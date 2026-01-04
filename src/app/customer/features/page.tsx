@@ -30,19 +30,19 @@ function CustomerFeaturesPageContent() {
   }, [searchParams]);
 
   const features = [
-    { id: 'overview', icon: '📊', name: 'Overview' },
-    { id: 'findshops', icon: '🔍', name: 'Find Shops' },
-    { id: 'tracking', icon: '📍', name: 'Live Tracking' },
-    { id: 'messages', icon: '💬', name: 'Messages' },
-    { id: 'payments', icon: '💳', name: 'Payments' },
-    { id: 'appointments', icon: '📅', name: 'Appointments' },
-    { id: 'reviews', icon: '⭐', name: 'Reviews' },
-    { id: 'favorites', icon: '❤️', name: 'Favorites' },
-    { id: 'rewards', icon: '🎁', name: 'Rewards' },
-    { id: 'documents', icon: '📄', name: 'Documents' },
-    { id: 'quotes', icon: '💰', name: 'Price Quotes' },
-    { id: 'history', icon: '📋', name: 'Service History' },
-    { id: 'insights', icon: '📈', name: 'Insights' },
+    { id: 'findshops', icon: '🔍', name: 'Find Shops', desc: 'Discover service centers near you', link: '/customer/features?tab=findshops' },
+    { id: 'appointments', icon: '📅', name: 'Appointments', desc: 'Book and manage service appointments', link: '/customer/appointments' },
+    { id: 'vehicles', icon: '🚛', name: 'My Vehicles', desc: 'Manage your fleet information', link: '/customer/vehicles' },
+    { id: 'reviews', icon: '⭐', name: 'Reviews', desc: 'Share your service experiences', link: '/customer/reviews' },
+    { id: 'favorites', icon: '❤️', name: 'Favorite Shops', desc: 'Quick access to preferred shops', link: '/customer/favorites' },
+    { id: 'tracking', icon: '📍', name: 'Live Tracking', desc: 'Track your tech in real-time', link: '/customer/features?tab=tracking' },
+    { id: 'messages', icon: '💬', name: 'Messages', desc: 'Chat with your technician', link: '/customer/features?tab=messages' },
+    { id: 'payments', icon: '💳', name: 'Payments', desc: 'Manage payment methods', link: '/customer/features?tab=payments' },
+    { id: 'rewards', icon: '🎁', name: 'Rewards', desc: 'Earn points and unlock perks', link: '/customer/features?tab=rewards' },
+    { id: 'documents', icon: '📄', name: 'Documents', desc: 'Access invoices and receipts', link: '/customer/features?tab=documents' },
+    { id: 'quotes', icon: '💰', name: 'Price Quotes', desc: 'Request and compare quotes', link: '/customer/features?tab=quotes' },
+    { id: 'history', icon: '📋', name: 'Service History', desc: 'View past service records', link: '/customer/features?tab=history' },
+    { id: 'insights', icon: '📈', name: 'Insights', desc: 'Track spending and trends', link: '/customer/features?tab=insights' },
   ];
 
   return (
@@ -68,49 +68,86 @@ function CustomerFeaturesPageContent() {
             >
               Sign Out
             </button>
-            <Link href="/" className="btn-outline">← Home</Link>
+            <Link href="/customer/home" className="btn-outline">← Dashboard</Link>
           </div>
         </div>
 
-        <div className="sos-content" style={{gridTemplateColumns:'200px 1fr'}}>
-          {/* Sidebar */}
-          <div className="sos-pane" style={{padding:'20px 12px', borderRight:'1px solid #5a5a5a'}}>
-            <div style={{display:'flex', flexDirection:'column', gap:4}}>
-              {features.map(feature => (
-                <button
-                  key={feature.id}
-                  onClick={() => setActiveTab(feature.id)}
-                  className="btn-outline"
-                  style={{
-                    justifyContent:'flex-start',
-                    padding:'10px 12px',
-                    background: activeTab === feature.id ? 'rgba(229,51,42,0.14)' : 'transparent',
-                    border: activeTab === feature.id ? '1px solid rgba(229,51,42,0.28)' : '1px solid #5a5a5a',
-                    color: activeTab === feature.id ? '#ffb3ad' : '#f5f7fb',
-                  }}
-                >
-                  <span style={{marginRight:8}}>{feature.icon}</span>
-                  <span style={{fontSize:13}}>{feature.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Main Content */}
+        <div className="sos-content" style={{gridTemplateColumns:'1fr'}}>
+          {/* Main Content - Card Grid */}
           <div className="sos-pane" style={{padding:28}}>
-            {activeTab === 'overview' && <OverviewTab />}
-            {activeTab === 'findshops' && <FindShopsTab />}
-            {activeTab === 'tracking' && <TrackingTab />}
-            {activeTab === 'messages' && <MessagesTab />}
-            {activeTab === 'payments' && <PaymentsTab />}
-            {activeTab === 'appointments' && <AppointmentsTab />}
-            {activeTab === 'reviews' && <ReviewsTab />}
-            {activeTab === 'favorites' && <FavoritesTab />}
-            {activeTab === 'rewards' && <RewardsTab points={loyaltyPoints} />}
-            {activeTab === 'documents' && <DocumentsTab />}
-            {activeTab === 'quotes' && <QuotesTab />}
-            {activeTab === 'history' && <HistoryTab />}
-            {activeTab === 'insights' && <InsightsTab />}
+            {activeTab === 'overview' ? (
+              <div>
+                <div className="sos-title">All Features</div>
+                <p className="sos-desc">Access your complete service management toolkit</p>
+                
+                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:20, marginTop:32}}>
+                  {features.map(feature => (
+                    <Link 
+                      key={feature.id} 
+                      href={feature.link}
+                      style={{textDecoration:'none'}}
+                    >
+                      <div 
+                        className="sos-item" 
+                        style={{
+                          flexDirection:'column',
+                          alignItems:'flex-start',
+                          padding:24,
+                          cursor:'pointer',
+                          transition:'all 0.2s',
+                          background:'rgba(0,0,0,0.3)',
+                          border:'1px solid rgba(255,255,255,0.1)',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(229,51,42,0.1)';
+                          e.currentTarget.style.borderColor = 'rgba(229,51,42,0.3)';
+                          e.currentTarget.style.transform = 'translateY(-4px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(0,0,0,0.3)';
+                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                      >
+                        <div style={{fontSize:48, marginBottom:12}}>{feature.icon}</div>
+                        <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:6}}>{feature.name}</div>
+                        <div style={{fontSize:13, color:'#9aa3b2', lineHeight:1.5}}>{feature.desc}</div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Quick Stats */}
+                <div style={{marginTop:48}}>
+                  <div style={{fontSize:20, fontWeight:700, marginBottom:20}}>Your Stats</div>
+                  <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:16}}>
+                    {[
+                      { label: 'Active Orders', value: '3', color: '#60a5fa' },
+                      { label: 'Pending Payment', value: '$450', color: '#fbbf24' },
+                      { label: 'Completed', value: '12', color: '#4ade80' },
+                      { label: 'Loyalty Points', value: loyaltyPoints.toString(), color: '#a78bfa' },
+                    ].map((stat, i) => (
+                      <div key={i} className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
+                        <div style={{fontSize:11, color:'#9aa3b2', marginBottom:8}}>{stat.label}</div>
+                        <div style={{fontSize:28, fontWeight:800, color:stat.color}}>{stat.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {activeTab === 'findshops' && <FindShopsTab />}
+                {activeTab === 'tracking' && <TrackingTab />}
+                {activeTab === 'messages' && <MessagesTab />}
+                {activeTab === 'payments' && <PaymentsTab />}
+                {activeTab === 'rewards' && <RewardsTab points={loyaltyPoints} />}
+                {activeTab === 'documents' && <DocumentsTab />}
+                {activeTab === 'quotes' && <QuotesTab />}
+                {activeTab === 'history' && <HistoryTab />}
+                {activeTab === 'insights' && <InsightsTab />}
+              </>
+            )}
           </div>
         </div>
 
@@ -123,41 +160,12 @@ function CustomerFeaturesPageContent() {
   );
 }
 
-function OverviewTab() {
-  return (
-    <div>
-      <div className="sos-title">Dashboard Overview</div>
-      <p className="sos-desc">Your complete service management hub</p>
-      
-      <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:16, marginTop:24}}>
-        {[
-          { label: 'Active Orders', value: '3', color: '#60a5fa' },
-          { label: 'Pending Payment', value: '$450', color: '#fbbf24' },
-          { label: 'Completed', value: '12', color: '#4ade80' },
-          { label: 'Loyalty Points', value: '250', color: '#a78bfa' },
-        ].map((stat, i) => (
-          <div key={i} className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
-            <div style={{fontSize:11, color:'#9aa3b2', marginBottom:8}}>{stat.label}</div>
-            <div style={{fontSize:24, fontWeight:800, color:stat.color}}>{stat.value}</div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{marginTop:32}}>
-        <div style={{fontSize:16, fontWeight:700, marginBottom:16}}>Quick Actions</div>
-        <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:12}}>
-          <Link href="/workorders/new" className="btn-primary" style={{textAlign:'center'}}>+ New Work Order</Link>
-          <button className="btn-outline">Schedule Service</button>
-          <button className="btn-outline">View History</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function TrackingTab() {
   return (
     <div>
+      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>
       <div className="sos-title">Live Tech Tracking</div>
       <p className="sos-desc">See your technician's real-time location and ETA</p>
       
@@ -189,6 +197,9 @@ function MessagesTab() {
 
   return (
     <div>
+      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>
       <div className="sos-title">Messages</div>
       <p className="sos-desc">Chat with your technician</p>
       
@@ -217,6 +228,9 @@ function MessagesTab() {
 function PaymentsTab() {
   return (
     <div>
+      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>
       <div className="sos-title">Payment Methods & History</div>
       <p className="sos-desc">Manage your payment options</p>
       
@@ -259,81 +273,49 @@ function PaymentsTab() {
 }
 
 function AppointmentsTab() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.push('/customer/appointments');
+  }, [router]);
+
   return (
     <div>
-      <div className="sos-title">Appointments</div>
-      <p className="sos-desc">Schedule and manage your service appointments</p>
-      
-      <div className="sos-item" style={{marginTop:24, flexDirection:'column', alignItems:'flex-start'}}>
-        <div style={{fontSize:16, fontWeight:700, marginBottom:8}}>Upcoming Appointment</div>
-        <div style={{display:'flex', gap:16, width:'100%', marginBottom:16}}>
-          <div style={{fontSize:48}}>📅</div>
-          <div style={{flex:1}}>
-            <div style={{fontWeight:600, marginBottom:4}}>Oil Change Service</div>
-            <div style={{fontSize:13, color:'#b8beca', marginBottom:2}}>Monday, Dec 16, 2025</div>
-            <div style={{fontSize:13, color:'#b8beca'}}>9:00 AM - 11:00 AM</div>
-          </div>
-        </div>
-        <div style={{display:'flex', gap:8, width:'100%'}}>
-          <button className="btn-outline" style={{flex:1}}>Reschedule</button>
-          <button className="btn-outline" style={{flex:1}}>Cancel</button>
-          <button className="btn-primary" style={{flex:1}}>Add to Calendar</button>
-        </div>
-      </div>
-
-      <button className="btn-primary" style={{marginTop:16, width:'100%'}}>+ Schedule New Appointment</button>
+      <div className="sos-title">Redirecting to Appointments...</div>
+      <p className="sos-desc">Taking you to the appointments page</p>
     </div>
   );
 }
 
 function ReviewsTab() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.push('/customer/reviews');
+  }, [router]);
+
   return (
     <div>
-      <div className="sos-title">Reviews & Ratings</div>
-      <p className="sos-desc">Rate your service experiences</p>
-      
-      <div style={{marginTop:24}}>
-        <div style={{fontSize:14, fontWeight:700, marginBottom:12}}>Pending Reviews</div>
-        <div className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
-          <div style={{fontWeight:600, marginBottom:8}}>Work Order #1234</div>
-          <div style={{fontSize:13, color:'#b8beca', marginBottom:12}}>Completed on 12/10/2025</div>
-          <div style={{marginBottom:12}}>
-            {[1,2,3,4,5].map(star => (
-              <span key={star} style={{fontSize:24, cursor:'pointer'}}>⭐</span>
-            ))}
-          </div>
-          <textarea className="sos-input" placeholder="Share your experience..." style={{width:'100%', minHeight:80, marginBottom:12}} />
-          <button className="btn-primary">Submit Review</button>
-        </div>
-      </div>
-
-      <div style={{marginTop:32}}>
-        <div style={{fontSize:14, fontWeight:700, marginBottom:12}}>Your Reviews</div>
-        <div className="sos-list">
-          <div className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
-            <div style={{marginBottom:8}}>⭐⭐⭐⭐⭐</div>
-            <div style={{fontSize:13, marginBottom:4}}>"Excellent service! Very professional."</div>
-            <div style={{fontSize:11, color:'#9aa3b2'}}>Work Order #1230 • 11/28/2025</div>
-          </div>
-        </div>
-      </div>
+      <div className="sos-title">Redirecting to Reviews...</div>
+      <p className="sos-desc">Taking you to the reviews page</p>
     </div>
   );
 }
 
 function FavoritesTab() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.push('/customer/favorites');
+  }, [router]);
+
   return (
     <div>
-      <div className="sos-title">Favorite Services</div>
-      <p className="sos-desc">Quick access to your frequently used services</p>
-      
-      <div className="sos-list" style={{marginTop:24}}>
-        {[
-          { name: 'Oil Change (Semi)', count: 8 },
-          { name: 'Tire Rotation', count: 5 },
-          { name: 'Brake Inspection', count: 3 },
-        ].map((fav, i) => (
-          <div key={i} className="sos-item">
+      <div className="sos-title">Redirecting to Favorites...</div>
+      <p className="sos-desc">Taking you to your favorite shops</p>
+    </div>
+  );
+}
             <div>
               <div style={{fontWeight:600}}>{fav.name}</div>
               <div style={{fontSize:12, color:'#9aa3b2'}}>Used {fav.count} times</div>
@@ -350,8 +332,9 @@ function FavoritesTab() {
 
 function RewardsTab({ points }: { points: number }) {
   return (
-    <div>
-      <div className="sos-title">Loyalty & Rewards</div>
+    <div>      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>      <div className="sos-title">Loyalty & Rewards</div>
       <p className="sos-desc">Earn points and redeem rewards</p>
       
       <div className="sos-item" style={{marginTop:24, padding:24, flexDirection:'column', alignItems:'center', background:'linear-gradient(135deg, rgba(229,51,42,0.2) 0%, rgba(255,122,89,0.2) 100%)'}}>
@@ -395,8 +378,9 @@ function RewardsTab({ points }: { points: number }) {
 
 function DocumentsTab() {
   return (
-    <div>
-      <div className="sos-title">Documents</div>
+    <div>      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>      <div className="sos-title">Documents</div>
       <p className="sos-desc">Access warranties, receipts, and service records</p>
       
       <div className="sos-list" style={{marginTop:24}}>
@@ -423,6 +407,9 @@ function DocumentsTab() {
 function QuotesTab() {
   return (
     <div>
+      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>
       <div className="sos-title">Price Quotes</div>
       <p className="sos-desc">Get instant estimates for services</p>
       
@@ -454,6 +441,9 @@ function QuotesTab() {
 function HistoryTab() {
   return (
     <div>
+      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>
       <div className="sos-title">Service History</div>
       <p className="sos-desc">Complete maintenance logs and records</p>
       
@@ -482,6 +472,9 @@ function HistoryTab() {
 function InsightsTab() {
   return (
     <div>
+      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>
       <div className="sos-title">Service Insights</div>
       <p className="sos-desc">Analytics and recommendations for your fleet</p>
       
@@ -583,6 +576,9 @@ function FindShopsTab() {
 
   return (
     <div>
+      <Link href="/customer/features" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>
+        ← Back to All Features
+      </Link>
       <div className="sos-title">Find Shops Near You</div>
       <p className="sos-desc">Search for shops within 100 miles of your location</p>
 
