@@ -1,0 +1,559 @@
+// Prisma Schema for Multi-Tenant Work Order Management System
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Customer model
+model Customer {
+  id        String   @id @default(cuid())
+  username  String?  @unique
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  company   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workOrders     WorkOrder[]
+  notifications  Notification[]
+  vehicles       Vehicle[]
+  paymentMethods PaymentMethod[]
+  reviews        Review[]
+
+  @@map("customers")
+}
+
+// Shop model
+model Shop {
+  id       String  @id @default(cuid())
+  username String  @unique
+  password String
+  shopName String
+  email    String
+  phone    String
+  zipCode  String
+  address  String?
+  city     String?
+  state    String?
+
+  businessLicense String?
+  insurancePolicy String?
+  shopType        String? // diesel, gas, both
+  profileComplete Boolean @default(false)
+
+  status String @default("pending") // pending, approved, suspended
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  approvedAt DateTime?
+
+  services       ShopService[]
+  shopLaborRates ShopLaborRate[]
+  workOrders     WorkOrder[]
+  techs          Tech[]
+  inventory      InventoryItem[]
+  settings       ShopSettings?
+
+  @@map("shops")
+}
+
+// Shop Services (51 services)
+model ShopService {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  serviceName String
+  category    String // diesel, gas
+  price       Float? // optional price for the service
+  duration    Int? // labor time in minutes
+  description String? // notes about the service
+
+  createdAt DateTime @default(now())
+
+  @@unique([shopId, serviceName, category])
+  @@index([shopId])
+  @@map("shop_services")
+}
+
+// Labor rates for shops
+model ShopLaborRate {
+  id        String   @id @default(cuid())
+  shopId    String
+  shop      Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  name      String
+  rate      Float
+  category  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@map("shop_labor_rates")
+}
+
+// Tech/Manager Users
+model Tech {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  email     String  @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  role      String // tech, manager
+
+  available Boolean @default(true)
+
+  // Labor rate for payroll
+  hourlyRate Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignedWorkOrders WorkOrder[]
+  statusHistory      StatusHistory[]
+  timeEntries        TimeEntry[]
+
+  @@index([shopId])
+  @@map("techs")
+}
+
+// Vehicle model
+model Vehicle {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  vehicleType String // semi-truck, trailer, equipment, personal-vehicle
+  make        String?
+  model       String?
+  year        Int?
+  vin         String?
+
+  createdAt DateTime @default(now())
+
+  workOrders WorkOrder[]
+
+  @@index([customerId])
+  @@map("vehicles")
+}
+
+// Work Order model
+model WorkOrder {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id])
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  vehicleType     String
+  serviceLocation String // roadside, in-shop
+
+  // Services requested
+  repairs     Json? // RepairService[]
+  maintenance Json? // MaintenanceService[]
+
+  // Parts
+  partsMaterials Json? // PartsMaterials
+
+  // Issue description
+  issueDescription String
+  pictures         Json? // string[]
+  vinPhoto         String?
+
+  // Location
+  location Json? // VehicleLocation
+
+  // Assignment
+  assignedToId String?
+  assignedTo   Tech?   @relation(fields: [assignedToId], references: [id])
+
+  // Status
+  status String @default("pending") // pending, assigned, in-progress, waiting-estimate, waiting-for-payment, closed, denied-estimate
+
+  // Estimate
+  estimate Json? // Estimate with line items
+
+  // Work details
+  techLabor  Json? // TechnicianLabor
+  partsUsed  Json? // PartLaborBreakdown
+  workPhotos Json? // WorkPhoto[]
+
+  // Completion
+  completion Json? // CompletionVerification
+
+  // Payment
+  paymentStatus   String  @default("unpaid") // unpaid, pending, paid, refunded
+  paymentIntentId String?
+  amountPaid      Float?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  messages      Message[]
+  statusHistory StatusHistory[]
+
+  @@index([customerId])
+  @@index([shopId])
+  @@index([assignedToId])
+  @@index([status])
+  @@map("work_orders")
+}
+
+// Status History
+model StatusHistory {
+  id          String    @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  fromStatus String
+  toStatus   String
+  reason     String?
+
+  changedById String?
+  changedBy   Tech?   @relation(fields: [changedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([workOrderId])
+  @@map("status_history")
+}
+
+// Messages
+model Message {
+  id          String    @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  sender     String // customer, tech, manager
+  senderName String
+  body       String @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([workOrderId])
+  @@map("messages")
+}
+
+// Notifications
+model Notification {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  type        String
+  title       String
+  message     String
+  workOrderId String?
+
+  read Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([customerId])
+  @@map("notifications")
+}
+
+// Inventory
+model InventoryItem {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  type String // part, labor
+  name String
+  sku  String?
+
+  // For parts
+  quantity     Int   @default(0)
+  price        Float @default(0)
+  reorderPoint Int?
+
+  // For labor
+  rate Float? // hourly rate
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@map("inventory")
+}
+
+// Payment Methods
+model PaymentMethod {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  type        String // card, bank
+  last4       String
+  brand       String?
+  expiryMonth Int?
+  expiryYear  Int?
+
+  isDefault Boolean @default(false)
+
+  stripePaymentMethodId String?
+
+  createdAt DateTime @default(now())
+
+  @@index([customerId])
+  @@map("payment_methods")
+}
+
+// Reviews
+model Review {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  shopId      String
+  workOrderId String?
+
+  rating  Int // 1-5
+  comment String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([customerId])
+  @@index([shopId])
+  @@map("reviews")
+}
+
+// Activity Logs
+model ActivityLog {
+  id String @id @default(cuid())
+
+  type     String // shop, revenue, user, alert
+  action   String
+  details  String
+  location String?
+  email    String?
+  amount   String?
+  severity String // info, success, warning, error
+  user     String
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([type])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+
+// Admin model
+model Admin {
+  id       String @id @default(cuid())
+  username String @unique
+  password String
+  email    String @unique
+
+  isSuperAdmin Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  refreshTokens RefreshToken[]
+
+  @@map("admins")
+}
+
+// Refresh tokens for long-lived sessions
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String
+  adminId   String?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  metadata  Json?
+
+  admin Admin? @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// Time tracking for employees (techs and managers)
+model TimeEntry {
+  id     String @id @default(cuid())
+  techId String
+  tech   Tech   @relation(fields: [techId], references: [id], onDelete: Cascade)
+  shopId String
+
+  clockIn  DateTime
+  clockOut DateTime?
+
+  // Break tracking
+  breakStart DateTime?
+  breakEnd   DateTime?
+  breakDuration Float? // Minutes
+
+  // Calculated fields
+  hoursWorked Float? // Calculated when clocked out (excluding breaks)
+  notes       String?
+
+  // Location tracking (optional)
+  location Json?
+  
+  // Photo verification (optional - stored as URLs)
+  clockInPhoto  String?
+  clockOutPhoto String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([techId])
+  @@index([shopId])
+  @@index([clockIn])
+  @@map("time_entries")
+}
+
+// Shop-specific settings for labor rates, margins, etc.
+model ShopSettings {
+  id     String @id @default(cuid())
+  shopId String @unique
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  // Labor settings
+  defaultLaborRate    Float @default(0) // Default hourly rate for labor
+  defaultProfitMargin Float @default(0.30) // 30% default margin on parts
+  overtimeMultiplier  Float @default(1.5) // Overtime pay multiplier (1.5x standard)
+
+  // Business hours
+  businessHours Json? // { monday: { open: '08:00', close: '17:00' }, ... }
+
+  // Other settings
+  taxRate            Float   @default(0)
+  allowTimeTracking  Boolean @default(true)
+  requireClockInOut  Boolean @default(false)
+  
+  // GPS verification settings
+  gpsVerificationEnabled Boolean @default(false)
+  shopLatitude           Float?
+  shopLongitude          Float?
+  gpsRadiusMeters        Int?    @default(100) // Allow clock in within 100m
+  
+  // Payroll budgets
+  weeklyPayrollBudget  Float?
+  monthlyPayrollBudget Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("shop_settings")
+}
+
+// Inventory requests from managers
+model InventoryRequest {
+  id        String @id @default(cuid())
+  shopId    String
+  requestedById String // Tech ID (manager)
+  
+  itemName    String
+  quantity    Int
+  reason      String?
+  urgency     String @default("normal") // low, normal, high, urgent
+  status      String @default("pending") // pending, approved, ordered, received, denied
+  
+  approvedBy  String?
+  approvedAt  DateTime?
+  
+  // Link to actual inventory item if approved
+  inventoryItemId String?
+  
+  orderDetails Json? // Purchase order info, tracking, etc.
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([requestedById])
+  @@index([status])
+  @@map("inventory_requests")
+}
+
+// Full inventory management (created when inventory requests are approved or manually added)
+model InventoryStock {
+  id     String @id @default(cuid())
+  shopId String
+  
+  itemName    String
+  sku         String?
+  category    String? // parts, fluids, tires, tools, etc.
+  
+  quantity        Int     @default(0)
+  unitCost        Float   @default(0)
+  sellingPrice    Float   @default(0)
+  reorderPoint    Int     @default(10)
+  reorderQuantity Int     @default(50)
+  
+  supplier      String?
+  supplierSKU   String?
+  location      String? // shelf/bin location in shop
+  
+  // Tracking
+  lastRestocked DateTime?
+  notes         String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([category])
+  @@index([quantity]) // For low stock alerts
+  @@map("inventory_stock")
+}
+
+// Direct Messages (Manager ↔ Tech, Manager ↔ Admin, Manager ↔ Customer)
+model DirectMessage {
+  id         String   @id @default(cuid())
+  
+  // Sender
+  senderId   String
+  senderRole String // manager, tech, admin, customer, shop
+  senderName String
+  
+  // Receiver
+  receiverId   String
+  receiverRole String // manager, tech, admin, customer, shop
+  receiverName String
+  
+  // Shop context (for managers/techs)
+  shopId     String?
+  
+  // Message content
+  subject    String?
+  body       String @db.Text
+  
+  // Status
+  isRead     Boolean  @default(false)
+  readAt     DateTime?
+  
+  // Reply thread
+  threadId   String? // ID of the first message in conversation
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([senderId, senderRole])
+  @@index([receiverId, receiverRole])
+  @@index([shopId])
+  @@index([threadId])
+  @@index([createdAt])
+  @@map("direct_messages")
+}

@@ -1,0 +1,162 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+export default function ShareLocation() {
+  const router = useRouter();
+  const [location, setLocation] = useState<{lat: number; lng: number} | null>(null);
+  const [address, setAddress] = useState('');
+  const [sharing, setSharing] = useState(false);
+  const [shareLink, setShareLink] = useState('');
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    const name = localStorage.getItem('userName');
+    if (role !== 'tech' && role !== 'manager') {
+      router.push('/auth/login');
+      return;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          setLocation(coords);
+          setAddress(`${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}`);
+        },
+        () => {
+          alert('Unable to get location. Please check location permissions.');
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by your browser');
+    }
+  };
+
+  const startSharing = () => {
+    if (!location) {
+      alert('Please get your current location first');
+      return;
+    }
+    setSharing(true);
+    const link = `https://maps.google.com/?q=${location.lat},${location.lng}`;
+    setShareLink(link);
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(shareLink);
+    alert('Location link copied to clipboard!');
+  };
+
+  return (
+    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+      <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(59,130,246,0.3)', padding:'20px 32px'}}>
+        <div style={{maxWidth:900, margin:'0 auto'}}>
+          <Link href="/tech/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
+            ← Back to Dashboard
+          </Link>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>📍 Share Location</h1>
+          <p style={{fontSize:14, color:'#9aa3b2'}}>Share your current location with customers or dispatch</p>
+        </div>
+      </div>
+
+      <div style={{maxWidth:900, margin:'0 auto', padding:32}}>
+        {/* Get Location */}
+        <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:32, marginBottom:24}}>
+          <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Current Location</h2>
+          
+          {!location ? (
+            <div style={{textAlign:'center', padding:40}}>
+              <div style={{fontSize:64, marginBottom:16}}>📍</div>
+              <p style={{fontSize:16, color:'#9aa3b2', marginBottom:24}}>Get your current GPS coordinates</p>
+              <button onClick={getCurrentLocation} style={{padding:'14px 32px', background:'#3b82f6', color:'white', border:'none', borderRadius:8, fontSize:15, fontWeight:600, cursor:'pointer'}}>
+                Get Current Location
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, padding:20, marginBottom:16}}>
+                <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>GPS Coordinates</div>
+                <div style={{fontSize:20, fontWeight:700, color:'#3b82f6', fontFamily:'monospace'}}>{address}</div>
+              </div>
+              
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16}}>
+                <div style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:16}}>
+                  <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>Latitude</div>
+                  <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>{location.lat.toFixed(6)}</div>
+                </div>
+                <div style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:16}}>
+                  <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>Longitude</div>
+                  <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>{location.lng.toFixed(6)}</div>
+                </div>
+              </div>
+
+              <button onClick={getCurrentLocation} style={{width:'100%', marginTop:16, padding:'12px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
+                🔄 Refresh Location
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Share Options */}
+        {location && (
+          <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:32}}>
+            <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Share Options</h2>
+            
+            {!sharing ? (
+              <button onClick={startSharing} style={{width:'100%', padding:'16px', background:'#22c55e', color:'white', border:'none', borderRadius:8, fontSize:16, fontWeight:600, cursor:'pointer'}}>
+                Start Sharing Location
+              </button>
+            ) : (
+              <div>
+                <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, padding:20, marginBottom:16}}>
+                  <div style={{fontSize:14, color:'#22c55e', marginBottom:8, fontWeight:600}}>✓ Location Sharing Active</div>
+                  <div style={{fontSize:13, color:'#9aa3b2', marginBottom:12}}>Share this link:</div>
+                  <div style={{background:'rgba(0,0,0,0.3)', padding:12, borderRadius:6, fontSize:13, color:'#3b82f6', wordBreak:'break-all', fontFamily:'monospace'}}>
+                    {shareLink}
+                  </div>
+                </div>
+
+                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                  <button onClick={copyLink} style={{padding:'14px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
+                    📋 Copy Link
+                  </button>
+                  <a href={shareLink} target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
+                    <button style={{width:'100%', padding:'14px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
+                      🗺️ Open in Maps
+                    </button>
+                  </a>
+                </div>
+
+                <button onClick={() => setSharing(false)} style={{width:'100%', marginTop:12, padding:'14px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
+                  Stop Sharing
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Quick Actions */}
+        <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginTop:24}}>
+          <h3 style={{fontSize:16, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Quick Send To</h3>
+          <div style={{display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:12}}>
+            <button disabled={!location} style={{padding:'12px', background:'rgba(245,158,11,0.2)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:location ? 'pointer' : 'not-allowed', opacity:location ? 1 : 0.5}}>
+              💬 Send to Customer
+            </button>
+            <button disabled={!location} style={{padding:'12px', background:'rgba(139,92,246,0.2)', color:'#8b5cf6', border:'1px solid rgba(139,92,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:location ? 'pointer' : 'not-allowed', opacity:location ? 1 : 0.5}}>
+              🏢 Send to Dispatch
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

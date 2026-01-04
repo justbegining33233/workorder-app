@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: FixTray Work Order API
+  version: 1.0.0
+paths:
+  /api/workorders:
+    get:
+      summary: Get all work orders
+      responses:
+        '200':
+          description: List of work orders
+    post:
+      summary: Create a new work order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+      responses:
+        '201':
+          description: Work order created
+  /api/workorders/{id}:
+    get:
+      summary: Get a work order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Work order details
+    put:
+      summary: Update a work order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+      responses:
+        '200':
+          description: Work order updated
+    delete:
+      summary: Delete a work order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Work order deleted
+components:
+  schemas:
+    WorkOrder:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        assignedTo:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        notes:
+          type: string

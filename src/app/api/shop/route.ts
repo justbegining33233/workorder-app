@@ -1,0 +1,50 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { verifyToken } from '@/lib/auth';
+
+// GET - Get shop details by ID
+export async function GET(request: NextRequest) {
+  try {
+    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const shopId = searchParams.get('shopId');
+
+    if (!shopId) {
+      return NextResponse.json({ error: 'Shop ID required' }, { status: 400 });
+    }
+
+    const shop = await prisma.shop.findUnique({
+      where: { id: shopId },
+      select: {
+        id: true,
+        shopName: true,
+        email: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        zipCode: true,
+        shopType: true,
+        status: true,
+      },
+    });
+
+    if (!shop) {
+      return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ shop });
+  } catch (error) {
+    console.error('Error fetching shop:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

@@ -1,0 +1,117 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { requireRole } from '@/lib/middleware';
+import { hashPassword } from '@/lib/auth';
+
+export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+  
+  try {
+    // Get shopId from query parameter or from auth
+    const { searchParams } = new URL(request.url);
+    const queryShopId = searchParams.get('shopId');
+    
+    let shopId: string | undefined;
+    if (queryShopId) {
+      shopId = queryShopId;
+    } else {
+      shopId = auth.role === 'shop' ? auth.id : auth.shopId;
+    }
+    
+    if (!shopId) {
+      return NextResponse.json({ error: 'Shop ID required' }, { status: 400 });
+    }
+    
+    const techs = await prisma.tech.findMany({
+      where: { shopId },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        role: true,
+        available: true,
+        createdAt: true,
+        _count: {
+          select: {
+            assignedWorkOrders: {
+              where: {
+                status: { in: ['assigned', 'in-progress'] },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { firstName: 'asc' },
+    });
+    
+    return NextResponse.json({ techs });
+  } catch (error) {
+    console.error('Error fetching techs:', error);
+    return NextResponse.json({ error: 'Failed to fetch techs' }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+  if (!request.headers.get('authorization')) {
+    const ok = await (await import('@/lib/csrf')).validateCsrf(request);
+    if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
+  }
+  try {
+    const data = await request.json();
+    const shopId = auth.role === 'shop' ? auth.id : auth.shopId;
+    
+    console.log('🔵 [CREATE TECH] Request data:', { 
+      email: data.email, 
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phone: data.phone,
+      role: data.role,
+      shopId,
+      authRole: auth.role 
+    });
+    
+    // Check if email exists
+    const existing = await prisma.tech.findUnique({
+      where: { email: data.email },
+    });
+    
+    if (existing) {
+      return NextResponse.json({ error: 'Email already in use' }, { status: 400 });
+    }
+    
+    const hashedPassword = await hashPassword(data.password);
+    
+    console.log('🔵 [CREATE TECH] Creating tech with hashed password, length:', hashedPassword.length);
+    
+    const tech = await prisma.tech.create({
+      data: {
+        shopId: shopId!,
+        email: data.email,
+        password: hashedPassword,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        role: data.role || 'tech',
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+      },
+    });
+    
+    console.log('✅ [CREATE TECH] Tech created successfully:', tech);
+    
+    return NextResponse.json(tech, { status: 201 });
+  } catch (error) {
+    console.error('Error creating tech:', error);
+    return NextResponse.json({ error: 'Failed to create tech' }, { status: 500 });
+  }
+}
