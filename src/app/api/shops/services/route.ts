@@ -14,12 +14,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Shop ID, service name, and category are required' }, { status: 400 });
     }
 
-    // Check if service already exists for this shop
+    // Check if service already exists for this shop with same category
     const existingService = await prisma.shopService.findUnique({
       where: {
-        shopId_serviceName: {
+        shopId_serviceName_category: {
           shopId,
           serviceName,
+          category,
         },
       },
     });

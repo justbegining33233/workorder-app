@@ -21,23 +21,16 @@ export async function GET(req: NextRequest) {
       orderBy: {
         createdAt: 'desc',
       },
-      include: {
-        user: {
-          select: {
-            username: true,
-            email: true,
-          },
-        },
-        shop: {
-          select: {
-            shopName: true,
-          },
-        },
-      },
     });
 
     // Transform audit logs to activity logs format
-    const activityLogs = auditLogs.map((log) => {
+    const activityLogs = auditLogs.map((log: {
+      id: string;
+      action: string;
+      details: any;
+      createdAt: Date;
+      adminId: string;
+    }) => {
       let type: 'shop' | 'revenue' | 'user' | 'alert' = 'user';
       let severity: 'info' | 'success' | 'warning' | 'error' = 'info';
 
@@ -59,22 +52,22 @@ export async function GET(req: NextRequest) {
         id: log.id,
         type,
         action: log.action,
-        details: log.details || 'No additional details',
+        details: typeof log.details === 'string' ? log.details : JSON.stringify(log.details || {}),
         time: log.createdAt,
         severity,
-        user: log.user?.username || 'System',
-        email: log.user?.email || undefined,
-        location: log.shop?.shopName || undefined,
+        user: log.adminId || 'System',
+        email: undefined,
+        location: undefined,
       };
     });
 
     // Apply filters
     let filteredLogs = activityLogs;
     if (filterType && filterType !== 'all') {
-      filteredLogs = filteredLogs.filter(log => log.type === filterType);
+      filteredLogs = filteredLogs.filter((log: { type: string }) => log.type === filterType);
     }
     if (filterSeverity && filterSeverity !== 'all') {
-      filteredLogs = filteredLogs.filter(log => log.severity === filterSeverity);
+      filteredLogs = filteredLogs.filter((log: { severity: string }) => log.severity === filterSeverity);
     }
 
     return NextResponse.json(filteredLogs);

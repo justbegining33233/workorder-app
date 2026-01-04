@@ -65,14 +65,6 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const messages = await prisma.message.findMany({
-            { senderId: contactId },
-            { receiverId: contactId },
-          ],
-        },
-      ];
-    }
-
     const messages = await prisma.directMessage.findMany({
       where,
       orderBy: {

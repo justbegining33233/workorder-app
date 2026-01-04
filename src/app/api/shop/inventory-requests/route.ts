@@ -91,13 +91,13 @@ export async function POST(request: NextRequest) {
     try {
       const shop = await prisma.shop.findUnique({
         where: { id: shopId },
-        select: { email: true, name: true },
+        select: { email: true, shopName: true },
       });
       
       if (shop?.email) {
         await sendInventoryRequestNotification(
           shop.email,
-          shop.name,
+          shop.shopName,
           itemName,
           quantity,
           urgency || 'normal'

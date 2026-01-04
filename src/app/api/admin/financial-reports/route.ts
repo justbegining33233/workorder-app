@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     });
 
     // Calculate total revenue
-    const totalRevenue = workOrders.reduce((sum, wo) => sum + (wo.totalCost || 0), 0);
+    const totalRevenue = workOrders.reduce((sum, wo) => sum + (wo.amountPaid || 0), 0);
     
     // Calculate platform fees (20% commission)
     const platformFees = totalRevenue * 0.2;
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
         paymentStatus: 'pending',
       },
     });
-    const pendingPayouts = pendingWorkOrders.reduce((sum, wo) => sum + (wo.totalCost || 0), 0) * 0.8;
+    const pendingPayouts = pendingWorkOrders.reduce((sum, wo) => sum + (wo.amountPaid || 0), 0) * 0.8;
 
     // Calculate average transaction
     const averageTransaction = workOrders.length > 0 ? totalRevenue / workOrders.length : 0;
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
         },
       },
       _sum: {
-        totalCost: true,
+        amountPaid: true,
       },
     });
 
@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     monthlyRevenue.forEach((item) => {
       const date = new Date(item.createdAt);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + (item._sum.totalCost || 0);
+      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + (item._sum?.amountPaid || 0);
     });
 
     // Format monthly data
@@ -91,14 +91,14 @@ export async function GET(req: NextRequest) {
       by: ['shopId'],
       where: {
         paymentStatus: 'paid',
-        shopId: { not: null },
+        shopId: { not: '' }, // Not empty string
       },
       _sum: {
-        totalCost: true,
+        amountPaid: true,
       },
       orderBy: {
         _sum: {
-          totalCost: 'desc',
+          amountPaid: 'desc',
         },
       },
       take: 5,
@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
           select: { shopName: true },
         });
         
-        const revenue = item._sum.totalCost || 0;
+        const revenue = item._sum?.amountPaid || 0;
         const fees = revenue * 0.2;
         const payout = revenue * 0.8;
         

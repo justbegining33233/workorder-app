@@ -36,6 +36,7 @@ model Shop {
   username String  @unique
   password String
   shopName String
+  ownerName String? // Owner's full name
   email    String
   phone    String
   zipCode  String
@@ -201,6 +202,7 @@ model WorkOrder {
   paymentStatus   String  @default("unpaid") // unpaid, pending, paid, refunded
   paymentIntentId String?
   amountPaid      Float?
+  totalCost       Float? // Total cost estimate for the work order
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -517,6 +519,25 @@ model InventoryStock {
   @@index([category])
   @@index([quantity]) // For low stock alerts
   @@map("inventory_stock")
+}
+
+// Audit Log for admin actions
+model AuditLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  action    String   // user_updated, user_deleted, shop_approved, etc.
+  targetId  String?  // ID of affected resource
+  targetType String? // user, shop, workorder, etc.
+  details   Json?    // Additional context
+  ipAddress String?
+  userAgent String?
+  
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 // Direct Messages (Manager ↔ Tech, Manager ↔ Admin, Manager ↔ Customer)
