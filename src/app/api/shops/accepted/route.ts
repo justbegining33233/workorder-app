@@ -12,23 +12,7 @@ export async function GET() {
       orderBy: {
         createdAt: 'desc'
       },
-      select: {
-        id: true,
-        username: true,
-        password: true,
-        shopName: true,
-        ownerName: true,
-        email: true,
-        phone: true,
-        zipCode: true,
-        address: true,
-        city: true,
-        state: true,
-        businessLicense: true,
-        insurancePolicy: true,
-        shopType: true,
-        profileComplete: true,
-        createdAt: true,
+      include: {
         workOrders: {
           select: {
             id: true,

@@ -26,6 +26,8 @@ model Customer {
   vehicles       Vehicle[]
   paymentMethods PaymentMethod[]
   reviews        Review[]
+  appointments   Appointment[]
+  favoriteShops  FavoriteShop[]
 
   @@map("customers")
 }
@@ -61,6 +63,8 @@ model Shop {
   techs          Tech[]
   inventory      InventoryItem[]
   settings       ShopSettings?
+  reviews        Review[]
+  appointments   Appointment[]
 
   @@map("shops")
 }
@@ -144,7 +148,8 @@ model Vehicle {
 
   createdAt DateTime @default(now())
 
-  workOrders WorkOrder[]
+  workOrders   WorkOrder[]
+  appointments Appointment[]
 
   @@index([customerId])
   @@map("vehicles")
@@ -208,6 +213,7 @@ model WorkOrder {
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
 
+  reviews       Review[]
   messages      Message[]
   statusHistory StatusHistory[]
 
@@ -320,23 +326,7 @@ model PaymentMethod {
 }
 
 // Reviews
-model Review {
-  id         String   @id @default(cuid())
-  customerId String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  shopId      String
-  workOrderId String?
-
-  rating  Int // 1-5
-  comment String? @db.Text
-
-  createdAt DateTime @default(now())
-
-  @@index([customerId])
-  @@index([shopId])
-  @@map("reviews")
-}
+// Removed duplicate - using enhanced Review model at end of file
 
 // Activity Logs
 model ActivityLog {
@@ -577,4 +567,71 @@ model DirectMessage {
   @@index([threadId])
   @@index([createdAt])
   @@map("direct_messages")
+}
+
+// Appointments - Customer booking system
+model Appointment {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  shopId      String
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  
+  scheduledDate DateTime
+  serviceType   String   // oil-change, inspection, repair, etc.
+  notes         String?  @db.Text
+  status        String   @default("scheduled") // scheduled, confirmed, completed, cancelled, no-show
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([shopId])
+  @@index([scheduledDate])
+  @@index([status])
+  @@map("appointments")
+}
+
+// Reviews - Customer feedback system
+model Review {
+  id          String    @id @default(cuid())
+  customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  shopId      String
+  shop        Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  
+  rating      Int       // 1-5 stars
+  comment     String?   @db.Text
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([workOrderId, customerId])
+  @@index([customerId])
+  @@index([shopId])
+  @@index([rating])
+  @@map("reviews")
+}
+
+// Favorite Shops - Customer saved shops
+model FavoriteShop {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  shopId     String
+  
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, shopId])
+  @@index([customerId])
+  @@map("favorite_shops")
 }

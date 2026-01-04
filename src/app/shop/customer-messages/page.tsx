@@ -30,18 +30,72 @@ export default function CustomerMessagesPage() {
       return;
     }
 
-    // Load messages (TODO: Replace with API call)
-    // For now, using empty array as we removed sample data
+    loadMessages();
   }, [router]);
 
-  const handleSendReply = () => {
+  const loadMessages = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const shopId = localStorage.getItem('shopId');
+      
+      const response = await fetch(`/api/messages?shopId=${shopId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data.map((msg: any) => ({
+          id: msg.id,
+          customerName: msg.customer ? `${msg.customer.firstName} ${msg.customer.lastName}` : 'Unknown',
+          workOrderId: msg.workOrderId,
+          subject: msg.subject,
+          message: msg.message,
+          timestamp: new Date(msg.createdAt),
+          status: msg.status,
+          priority: msg.priority || 'normal'
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error);
+    }
+  };
+
+  const handleSendReply = async () => {
     if (!reply.trim() || !selectedMessage) return;
     
-    // TODO: Replace with API call to send reply
-    alert('Reply sent successfully!');
-    setReply('');
-    setSelectedMessage(null);
-    setMessages([]);
+    try {
+      const token = localStorage.getItem('token');
+      const shopId = localStorage.getItem('shopId');
+      
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          customerId: selectedMessage.id, // This needs proper customer ID mapping
+          shopId,
+          subject: `Re: ${selectedMessage.subject}`,
+          message: reply,
+          workOrderId: selectedMessage.workOrderId
+        }),
+      });
+
+      if (response.ok) {
+        alert('Reply sent successfully!');
+        setReply('');
+        setSelectedMessage(null);
+        loadMessages(); // Reload messages
+      } else {
+        alert('Failed to send reply');
+      }
+    } catch (error) {
+      console.error('Error sending reply:', error);
+      alert('Error sending reply');
+    }
   };
 
   const filteredMessages = messages.filter(msg => {

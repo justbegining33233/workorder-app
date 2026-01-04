@@ -69,3 +69,60 @@ export async function sendPaymentConfirmationEmail(email: string, workOrderId: s
   `;
   await sendEmail(email, 'Payment Confirmation', html);
 }
+
+export async function sendLowStockAlert(
+  email: string,
+  shopName: string,
+  itemName: string,
+  currentStock: number,
+  reorderPoint: number
+) {
+  const html = `
+    <h1>Low Stock Alert - ${shopName}</h1>
+    <p><strong>${itemName}</strong> is running low on stock.</p>
+    <p>Current Stock: ${currentStock}</p>
+    <p>Reorder Point: ${reorderPoint}</p>
+    <p>Please order more inventory to avoid stockouts.</p>
+    <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/shop/parts-labor">Manage Inventory</a></p>
+  `;
+  await sendEmail(email, `Low Stock Alert: ${itemName}`, html);
+}
+
+export async function sendAppointmentConfirmation(
+  email: string,
+  customerName: string,
+  shopName: string,
+  appointmentDate: Date,
+  serviceType: string
+) {
+  const html = `
+    <h1>Appointment Confirmed</h1>
+    <p>Hi ${customerName},</p>
+    <p>Your appointment has been confirmed!</p>
+    <p><strong>Shop:</strong> ${shopName}</p>
+    <p><strong>Date:</strong> ${appointmentDate.toLocaleDateString()} at ${appointmentDate.toLocaleTimeString()}</p>
+    <p><strong>Service:</strong> ${serviceType}</p>
+    <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/appointments">View Appointments</a></p>
+  `;
+  await sendEmail(email, 'Appointment Confirmation', html);
+}
+
+export async function sendAppointmentReminder(
+  email: string,
+  customerName: string,
+  shopName: string,
+  appointmentDate: Date,
+  serviceType: string
+) {
+  const html = `
+    <h1>Appointment Reminder</h1>
+    <p>Hi ${customerName},</p>
+    <p>This is a reminder about your upcoming appointment:</p>
+    <p><strong>Shop:</strong> ${shopName}</p>
+    <p><strong>Date:</strong> ${appointmentDate.toLocaleDateString()} at ${appointmentDate.toLocaleTimeString()}</p>
+    <p><strong>Service:</strong> ${serviceType}</p>
+    <p>See you soon!</p>
+    <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/appointments">View Appointments</a></p>
+  `;
+  await sendEmail(email, 'Appointment Reminder', html);
+}
