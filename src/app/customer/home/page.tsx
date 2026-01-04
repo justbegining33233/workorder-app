@@ -166,28 +166,33 @@ export default function CustomerHome() {
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
               <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>Quick Actions</h2>
               <div style={{display:'flex', flexDirection:'column', gap:12}}>
-                <Link href="/customer/features?tab=findshops">
+                <Link href="/customer/appointments">
                   <button style={{width:'100%', padding:'12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    🔍 Find Shops Near Me
+                    📅 My Appointments
                   </button>
                 </Link>
-                <Link href="/customer/features?tab=payments">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    💳 Payment History
-                  </button>
-                </Link>
-                <Link href="/customer/features?tab=appointments">
+                <Link href="/customer/vehicles">
                   <button style={{width:'100%', padding:'12px', background:'rgba(245,158,11,0.2)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    📅 Manage Appointments
+                    🚛 My Vehicles
                   </button>
                 </Link>
-                <Link href="/customer/features?tab=vehicles">
+                <Link href="/customer/reviews">
                   <button style={{width:'100%', padding:'12px', background:'rgba(168,85,247,0.2)', color:'#a855f7', border:'1px solid rgba(168,85,247,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    🚗 My Vehicles
+                    ⭐ My Reviews
+                  </button>
+                </Link>
+                <Link href="/customer/favorites">
+                  <button style={{width:'100%', padding:'12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
+                    ❤️ Favorite Shops
+                  </button>
+                </Link>
+                <Link href="/customer/features?tab=findshops">
+                  <button style={{width:'100%', padding:'12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
+                    🔍 Find Shops
                   </button>
                 </Link>
                 <Link href="/customer/features">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
+                  <button style={{width:'100%', padding:'12px', background:'rgba(255,255,255,0.1)', color:'#9aa3b2', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
                     ⚙️ All Features
                   </button>
                 </Link>

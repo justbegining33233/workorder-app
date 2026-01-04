@@ -35,18 +35,24 @@ export default function ManagerDashboard() {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('token');
+      console.log('🔑 Fetching dashboard with token:', token ? 'Present' : 'Missing');
+      
       const response = await fetch('/api/manager/dashboard', {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
+      console.log('📊 Dashboard API response status:', response.status);
+
       if (response.ok) {
         const dashboardData = await response.json();
+        console.log('✅ Dashboard data loaded:', dashboardData);
         setData(dashboardData);
       } else {
-        console.error('Failed to fetch dashboard data');
+        const errorData = await response.json();
+        console.error('❌ Failed to fetch dashboard data:', response.status, errorData);
       }
     } catch (error) {
-      console.error('Error fetching dashboard:', error);
+      console.error('💥 Error fetching dashboard:', error);
     } finally {
       setLoading(false);
     }
@@ -73,8 +79,8 @@ export default function ManagerDashboard() {
       {/* Header */}
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(229,51,42,0.3)', padding: '20px 32px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
-          <Link href="/shop/home" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
-            ← Back to Shop
+          <Link href="/manager/home" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
+            ← Back to Manager Home
           </Link>
           <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>📊 Manager Dashboard</h1>
           <p style={{ fontSize: 14, color: '#9aa3b2' }}>Team overview and work order management</p>
