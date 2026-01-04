@@ -12,6 +12,19 @@ function CustomerFeaturesPageContent() {
   const [activeTab, setActiveTab] = useState<string>('discover');
   const [loyaltyPoints, setLoyaltyPoints] = useState(250);
   const [tier, setTier] = useState('Silver');
+  
+  // Real data states
+  const [stats, setStats] = useState({
+    appointmentCount: 0,
+    upcomingAppointments: 0,
+    vehicleCount: 0,
+    reviewCount: 0,
+    favoriteCount: 0,
+    historyCount: 0,
+    documentCount: 0,
+    unreadMessages: 0,
+    paymentMethods: 0,
+  });
 
   useEffect(() => {
     const userRole = localStorage.getItem('userRole');
@@ -19,6 +32,9 @@ function CustomerFeaturesPageContent() {
       router.push('/auth/login');
       return;
     }
+    
+    // Fetch real data
+    fetchStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -29,28 +45,83 @@ function CustomerFeaturesPageContent() {
     }
   }, [searchParams]);
 
+  const fetchStats = async () => {
+    try {
+      // Fetch appointments
+      const apptRes = await fetch('/api/appointments');
+      const appointments = await apptRes.json();
+      const upcoming = appointments.filter((a: any) => 
+        a.status === 'Scheduled' || a.status === 'Confirmed'
+      ).length;
+      
+      // Fetch vehicles
+      const vehicleRes = await fetch('/api/customers/vehicles');
+      const vehicles = await vehicleRes.json();
+      
+      // Fetch reviews
+      const reviewRes = await fetch('/api/reviews');
+      const reviews = await reviewRes.json();
+      
+      // Fetch favorites
+      const favRes = await fetch('/api/customers/favorites');
+      const favorites = await favRes.json();
+      
+      // Fetch work orders for history
+      const historyRes = await fetch('/api/workorders');
+      const workorders = await historyRes.json();
+      const completed = workorders.filter((w: any) => w.status === 'Completed').length;
+      
+      // Fetch documents
+      const docRes = await fetch('/api/customers/documents');
+      const documents = await docRes.json();
+      
+      // Fetch messages
+      const msgRes = await fetch('/api/customers/messages');
+      const messages = await msgRes.json();
+      const unread = messages.filter((m: any) => !m.read && m.from !== 'customer').length;
+      
+      // Fetch payment methods
+      const paymentRes = await fetch('/api/customers/payment-methods');
+      const paymentMethods = await paymentRes.json();
+      
+      setStats({
+        appointmentCount: appointments.length,
+        upcomingAppointments: upcoming,
+        vehicleCount: Array.isArray(vehicles) ? vehicles.length : 0,
+        reviewCount: Array.isArray(reviews) ? reviews.length : 0,
+        favoriteCount: Array.isArray(favorites) ? favorites.length : 0,
+        historyCount: completed,
+        documentCount: Array.isArray(documents) ? documents.length : 0,
+        unreadMessages: unread,
+        paymentMethods: Array.isArray(paymentMethods) ? paymentMethods.length : 0,
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
   const discoverFeatures = [
     { id: 'findshops', icon: '🔍', name: 'Find Shops', desc: 'Discover service centers near you', detail: 'Search by location and compare ratings', badge: 'Popular', badgeColor: '#3b82f6', link: '/customer/features?tab=findshops' },
-    { id: 'appointments', icon: '📅', name: 'Appointments', desc: 'Book and manage service appointments', detail: '2 upcoming • 0 pending', badge: 'Active', badgeColor: '#10b981', link: '/customer/appointments' },
+    { id: 'appointments', icon: '📅', name: 'Appointments', desc: 'Book and manage service appointments', detail: `${stats.upcomingAppointments} upcoming • ${stats.appointmentCount} total`, badge: stats.upcomingAppointments > 0 ? 'Active' : '', badgeColor: '#10b981', link: '/customer/appointments' },
     { id: 'quotes', icon: '💰', name: 'Price Quotes', desc: 'Request and compare quotes', detail: 'Get estimates before service', badge: '', badgeColor: '', link: '/customer/features?tab=quotes' },
   ];
 
   const activeFeatures = [
     { id: 'tracking', icon: '📍', name: 'Live Tracking', desc: 'Track your tech in real-time', detail: 'View real-time location updates', badge: 'Live', badgeColor: '#ef4444', link: '/customer/features?tab=tracking' },
-    { id: 'messages', icon: '💬', name: 'Messages', desc: 'Chat with your technician', detail: 'Direct communication channel', badge: '', badgeColor: '', link: '/customer/features?tab=messages' },
-    { id: 'vehicles', icon: '🚛', name: 'My Vehicles', desc: 'Manage your fleet information', detail: '0 vehicles registered', badge: 'Essential', badgeColor: '#f59e0b', link: '/customer/vehicles' },
+    { id: 'messages', icon: '💬', name: 'Messages', desc: 'Chat with your technician', detail: stats.unreadMessages > 0 ? `${stats.unreadMessages} unread message${stats.unreadMessages !== 1 ? 's' : ''}` : 'Direct communication channel', badge: stats.unreadMessages > 0 ? 'New' : '', badgeColor: '#ef4444', link: '/customer/features?tab=messages' },
+    { id: 'vehicles', icon: '🚛', name: 'My Vehicles', desc: 'Manage your fleet information', detail: `${stats.vehicleCount} vehicle${stats.vehicleCount !== 1 ? 's' : ''} registered`, badge: 'Essential', badgeColor: '#f59e0b', link: '/customer/vehicles' },
   ];
 
   const accountFeatures = [
-    { id: 'reviews', icon: '⭐', name: 'Reviews', desc: 'Share your service experiences', detail: '0 reviews written', badge: '', badgeColor: '', link: '/customer/reviews' },
-    { id: 'favorites', icon: '❤️', name: 'Favorite Shops', desc: 'Quick access to preferred shops', detail: '0 saved favorites', badge: '', badgeColor: '', link: '/customer/favorites' },
+    { id: 'reviews', icon: '⭐', name: 'Reviews', desc: 'Share your service experiences', detail: `${stats.reviewCount} review${stats.reviewCount !== 1 ? 's' : ''} written`, badge: '', badgeColor: '', link: '/customer/reviews' },
+    { id: 'favorites', icon: '❤️', name: 'Favorite Shops', desc: 'Quick access to preferred shops', detail: `${stats.favoriteCount} saved favorite${stats.favoriteCount !== 1 ? 's' : ''}`, badge: '', badgeColor: '', link: '/customer/favorites' },
     { id: 'rewards', icon: '🎁', name: 'Rewards', desc: 'Earn points and unlock perks', detail: `${loyaltyPoints} points • ${tier} tier`, badge: 'New', badgeColor: '#a855f7', link: '/customer/features?tab=rewards' },
-    { id: 'payments', icon: '💳', name: 'Payments', desc: 'Manage payment methods', detail: '1 saved payment method', badge: '', badgeColor: '', link: '/customer/features?tab=payments' },
+    { id: 'payments', icon: '💳', name: 'Payments', desc: 'Manage payment methods', detail: `${stats.paymentMethods} saved payment method${stats.paymentMethods !== 1 ? 's' : ''}`, badge: '', badgeColor: '', link: '/customer/features?tab=payments' },
   ];
 
   const recordsFeatures = [
-    { id: 'history', icon: '📋', name: 'Service History', desc: 'View past service records', detail: '12 completed services', badge: '', badgeColor: '', link: '/customer/features?tab=history' },
-    { id: 'documents', icon: '📄', name: 'Documents', desc: 'Access invoices and receipts', detail: 'Download and manage docs', badge: '', badgeColor: '', link: '/customer/features?tab=documents' },
+    { id: 'history', icon: '📋', name: 'Service History', desc: 'View past service records', detail: `${stats.historyCount} completed service${stats.historyCount !== 1 ? 's' : ''}`, badge: '', badgeColor: '', link: '/customer/features?tab=history' },
+    { id: 'documents', icon: '📄', name: 'Documents', desc: 'Access invoices and receipts', detail: `${stats.documentCount} document${stats.documentCount !== 1 ? 's' : ''} available`, badge: '', badgeColor: '', link: '/customer/features?tab=documents' },
     { id: 'insights', icon: '📈', name: 'Insights', desc: 'Track spending and trends', detail: 'Analytics and reports', badge: 'Pro', badgeColor: '#ec4899', link: '/customer/features?tab=insights' },
   ];
 

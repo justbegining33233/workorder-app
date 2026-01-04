@@ -18,6 +18,7 @@ model Customer {
   lastName  String
   phone     String?
   company   String?
+  stripeCustomerId String? @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -217,6 +218,8 @@ model WorkOrder {
   reviews       Review[]
   messages      Message[]
   statusHistory StatusHistory[]
+  customerMessages CustomerMessage[]
+  tracking      TechTracking?
 
   @@index([customerId])
   @@index([shopId])
@@ -635,4 +638,71 @@ model FavoriteShop {
   @@unique([customerId, shopId])
   @@index([customerId])
   @@map("favorite_shops")
+}
+
+// Customer Documents - Invoices, receipts, warranties
+model CustomerDocument {
+  id          String    @id @default(cuid())
+  customerId  String
+  
+  name        String
+  type        String    @default("other") // invoice, receipt, warranty, contract, other
+  url         String    // Cloudinary URL
+  fileSize    Int       @default(0)
+  
+  workOrderId String?
+  
+  uploadedAt  DateTime  @default(now())
+
+  @@index([customerId])
+  @@index([workOrderId])
+  @@map("customer_documents")
+}
+
+// Customer Messages - Chat between customer and tech
+model CustomerMessage {
+  id          String    @id @default(cuid())
+  customerId  String
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  
+  from        String    // 'customer' or 'tech'
+  content     String    @db.Text
+  read        Boolean   @default(false)
+  
+  sentAt      DateTime  @default(now())
+
+  @@index([customerId])
+  @@index([workOrderId])
+  @@index([read])
+  @@map("customer_messages")
+}
+
+// Tech Tracking - Real-time GPS location for active work orders
+model TechTracking {
+  id              String    @id @default(cuid())
+  workOrderId     String    @unique
+  workOrder       WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  
+  latitude        Float
+  longitude       Float
+  estimatedArrival DateTime?
+  
+  updatedAt       DateTime  @updatedAt
+
+  @@index([workOrderId])
+  @@map("tech_tracking")
+}
+
+// Push Subscriptions - Web push notifications
+model PushSubscription {
+  id           String   @id @default(cuid())
+  customerId   String   @unique
+  subscription String   @db.Text // JSON string of push subscription
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([customerId])
+  @@map("push_subscriptions")
 }
