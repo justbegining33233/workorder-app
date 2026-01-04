@@ -140,11 +140,12 @@ model Vehicle {
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  vehicleType String // semi-truck, trailer, equipment, personal-vehicle
-  make        String?
-  model       String?
-  year        Int?
-  vin         String?
+  vehicleType   String // semi-truck, trailer, equipment, personal-vehicle
+  make          String?
+  model         String?
+  year          Int?
+  vin           String?
+  licensePlate  String?
 
   createdAt DateTime @default(now())
 

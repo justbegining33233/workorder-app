@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     // Verify tech exists and belongs to shop
     const tech = await prisma.tech.findUnique({
       where: { id: techId },
+      select: { id: true, shopId: true, firstName: true, lastName: true },
     });
 
     if (!tech || tech.shopId !== decoded.shopId) {
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
       },
       include: {
         assignedTo: {
-          select: { id: true, name: true },
+          select: { id: true, firstName: true, lastName: true },
         },
         customer: {
           select: { firstName: true, lastName: true },
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
         workOrderId,
         fromStatus: workOrder.status,
         toStatus: updatedWorkOrder.status,
-        reason: `Assigned to ${tech.name}`,
+        reason: `Assigned to ${tech.firstName} ${tech.lastName}`,
         changedById: techId,
       },
     });

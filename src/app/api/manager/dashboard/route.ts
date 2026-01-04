@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
           select: { firstName: true, lastName: true },
         },
         assignedTo: {
-          select: { id: true, name: true },
+          select: { id: true, firstName: true, lastName: true },
         },
       },
       orderBy: { createdAt: 'desc' },
@@ -49,7 +49,8 @@ export async function GET(request: NextRequest) {
       where: { shopId },
       select: {
         id: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         email: true,
         phone: true,
         role: true,
