@@ -331,6 +331,16 @@ export default function ShopHome() {
                     </button>
                   </Link>
                 )}
+                <Link href="/manager/dashboard">
+                  <button style={{width:'100%', padding:'12px', background:'rgba(168,85,247,0.2)', color:'#a855f7', border:'1px solid rgba(168,85,247,0.3)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer', textAlign:'left'}}>
+                    📊 Manager Dashboard
+                  </button>
+                </Link>
+                <Link href="/manager/assignments">
+                  <button style={{width:'100%', padding:'12px', background:'rgba(168,85,247,0.2)', color:'#a855f7', border:'1px solid rgba(168,85,247,0.3)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer', textAlign:'left'}}>
+                    👥 Assign Work Orders
+                  </button>
+                </Link>
                 <Link href="/workorders/list">
                   <button style={{width:'100%', padding:'12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
                     📋 All Work Orders
