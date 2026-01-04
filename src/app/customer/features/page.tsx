@@ -9,7 +9,7 @@ import '../../../styles/sos-theme.css';
 function CustomerFeaturesPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<string>('discover');
   const [loyaltyPoints, setLoyaltyPoints] = useState(250);
   const [tier, setTier] = useState('Silver');
 
@@ -29,21 +29,156 @@ function CustomerFeaturesPageContent() {
     }
   }, [searchParams]);
 
-  const features = [
-    { id: 'findshops', icon: '🔍', name: 'Find Shops', desc: 'Discover service centers near you', link: '/customer/features?tab=findshops' },
-    { id: 'appointments', icon: '📅', name: 'Appointments', desc: 'Book and manage service appointments', link: '/customer/appointments' },
-    { id: 'vehicles', icon: '🚛', name: 'My Vehicles', desc: 'Manage your fleet information', link: '/customer/vehicles' },
-    { id: 'reviews', icon: '⭐', name: 'Reviews', desc: 'Share your service experiences', link: '/customer/reviews' },
-    { id: 'favorites', icon: '❤️', name: 'Favorite Shops', desc: 'Quick access to preferred shops', link: '/customer/favorites' },
-    { id: 'tracking', icon: '📍', name: 'Live Tracking', desc: 'Track your tech in real-time', link: '/customer/features?tab=tracking' },
-    { id: 'messages', icon: '💬', name: 'Messages', desc: 'Chat with your technician', link: '/customer/features?tab=messages' },
-    { id: 'payments', icon: '💳', name: 'Payments', desc: 'Manage payment methods', link: '/customer/features?tab=payments' },
-    { id: 'rewards', icon: '🎁', name: 'Rewards', desc: 'Earn points and unlock perks', link: '/customer/features?tab=rewards' },
-    { id: 'documents', icon: '📄', name: 'Documents', desc: 'Access invoices and receipts', link: '/customer/features?tab=documents' },
-    { id: 'quotes', icon: '💰', name: 'Price Quotes', desc: 'Request and compare quotes', link: '/customer/features?tab=quotes' },
-    { id: 'history', icon: '📋', name: 'Service History', desc: 'View past service records', link: '/customer/features?tab=history' },
-    { id: 'insights', icon: '📈', name: 'Insights', desc: 'Track spending and trends', link: '/customer/features?tab=insights' },
+  const discoverFeatures = [
+    { id: 'findshops', icon: '🔍', name: 'Find Shops', desc: 'Discover service centers near you', detail: 'Search by location and compare ratings', badge: 'Popular', badgeColor: '#3b82f6', link: '/customer/features?tab=findshops' },
+    { id: 'appointments', icon: '📅', name: 'Appointments', desc: 'Book and manage service appointments', detail: '2 upcoming • 0 pending', badge: 'Active', badgeColor: '#10b981', link: '/customer/appointments' },
+    { id: 'quotes', icon: '💰', name: 'Price Quotes', desc: 'Request and compare quotes', detail: 'Get estimates before service', badge: '', badgeColor: '', link: '/customer/features?tab=quotes' },
   ];
+
+  const activeFeatures = [
+    { id: 'tracking', icon: '📍', name: 'Live Tracking', desc: 'Track your tech in real-time', detail: 'View real-time location updates', badge: 'Live', badgeColor: '#ef4444', link: '/customer/features?tab=tracking' },
+    { id: 'messages', icon: '💬', name: 'Messages', desc: 'Chat with your technician', detail: 'Direct communication channel', badge: '', badgeColor: '', link: '/customer/features?tab=messages' },
+    { id: 'vehicles', icon: '🚛', name: 'My Vehicles', desc: 'Manage your fleet information', detail: '0 vehicles registered', badge: 'Essential', badgeColor: '#f59e0b', link: '/customer/vehicles' },
+  ];
+
+  const accountFeatures = [
+    { id: 'reviews', icon: '⭐', name: 'Reviews', desc: 'Share your service experiences', detail: '0 reviews written', badge: '', badgeColor: '', link: '/customer/reviews' },
+    { id: 'favorites', icon: '❤️', name: 'Favorite Shops', desc: 'Quick access to preferred shops', detail: '0 saved favorites', badge: '', badgeColor: '', link: '/customer/favorites' },
+    { id: 'rewards', icon: '🎁', name: 'Rewards', desc: 'Earn points and unlock perks', detail: `${loyaltyPoints} points • ${tier} tier`, badge: 'New', badgeColor: '#a855f7', link: '/customer/features?tab=rewards' },
+    { id: 'payments', icon: '💳', name: 'Payments', desc: 'Manage payment methods', detail: '1 saved payment method', badge: '', badgeColor: '', link: '/customer/features?tab=payments' },
+  ];
+
+  const recordsFeatures = [
+    { id: 'history', icon: '📋', name: 'Service History', desc: 'View past service records', detail: '12 completed services', badge: '', badgeColor: '', link: '/customer/features?tab=history' },
+    { id: 'documents', icon: '📄', name: 'Documents', desc: 'Access invoices and receipts', detail: 'Download and manage docs', badge: '', badgeColor: '', link: '/customer/features?tab=documents' },
+    { id: 'insights', icon: '📈', name: 'Insights', desc: 'Track spending and trends', detail: 'Analytics and reports', badge: 'Pro', badgeColor: '#ec4899', link: '/customer/features?tab=insights' },
+  ];
+
+  const renderFeatureCards = (features: typeof discoverFeatures) => (
+    <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:24, marginTop:32}}>
+      {features.map(feature => (
+        <Link 
+          key={feature.id} 
+          href={feature.link}
+          style={{textDecoration:'none'}}
+        >
+          <div 
+            className="sos-item" 
+            style={{
+              flexDirection:'column',
+              alignItems:'flex-start',
+              padding:'24px',
+              cursor:'pointer',
+              transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
+              border:'1px solid rgba(255,255,255,0.15)',
+              borderRadius:16,
+              boxShadow:'0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)',
+              position:'relative',
+              overflow:'hidden',
+              minHeight:200,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(145deg, rgba(229,51,42,0.15) 0%, rgba(255,122,89,0.1) 100%)';
+              e.currentTarget.style.borderColor = 'rgba(229,51,42,0.4)';
+              e.currentTarget.style.transform = 'translateY(-8px)';
+              e.currentTarget.style.boxShadow = '0 12px 24px rgba(229,51,42,0.25), 0 6px 12px rgba(0,0,0,0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)';
+            }}
+          >
+            {/* Badge */}
+            {feature.badge && (
+              <div style={{
+                position:'absolute',
+                top:12,
+                right:12,
+                padding:'4px 10px',
+                background:feature.badgeColor,
+                color:'white',
+                borderRadius:12,
+                fontSize:10,
+                fontWeight:700,
+                textTransform:'uppercase',
+                letterSpacing:'0.5px',
+                boxShadow:'0 2px 4px rgba(0,0,0,0.2)'
+              }}>
+                {feature.badge}
+              </div>
+            )}
+
+            {/* Icon */}
+            <div style={{
+              fontSize:56,
+              marginBottom:16,
+              display:'flex',
+              alignItems:'center',
+              justifyContent:'center',
+              width:80,
+              height:80,
+              background:'rgba(255,255,255,0.05)',
+              borderRadius:20,
+              border:'1px solid rgba(255,255,255,0.1)',
+            }}>
+              {feature.icon}
+            </div>
+
+            {/* Title */}
+            <div style={{
+              fontSize:20,
+              fontWeight:700,
+              color:'#e5e7eb',
+              marginBottom:8,
+              letterSpacing:'-0.02em'
+            }}>
+              {feature.name}
+            </div>
+
+            {/* Description */}
+            <div style={{
+              fontSize:13,
+              color:'#9aa3b2',
+              lineHeight:1.5,
+              marginBottom:12,
+              flex:1
+            }}>
+              {feature.desc}
+            </div>
+
+            {/* Detail/Stats */}
+            <div style={{
+              fontSize:12,
+              color:'#6b7280',
+              padding:'8px 12px',
+              background:'rgba(0,0,0,0.3)',
+              borderRadius:8,
+              width:'100%',
+              borderLeft:'3px solid rgba(229,51,42,0.5)',
+              fontWeight:600
+            }}>
+              {feature.detail}
+            </div>
+
+            {/* Arrow indicator */}
+            <div style={{
+              position:'absolute',
+              bottom:16,
+              right:16,
+              fontSize:20,
+              color:'rgba(229,51,42,0.6)',
+              transition:'transform 0.3s'
+            }}>
+              →
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
 
   return (
     <div className="sos-wrap">
@@ -75,79 +210,123 @@ function CustomerFeaturesPageContent() {
         <div className="sos-content" style={{gridTemplateColumns:'1fr'}}>
           {/* Main Content - Card Grid */}
           <div className="sos-pane" style={{padding:28}}>
-            {activeTab === 'overview' ? (
-              <div>
-                <div className="sos-title">All Features</div>
-                <p className="sos-desc">Access your complete service management toolkit</p>
-                
-                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:20, marginTop:32}}>
-                  {features.map(feature => (
-                    <Link 
-                      key={feature.id} 
-                      href={feature.link}
-                      style={{textDecoration:'none'}}
-                    >
-                      <div 
-                        className="sos-item" 
-                        style={{
-                          flexDirection:'column',
-                          alignItems:'flex-start',
-                          padding:24,
-                          cursor:'pointer',
-                          transition:'all 0.2s',
-                          background:'rgba(0,0,0,0.3)',
-                          border:'1px solid rgba(255,255,255,0.1)',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = 'rgba(229,51,42,0.1)';
-                          e.currentTarget.style.borderColor = 'rgba(229,51,42,0.3)';
-                          e.currentTarget.style.transform = 'translateY(-4px)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = 'rgba(0,0,0,0.3)';
-                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                      >
-                        <div style={{fontSize:48, marginBottom:12}}>{feature.icon}</div>
-                        <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:6}}>{feature.name}</div>
-                        <div style={{fontSize:13, color:'#9aa3b2', lineHeight:1.5}}>{feature.desc}</div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Quick Stats */}
-                <div style={{marginTop:48}}>
-                  <div style={{fontSize:20, fontWeight:700, marginBottom:20}}>Your Stats</div>
-                  <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:16}}>
-                    {[
-                      { label: 'Active Orders', value: '3', color: '#60a5fa' },
-                      { label: 'Pending Payment', value: '$450', color: '#fbbf24' },
-                      { label: 'Completed', value: '12', color: '#4ade80' },
-                      { label: 'Loyalty Points', value: loyaltyPoints.toString(), color: '#a78bfa' },
-                    ].map((stat, i) => (
-                      <div key={i} className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
-                        <div style={{fontSize:11, color:'#9aa3b2', marginBottom:8}}>{stat.label}</div>
-                        <div style={{fontSize:28, fontWeight:800, color:stat.color}}>{stat.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            {/* Tab Navigation */}
+            <div style={{marginBottom:32}}>
+              <div style={{display:'flex', gap:8, borderBottom:'2px solid rgba(255,255,255,0.1)', paddingBottom:2}}>
+                <button
+                  onClick={() => setActiveTab('discover')}
+                  style={{
+                    padding:'12px 24px',
+                    background: activeTab === 'discover' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                    border:'none',
+                    borderBottom: activeTab === 'discover' ? '3px solid #e5332a' : '3px solid transparent',
+                    color: activeTab === 'discover' ? '#e5332a' : '#9aa3b2',
+                    cursor:'pointer',
+                    fontSize:15,
+                    fontWeight:700,
+                    transition:'all 0.2s',
+                    borderRadius:'8px 8px 0 0'
+                  }}
+                >
+                  🔍 Discover & Book
+                </button>
+                <button
+                  onClick={() => setActiveTab('active')}
+                  style={{
+                    padding:'12px 24px',
+                    background: activeTab === 'active' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                    border:'none',
+                    borderBottom: activeTab === 'active' ? '3px solid #e5332a' : '3px solid transparent',
+                    color: activeTab === 'active' ? '#e5332a' : '#9aa3b2',
+                    cursor:'pointer',
+                    fontSize:15,
+                    fontWeight:700,
+                    transition:'all 0.2s',
+                    borderRadius:'8px 8px 0 0'
+                  }}
+                >
+                  📍 Active Service
+                </button>
+                <button
+                  onClick={() => setActiveTab('account')}
+                  style={{
+                    padding:'12px 24px',
+                    background: activeTab === 'account' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                    border:'none',
+                    borderBottom: activeTab === 'account' ? '3px solid #e5332a' : '3px solid transparent',
+                    color: activeTab === 'account' ? '#e5332a' : '#9aa3b2',
+                    cursor:'pointer',
+                    fontSize:15,
+                    fontWeight:700,
+                    transition:'all 0.2s',
+                    borderRadius:'8px 8px 0 0'
+                  }}
+                >
+                  👤 My Account
+                </button>
+                <button
+                  onClick={() => setActiveTab('records')}
+                  style={{
+                    padding:'12px 24px',
+                    background: activeTab === 'records' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                    border:'none',
+                    borderBottom: activeTab === 'records' ? '3px solid #e5332a' : '3px solid transparent',
+                    color: activeTab === 'records' ? '#e5332a' : '#9aa3b2',
+                    cursor:'pointer',
+                    fontSize:15,
+                    fontWeight:700,
+                    transition:'all 0.2s',
+                    borderRadius:'8px 8px 0 0'
+                  }}
+                >
+                  📊 History & Reports
+                </button>
               </div>
-            ) : (
-              <>
-                {activeTab === 'findshops' && <FindShopsTab />}
-                {activeTab === 'tracking' && <TrackingTab />}
-                {activeTab === 'messages' && <MessagesTab />}
-                {activeTab === 'payments' && <PaymentsTab />}
-                {activeTab === 'rewards' && <RewardsTab points={loyaltyPoints} />}
-                {activeTab === 'documents' && <DocumentsTab />}
-                {activeTab === 'quotes' && <QuotesTab />}
-                {activeTab === 'history' && <HistoryTab />}
-                {activeTab === 'insights' && <InsightsTab />}
-              </>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === 'discover' && (
+              <div>
+                <div className="sos-title">Discover & Book Services</div>
+                <p className="sos-desc">Find shops, schedule appointments, and get quotes</p>
+                {renderFeatureCards(discoverFeatures)}
+              </div>
             )}
+
+            {activeTab === 'active' && (
+              <div>
+                <div className="sos-title">Active Service</div>
+                <p className="sos-desc">Track your service, communicate with techs, and manage vehicles</p>
+                {renderFeatureCards(activeFeatures)}
+              </div>
+            )}
+
+            {activeTab === 'account' && (
+              <div>
+                <div className="sos-title">My Account</div>
+                <p className="sos-desc">Reviews, favorites, rewards, and payment settings</p>
+                {renderFeatureCards(accountFeatures)}
+              </div>
+            )}
+
+            {activeTab === 'records' && (
+              <div>
+                <div className="sos-title">History & Reports</div>
+                <p className="sos-desc">Access past services, documents, and spending insights</p>
+                {renderFeatureCards(recordsFeatures)}
+              </div>
+            )}
+
+            {/* Handle old tab parameters */}
+            {activeTab === 'findshops' && <FindShopsTab />}
+            {activeTab === 'tracking' && <TrackingTab />}
+            {activeTab === 'messages' && <MessagesTab />}
+            {activeTab === 'payments' && <PaymentsTab />}
+            {activeTab === 'rewards' && <RewardsTab points={loyaltyPoints} />}
+            {activeTab === 'documents' && <DocumentsTab />}
+            {activeTab === 'quotes' && <QuotesTab />}
+            {activeTab === 'history' && <HistoryTab />}
+            {activeTab === 'insights' && <InsightsTab />}
           </div>
         </div>
 
@@ -313,19 +492,6 @@ function FavoritesTab() {
     <div>
       <div className="sos-title">Redirecting to Favorites...</div>
       <p className="sos-desc">Taking you to your favorite shops</p>
-    </div>
-  );
-}
-            <div>
-              <div style={{fontWeight:600}}>{fav.name}</div>
-              <div style={{fontSize:12, color:'#9aa3b2'}}>Used {fav.count} times</div>
-            </div>
-            <button className="btn-primary">Reorder</button>
-          </div>
-        ))}
-      </div>
-
-      <button className="btn-outline" style={{marginTop:16, width:'100%'}}>+ Save Current Order as Favorite</button>
     </div>
   );
 }
