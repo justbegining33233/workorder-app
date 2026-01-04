@@ -257,6 +257,12 @@ export default function ManagerHome() {
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginTop:24}}>
               <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:16}}>Quick Actions</h3>
               <div style={{display:'grid', gap:8}}>
+                <Link href="/manager/dashboard" style={{padding:12, background:'rgba(168,85,247,0.2)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:700, border:'1px solid rgba(168,85,247,0.3)'}}>
+                  📊 Manager Dashboard
+                </Link>
+                <Link href="/manager/assignments" style={{padding:12, background:'rgba(168,85,247,0.2)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:700, border:'1px solid rgba(168,85,247,0.3)'}}>
+                  👥 Assign Work Orders
+                </Link>
                 <Link href="/shop/home" style={{padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8, textDecoration:'none', color:'#3b82f6', fontSize:14, fontWeight:600}}>
                   📊 View Center Control
                 </Link>

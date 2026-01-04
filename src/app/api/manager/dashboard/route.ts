@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== 'manager') {
+    if (!decoded || (decoded.role !== 'manager' && decoded.role !== 'shop')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
