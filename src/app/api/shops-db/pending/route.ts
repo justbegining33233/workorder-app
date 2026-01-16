@@ -3,9 +3,19 @@ import prisma from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
+import { shopRegistrationSchema } from '@/lib/validation';
+import { sanitizeObject } from '@/lib/sanitize';
+import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
 
 // Get pending shops
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  // Apply rate limiting
+  const rateLimitResult = rateLimit(rateLimitConfigs.api)(request);
+  if (rateLimitResult) return rateLimitResult;
+
   try {
     const shops = await prisma.shop.findMany({
       where: { status: 'pending' },
@@ -33,8 +43,24 @@ export async function GET() {
 
 // Create shop application
 export async function POST(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResult = rateLimit(rateLimitConfigs.auth)(request);
+  if (rateLimitResult) return rateLimitResult;
+
   try {
-    const data = await request.json();
+    const body = await request.json();
+    const sanitizedBody = sanitizeObject(body);
+
+    // Validate input
+    const validationResult = shopRegistrationSchema.safeParse(sanitizedBody);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validationResult.error.issues },
+        { status: 400 }
+      );
+    }
+
+    const data = validationResult.data;
     
     // Check if username/email exists
     const existing = await prisma.shop.findFirst({

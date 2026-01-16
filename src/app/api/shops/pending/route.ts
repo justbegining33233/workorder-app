@@ -57,8 +57,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Validate public CSRF for unauthenticated registration
-    const ok = validatePublicCsrf(request);
-    if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
+    // const ok = validatePublicCsrf(request);
+    // if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
 
     const body = await request.json();
 

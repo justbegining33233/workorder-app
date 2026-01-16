@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
     }
     const { workOrderId } = await req.json();
-    const wo = getWorkOrderById(workOrderId);
+    const wo = await getWorkOrderById(workOrderId);
     
     if (!wo) {
       return NextResponse.json({ error: 'Work order not found' }, { status: 404 });
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Work order must be waiting-for-payment' }, { status: 400 });
     }
     
-    const updated = updateWorkOrder(workOrderId, { status: 'closed' });
+    const updated = await updateWorkOrder(workOrderId, { status: 'closed' });
     return NextResponse.json(updated);
   } catch (e) {
     console.error('Failed to mark as paid', e);

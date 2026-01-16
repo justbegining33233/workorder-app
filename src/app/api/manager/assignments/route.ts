@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const updatedWorkOrder = await prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
-        assignedToId: techId,
+        assignedTechId: techId,
         status: workOrder.status === 'pending' ? 'assigned' : workOrder.status,
       },
       include: {

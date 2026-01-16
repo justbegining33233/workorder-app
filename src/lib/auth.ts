@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
+import { NextRequest, NextResponse } from 'next/server';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
 const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '15m';
@@ -36,4 +37,40 @@ export function verifyToken(token: string): any {
 
 export function refreshExpiryDate(days = DEFAULT_REFRESH_EXPIRES_DAYS) {
   return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+}
+
+export function authenticateRequest(request: NextRequest): AuthUser | null {
+  const token = getAuthToken(request);
+  if (!token) return null;
+  
+  const payload = verifyToken(token);
+  if (!payload) return null;
+  
+  return payload as AuthUser;
+}
+
+export function requireRole(request: NextRequest, roles: string[]): NextResponse | AuthUser {
+  const user = authenticateRequest(request);
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (!roles.includes(user.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+  return user;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: 'customer' | 'tech' | 'manager' | 'admin' | 'shop';
+  shopId?: string;
+}
+
+export function getAuthToken(request: NextRequest): string | null {
+  const authHeader = request.headers.get('authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    return authHeader.substring(7);
+  }
+  return null;
 }

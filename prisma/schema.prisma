@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // Customer model
@@ -29,6 +29,8 @@ model Customer {
   reviews        Review[]
   appointments   Appointment[]
   favoriteShops  FavoriteShop[]
+  documents      CustomerDocument[]
+  messages       CustomerMessage[]
 
   @@map("customers")
 }
@@ -124,6 +126,12 @@ model Tech {
   // Labor rate for payroll
   hourlyRate Float @default(0)
 
+  // Location tracking
+  latitude         Float?
+  longitude        Float?
+  locationAccuracy Float?
+  lastLocationUpdate DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -173,43 +181,44 @@ model WorkOrder {
   serviceLocation String // roadside, in-shop
 
   // Services requested
-  repairs     Json? // RepairService[]
-  maintenance Json? // MaintenanceService[]
+  repairs     String? // RepairService[]
+  maintenance String? // MaintenanceService[]
 
   // Parts
-  partsMaterials Json? // PartsMaterials
+  partsMaterials String? // PartsMaterials
 
   // Issue description
   issueDescription String
-  pictures         Json? // string[]
+  pictures         String? // string[]
   vinPhoto         String?
 
   // Location
-  location Json? // VehicleLocation
+  location String? // VehicleLocation
 
   // Assignment
-  assignedToId String?
-  assignedTo   Tech?   @relation(fields: [assignedToId], references: [id])
+  assignedTechId String?
+  assignedTo     Tech?   @relation(fields: [assignedTechId], references: [id])
 
   // Status
   status String @default("pending") // pending, assigned, in-progress, waiting-estimate, waiting-for-payment, closed, denied-estimate
 
   // Estimate
-  estimate Json? // Estimate with line items
+  estimate String? // Estimate with line items
 
   // Work details
-  techLabor  Json? // TechnicianLabor
-  partsUsed  Json? // PartLaborBreakdown
-  workPhotos Json? // WorkPhoto[]
+  techLabor  String? // TechnicianLabor
+  partsUsed  String? // PartLaborBreakdown
+  workPhotos String? // WorkPhoto[]
 
   // Completion
-  completion Json? // CompletionVerification
+  completion String? // CompletionVerification
 
   // Payment
   paymentStatus   String  @default("unpaid") // unpaid, pending, paid, refunded
   paymentIntentId String?
   amountPaid      Float?
-  totalCost       Float? // Total cost estimate for the work order
+  estimatedCost   Float? // Total cost estimate for the work order
+  dueDate         DateTime?
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -223,7 +232,7 @@ model WorkOrder {
 
   @@index([customerId])
   @@index([shopId])
-  @@index([assignedToId])
+  @@index([assignedTechId])
   @@index([status])
   @@map("work_orders")
 }
@@ -255,7 +264,7 @@ model Message {
 
   sender     String // customer, tech, manager
   senderName String
-  body       String @db.Text
+  body       String
 
   createdAt DateTime @default(now())
 
@@ -269,16 +278,29 @@ model Notification {
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  type        String
+  type        String   // status_update, estimate_ready, payment_due, appointment_reminder, etc.
   title       String
   message     String
-  workOrderId String?
+  read        Boolean  @default(false)
+  readAt      DateTime?
 
-  read Boolean @default(false)
+  // Related entities
+  workOrderId String?
+  appointmentId String?
+
+  // Delivery methods
+  deliveryMethod String // 'email,sms,push,in-app' (comma-separated)
+
+  // Metadata
+  metadata    String?  // JSON string for additional data
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([customerId])
+  @@index([read])
+  @@index([type])
+  @@index([createdAt])
   @@map("notifications")
 }
 
@@ -345,7 +367,7 @@ model ActivityLog {
   severity String // info, success, warning, error
   user     String
 
-  metadata Json?
+  metadata String?
 
   createdAt DateTime @default(now())
 
@@ -377,7 +399,7 @@ model RefreshToken {
   adminId   String?
   createdAt DateTime @default(now())
   expiresAt DateTime
-  metadata  Json?
+  metadata  String?
 
   admin Admin? @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
@@ -404,7 +426,7 @@ model TimeEntry {
   notes       String?
 
   // Location tracking (optional)
-  location Json?
+  location String?
   
   // Photo verification (optional - stored as URLs)
   clockInPhoto  String?
@@ -431,7 +453,7 @@ model ShopSettings {
   overtimeMultiplier  Float @default(1.5) // Overtime pay multiplier (1.5x standard)
 
   // Business hours
-  businessHours Json? // { monday: { open: '08:00', close: '17:00' }, ... }
+  businessHours String? // { monday: { open: '08:00', close: '17:00' }, ... }
 
   // Other settings
   taxRate            Float   @default(0)
@@ -472,7 +494,7 @@ model InventoryRequest {
   // Link to actual inventory item if approved
   inventoryItemId String?
   
-  orderDetails Json? // Purchase order info, tracking, etc.
+  orderDetails String? // Purchase order info, tracking, etc.
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -522,7 +544,7 @@ model AuditLog {
   action    String   // user_updated, user_deleted, shop_approved, etc.
   targetId  String?  // ID of affected resource
   targetType String? // user, shop, workorder, etc.
-  details   Json?    // Additional context
+  details   String?    // Additional context
   ipAddress String?
   userAgent String?
   
@@ -553,7 +575,7 @@ model DirectMessage {
   
   // Message content
   subject    String?
-  body       String @db.Text
+  body       String
   
   // Status
   isRead     Boolean  @default(false)
@@ -587,7 +609,7 @@ model Appointment {
   
   scheduledDate DateTime
   serviceType   String   // oil-change, inspection, repair, etc.
-  notes         String?  @db.Text
+  notes         String?
   status        String   @default("scheduled") // scheduled, confirmed, completed, cancelled, no-show
   
   createdAt   DateTime @default(now())
@@ -613,7 +635,7 @@ model Review {
   workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
   
   rating      Int       // 1-5 stars
-  comment     String?   @db.Text
+  comment     String?
   
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -644,6 +666,7 @@ model FavoriteShop {
 model CustomerDocument {
   id          String    @id @default(cuid())
   customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   
   name        String
   type        String    @default("other") // invoice, receipt, warranty, contract, other
@@ -663,11 +686,12 @@ model CustomerDocument {
 model CustomerMessage {
   id          String    @id @default(cuid())
   customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   workOrderId String
   workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
   
   from        String    // 'customer' or 'tech'
-  content     String    @db.Text
+  content     String
   read        Boolean   @default(false)
   
   sentAt      DateTime  @default(now())
@@ -698,7 +722,7 @@ model TechTracking {
 model PushSubscription {
   id           String   @id @default(cuid())
   customerId   String   @unique
-  subscription String   @db.Text // JSON string of push subscription
+  subscription String   // JSON string of push subscription
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

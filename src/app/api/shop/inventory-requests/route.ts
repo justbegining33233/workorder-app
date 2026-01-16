@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
-import { sendInventoryRequestNotification, sendInventoryApprovalNotification } from '@/lib/emailService';
+import { sendInventoryRequestNotification, sendInventoryApprovalNotification, sendLowStockAlert } from '@/lib/emailService';
 
 // GET - Get inventory requests
 export async function GET(request: NextRequest) {
@@ -165,7 +165,6 @@ export async function PATCH(request: NextRequest) {
           shopId: inventoryRequest.shopId,
           itemName: {
             contains: inventoryRequest.itemName,
-            mode: 'insensitive',
           },
         },
       });
@@ -184,7 +183,11 @@ export async function PATCH(request: NextRequest) {
         // Check if below reorder point
         if (newQuantity <= inventoryItem.reorderPoint) {
           console.log(`⚠️ Low stock alert: ${inventoryItem.itemName} (${newQuantity} remaining, reorder at ${inventoryItem.reorderPoint})`);
-          // TODO: Send email notification for low stock
+          // Send email notification for low stock
+          const shop = await prisma.shop.findUnique({ where: { id: inventoryRequest.shopId }, select: { email: true } });
+          if (shop?.email) {
+            await sendLowStockAlert(shop.email, inventoryItem.itemName, newQuantity, inventoryItem.reorderPoint);
+          }
         }
       }
     }

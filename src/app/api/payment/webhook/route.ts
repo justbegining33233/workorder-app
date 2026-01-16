@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
           title: 'Payment Successful',
           message: `Payment of $${workOrder.amountPaid!.toFixed(2)} received for work order ${workOrder.id}`,
           workOrderId: workOrder.id,
+          deliveryMethod: 'in-app',
         },
       });
     }

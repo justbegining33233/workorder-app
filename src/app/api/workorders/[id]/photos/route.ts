@@ -15,7 +15,7 @@ export async function POST(
     const { id } = await params;
     const { url, type, caption } = await request.json();
 
-    const workOrder = getWorkOrderById(id);
+    const workOrder = await getWorkOrderById(id);
     if (!workOrder) {
       return NextResponse.json({ error: 'Work order not found' }, { status: 404 });
     }

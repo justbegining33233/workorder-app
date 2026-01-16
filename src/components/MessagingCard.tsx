@@ -77,7 +77,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.error('❌ No token found in localStorage');
+        console.warn('⚠️ No token found - skipping message fetch. User may need to log in again.');
         setAuthError(true);
         return;
       }
@@ -87,7 +87,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       });
       
       if (response.status === 401) {
-        console.error('❌ Token invalid or expired (401)');
+        console.warn('⚠️ Token invalid or expired (401) - authentication required');
         setAuthError(true);
         return;
       }
@@ -283,12 +283,31 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
           <span style={{ fontSize: 24 }}>⚠️</span>
           <div style={{ flex: 1 }}>
             <p style={{ color: '#fca5a5', fontWeight: 600, margin: 0, fontSize: 14 }}>
-              Authentication Error
+              Session Expired or Missing
             </p>
             <p style={{ color: '#f87171', margin: 0, fontSize: 12, marginTop: 4 }}>
-              Your session has expired. Please <a href="/auth/login" style={{ color: '#fca5a5', textDecoration: 'underline' }}>log out and log back in</a>.
+              Please sign out and log back in to restore messaging functionality.
             </p>
           </div>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              window.location.href = '/auth/login';
+            }}
+            style={{
+              padding: '8px 16px',
+              background: '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontSize: 12,
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Log Out
+          </button>
         </div>
       )}
       

@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       data: {
         tokenHash: refreshHash,
         adminId: null,
-        metadata: { shopId: shop.id, ip: userIp, agent: userAgent, csrfToken: csrf },
+        metadata: JSON.stringify({ shopId: shop.id, ip: userIp, agent: userAgent, csrfToken: csrf }),
         expiresAt,
       }
     });

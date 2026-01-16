@@ -59,7 +59,22 @@ export const emailTemplates = {
       </div>
     `,
   }),
-
+  lowStockAlert: (itemName: string, quantity: number, reorderPoint: number) => ({
+    subject: `⚠️ Low Stock Alert - ${itemName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #f59e0b;">⚠️ Low Stock Alert</h2>
+        <p>Inventory levels are running low:</p>
+        <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+          <p><strong>Item:</strong> ${itemName}</p>
+          <p><strong>Current Quantity:</strong> ${quantity}</p>
+          <p><strong>Reorder Point:</strong> ${reorderPoint}</p>
+        </div>
+        <p>Please reorder this item to avoid stockouts.</p>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/shop/inventory" style="display: inline-block; background: #f59e0b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">View Inventory</a>
+      </div>
+    `,
+  }),
   clockInReminder: (techName: string) => ({
     subject: 'Clock-In Reminder',
     html: `
@@ -69,23 +84,6 @@ export const emailTemplates = {
         <p>This is a friendly reminder to clock in for your shift.</p>
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/tech/home" style="display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">Clock In Now</a>
         <p style="margin-top: 20px; color: #666; font-size: 12px;">Don't forget to clock out at the end of your shift!</p>
-      </div>
-    `,
-  }),
-
-  lowStockAlert: (shopName: string, itemName: string, currentQuantity: number, reorderPoint: number) => ({
-    subject: `⚠️ Low Stock Alert - ${itemName}`,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #f59e0b;">⚠️ Low Stock Alert</h2>
-        <p><strong>${shopName}</strong> has low stock on an item:</p>
-        <div style="background: #fffbeb; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-          <p><strong>Item:</strong> ${itemName}</p>
-          <p><strong>Current Quantity:</strong> ${currentQuantity}</p>
-          <p><strong>Reorder Point:</strong> ${reorderPoint}</p>
-        </div>
-        <p>Please restock this item soon to avoid shortages.</p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/shop/admin" style="display: inline-block; background: #f59e0b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">View Inventory</a>
       </div>
     `,
   }),
@@ -200,6 +198,20 @@ export async function sendInventoryApprovalNotification(
   
   return sendEmail({
     to: techEmail,
+    ...template,
+  });
+}
+
+export async function sendLowStockAlert(
+  shopEmail: string,
+  itemName: string,
+  quantity: number,
+  reorderPoint: number
+) {
+  const template = emailTemplates.lowStockAlert(itemName, quantity, reorderPoint);
+  
+  return sendEmail({
+    to: shopEmail,
     ...template,
   });
 }

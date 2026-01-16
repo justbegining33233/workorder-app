@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const workOrders = getAllWorkOrders();
+    const workOrders = await getAllWorkOrders();
 
     // Calculate stats
     const closedOrders = workOrders.filter(wo => wo.status === 'closed');

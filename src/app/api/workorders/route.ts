@@ -3,6 +3,9 @@ import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
 import { sendWorkOrderCreatedEmail } from '@/lib/email';
+import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
+import { workOrderCreateSchema } from '@/lib/validation';
+import { sanitizeObject } from '@/lib/sanitize';
 
 export async function GET(request: NextRequest) {
   const auth = requireAuth(request);
@@ -120,22 +123,26 @@ export async function POST(request: NextRequest) {
     if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
   }
   
+  const rateLimitResult = rateLimit(rateLimitConfigs.api)(request);
+  if (rateLimitResult) return rateLimitResult;
+  
   try {
     const data = await request.json();
+    const sanitizedData = sanitizeObject(data);
     
     const workOrder = await prisma.workOrder.create({
       data: {
         customerId: auth.id,
-        shopId: data.shopId,
-        vehicleType: data.vehicleType,
-        serviceLocation: data.serviceLocationType || 'in-shop',
-        repairs: data.services?.repairs || [],
-        maintenance: data.services?.maintenance || [],
-        partsMaterials: data.partsMaterials,
-        issueDescription: data.issueDescription,
-        pictures: data.issueDescription?.pictures || [],
-        vinPhoto: data.vinPhoto,
-        location: data.vehicleLocation,
+        shopId: sanitizedData.shopId,
+        vehicleType: sanitizedData.vehicleType,
+        serviceLocation: sanitizedData.serviceLocationType || 'in-shop',
+        repairs: sanitizedData.services?.repairs || [],
+        maintenance: sanitizedData.services?.maintenance || [],
+        partsMaterials: sanitizedData.partsMaterials,
+        issueDescription: sanitizedData.issueDescription,
+        pictures: sanitizedData.issueDescription?.pictures || [],
+        vinPhoto: sanitizedData.vinPhoto,
+        location: sanitizedData.vehicleLocation,
         status: 'pending',
       },
       include: {
@@ -155,6 +162,7 @@ export async function POST(request: NextRequest) {
         title: 'Work Order Created',
         message: `Your work order ${workOrder.id} has been created successfully`,
         workOrderId: workOrder.id,
+        deliveryMethod: 'in-app',
       },
     });
     

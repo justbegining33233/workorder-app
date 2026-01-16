@@ -29,17 +29,15 @@ export async function GET(request: Request) {
     const workOrders = await prisma.workOrder.findMany({
       where,
       include: {
-        assignedTech: {
+        assignedTo: {
           select: {
             id: true,
-            username: true,
+            firstName: true,
+            lastName: true,
             phone: true,
           },
         },
-        tracking: {
-          orderBy: { updatedAt: 'desc' },
-          take: 1,
-        },
+        tracking: true,
       },
     });
 
@@ -49,15 +47,15 @@ export async function GET(request: Request) {
 
     const trackingData = workOrders.map(wo => ({
       workOrderId: wo.id,
-      title: wo.title,
+      issueDescription: wo.issueDescription,
       status: wo.status,
-      tech: wo.assignedTech ? {
-        id: wo.assignedTech.id,
-        name: wo.assignedTech.username,
-        phone: wo.assignedTech.phone,
+      tech: wo.assignedTo ? {
+        id: wo.assignedTo.id,
+        name: `${wo.assignedTo.firstName} ${wo.assignedTo.lastName}`,
+        phone: wo.assignedTo.phone,
       } : null,
-      location: wo.tracking[0] || null,
-      estimatedArrival: wo.tracking[0]?.estimatedArrival || null,
+      location: wo.tracking || null,
+      estimatedArrival: wo.tracking?.estimatedArrival || null,
     }));
 
     return NextResponse.json(trackingData);

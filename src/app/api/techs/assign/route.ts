@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     const updated = await prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
-        assignedToId: techId,
+        assignedTechId: techId,
         status: workOrder.status === 'pending' ? 'assigned' : workOrder.status,
       },
       include: {
@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
         title: 'Technician Assigned',
         message: `${tech.firstName} ${tech.lastName} has been assigned to your work order`,
         workOrderId,
+        deliveryMethod: 'in-app',
       },
     });
     

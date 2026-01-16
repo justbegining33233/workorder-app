@@ -66,6 +66,7 @@ export default function ShopRegistrationForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<ShopFormData>({
     shopName: '',
@@ -123,6 +124,7 @@ export default function ShopRegistrationForm() {
     }
 
     setLoading(true);
+    setError(null);
     try {
       // Obtain a public CSRF token (double-submit) and set cookie
       await fetch('/api/auth/csrf', { method: 'GET', credentials: 'include' });
@@ -138,9 +140,13 @@ export default function ShopRegistrationForm() {
 
       if (res.ok) {
         router.push('/auth/thank-you');
+      } else {
+        const errorData = await res.json();
+        setError(errorData.error || 'Registration failed');
       }
     } catch (error) {
       console.error('Shop registration failed:', error);
+      setError('Network error or server issue');
     } finally {
       setLoading(false);
     }
@@ -159,6 +165,12 @@ export default function ShopRegistrationForm() {
           </div>
           <div style={{fontSize:13, color:'#9aa3b2'}}>Step {step} of 4</div>
         </div>
+
+        {error && (
+          <div style={{backgroundColor: '#fee', border: '1px solid #fcc', color: '#c33', padding: '12px', borderRadius: '4px', marginBottom: '16px'}}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="sos-pane" style={{padding:28}}>

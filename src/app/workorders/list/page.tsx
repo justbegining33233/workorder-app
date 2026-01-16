@@ -20,8 +20,8 @@ interface WorkOrder {
 function WorkOrderListPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const filter = searchParams.get('filter');
-  const status = searchParams.get('status');
+  const filter = searchParams?.get('filter') || '';
+  const status = searchParams?.get('status') || '';
 
   const [userRole, setUserRole] = useState('');
 

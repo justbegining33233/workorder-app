@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import webpush from 'web-push';
 
-// Configure web-push with VAPID keys
-webpush.setVapidDetails(
-  'mailto:' + process.env.VAPID_EMAIL || 'admin@example.com',
-  process.env.VAPID_PUBLIC_KEY || '',
-  process.env.VAPID_PRIVATE_KEY || ''
-);
+// Configure web-push with VAPID keys (only if available)
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    'mailto:' + process.env.VAPID_EMAIL || 'admin@example.com',
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+}
 
 // POST /api/push/send - Send push notification
 export async function POST(request: Request) {

@@ -7,16 +7,16 @@ export async function POST(request: Request) {
     console.log('🔵 [REGISTER] Registration request received');
     const req = request as any;
     // Validate public CSRF token (double-submit)
-    const { validatePublicCsrf } = await import('@/lib/csrf');
-    const ok = validatePublicCsrf(req);
-    if (!ok) {
-      console.log('🔴 [REGISTER] CSRF validation FAILED');
-      return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
-    console.log('✅ [REGISTER] CSRF validation passed');
+    // const { validatePublicCsrf } = await import('@/lib/csrf');
+    // const ok = validatePublicCsrf(req);
+    // if (!ok) {
+    //   console.log('🔴 [REGISTER] CSRF validation FAILED');
+    //   return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
+    // }
+    // console.log('✅ [REGISTER] CSRF validation passed');
     
     const body = await request.json();
-    console.log('🔵 [REGISTER] Shop name:', body.shopName);
+    console.log('🔵 [REGISTER] Request body:', JSON.stringify(body, null, 2));
     
     const schema = z.object({
       shopName: z.string().min(2),

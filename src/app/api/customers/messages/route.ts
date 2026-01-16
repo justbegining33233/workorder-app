@@ -26,7 +26,7 @@ export async function GET(request: Request) {
         workOrder: {
           select: {
             id: true,
-            title: true,
+            issueDescription: true,
           },
         },
       },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -23,6 +23,8 @@ type PendingShop = {
 export default function PendingShops() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [previousPendingCount, setPreviousPendingCount] = useState(0);
   const [pendingShops, setPendingShops] = useState<PendingShop[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedShop, setSelectedShop] = useState<PendingShop | null>(null);
@@ -45,12 +47,82 @@ export default function PendingShops() {
       return;
     }
     fetchPendingShops();
+    
+    // Request notification permission
+    if ('Notification' in window) {
+      setNotificationPermission(Notification.permission);
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+          setNotificationPermission(permission);
+        });
+      }
+    }
   }, [mounted, router]);
+
+  // Auto-refresh pending shops every 5 seconds
+  useEffect(() => {
+    if (!mounted) return;
+
+    let refreshTimeout: NodeJS.Timeout;
+    
+    const refreshPendingShops = async () => {
+      try {
+        const response = await fetch('/api/shops/pending', {
+          cache: 'no-store',
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache',
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Check for new shops and send notification
+          if (data.length > previousPendingCount && previousPendingCount > 0) {
+            const newCount = data.length - previousPendingCount;
+            if (notificationPermission === 'granted') {
+              const notification = new Notification('New Shop Registration', {
+                body: `${newCount} new shop${newCount > 1 ? 's' : ''} awaiting approval`,
+                icon: '/favicon.ico',
+                badge: '/favicon.ico'
+              });
+
+              notification.onclick = () => {
+                window.focus();
+                notification.close();
+              };
+
+              setTimeout(() => notification.close(), 5000);
+            }
+          }
+          
+          startTransition(() => {
+            setPendingShops(data);
+            setPreviousPendingCount(data.length);
+          });
+        }
+      } catch (error) {
+        console.error('Error refreshing pending shops:', error);
+      }
+    };
+
+    // Set up interval for auto-refresh with a slight delay to prevent glitches
+    const interval = setInterval(() => {
+      refreshTimeout = setTimeout(refreshPendingShops, 100); // Small delay
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+    };
+  }, [mounted, previousPendingCount, notificationPermission]);
 
   const fetchPendingShops = async () => {
     try {
       const response = await fetch('/api/shops/pending', {
         cache: 'no-store',
+        credentials: 'include',
         headers: {
           'Cache-Control': 'no-cache',
         },
@@ -184,7 +256,7 @@ export default function PendingShops() {
         ) : (
           <div style={{display:'grid', gap:16}}>
             {pendingShops.map((shop) => (
-              <div key={shop.id} style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:12, padding:24}}>
+              <div key={shop.id} style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:12, padding:24, transition: 'all 0.3s ease'}}>
                 <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20}}>
                   <div style={{flex:1}}>
                     <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:8}}>

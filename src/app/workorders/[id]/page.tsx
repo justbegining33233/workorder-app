@@ -579,14 +579,21 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
             {/* Estimate Form for Tech/Manager */}
             {['tech', 'manager'].includes(role) && !workOrder.estimate && (
               <div style={{marginBottom:20}}>
-                {!showEstimateForm ? (
+                <div style={{display:'flex', gap:8, marginBottom:8}}>
                   <button
                     onClick={() => setShowEstimateForm(true)}
-                    style={{width:'100%', padding:'12px', background:'#3b82f6', color:'white', border:'none', borderRadius:8, cursor:'pointer', fontSize:14, fontWeight:600}}
+                    style={{flex:1, padding:'12px', background:'#3b82f6', color:'white', border:'none', borderRadius:8, cursor:'pointer', fontSize:14, fontWeight:600}}
                   >
-                    + Create Estimate
+                    Quick Estimate
                   </button>
-                ) : (
+                  <Link
+                    href={`/manager/estimates?workOrderId=${id}`}
+                    style={{flex:1, padding:'12px', background:'#22c55e', color:'white', border:'none', borderRadius:8, cursor:'pointer', fontSize:14, fontWeight:600, textDecoration:'none', textAlign:'center'}}
+                  >
+                    Detailed Estimate
+                  </Link>
+                </div>
+                {showEstimateForm && (
                   <div style={{padding:16, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8}}>
                     <input
                       type="number"

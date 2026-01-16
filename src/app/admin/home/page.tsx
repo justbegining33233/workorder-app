@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -8,6 +8,9 @@ export default function AdminHome() {
   const router = useRouter();
   const [userName, setUserName] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [previousPendingCount, setPreviousPendingCount] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [platformStats, setPlatformStats] = useState({
     totalRevenue: '$0',
     totalShops: 0,
@@ -39,7 +42,7 @@ export default function AdminHome() {
     if (name) setUserName(name);
     
     // Fetch platform statistics
-    fetch('/api/admin/stats', { cache: 'no-store' })
+    fetch('/api/admin/stats', { cache: 'no-store', credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         if (data.totalRevenue !== undefined) {
@@ -59,7 +62,7 @@ export default function AdminHome() {
       .catch(err => console.error('Error fetching platform stats:', err));
     
     // Fetch pending shops
-    fetch('/api/shops/pending', { cache: 'no-store' })
+    fetch('/api/shops/pending', { cache: 'no-store', credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -69,7 +72,7 @@ export default function AdminHome() {
       .catch(err => console.error('Error fetching pending shops:', err));
     
     // Fetch approved shops
-    fetch('/api/shops/accepted', { cache: 'no-store' })
+    fetch('/api/shops/accepted', { cache: 'no-store', credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -77,12 +80,124 @@ export default function AdminHome() {
         }
       })
       .catch(err => console.error('Error fetching approved shops:', err));
+    
+    // Request notification permission
+    if ('Notification' in window) {
+      setNotificationPermission(Notification.permission);
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+          setNotificationPermission(permission);
+        });
+      }
+    }
   }, [mounted, router]);
+
+  // Auto-refresh data every 5 seconds
+  useEffect(() => {
+    if (!mounted) return;
+
+    let refreshTimeout: NodeJS.Timeout;
+    
+    const refreshData = async () => {
+      try {
+        // Refresh platform stats
+        const statsResponse = await fetch('/api/admin/stats', { 
+          cache: 'no-store', 
+          credentials: 'include' 
+        });
+        
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          if (statsData.totalRevenue !== undefined) {
+            const newStats = {
+              totalRevenue: statsData.totalRevenue,
+              totalShops: statsData.totalShops,
+              totalJobs: statsData.totalJobs,
+              activeUsers: statsData.activeUsers,
+              pendingShops: statsData.pendingShops,
+              systemHealth: 100
+            };
+            
+            // Use startTransition for smooth updates
+            startTransition(() => {
+              setPlatformStats(newStats);
+              
+              // Check for new pending shops and send notification
+              if (newStats.pendingShops > previousPendingCount && previousPendingCount > 0) {
+                showNewShopNotification(newStats.pendingShops - previousPendingCount);
+              }
+              setPreviousPendingCount(newStats.pendingShops);
+            });
+          }
+        }
+
+        // Refresh pending shops
+        const pendingResponse = await fetch('/api/shops/pending', {
+          cache: 'no-store',
+          credentials: 'include'
+        });
+        
+        if (pendingResponse.ok) {
+          const pendingData = await pendingResponse.json();
+          startTransition(() => {
+            setPendingShops(pendingData.slice(0, 3));
+          });
+        }
+
+        // Refresh approved shops
+        const approvedResponse = await fetch('/api/shops/accepted', {
+          cache: 'no-store',
+          credentials: 'include'
+        });
+        
+        if (approvedResponse.ok) {
+          const approvedData = await approvedResponse.json();
+          startTransition(() => {
+            setApprovedShops(approvedData.slice(0, 3));
+          });
+        }
+      } catch (error) {
+        console.error('Error refreshing data:', error);
+      }
+    };
+
+    // Initial refresh to set previous count
+    refreshData();
+
+    // Set up interval for auto-refresh with a slight delay to prevent glitches
+    const interval = setInterval(() => {
+      refreshTimeout = setTimeout(refreshData, 100); // Small delay
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+    };
+  }, [mounted, previousPendingCount]);
+
+  const showNewShopNotification = (newCount: number) => {
+    if (notificationPermission === 'granted') {
+      const notification = new Notification('New Shop Registration', {
+        body: `${newCount} new shop${newCount > 1 ? 's' : ''} awaiting approval`,
+        icon: '/favicon.ico',
+        badge: '/favicon.ico'
+      });
+
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+
+      // Auto-close after 5 seconds
+      setTimeout(() => notification.close(), 5000);
+    }
+  };
 
   const fetchPendingShops = async () => {
     try {
       const response = await fetch('/api/shops/pending', {
-        cache: 'no-store'
+        cache: 'no-store',
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -122,7 +237,7 @@ export default function AdminHome() {
         fetchPendingShops();
         
         // Refresh approved shops list too
-        fetch('/api/shops/accepted', { cache: 'no-store' })
+        fetch('/api/shops/accepted', { cache: 'no-store', credentials: 'include' })
           .then(res => res.json())
           .then(data => {
             if (Array.isArray(data)) {
@@ -146,6 +261,7 @@ export default function AdminHome() {
     try {
       const response = await fetch('/api/shops/pending', {
         method: 'PATCH',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: shopId, action: 'deny' }),
       });
@@ -179,6 +295,12 @@ export default function AdminHome() {
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
       {/* Header */}
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <div style={{display:'flex', alignItems:'center', gap:24}}>
@@ -189,6 +311,66 @@ export default function AdminHome() {
           </div>
         </div>
         <div style={{display:'flex', alignItems:'center', gap:16}}>
+          <div style={{display:'flex', alignItems:'center', gap:8}}>
+            {isRefreshing && (
+              <div style={{display:'flex', alignItems:'center', gap:4}}>
+                <div style={{width:12, height:12, border:'2px solid #e5332a', borderTop:'2px solid transparent', borderRadius:'50%', animation:'spin 1s linear infinite'}}></div>
+                <span style={{fontSize:12, color:'#9aa3b2'}}>Refreshing...</span>
+              </div>
+            )}
+            <button 
+              onClick={() => {
+                const refreshData = async () => {
+                  setIsRefreshing(true);
+                  try {
+                    // Refresh all data
+                    const [statsRes, pendingRes, approvedRes] = await Promise.all([
+                      fetch('/api/admin/stats', { cache: 'no-store', credentials: 'include' }),
+                      fetch('/api/shops/pending', { cache: 'no-store', credentials: 'include' }),
+                      fetch('/api/shops/accepted', { cache: 'no-store', credentials: 'include' })
+                    ]);
+
+                    if (statsRes.ok) {
+                      const statsData = await statsRes.json();
+                      startTransition(() => {
+                        setPlatformStats({
+                          totalRevenue: statsData.totalRevenue || '$0',
+                          totalShops: statsData.totalShops || 0,
+                          totalJobs: statsData.totalJobs || 0,
+                          activeUsers: statsData.activeUsers || 0,
+                          pendingShops: statsData.pendingShops || 0,
+                          systemHealth: 100
+                        });
+                      });
+                    }
+
+                    if (pendingRes.ok) {
+                      const pendingData = await pendingRes.json();
+                      startTransition(() => {
+                        setPendingShops(pendingData.slice(0, 3));
+                      });
+                    }
+
+                    if (approvedRes.ok) {
+                      const approvedData = await approvedRes.json();
+                      startTransition(() => {
+                        setApprovedShops(approvedData.slice(0, 3));
+                      });
+                    }
+                  } catch (error) {
+                    console.error('Manual refresh error:', error);
+                  } finally {
+                    setIsRefreshing(false);
+                  }
+                };
+                refreshData();
+              }}
+              style={{padding:'6px 12px', background:'rgba(229,51,42,0.1)', border:'1px solid rgba(229,51,42,0.3)', color:'#e5332a', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600, opacity: isRefreshing ? 0.6 : 1}}
+              disabled={isRefreshing}
+            >
+              {isRefreshing ? '⟳' : '🔄'} {isRefreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
           <span style={{fontSize:14, color:'#9aa3b2'}}>Welcome, {userName}</span>
           <button onClick={handleSignOut} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
             Sign Out
@@ -199,29 +381,29 @@ export default function AdminHome() {
       <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
         {/* Platform Overview Stats */}
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:16, marginBottom:32}}>
-          <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:20}}>
+          <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:20, transition: 'all 0.3s ease'}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Total Revenue</div>
-            <div style={{fontSize:32, fontWeight:700, color:'#22c55e'}}>{platformStats.totalRevenue}</div>
+            <div style={{fontSize:32, fontWeight:700, color:'#22c55e', transition: 'color 0.3s ease'}}>{platformStats.totalRevenue}</div>
             <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>All time</div>
           </div>
-          <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
+          <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20, transition: 'all 0.3s ease'}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Total Shops</div>
-            <div style={{fontSize:32, fontWeight:700, color:'#3b82f6'}}>{platformStats.totalShops}</div>
+            <div style={{fontSize:32, fontWeight:700, color:'#3b82f6', transition: 'color 0.3s ease'}}>{platformStats.totalShops}</div>
             <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>{platformStats.pendingShops} pending approval</div>
           </div>
-          <div style={{background:'rgba(168,85,247,0.1)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, padding:20}}>
+          <div style={{background:'rgba(168,85,247,0.1)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, padding:20, transition: 'all 0.3s ease'}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Total Jobs</div>
-            <div style={{fontSize:32, fontWeight:700, color:'#a855f7'}}>{platformStats.totalJobs}</div>
+            <div style={{fontSize:32, fontWeight:700, color:'#a855f7', transition: 'color 0.3s ease'}}>{platformStats.totalJobs}</div>
             <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>All time</div>
           </div>
-          <div style={{background:'rgba(245,158,11,0.1)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:20}}>
+          <div style={{background:'rgba(245,158,11,0.1)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:20, transition: 'all 0.3s ease'}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Active Users</div>
-            <div style={{fontSize:32, fontWeight:700, color:'#f59e0b'}}>{platformStats.activeUsers}</div>
+            <div style={{fontSize:32, fontWeight:700, color:'#f59e0b', transition: 'color 0.3s ease'}}>{platformStats.activeUsers}</div>
             <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>Last 30 days</div>
           </div>
-          <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:20}}>
+          <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:20, transition: 'all 0.3s ease'}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>System Health</div>
-            <div style={{fontSize:32, fontWeight:700, color:'#22c55e'}}>{platformStats.systemHealth}%</div>
+            <div style={{fontSize:32, fontWeight:700, color:'#22c55e', transition: 'color 0.3s ease'}}>{platformStats.systemHealth}%</div>
             <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>All systems operational</div>
           </div>
         </div>
@@ -242,7 +424,7 @@ export default function AdminHome() {
                   </div>
                 ) : (
                   approvedShops.map((shop, idx) => (
-                    <div key={shop.id || idx} style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, padding:16}}>
+                    <div key={shop.id || idx} style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, padding:16, transition: 'all 0.3s ease'}}>
                       <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                         <div style={{flex:1}}>
                           <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
@@ -271,7 +453,7 @@ export default function AdminHome() {
               </div>
               <div style={{display:'flex', flexDirection:'column', gap:12}}>
                 {pendingShops.map((shop) => (
-                  <div key={shop.id} style={{background:'rgba(229,51,42,0.1)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, padding:16}}>
+                  <div key={shop.id} style={{background:'rgba(229,51,42,0.1)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, padding:16, transition: 'all 0.3s ease'}}>
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12}}>
                       <div style={{flex:1}}>
                         <div style={{fontSize:15, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{shop.name}</div>

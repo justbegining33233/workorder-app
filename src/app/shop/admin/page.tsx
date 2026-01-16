@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import MessagingCard from '@/components/MessagingCard';
+import TopNavBar from '@/components/TopNavBar';
+import Sidebar from '@/components/Sidebar';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function ShopAdminPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
@@ -101,6 +105,8 @@ export default function ShopAdminPage() {
       if (response.ok) {
         const data = await response.json();
         console.log('✅ Shop stats loaded:', data);
+        console.log('👥 Currently clocked in count:', data.team?.clockedIn);
+        console.log('👥 Currently working list:', data.team?.currentlyWorking);
         setShopStats(data);
       } else {
         // Set empty data structure if fetch fails
@@ -330,9 +336,9 @@ export default function ShopAdminPage() {
     try {
       // Dynamic import for client-side only
       const { default: jsPDF } = await import('jspdf');
-      const autoTable = (await import('jspdf-autotable')).default;
+      const { default: autoTable } = await import('jspdf-autotable');
       
-      const doc = new jsPDF() as any;
+      const doc = new jsPDF();
       
       // Title
       doc.setFontSize(20);
@@ -393,7 +399,7 @@ export default function ShopAdminPage() {
         ]);
       });
       
-      doc.autoTable({
+      autoTable(doc, {
         startY: 75,
         head: [['Employee', 'Role', 'Date', 'Clock In', 'Clock Out', 'Hours', 'Rate', 'Pay']],
         body: tableData,
@@ -413,1014 +419,751 @@ export default function ShopAdminPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)' }}>
-      {/* Header */}
-      <div style={{
-        background: 'rgba(0,0,0,0.3)',
-        borderBottom: '1px solid rgba(229,51,42,0.3)',
-        padding: '16px 32px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <Link href="/shop/home" style={{ fontSize: 24, fontWeight: 900, color: '#e5332a', textDecoration: 'none' }}>
-            SOS
-          </Link>
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}>Shop Admin Control Panel</div>
-            <div style={{ fontSize: 12, color: '#9aa3b2' }}>{userName}</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Link href="/shop/home" style={{
-            padding: '8px 16px',
-            background: '#3b82f6',
-            color: 'white',
-            borderRadius: 6,
-            textDecoration: 'none',
-            fontSize: 13,
-            fontWeight: 600,
-          }}>
-            📊 Shop Dashboard
-          </Link>
-          <button 
-            onClick={() => {
-              localStorage.clear();
-              router.push('/auth/login');
-            }}
-            style={{
-              padding: '8px 16px',
-              background: '#4b5563',
-              color: 'white',
-              border: 'none',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontSize: 13,
-              fontWeight: 600,
-            }}
-          >
-            Sign Out
-          </button>
-        </div>
-      </div>
-
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: 32 }}>
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
-          <button
-            onClick={() => setActiveTab('overview')}
-            style={{
-              padding: '12px 24px',
-              background: activeTab === 'overview' ? 'rgba(229,51,42,0.2)' : 'transparent',
-              color: activeTab === 'overview' ? '#e5332a' : '#9aa3b2',
-              border: 'none',
-              borderBottom: activeTab === 'overview' ? '2px solid #e5332a' : 'none',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            📊 Overview
-          </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            style={{
-              padding: '12px 24px',
-              background: activeTab === 'settings' ? 'rgba(229,51,42,0.2)' : 'transparent',
-              color: activeTab === 'settings' ? '#e5332a' : '#9aa3b2',
-              border: 'none',
-              borderBottom: activeTab === 'settings' ? '2px solid #e5332a' : 'none',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            ⚙️ Settings
-          </button>
-          <button
-            onClick={() => setActiveTab('payroll')}
-            style={{
-              padding: '12px 24px',
-              background: activeTab === 'payroll' ? 'rgba(229,51,42,0.2)' : 'transparent',
-              color: activeTab === 'payroll' ? '#e5332a' : '#9aa3b2',
-              border: 'none',
-              borderBottom: activeTab === 'payroll' ? '2px solid #e5332a' : 'none',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            💰 Payroll
-          </button>
-          <button
-            onClick={() => setActiveTab('team')}
-            style={{
-              padding: '12px 24px',
-              background: activeTab === 'team' ? 'rgba(229,51,42,0.2)' : 'transparent',
-              color: activeTab === 'team' ? '#e5332a' : '#9aa3b2',
-              border: 'none',
-              borderBottom: activeTab === 'team' ? '2px solid #e5332a' : 'none',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            👥 Team
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab('inventory');
-              fetchInventoryStock(shopId);
-              fetchInventoryRequests(shopId);
-            }}
-            style={{
-              padding: '12px 24px',
-              background: activeTab === 'inventory' ? 'rgba(229,51,42,0.2)' : 'transparent',
-              color: activeTab === 'inventory' ? '#e5332a' : '#9aa3b2',
-              border: 'none',
-              borderBottom: activeTab === 'inventory' ? '2px solid #e5332a' : 'none',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            📦 Inventory
-          </button>
-        </div>
-
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div>
-            {!shopStats ? (
-              <div style={{ textAlign: 'center', padding: 64, color: '#9aa3b2' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
-                <div style={{ fontSize: 18, marginBottom: 8 }}>Loading shop statistics...</div>
-                <div style={{ fontSize: 14 }}>Please wait while we fetch your data</div>
-              </div>
-            ) : (
-              <>
-            {/* Key Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
-              <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: 20 }}>
-                <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Open Work Orders</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6' }}>{shopStats.workOrders.open}</div>
-              </div>
-              <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
-                <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Completed Today</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e' }}>{shopStats.workOrders.completedToday}</div>
-              </div>
-              <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
-                <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Today's Revenue</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e' }}>${shopStats.revenue.today.toFixed(2)}</div>
-              </div>
-              <div style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 12, padding: 20 }}>
-                <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>This Week</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#a855f7' }}>${shopStats.revenue.week.toFixed(2)}</div>
-              </div>
-              <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: 20 }}>
-                <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Team Members</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b' }}>{shopStats.team.total}</div>
-                <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>{shopStats.team.clockedIn} clocked in</div>
-              </div>
-              <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 12, padding: 20 }}>
-                <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Pending Actions</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#e5332a' }}>
-                  {shopStats.workOrders.pendingApprovals + shopStats.inventory.pendingRequests}
-                </div>
-                <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
-                  {shopStats.workOrders.pendingApprovals} orders, {shopStats.inventory.pendingRequests} inventory
-                </div>
-              </div>
-              <div style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 12, padding: 20 }}>
-                <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Inventory Items</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1' }}>{inventoryStock.length}</div>
-                <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
-                  {inventoryStock.filter((item: any) => item.quantity <= item.reorderPoint).length} low stock
-                </div>
-              </div>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)', display: 'flex', flexDirection: 'column' }}>
+      {/* Top Navigation */}
+      <TopNavBar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} showMenuButton={true} />
+      {/* Breadcrumbs */}
+      <Breadcrumbs />
+      {/* Main Layout with Sidebar */}
+      <div style={{ display: 'flex', flex: 1 }}>
+        {/* Sidebar */}
+        <Sidebar role="shop" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        {/* Main Content */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: 32 }}>
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
+              <button
+                onClick={() => setActiveTab('overview')}
+                style={{
+                  padding: '12px 24px',
+                  background: activeTab === 'overview' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                  color: activeTab === 'overview' ? '#e5332a' : '#9aa3b2',
+                  border: 'none',
+                  borderBottom: activeTab === 'overview' ? '2px solid #e5332a' : 'none',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                📊 Overview
+              </button>
+              <button
+                onClick={() => setActiveTab('settings')}
+                style={{
+                  padding: '12px 24px',
+                  background: activeTab === 'settings' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                  color: activeTab === 'settings' ? '#e5332a' : '#9aa3b2',
+                  border: 'none',
+                  borderBottom: activeTab === 'settings' ? '2px solid #e5332a' : 'none',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                ⚙️ Settings
+              </button>
+              <button
+                onClick={() => setActiveTab('payroll')}
+                style={{
+                  padding: '12px 24px',
+                  background: activeTab === 'payroll' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                  color: activeTab === 'payroll' ? '#e5332a' : '#9aa3b2',
+                  border: 'none',
+                  borderBottom: activeTab === 'payroll' ? '2px solid #e5332a' : 'none',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                💰 Payroll
+              </button>
+              <button
+                onClick={() => setActiveTab('team')}
+                style={{
+                  padding: '12px 24px',
+                  background: activeTab === 'team' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                  color: activeTab === 'team' ? '#e5332a' : '#9aa3b2',
+                  border: 'none',
+                  borderBottom: activeTab === 'team' ? '2px solid #e5332a' : 'none',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                👥 Team
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab('inventory');
+                  fetchInventoryStock(shopId);
+                  fetchInventoryRequests(shopId);
+                }}
+                style={{
+                  padding: '12px 24px',
+                  background: activeTab === 'inventory' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                  color: activeTab === 'inventory' ? '#e5332a' : '#9aa3b2',
+                  border: 'none',
+                  borderBottom: activeTab === 'inventory' ? '2px solid #e5332a' : 'none',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                📦 Inventory
+              </button>
             </div>
 
-            {/* Inventory Summary Card */}
-            <div style={{ 
-              background: 'rgba(255,255,255,0.05)', 
-              borderRadius: 12, 
-              padding: 24, 
-              marginBottom: 24 
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ fontSize: 24 }}>📦</div>
-                  <div>
-                    <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Current Inventory</h3>
-                    <div style={{ color: '#9aa3b2', fontSize: 13 }}>Parts and supplies in stock</div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveTab('inventory')}
-                  style={{
-                    padding: '8px 16px',
-                    background: 'rgba(99,102,241,0.2)',
-                    border: '1px solid rgba(99,102,241,0.3)',
-                    borderRadius: 8,
-                    color: '#6366f1',
-                    fontSize: 14,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  + Add Inventory
-                </button>
-              </div>
-
-              {inventoryStock.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
-                  <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
-                  <div style={{ marginBottom: 8 }}>No inventory items yet</div>
-                  <div style={{ fontSize: 13 }}>Click "Add Inventory" to start tracking parts and supplies</div>
-                </div>
-              ) : (
-                <>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16, marginBottom: 16 }}>
-                    {/* Total Value */}
-                    <div style={{ 
-                      background: 'rgba(34,197,94,0.1)', 
-                      border: '1px solid rgba(34,197,94,0.3)', 
-                      borderRadius: 8, 
-                      padding: 16 
-                    }}>
-                      <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Total Value</div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#22c55e' }}>
-                        ${inventoryStock.reduce((sum: number, item: any) => sum + (item.quantity * item.unitCost), 0).toFixed(2)}
-                      </div>
-                      <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
-                        {inventoryStock.reduce((sum: number, item: any) => sum + item.quantity, 0)} total units
-                      </div>
-                    </div>
-
-                    {/* Low Stock Alert */}
-                    <div style={{ 
-                      background: 'rgba(245,158,11,0.1)', 
-                      border: '1px solid rgba(245,158,11,0.3)', 
-                      borderRadius: 8, 
-                      padding: 16 
-                    }}>
-                      <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Low Stock Items</div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#f59e0b' }}>
-                        {inventoryStock.filter((item: any) => item.quantity <= item.reorderPoint).length}
-                      </div>
-                      <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>Need reorder</div>
-                    </div>
-
-                    {/* Suppliers */}
-                    <div style={{ 
-                      background: 'rgba(99,102,241,0.1)', 
-                      border: '1px solid rgba(99,102,241,0.3)', 
-                      borderRadius: 8, 
-                      padding: 16 
-                    }}>
-                      <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Suppliers</div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#6366f1' }}>
-                        {new Set(inventoryStock.filter((item: any) => item.supplier).map((item: any) => item.supplier)).size}
-                      </div>
-                      <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>Active vendors</div>
-                    </div>
-
-                    {/* Categories */}
-                    <div style={{ 
-                      background: 'rgba(168,85,247,0.1)', 
-                      border: '1px solid rgba(168,85,247,0.3)', 
-                      borderRadius: 8, 
-                      padding: 16 
-                    }}>
-                      <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Categories</div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: '#a855f7' }}>
-                        {new Set(inventoryStock.filter((item: any) => item.category).map((item: any) => item.category)).size}
-                      </div>
-                      <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>Item types</div>
-                    </div>
-                  </div>
-
-                  {/* Quick View Table */}
-                  <div style={{ 
-                    background: 'rgba(0,0,0,0.2)', 
-                    borderRadius: 8, 
-                    overflow: 'hidden',
-                    maxHeight: 300,
-                    overflowY: 'auto'
-                  }}>
-                    <table style={{ width: '100%', fontSize: 13 }}>
-                      <thead style={{ background: 'rgba(0,0,0,0.3)', position: 'sticky', top: 0 }}>
-                        <tr>
-                          <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Item</th>
-                          <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>SKU</th>
-                          <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Quantity</th>
-                          <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Supplier</th>
-                          <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {inventoryStock.slice(0, 10).map((item: any) => (
-                          <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <td style={{ padding: 12, color: '#e5e7eb' }}>{item.itemName}</td>
-                            <td style={{ padding: 12, color: '#9aa3b2' }}>{item.sku || '-'}</td>
-                            <td style={{ padding: 12, color: item.quantity <= item.reorderPoint ? '#f59e0b' : '#22c55e', fontWeight: 600 }}>
-                              {item.quantity}
-                            </td>
-                            <td style={{ padding: 12, color: '#9aa3b2' }}>{item.supplier || '-'}</td>
-                            <td style={{ padding: 12 }}>
-                              {item.quantity <= item.reorderPoint ? (
-                                <span style={{ 
-                                  padding: '4px 8px', 
-                                  background: 'rgba(245,158,11,0.2)', 
-                                  border: '1px solid rgba(245,158,11,0.3)',
-                                  borderRadius: 4,
-                                  fontSize: 11,
-                                  color: '#f59e0b',
-                                  fontWeight: 600
-                                }}>
-                                  LOW STOCK
-                                </span>
-                              ) : (
-                                <span style={{ 
-                                  padding: '4px 8px', 
-                                  background: 'rgba(34,197,94,0.2)', 
-                                  border: '1px solid rgba(34,197,94,0.3)',
-                                  borderRadius: 4,
-                                  fontSize: 11,
-                                  color: '#22c55e',
-                                  fontWeight: 600
-                                }}>
-                                  IN STOCK
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {inventoryStock.length > 10 && (
-                    <div style={{ textAlign: 'center', marginTop: 16 }}>
-                      <button
-                        onClick={() => setActiveTab('inventory')}
-                        style={{
-                          padding: '8px 16px',
-                          background: 'transparent',
-                          border: '1px solid rgba(99,102,241,0.3)',
-                          borderRadius: 8,
-                          color: '#6366f1',
-                          fontSize: 13,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        View All {inventoryStock.length} Items →
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Shop Communications - MessagingCard */}
-            <div style={{ marginBottom: 24 }}>
-              <MessagingCard userId={userId} shopId={shopId} />
-            </div>
-
-            {/* Legacy Shop Messages Section (now moved to MessagingCard above) */}
-            <div style={{ display: 'none' }}>
-              {shopMessages.length === 0 ? (
-                <div />
-              ) : (
-                <>
-                  {messageStats && (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
-                      <div style={{ 
-                        background: 'rgba(59,130,246,0.1)', 
-                        border: '1px solid rgba(59,130,246,0.3)', 
-                        borderRadius: 8, 
-                        padding: 16 
-                      }}>
-                        <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Total Messages</div>
-                        <div style={{ fontSize: 24, fontWeight: 700, color: '#3b82f6' }}>
-                          {messageStats.totalMessages}
-                        </div>
-                      </div>
-                      <div style={{ 
-                        background: 'rgba(34,197,94,0.1)', 
-                        border: '1px solid rgba(34,197,94,0.3)', 
-                        borderRadius: 8, 
-                        padding: 16 
-                      }}>
-                        <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>From Customers</div>
-                        <div style={{ fontSize: 24, fontWeight: 700, color: '#22c55e' }}>
-                          {messageStats.byRole.customer}
-                        </div>
-                      </div>
-                      <div style={{ 
-                        background: 'rgba(245,158,11,0.1)', 
-                        border: '1px solid rgba(245,158,11,0.3)', 
-                        borderRadius: 8, 
-                        padding: 16 
-                      }}>
-                        <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>From Techs</div>
-                        <div style={{ fontSize: 24, fontWeight: 700, color: '#f59e0b' }}>
-                          {messageStats.byRole.tech}
-                        </div>
-                      </div>
-                      <div style={{ 
-                        background: 'rgba(168,85,247,0.1)', 
-                        border: '1px solid rgba(168,85,247,0.3)', 
-                        borderRadius: 8, 
-                        padding: 16 
-                      }}>
-                        <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>From Managers</div>
-                        <div style={{ fontSize: 24, fontWeight: 700, color: '#a855f7' }}>
-                          {messageStats.byRole.manager}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Recent Messages */}
-                  <div style={{ 
-                    background: 'rgba(0,0,0,0.2)', 
-                    borderRadius: 8, 
-                    overflow: 'hidden',
-                    maxHeight: 400,
-                    overflowY: 'auto'
-                  }}>
-                    <div style={{ display: 'grid', gap: 12, padding: 16 }}>
-                      {shopMessages.map((msg: any) => (
-                        <div key={msg.id} style={{ 
-                          background: 'rgba(255,255,255,0.03)', 
-                          border: '1px solid rgba(255,255,255,0.1)', 
-                          borderRadius: 8, 
-                          padding: 16 
-                        }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <span style={{ 
-                                fontSize: 20,
-                              }}>
-                                {msg.sender === 'customer' ? '👤' : msg.sender === 'tech' ? '🔧' : '👔'}
-                              </span>
-                              <div>
-                                <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 14 }}>
-                                  {msg.senderName}
-                                </div>
-                                <div style={{ color: '#9aa3b2', fontSize: 12 }}>
-                                  {msg.sender === 'customer' ? 'Customer' : msg.sender === 'tech' ? 'Technician' : 'Manager'}
-                                </div>
-                              </div>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                              <div style={{ color: '#9aa3b2', fontSize: 11 }}>
-                                {new Date(msg.createdAt).toLocaleDateString()} {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                              </div>
-                              <Link 
-                                href={`/shop/workorder/${msg.workOrder.id}`}
-                                style={{ 
-                                  color: '#3b82f6', 
-                                  fontSize: 11, 
-                                  textDecoration: 'none',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 4,
-                                  marginTop: 4
-                                }}
-                              >
-                                View Order →
-                              </Link>
-                            </div>
-                          </div>
-                          
-                          <div style={{ color: '#e5e7eb', fontSize: 14, marginBottom: 8, lineHeight: 1.5 }}>
-                            {msg.body}
-                          </div>
-                          
-                          <div style={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 8,
-                            padding: 8,
-                            background: 'rgba(0,0,0,0.2)',
-                            borderRadius: 6,
-                          }}>
-                            <span style={{ fontSize: 14 }}>📋</span>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ color: '#9aa3b2', fontSize: 11 }}>Work Order</div>
-                              <div style={{ color: '#e5e7eb', fontSize: 12, fontWeight: 600 }}>
-                                {msg.workOrder.title}
-                              </div>
-                            </div>
-                            <div style={{ 
-                              padding: '4px 8px', 
-                              background: 'rgba(59,130,246,0.2)', 
-                              border: '1px solid rgba(59,130,246,0.3)',
-                              borderRadius: 4,
-                              fontSize: 11,
-                              color: '#3b82f6',
-                            }}>
-                              {msg.workOrder.customer}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {shopMessages.length >= 20 && (
-                    <div style={{ textAlign: 'center', marginTop: 16, color: '#9aa3b2', fontSize: 13 }}>
-                      Showing 20 most recent messages
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Budget Tracking */}
-            {budgetData && (budgetData.weeklyBudget > 0 || budgetData.monthlyBudget > 0) && (
-              <div style={{ 
-                background: 'rgba(255,255,255,0.05)', 
-                borderRadius: 12, 
-                padding: 24, 
-                marginBottom: 24 
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                  <div style={{ fontSize: 24 }}>💰</div>
-                  <div>
-                    <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Payroll Budget Tracking</h3>
-                    <div style={{ color: '#9aa3b2', fontSize: 13 }}>Monitor spending against budget limits</div>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-                  {/* Weekly Budget */}
-                  {budgetData.weeklyBudget > 0 && (
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                        <span style={{ color: '#e5e7eb', fontSize: 14, fontWeight: 600 }}>Weekly Budget</span>
-                        <span style={{ 
-                          color: budgetData.weeklySpent > budgetData.weeklyBudget ? '#ef4444' : 
-                                 budgetData.weeklySpent / budgetData.weeklyBudget > 0.9 ? '#f59e0b' : '#22c55e',
-                          fontSize: 14,
-                          fontWeight: 600
-                        }}>
-                          ${budgetData.weeklySpent.toFixed(2)} / ${budgetData.weeklyBudget.toFixed(2)}
-                        </span>
-                      </div>
-                      <div style={{ 
-                        width: '100%', 
-                        height: 24, 
-                        background: 'rgba(255,255,255,0.1)', 
-                        borderRadius: 12, 
-                        overflow: 'hidden',
-                        position: 'relative'
-                      }}>
-                        <div style={{
-                          width: `${Math.min(100, (budgetData.weeklySpent / budgetData.weeklyBudget) * 100)}%`,
-                          height: '100%',
-                          background: budgetData.weeklySpent > budgetData.weeklyBudget ? 
-                            'linear-gradient(90deg, #ef4444, #dc2626)' :
-                            budgetData.weeklySpent / budgetData.weeklyBudget > 0.9 ?
-                            'linear-gradient(90deg, #f59e0b, #d97706)' :
-                            'linear-gradient(90deg, #22c55e, #16a34a)',
-                          transition: 'width 0.3s ease',
-                        }} />
-                        <div style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: 11,
-                          fontWeight: 700,
-                          color: 'white',
-                          textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                        }}>
-                          {Math.min(100, Math.round((budgetData.weeklySpent / budgetData.weeklyBudget) * 100))}%
-                        </div>
-                      </div>
-                      {budgetData.weeklySpent > budgetData.weeklyBudget && (
-                        <div style={{ 
-                          marginTop: 8, 
-                          padding: 8, 
-                          background: 'rgba(239,68,68,0.1)', 
-                          border: '1px solid rgba(239,68,68,0.3)',
-                          borderRadius: 6,
-                          fontSize: 12,
-                          color: '#ef4444',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 8
-                        }}>
-                          <span>⚠️</span>
-                          <span>Over budget by ${(budgetData.weeklySpent - budgetData.weeklyBudget).toFixed(2)}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Monthly Budget */}
-                  {budgetData.monthlyBudget > 0 && (
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                        <span style={{ color: '#e5e7eb', fontSize: 14, fontWeight: 600 }}>Monthly Budget</span>
-                        <span style={{ 
-                          color: budgetData.monthlySpent > budgetData.monthlyBudget ? '#ef4444' : 
-                                 budgetData.monthlySpent / budgetData.monthlyBudget > 0.9 ? '#f59e0b' : '#22c55e',
-                          fontSize: 14,
-                          fontWeight: 600
-                        }}>
-                          ${budgetData.monthlySpent.toFixed(2)} / ${budgetData.monthlyBudget.toFixed(2)}
-                        </span>
-                      </div>
-                      <div style={{ 
-                        width: '100%', 
-                        height: 24, 
-                        background: 'rgba(255,255,255,0.1)', 
-                        borderRadius: 12, 
-                        overflow: 'hidden',
-                        position: 'relative'
-                      }}>
-                        <div style={{
-                          width: `${Math.min(100, (budgetData.monthlySpent / budgetData.monthlyBudget) * 100)}%`,
-                          height: '100%',
-                          background: budgetData.monthlySpent > budgetData.monthlyBudget ? 
-                            'linear-gradient(90deg, #ef4444, #dc2626)' :
-                            budgetData.monthlySpent / budgetData.monthlyBudget > 0.9 ?
-                            'linear-gradient(90deg, #f59e0b, #d97706)' :
-                            'linear-gradient(90deg, #22c55e, #16a34a)',
-                          transition: 'width 0.3s ease',
-                        }} />
-                        <div style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: 11,
-                          fontWeight: 700,
-                          color: 'white',
-                          textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                        }}>
-                          {Math.min(100, Math.round((budgetData.monthlySpent / budgetData.monthlyBudget) * 100))}%
-                        </div>
-                      </div>
-                      {budgetData.monthlySpent > budgetData.monthlyBudget && (
-                        <div style={{ 
-                          marginTop: 8, 
-                          padding: 8, 
-                          background: 'rgba(239,68,68,0.1)', 
-                          border: '1px solid rgba(239,68,68,0.3)',
-                          borderRadius: 6,
-                          fontSize: 12,
-                          color: '#ef4444',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 8
-                        }}>
-                          <span>⚠️</span>
-                          <span>Over budget by ${(budgetData.monthlySpent - budgetData.monthlyBudget).toFixed(2)}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Budget Alert Banner */}
-                {(budgetData.weeklySpent > budgetData.weeklyBudget || budgetData.monthlySpent > budgetData.monthlyBudget) && (
-                  <div style={{
-                    marginTop: 20,
-                    padding: 16,
-                    background: 'rgba(239,68,68,0.15)',
-                    border: '2px solid rgba(239,68,68,0.4)',
-                    borderRadius: 8,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12
-                  }}>
-                    <div style={{ fontSize: 32 }}>🚨</div>
-                    <div>
-                      <div style={{ color: '#ef4444', fontWeight: 700, fontSize: 15, marginBottom: 4 }}>
-                        Budget Alert: Payroll Spending Exceeded
-                      </div>
-                      <div style={{ color: '#e5e7eb', fontSize: 13 }}>
-                        Review your payroll expenses and consider adjusting team schedules or budget limits.
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-              {/* Currently Clocked In */}
-              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                  <div style={{ fontSize: 24 }}>⏰</div>
-                  <div>
-                    <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Currently Clocked In</h3>
-                    <div style={{ color: '#9aa3b2', fontSize: 13 }}>{shopStats.team.clockedIn} employees working</div>
-                  </div>
-                </div>
-
-                {shopStats.team.currentlyWorking.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
-                    <div style={{ fontSize: 48, marginBottom: 12 }}>🕐</div>
-                    <div>No one currently clocked in</div>
+            {/* Tab Content */}
+            {activeTab === 'overview' && (
+              <div>
+                {!shopStats ? (
+                  <div style={{ textAlign: 'center', padding: 64, color: '#9aa3b2' }}>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
+                    <div style={{ fontSize: 18, marginBottom: 8 }}>Loading shop statistics...</div>
+                    <div style={{ fontSize: 14 }}>Please wait while we fetch your data</div>
                   </div>
                 ) : (
-                  <div style={{ display: 'grid', gap: 8 }}>
-                    {shopStats.team.currentlyWorking.map((emp: any) => (
-                      <div key={emp.id} style={{ 
-                        background: 'rgba(34,197,94,0.1)', 
-                        border: '1px solid rgba(34,197,94,0.3)', 
-                        borderRadius: 8, 
-                        padding: 12,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 12
-                      }}>
-                        <div style={{ 
-                          width: 10, 
-                          height: 10, 
-                          borderRadius: '50%', 
-                          background: '#22c55e',
-                          flexShrink: 0
-                        }} />
-                        <div style={{ flex: 1 }}>
-                          <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 15 }}>{emp.name}</div>
-                          <div style={{ color: '#9aa3b2', fontSize: 12 }}>
-                            {emp.role === 'manager' ? '👔 Manager' : '🔧 Technician'} • Clocked in at {new Date(emp.clockedInAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                          </div>
+                  <>
+                    {/* Key Stats */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
+                      <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: 20 }}>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Open Work Orders</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6' }}>{shopStats.workOrders.open}</div>
+                      </div>
+                      <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Completed Today</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e' }}>{shopStats.workOrders.completedToday}</div>
+                      </div>
+                      <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Today's Revenue</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e' }}>${shopStats.revenue.today.toFixed(2)}</div>
+                      </div>
+                      <div style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 12, padding: 20 }}>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>This Week</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#a855f7' }}>${shopStats.revenue.week.toFixed(2)}</div>
+                      </div>
+                      <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: 20 }}>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Team Members</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#f59e0b' }}>{shopStats.team.total}</div>
+                        <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>{shopStats.team.clockedIn} clocked in</div>
+                      </div>
+                      <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 12, padding: 20 }}>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Pending Actions</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#e5332a' }}>
+                          {shopStats.workOrders.pendingApprovals + shopStats.inventory.pendingRequests}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
+                          {shopStats.workOrders.pendingApprovals} orders, {shopStats.inventory.pendingRequests} inventory
                         </div>
                       </div>
-                    ))}
-                  </div>
+                      <div style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 12, padding: 20 }}>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Inventory Items</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#6366f1' }}>{inventoryStock.length}</div>
+                        <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
+                          {inventoryStock.filter((item: any) => item.quantity <= item.reorderPoint).length} low stock
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Inventory Summary Card */}
+                    <div style={{ 
+                      background: 'rgba(255,255,255,0.05)', 
+                      borderRadius: 12, 
+                      padding: 24, 
+                      marginBottom: 24 
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ fontSize: 24 }}>📦</div>
+                          <div>
+                            <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Current Inventory</h3>
+                            <div style={{ color: '#9aa3b2', fontSize: 13 }}>Parts and supplies in stock</div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setActiveTab('inventory')}
+                          style={{
+                            padding: '8px 16px',
+                            background: 'rgba(99,102,241,0.2)',
+                            border: '1px solid rgba(99,102,241,0.3)',
+                            borderRadius: 8,
+                            color: '#6366f1',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          + Add Inventory
+                        </button>
+                      </div>
+
+                      {inventoryStock.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
+                          <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
+                          <div>No inventory items yet</div>
+                          <div style={{ fontSize: 13 }}>Click "Add Inventory" to start tracking parts and supplies</div>
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16, marginBottom: 16 }}>
+                            {/* Total Value */}
+                            <div style={{ 
+                              background: 'rgba(34,197,94,0.1)', 
+                              border: '1px solid rgba(34,197,94,0.3)', 
+                              borderRadius: 8, 
+                              padding: 16 
+                            }}>
+                              <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Total Value</div>
+                              <div style={{ fontSize: 24, fontWeight: 700, color: '#22c55e' }}>
+                                ${inventoryStock.reduce((sum: number, item: any) => sum + (item.quantity * item.unitCost), 0).toFixed(2)}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
+                                {inventoryStock.reduce((sum: number, item: any) => sum + item.quantity, 0)} total units
+                              </div>
+                            </div>
+
+                            {/* Low Stock Alert */}
+                            <div style={{ 
+                              background: 'rgba(245,158,11,0.1)', 
+                              border: '1px solid rgba(245,158,11,0.3)', 
+                              borderRadius: 8, 
+                              padding: 16 
+                            }}>
+                              <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Low Stock Items</div>
+                              <div style={{ fontSize: 24, fontWeight: 700, color: '#f59e0b' }}>
+                                {inventoryStock.filter((item: any) => item.quantity <= item.reorderPoint).length}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>Need reorder</div>
+                            </div>
+
+                            {/* Suppliers */}
+                            <div style={{ 
+                              background: 'rgba(99,102,241,0.1)', 
+                              border: '1px solid rgba(99,102,241,0.3)', 
+                              borderRadius: 8, 
+                              padding: 16 
+                            }}>
+                              <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Suppliers</div>
+                              <div style={{ fontSize: 24, fontWeight: 700, color: '#6366f1' }}>
+                                {new Set(inventoryStock.filter((item: any) => item.supplier).map((item: any) => item.supplier)).size}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>Active vendors</div>
+                            </div>
+
+                            {/* Categories */}
+                            <div style={{ 
+                              background: 'rgba(168,85,247,0.1)', 
+                              border: '1px solid rgba(168,85,247,0.3)', 
+                              borderRadius: 8, 
+                              padding: 16 
+                            }}>
+                              <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Categories</div>
+                              <div style={{ fontSize: 24, fontWeight: 700, color: '#a855f7' }}>
+                                {new Set(inventoryStock.filter((item: any) => item.category).map((item: any) => item.category)).size}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>Item types</div>
+                            </div>
+                          </div>
+
+                          {/* Quick View Table */}
+                          <div style={{ 
+                            background: 'rgba(0,0,0,0.2)', 
+                            borderRadius: 8, 
+                            overflow: 'hidden',
+                            maxHeight: 300,
+                            overflowY: 'auto'
+                          }}>
+                            <table style={{ width: '100%', fontSize: 13 }}>
+                              <thead style={{ background: 'rgba(0,0,0,0.3)', position: 'sticky', top: 0 }}>
+                                <tr>
+                                  <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Item</th>
+                                  <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>SKU</th>
+                                  <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Quantity</th>
+                                  <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Supplier</th>
+                                  <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Status</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {inventoryStock.slice(0, 10).map((item: any) => (
+                                  <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <td style={{ padding: 12, color: '#e5e7eb' }}>{item.itemName}</td>
+                                    <td style={{ padding: 12, color: '#9aa3b2' }}>{item.sku || '-'}</td>
+                                    <td style={{ padding: 12, color: item.quantity <= item.reorderPoint ? '#f59e0b' : '#22c55e', fontWeight: 600 }}>
+                                      {item.quantity}
+                                    </td>
+                                    <td style={{ padding: 12, color: '#9aa3b2' }}>{item.supplier || '-'}</td>
+                                    <td style={{ padding: 12 }}>
+                                      {item.quantity <= item.reorderPoint ? (
+                                        <span style={{ 
+                                          padding: '4px 8px', 
+                                          background: 'rgba(245,158,11,0.2)', 
+                                          border: '1px solid rgba(245,158,11,0.3)',
+                                          borderRadius: 4,
+                                          fontSize: 11,
+                                          color: '#f59e0b',
+                                          fontWeight: 600
+                                        }}>
+                                          LOW STOCK
+                                        </span>
+                                      ) : (
+                                        <span style={{ 
+                                          padding: '4px 8px', 
+                                          background: 'rgba(34,197,94,0.2)', 
+                                          border: '1px solid rgba(34,197,94,0.3)',
+                                          borderRadius: 4,
+                                          fontSize: 11,
+                                          color: '#22c55e',
+                                          fontWeight: 600
+                                        }}>
+                                          IN STOCK
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {inventoryStock.length > 10 && (
+                            <div style={{ textAlign: 'center', marginTop: 16 }}>
+                              <button
+                                onClick={() => setActiveTab('inventory')}
+                                style={{
+                                  padding: '8px 16px',
+                                  background: 'transparent',
+                                  border: '1px solid rgba(99,102,241,0.3)',
+                                  borderRadius: 8,
+                                  color: '#6366f1',
+                                  fontSize: 13,
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                View All {inventoryStock.length} Items →
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+
+                    {/* Shop Communications - MessagingCard */}
+                    <div style={{ marginBottom: 24 }}>
+                      <MessagingCard userId={userId} shopId={shopId} />
+                    </div>
+
+                    {/* Budget Tracking */}
+                    {budgetData && (budgetData.weeklyBudget > 0 || budgetData.monthlyBudget > 0) && (
+                      <div style={{ 
+                        background: 'rgba(255,255,255,0.05)', 
+                        borderRadius: 12, 
+                        padding: 24, 
+                        marginBottom: 24 
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                          <div style={{ fontSize: 24 }}>💰</div>
+                          <div>
+                            <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Payroll Budget Tracking</h3>
+                            <div style={{ color: '#9aa3b2', fontSize: 13 }}>Monitor spending against budget limits</div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                          {/* Weekly Budget */}
+                          {budgetData.weeklyBudget > 0 && (
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                <span style={{ color: '#e5e7eb', fontSize: 14, fontWeight: 600 }}>Weekly Budget</span>
+                                <span style={{ 
+                                  color: budgetData.weeklySpent > budgetData.weeklyBudget ? '#ef4444' : 
+                                         budgetData.weeklySpent / budgetData.weeklyBudget > 0.9 ? '#f59e0b' : '#22c55e',
+                                  fontSize: 14,
+                                  fontWeight: 600
+                                }}>
+                                  ${budgetData.weeklySpent.toFixed(2)} / ${budgetData.weeklyBudget.toFixed(2)}
+                                </span>
+                              </div>
+                              <div style={{ 
+                                width: '100%', 
+                                height: 24, 
+                                background: 'rgba(255,255,255,0.1)', 
+                                borderRadius: 12, 
+                                overflow: 'hidden',
+                                position: 'relative'
+                              }}>
+                                <div style={{
+                                  width: `${Math.min(100, (budgetData.weeklySpent / budgetData.weeklyBudget) * 100)}%`,
+                                  height: '100%',
+                                  background: budgetData.weeklySpent > budgetData.weeklyBudget ? 
+                                    'linear-gradient(90deg, #ef4444, #dc2626)' :
+                                    budgetData.weeklySpent / budgetData.weeklyBudget > 0.9 ?
+                                    'linear-gradient(90deg, #f59e0b, #d97706)' :
+                                    'linear-gradient(90deg, #22c55e, #16a34a)',
+                                  transition: 'width 0.3s ease',
+                                }} />
+                                <div style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: 11,
+                                  fontWeight: 700,
+                                  color: 'white',
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                                }}>
+                                  {Math.min(100, Math.round((budgetData.weeklySpent / budgetData.weeklyBudget) * 100))}%
+                                </div>
+                              </div>
+                              {budgetData.weeklySpent > budgetData.weeklyBudget && (
+                                <div style={{ 
+                                  marginTop: 8, 
+                                  padding: 8, 
+                                  background: 'rgba(239,68,68,0.1)', 
+                                  border: '1px solid rgba(239,68,68,0.3)',
+                                  borderRadius: 6,
+                                  fontSize: 12,
+                                  color: '#ef4444',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8
+                                }}>
+                                  <span>⚠️</span>
+                                  <span>Over budget by ${(budgetData.weeklySpent - budgetData.weeklyBudget).toFixed(2)}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Monthly Budget */}
+                          {budgetData.monthlyBudget > 0 && (
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                <span style={{ color: '#e5e7eb', fontSize: 14, fontWeight: 600 }}>Monthly Budget</span>
+                                <span style={{ 
+                                  color: budgetData.monthlySpent > budgetData.monthlyBudget ? '#ef4444' : 
+                                         budgetData.monthlySpent / budgetData.monthlyBudget > 0.9 ? '#f59e0b' : '#22c55e',
+                                  fontSize: 14,
+                                  fontWeight: 600
+                                }}>
+                                  ${budgetData.monthlySpent.toFixed(2)} / ${budgetData.monthlyBudget.toFixed(2)}
+                                </span>
+                              </div>
+                              <div style={{ 
+                                width: '100%', 
+                                height: 24, 
+                                background: 'rgba(255,255,255,0.1)', 
+                                borderRadius: 12, 
+                                overflow: 'hidden',
+                                position: 'relative'
+                              }}>
+                                <div style={{
+                                  width: `${Math.min(100, (budgetData.monthlySpent / budgetData.monthlyBudget) * 100)}%`,
+                                  height: '100%',
+                                  background: budgetData.monthlySpent > budgetData.monthlyBudget ? 
+                                    'linear-gradient(90deg, #ef4444, #dc2626)' :
+                                    budgetData.monthlySpent / budgetData.monthlyBudget > 0.9 ?
+                                    'linear-gradient(90deg, #f59e0b, #d97706)' :
+                                    'linear-gradient(90deg, #22c55e, #16a34a)',
+                                  transition: 'width 0.3s ease',
+                                }} />
+                                <div style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: 11,
+                                  fontWeight: 700,
+                                  color: 'white',
+                                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                                }}>
+                                  {Math.min(100, Math.round((budgetData.monthlySpent / budgetData.monthlyBudget) * 100))}%
+                                </div>
+                              </div>
+                              {budgetData.monthlySpent > budgetData.monthlyBudget && (
+                                <div style={{ 
+                                  marginTop: 8, 
+                                  padding: 8, 
+                                  background: 'rgba(239,68,68,0.1)', 
+                                  border: '1px solid rgba(239,68,68,0.3)',
+                                  borderRadius: 6,
+                                  fontSize: 12,
+                                  color: '#ef4444',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8
+                                }}>
+                                  <span>⚠️</span>
+                                  <span>Over budget by ${(budgetData.monthlySpent - budgetData.monthlyBudget).toFixed(2)}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Budget Alert Banner */}
+                        {(budgetData.weeklySpent > budgetData.weeklyBudget || budgetData.monthlySpent > budgetData.monthlyBudget) && (
+                          <div style={{
+                            marginTop: 20,
+                            padding: 16,
+                            background: 'rgba(239,68,68,0.15)',
+                            border: '2px solid rgba(239,68,68,0.4)',
+                            borderRadius: 8,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 12
+                          }}>
+                            <div style={{ fontSize: 32 }}>🚨</div>
+                            <div>
+                              <div style={{ color: '#ef4444', fontWeight: 700, fontSize: 15, marginBottom: 4 }}>
+                                Budget Alert: Payroll Spending Exceeded
+                              </div>
+                              <div style={{ color: '#e5e7eb', fontSize: 13 }}>
+                                Review your payroll expenses and consider adjusting team schedules or budget limits.
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                      {/* Currently Clocked In */}
+                      <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                          <div style={{ fontSize: 24 }}>⏰</div>
+                          <div>
+                            <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Currently Clocked In</h3>
+                            <div style={{ color: '#9aa3b2', fontSize: 13 }}>{shopStats.team.clockedIn} employees working</div>
+                          </div>
+                        </div>
+
+                        {shopStats.team.currentlyWorking.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
+                            <div style={{ fontSize: 48, marginBottom: 12 }}>🕐</div>
+                            <div>No one currently clocked in</div>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'grid', gap: 8 }}>
+                            {shopStats.team.currentlyWorking.map((emp: any) => (
+                              <div key={emp.id} style={{ 
+                                background: 'rgba(34,197,94,0.1)', 
+                                border: '1px solid rgba(34,197,94,0.3)', 
+                                borderRadius: 8, 
+                                padding: 12,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                              }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                  <div style={{ 
+                                    width: 32, 
+                                    height: 32, 
+                                    borderRadius: '50%', 
+                                    background: 'rgba(34,197,94,0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: 16
+                                  }}>
+                                    {emp.role === 'manager' ? '👔' : '🔧'}
+                                  </div>
+                                  <div>
+                                    <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 14 }}>{emp.name}</div>
+                                    <div style={{ color: '#9aa3b2', fontSize: 12 }}>
+                                      Clocked in at {new Date(emp.clockedInAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div style={{ color: '#22c55e', fontWeight: 700, fontSize: 14 }}>
+                                  {emp.currentHours?.toFixed(1) || '0.0'}h
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Quick Actions */}
+                      <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                          <div style={{ fontSize: 24 }}>⚡</div>
+                          <div>
+                            <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Quick Actions</h3>
+                            <div style={{ color: '#9aa3b2', fontSize: 13 }}>Common tasks and shortcuts</div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gap: 12 }}>
+                          <button
+                            onClick={() => setActiveTab('team')}
+                            style={{
+                              width: '100%',
+                              padding: 16,
+                              background: 'rgba(59,130,246,0.2)',
+                              border: '1px solid rgba(59,130,246,0.3)',
+                              borderRadius: 8,
+                              color: '#3b82f6',
+                              fontSize: 14,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 12,
+                            }}
+                          >
+                            <span style={{ fontSize: 20 }}>👥</span>
+                            <div>
+                              <div>Manage Team</div>
+                              <div style={{ fontSize: 11, opacity: 0.8 }}>Add or edit team members</div>
+                            </div>
+                          </button>
+
+                          <button
+                            onClick={() => setActiveTab('payroll')}
+                            style={{
+                              width: '100%',
+                              padding: 16,
+                              background: 'rgba(34,197,94,0.2)',
+                              border: '1px solid rgba(34,197,94,0.3)',
+                              borderRadius: 8,
+                              color: '#22c55e',
+                              fontSize: 14,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 12,
+                            }}
+                          >
+                            <span style={{ fontSize: 20 }}>💰</span>
+                            <div>
+                              <div>Generate Payroll</div>
+                              <div style={{ fontSize: 11, opacity: 0.8 }}>Download employee hours report</div>
+                            </div>
+                          </button>
+
+                          <button
+                            onClick={() => setActiveTab('settings')}
+                            style={{
+                              width: '100%',
+                              padding: 16,
+                              background: 'rgba(168,85,247,0.2)',
+                              border: '1px solid rgba(168,85,247,0.3)',
+                              borderRadius: 8,
+                              color: '#a855f7',
+                              fontSize: 14,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 12,
+                            }}
+                          >
+                            <span style={{ fontSize: 20 }}>⚙️</span>
+                            <div>
+                              <div>Shop Settings</div>
+                              <div style={{ fontSize: 11, opacity: 0.8 }}>Configure rates and margins</div>
+                            </div>
+                          </button>
+
+                          {shopStats.inventory.pendingRequests > 0 && (
+                            <Link href="/shop/home" style={{ textDecoration: 'none' }}>
+                              <button style={{
+                                width: '100%',
+                                padding: 16,
+                                background: 'rgba(229,51,42,0.2)',
+                                border: '1px solid rgba(229,51,42,0.3)',
+                                borderRadius: 8,
+                                color: '#e5332a',
+                                fontSize: 14,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                              }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                  <span style={{ fontSize: 20 }}>📦</span>
+                                  <div>
+                                    <div>Pending Inventory Requests</div>
+                                    <div style={{ fontSize: 11, opacity: 0.8 }}>Requires approval</div>
+                                  </div>
+                                </div>
+                                <div style={{
+                                  padding: '4px 12px',
+                                  background: '#e5332a',
+                                  borderRadius: 12,
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                }}>
+                                  {shopStats.inventory.pendingRequests}
+                                </div>
+                              </button>
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
-
-              {/* Quick Actions */}
-              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24 }}>
-                <h3 style={{ color: '#e5e7eb', marginBottom: 20, fontSize: 18 }}>Quick Actions</h3>
-                <div style={{ display: 'grid', gap: 12 }}>
-                  <Link href="/shop/home" style={{ textDecoration: 'none' }}>
-                    <button style={{
-                      width: '100%',
-                      padding: 16,
-                      background: 'rgba(59,130,246,0.2)',
-                      border: '1px solid rgba(59,130,246,0.3)',
-                      borderRadius: 8,
-                      color: '#3b82f6',
-                      fontSize: 14,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                    }}>
-                      <span style={{ fontSize: 20 }}>📊</span>
-                      <div>
-                        <div>Shop Dashboard</div>
-                        <div style={{ fontSize: 11, opacity: 0.8 }}>View all work orders and operations</div>
-                      </div>
-                    </button>
-                  </Link>
-
-                  <Link href="/shop/manage-team" style={{ textDecoration: 'none' }}>
-                    <button style={{
-                      width: '100%',
-                      padding: 16,
-                      background: 'rgba(245,158,11,0.2)',
-                      border: '1px solid rgba(245,158,11,0.3)',
-                      borderRadius: 8,
-                      color: '#f59e0b',
-                      fontSize: 14,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                    }}>
-                      <span style={{ fontSize: 20 }}>👥</span>
-                      <div>
-                        <div>Manage Team</div>
-                        <div style={{ fontSize: 11, opacity: 0.8 }}>Add or edit team members</div>
-                      </div>
-                    </button>
-                  </Link>
-
-                  <button
-                    onClick={() => setActiveTab('payroll')}
-                    style={{
-                      width: '100%',
-                      padding: 16,
-                      background: 'rgba(34,197,94,0.2)',
-                      border: '1px solid rgba(34,197,94,0.3)',
-                      borderRadius: 8,
-                      color: '#22c55e',
-                      fontSize: 14,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                    }}
-                  >
-                    <span style={{ fontSize: 20 }}>💰</span>
-                    <div>
-                      <div>Generate Payroll</div>
-                      <div style={{ fontSize: 11, opacity: 0.8 }}>Download employee hours report</div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('settings')}
-                    style={{
-                      width: '100%',
-                      padding: 16,
-                      background: 'rgba(168,85,247,0.2)',
-                      border: '1px solid rgba(168,85,247,0.3)',
-                      borderRadius: 8,
-                      color: '#a855f7',
-                      fontSize: 14,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12,
-                    }}
-                  >
-                    <span style={{ fontSize: 20 }}>⚙️</span>
-                    <div>
-                      <div>Shop Settings</div>
-                      <div style={{ fontSize: 11, opacity: 0.8 }}>Configure rates and margins</div>
-                    </div>
-                  </button>
-
-                  {shopStats.inventory.pendingRequests > 0 && (
-                    <Link href="/shop/home" style={{ textDecoration: 'none' }}>
-                      <button style={{
-                        width: '100%',
-                        padding: 16,
-                        background: 'rgba(229,51,42,0.2)',
-                        border: '1px solid rgba(229,51,42,0.3)',
-                        borderRadius: 8,
-                        color: '#e5332a',
-                        fontSize: 14,
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <span style={{ fontSize: 20 }}>📦</span>
-                          <div>
-                            <div>Pending Inventory Requests</div>
-                            <div style={{ fontSize: 11, opacity: 0.8 }}>Requires approval</div>
-                          </div>
-                        </div>
-                        <div style={{
-                          padding: '4px 12px',
-                          background: '#e5332a',
-                          borderRadius: 12,
-                          fontSize: 12,
-                          fontWeight: 700,
-                        }}>
-                          {shopStats.inventory.pendingRequests}
-                        </div>
-                      </button>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-              </>
             )}
-          </div>
-        )}
 
-        {/* Settings Tab */}
-        {activeTab === 'settings' && settings && (
-          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 32 }}>
-            <h2 style={{ color: '#e5e7eb', marginBottom: 24, fontSize: 24 }}>Shop Settings</h2>
+            {/* Settings Tab */}
+            {activeTab === 'settings' && settings && (
+              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 32 }}>
+                <h2 style={{ color: '#e5e7eb', marginBottom: 24, fontSize: 24 }}>Shop Settings</h2>
 
-            <div style={{ display: 'grid', gap: 24 }}>
-              <div>
-                <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                  Default Labor Rate (per hour)
-                </label>
-                <input
-                  type="number"
-                  value={settings.defaultLaborRate}
-                  onChange={(e) => setSettings({ ...settings, defaultLaborRate: parseFloat(e.target.value) })}
-                  style={{
-                    width: '100%',
-                    padding: 12,
-                    borderRadius: 8,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    background: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                  }}
-                />
-              </div>
+                <div style={{ display: 'grid', gap: 24 }}>
+                  <div>
+                    <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
+                      Default Labor Rate (per hour)
+                    </label>
+                    <input
+                      type="number"
+                      value={settings.defaultLaborRate}
+                      onChange={(e) => setSettings({ ...settings, defaultLaborRate: parseFloat(e.target.value) })}
+                      style={{
+                        width: '100%',
+                        padding: 12,
+                        borderRadius: 8,
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        background: 'rgba(0,0,0,0.3)',
+                        color: 'white',
+                      }}
+                    />
+                  </div>
 
-              <div>
-                <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                  Default Profit Margin (0-1, e.g., 0.30 = 30%)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="1"
-                  value={settings.defaultProfitMargin}
-                  onChange={(e) => setSettings({ ...settings, defaultProfitMargin: parseFloat(e.target.value) })}
-                  style={{
-                    width: '100%',
-                    padding: 12,
-                    borderRadius: 8,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    background: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                  }}
-                />
-              </div>
+                  <div>
+                    <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
+                      Default Profit Margin (0-1, e.g., 0.30 = 30%)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={settings.defaultProfitMargin}
+                      onChange={(e) => setSettings({ ...settings, defaultProfitMargin: parseFloat(e.target.value) })}
+                      style={{
+                        width: '100%',
+                        padding: 12,
+                        borderRadius: 8,
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        background: 'rgba(0,0,0,0.3)',
+                        color: 'white',
+                      }}
+                    />
+                  </div>
 
-              <div>
-                <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                  Tax Rate (0-1, e.g., 0.08 = 8%)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="1"
-                  value={settings.taxRate}
-                  onChange={(e) => setSettings({ ...settings, taxRate: parseFloat(e.target.value) })}
-                  style={{
-                    width: '100%',
-                    padding: 12,
-                    borderRadius: 8,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    background: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#e5e7eb', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={settings.requireClockInOut}
-                    onChange={(e) => setSettings({ ...settings, requireClockInOut: e.target.checked })}
-                  />
-                  Require employees to clock in/out
-                </label>
-              </div>
-
-              {/* Overtime Settings */}
-              <div>
-                <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                  Overtime Multiplier (e.g., 1.5 = time and a half)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="1"
-                  value={settings.overtimeMultiplier || 1.5}
-                  onChange={(e) => setSettings({ ...settings, overtimeMultiplier: parseFloat(e.target.value) })}
-                  style={{
-                    width: '100%',
-                    padding: 12,
-                    borderRadius: 8,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    background: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                  }}
-                />
-              </div>
-
-              {/* Budget Settings */}
-              <div style={{ 
-                marginTop: 24, 
-                paddingTop: 24, 
-                borderTop: '1px solid rgba(255,255,255,0.1)' 
-              }}>
-                <h3 style={{ color: '#e5e7eb', marginBottom: 16, fontSize: 18 }}>💰 Payroll Budget Limits</h3>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
                     <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
                       Weekly Payroll Budget ($)
@@ -1462,761 +1205,647 @@ export default function ShopAdminPage() {
                       }}
                     />
                   </div>
-                </div>
-                <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 8 }}>
-                  Set budget limits to track payroll spending. Leave blank to disable budget tracking.
-                </div>
-              </div>
 
-              {/* GPS Verification Settings */}
-              <div style={{ 
-                marginTop: 24, 
-                paddingTop: 24, 
-                borderTop: '1px solid rgba(255,255,255,0.1)' 
-              }}>
-                <h3 style={{ color: '#e5e7eb', marginBottom: 16, fontSize: 18 }}>📍 GPS Verification</h3>
-                
-                <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#e5e7eb', cursor: 'pointer', marginBottom: 16 }}>
-                    <input
-                      type="checkbox"
-                      checked={settings.gpsVerificationEnabled || false}
-                      onChange={(e) => setSettings({ ...settings, gpsVerificationEnabled: e.target.checked })}
-                    />
-                    Enable GPS verification for clock in/out
-                  </label>
-                </div>
-
-                {settings.gpsVerificationEnabled && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-                    <div>
-                      <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                        Shop Latitude
-                      </label>
-                      <input
-                        type="number"
-                        step="0.000001"
-                        value={settings.shopLatitude || ''}
-                        onChange={(e) => setSettings({ ...settings, shopLatitude: e.target.value ? parseFloat(e.target.value) : null })}
-                        placeholder="e.g., 40.7128"
-                        style={{
-                          width: '100%',
-                          padding: 12,
-                          borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,0.2)',
-                          background: 'rgba(0,0,0,0.3)',
-                          color: 'white',
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                        Shop Longitude
-                      </label>
-                      <input
-                        type="number"
-                        step="0.000001"
-                        value={settings.shopLongitude || ''}
-                        onChange={(e) => setSettings({ ...settings, shopLongitude: e.target.value ? parseFloat(e.target.value) : null })}
-                        placeholder="e.g., -74.0060"
-                        style={{
-                          width: '100%',
-                          padding: 12,
-                          borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,0.2)',
-                          background: 'rgba(0,0,0,0.3)',
-                          color: 'white',
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                        Radius (meters)
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={settings.gpsRadiusMeters || 100}
-                        onChange={(e) => setSettings({ ...settings, gpsRadiusMeters: parseInt(e.target.value) })}
-                        style={{
-                          width: '100%',
-                          padding: 12,
-                          borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,0.2)',
-                          background: 'rgba(0,0,0,0.3)',
-                          color: 'white',
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-                <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 8 }}>
-                  Employees must be within the specified radius to clock in/out.
-                </div>
-              </div>
-
-              <button
-                onClick={handleUpdateSettings}
-                disabled={loading}
-                style={{
-                  padding: '12px 24px',
-                  background: '#e5332a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 8,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontWeight: 600,
-                  opacity: loading ? 0.6 : 1,
-                }}
-              >
-                {loading ? 'Saving...' : 'Save Settings'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Payroll Tab */}
-        {activeTab === 'payroll' && (
-          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 32 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <div>
-                <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>💰 Payroll Report</h2>
-                <div style={{ color: '#9aa3b2', fontSize: 13, marginTop: 4 }}>Live view • Updates every 5 seconds</div>
-              </div>
-              <div style={{ display: 'flex', gap: 12 }}>
-                <button
-                  onClick={handleRefreshPayroll}
-                  disabled={loading}
-                  style={{
-                    padding: '10px 20px',
-                    background: '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    fontWeight: 600,
-                  }}
-                >
-                  {loading ? '⟳ Refreshing...' : '🔄 Refresh Now'}
-                </button>
-                {payrollData && payrollData.employees.length > 0 && (
-                  <>
-                    <button
-                      onClick={downloadPayrollCSV}
-                      style={{
-                        padding: '10px 20px',
-                        background: '#22c55e',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 8,
-                        cursor: 'pointer',
-                        fontWeight: 600,
-                      }}
-                    >
-                      📥 Download CSV
-                    </button>
-                    <button
-                      onClick={downloadPayrollPDF}
-                      disabled={generatingPDF}
-                      style={{
-                        padding: '10px 20px',
-                        background: '#ef4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 8,
-                        cursor: generatingPDF ? 'not-allowed' : 'pointer',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {generatingPDF ? 'Generating...' : '📄 Download PDF'}
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Date Range Picker */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24, background: 'rgba(0,0,0,0.3)', padding: 20, borderRadius: 8 }}>
-              <div>
-                <label style={{ color: '#9aa3b2', fontSize: 13, display: 'block', marginBottom: 8 }}>
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={payrollStartDate}
-                  onChange={(e) => setPayrollStartDate(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: 10,
-                    borderRadius: 6,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    background: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                  }}
-                />
-              </div>
-              <div>
-                <label style={{ color: '#9aa3b2', fontSize: 13, display: 'block', marginBottom: 8 }}>
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  value={payrollEndDate}
-                  onChange={(e) => setPayrollEndDate(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: 10,
-                    borderRadius: 6,
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    background: 'rgba(0,0,0,0.3)',
-                    color: 'white',
-                  }}
-                />
-              </div>
-            </div>
-
-            {payrollData && (
-              <div>
-                <div style={{ color: '#9aa3b2', marginBottom: 16 }}>
-                  Period: {payrollData.periodStart} to {payrollData.periodEnd}
-                </div>
-
-                {/* Summary */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
-                  <div style={{ background: 'rgba(59,130,246,0.1)', padding: 16, borderRadius: 8 }}>
-                    <div style={{ color: '#9aa3b2', fontSize: 13 }}>Total Employees</div>
-                    <div style={{ color: '#3b82f6', fontSize: 28, fontWeight: 700 }}>
-                      {payrollData.summary.totalEmployees}
-                    </div>
-                  </div>
-                  <div style={{ background: 'rgba(34,197,94,0.1)', padding: 16, borderRadius: 8 }}>
-                    <div style={{ color: '#9aa3b2', fontSize: 13 }}>Total Hours</div>
-                    <div style={{ color: '#22c55e', fontSize: 28, fontWeight: 700 }}>
-                      {payrollData.summary.totalHours.toFixed(2)}
-                    </div>
-                  </div>
-                  <div style={{ background: 'rgba(239,68,68,0.1)', padding: 16, borderRadius: 8 }}>
-                    <div style={{ color: '#9aa3b2', fontSize: 13 }}>Total Payroll</div>
-                    <div style={{ color: '#ef4444', fontSize: 28, fontWeight: 700 }}>
-                      ${payrollData.summary.totalPayroll.toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Employee Details - Clean List */}
-                <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 12, overflow: 'hidden' }}>
-                  {/* Header */}
+                  {/* GPS Verification Settings */}
                   <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
-                    gap: 16,
-                    padding: '12px 24px',
-                    background: 'rgba(255,255,255,0.05)',
-                    borderBottom: '1px solid rgba(255,255,255,0.1)',
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: '#9aa3b2',
-                    textTransform: 'uppercase'
+                    marginTop: 24, 
+                    paddingTop: 24, 
+                    borderTop: '1px solid rgba(255,255,255,0.1)' 
                   }}>
-                    <div>Employee</div>
-                    <div>Role</div>
-                    <div style={{ textAlign: 'right' }}>Hours</div>
-                    <div style={{ textAlign: 'right' }}>Rate</div>
-                    <div style={{ textAlign: 'right' }}>Total Pay</div>
+                    <h3 style={{ color: '#e5e7eb', marginBottom: 16, fontSize: 18 }}>📍 GPS Verification</h3>
+                    
+                    <div>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#e5e7eb', cursor: 'pointer', marginBottom: 16 }}>
+                        <input
+                          type="checkbox"
+                          checked={settings.gpsVerificationEnabled || false}
+                          onChange={(e) => setSettings({ ...settings, gpsVerificationEnabled: e.target.checked })}
+                        />
+                        Enable GPS verification for clock in/out
+                      </label>
+                    </div>
+
+                    {settings.gpsVerificationEnabled && (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                        <div>
+                          <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
+                            Shop Latitude
+                          </label>
+                          <input
+                            type="number"
+                            step="0.000001"
+                            value={settings.shopLatitude || ''}
+                            onChange={(e) => setSettings({ ...settings, shopLatitude: e.target.value ? parseFloat(e.target.value) : null })}
+                            placeholder="e.g., 40.7128"
+                            style={{
+                              width: '100%',
+                              padding: 12,
+                              borderRadius: 8,
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              background: 'rgba(0,0,0,0.3)',
+                              color: 'white',
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
+                            Shop Longitude
+                          </label>
+                          <input
+                            type="number"
+                            step="0.000001"
+                            value={settings.shopLongitude || ''}
+                            onChange={(e) => setSettings({ ...settings, shopLongitude: e.target.value ? parseFloat(e.target.value) : null })}
+                            placeholder="e.g., -74.0060"
+                            style={{
+                              width: '100%',
+                              padding: 12,
+                              borderRadius: 8,
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              background: 'rgba(0,0,0,0.3)',
+                              color: 'white',
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
+                            Radius (meters)
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={settings.gpsRadiusMeters || 100}
+                            onChange={(e) => setSettings({ ...settings, gpsRadiusMeters: parseInt(e.target.value) })}
+                            style={{
+                              width: '100%',
+                              padding: 12,
+                              borderRadius: 8,
+                              border: '1px solid rgba(255,255,255,0.2)',
+                              background: 'rgba(0,0,0,0.3)',
+                              color: 'white',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 8 }}>
+                      Employees must be within the specified radius to clock in/out.
+                    </div>
                   </div>
 
-                  {/* Employee Rows */}
-                  {payrollData.employees.map((emp: any, idx: number) => (
-                    <div 
-                      key={emp.id} 
-                      style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
-                        gap: 16,
-                        padding: '16px 24px',
-                        borderBottom: idx < payrollData.employees.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                        alignItems: 'center'
+                  <button
+                    onClick={handleUpdateSettings}
+                    disabled={loading}
+                    style={{
+                      padding: '12px 24px',
+                      background: '#e5332a',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: 8,
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      fontWeight: 600,
+                      opacity: loading ? 0.6 : 1,
+                    }}
+                  >
+                    {loading ? 'Saving...' : 'Save Settings'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Payroll Tab */}
+            {activeTab === 'payroll' && (
+              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 32 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                  <div>
+                    <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>💰 Payroll Report</h2>
+                    <div style={{ color: '#9aa3b2', fontSize: 13, marginTop: 4 }}>Live view • Updates every 5 seconds</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <button
+                      onClick={handleRefreshPayroll}
+                      disabled={loading}
+                      style={{
+                        padding: '10px 20px',
+                        background: '#3b82f6',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 8,
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        fontWeight: 600,
                       }}
                     >
-                      <div>
-                        <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 15 }}>{emp.name}</div>
-                        <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 2 }}>
-                          {emp.entries?.length || 0} shifts this period
+                      {loading ? '⟳ Refreshing...' : '🔄 Refresh Now'}
+                    </button>
+                    {payrollData && payrollData.employees.length > 0 && (
+                      <>
+                        <button
+                          onClick={downloadPayrollCSV}
+                          style={{
+                            padding: '10px 20px',
+                            background: '#22c55e',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: 8,
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                          }}
+                        >
+                          📥 Download CSV
+                        </button>
+                        <button
+                          onClick={downloadPayrollPDF}
+                          disabled={generatingPDF}
+                          style={{
+                            padding: '10px 20px',
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: 8,
+                            cursor: generatingPDF ? 'not-allowed' : 'pointer',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {generatingPDF ? 'Generating...' : '📄 Download PDF'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Date Range Picker */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24, background: 'rgba(0,0,0,0.3)', padding: 20, borderRadius: 8 }}>
+                  <div>
+                    <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      value={payrollStartDate}
+                      onChange={(e) => setPayrollStartDate(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: 12,
+                        borderRadius: 8,
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        background: 'rgba(0,0,0,0.3)',
+                        color: 'white',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      value={payrollEndDate}
+                      onChange={(e) => setPayrollEndDate(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: 12,
+                        borderRadius: 8,
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        background: 'rgba(0,0,0,0.3)',
+                        color: 'white',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {(!payrollData || payrollData.employees.length === 0) && (
+                  <div style={{ textAlign: 'center', padding: 48 }}>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>⏰</div>
+                    <div style={{ color: '#9aa3b2', fontSize: 16 }}>No completed time entries found</div>
+                    <div style={{ color: '#6b7280', fontSize: 13, marginTop: 8 }}>
+                      Time entries will appear here once employees clock out
+                    </div>
+                  </div>
+                )}
+
+                {payrollData && payrollData.employees.length > 0 && (
+                  <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, overflow: 'hidden' }}>
+                    <div style={{ padding: 20, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16 }}>
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Employees</div>
+                          <div style={{ color: '#e5e7eb', fontSize: 24, fontWeight: 700 }}>{payrollData.summary.totalEmployees}</div>
                         </div>
-                      </div>
-                      <div style={{ color: '#9aa3b2', fontSize: 14 }}>
-                        {emp.role === 'manager' ? '👔 Manager' : '🔧 Tech'}
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ color: '#3b82f6', fontWeight: 700, fontSize: 18 }}>
-                          {emp.totalHours.toFixed(1)}
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Hours</div>
+                          <div style={{ color: '#3b82f6', fontSize: 24, fontWeight: 700 }}>{payrollData.summary.totalHours.toFixed(1)}</div>
                         </div>
-                        <div style={{ color: '#9aa3b2', fontSize: 11 }}>hours</div>
-                      </div>
-                      <div style={{ textAlign: 'right', color: '#9aa3b2', fontSize: 14 }}>
-                        ${emp.hourlyRate || 0}/hr
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ 
-                          color: '#22c55e', 
-                          fontWeight: 700, 
-                          fontSize: 20,
-                          padding: '4px 12px',
-                          background: 'rgba(34,197,94,0.1)',
-                          borderRadius: 6,
-                          display: 'inline-block'
-                        }}>
-                          ${emp.totalPay.toFixed(2)}
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Payroll</div>
+                          <div style={{ color: '#22c55e', fontSize: 24, fontWeight: 700 }}>${payrollData.summary.totalPayroll.toFixed(2)}</div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', fontSize: 14 }}>
+                        <thead style={{ background: 'rgba(0,0,0,0.3)' }}>
+                          <tr>
+                            <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Employee</th>
+                            <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Role</th>
+                            <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontWeight: 600 }}>Total Hours</th>
+                            <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontWeight: 600 }}>Rate</th>
+                            <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontWeight: 600 }}>Total Pay</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {payrollData.employees.map((emp: any) => (
+                            <tr key={emp.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              <td style={{ padding: 16, color: '#e5e7eb', fontWeight: 600 }}>{emp.name}</td>
+                              <td style={{ padding: 16, color: '#9aa3b2' }}>
+                                {emp.role === 'manager' ? '👔 Manager' : '🔧 Tech'}
+                              </td>
+                              <td style={{ padding: 16, textAlign: 'center', color: '#3b82f6', fontWeight: 600 }}>
+                                {emp.totalHours.toFixed(1)}
+                              </td>
+                              <td style={{ padding: 16, textAlign: 'center', color: '#9aa3b2' }}>
+                                ${emp.hourlyRate || 0}
+                              </td>
+                              <td style={{ padding: 16, textAlign: 'center', color: '#22c55e', fontWeight: 700, fontSize: 16 }}>
+                                ${emp.totalPay.toFixed(2)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {(!payrollData || payrollData.employees.length === 0) && (
-              <div style={{ textAlign: 'center', padding: 48 }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>⏰</div>
-                <div style={{ color: '#9aa3b2', fontSize: 16 }}>No completed time entries found</div>
-                <div style={{ color: '#6b7280', fontSize: 13, marginTop: 8 }}>
-                  Time entries will appear here once employees clock out
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Team Management Tab */}
-        {activeTab === 'team' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>👥 Team Management</h2>
-              <Link href="/shop/manage-team" style={{
-                padding: '10px 20px',
-                background: 'rgba(59,130,246,0.2)',
-                color: '#3b82f6',
-                border: '1px solid rgba(59,130,246,0.3)',
-                borderRadius: 8,
-                textDecoration: 'none',
-                fontWeight: 600,
-                fontSize: 14
-              }}>
-                ➕ Add Team Member
-              </Link>
-            </div>
-
-            {teamData.length === 0 ? (
-              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 48, textAlign: 'center' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>👥</div>
-                <div style={{ color: '#9aa3b2', fontSize: 16 }}>No team members found</div>
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gap: 16 }}>
-                {teamData.map((member: any) => (
-                  <div key={member.id} style={{
-                    background: 'rgba(255,255,255,0.05)',
-                    border: member.isClockedIn ? '2px solid rgba(34,197,94,0.5)' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 12,
-                    padding: 24
+            {/* Team Management Tab */}
+            {activeTab === 'team' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                  <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>👥 Team Management</h2>
+                  <Link href="/shop/manage-team" style={{
+                    padding: '10px 20px',
+                    background: 'rgba(59,130,246,0.2)',
+                    color: '#3b82f6',
+                    border: '1px solid rgba(59,130,246,0.3)',
+                    borderRadius: 8,
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    fontSize: 14
                   }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 24 }}>
-                      {/* Member Info */}
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                          <div style={{ 
-                            width: 48, 
-                            height: 48, 
-                            borderRadius: '50%', 
-                            background: member.role === 'manager' ? 'rgba(139,92,246,0.2)' : 'rgba(59,130,246,0.2)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 20
-                          }}>
-                            {member.role === 'manager' ? '👔' : '🔧'}
-                          </div>
-                          <div>
-                            <div style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700 }}>{member.name}</div>
-                            <div style={{ color: '#9aa3b2', fontSize: 13 }}>
-                              {member.role === 'manager' ? 'Manager' : 'Technician'}
-                            </div>
-                          </div>
-                        </div>
-                        <div style={{ display: 'grid', gap: 6 }}>
-                          <div style={{ color: '#9aa3b2', fontSize: 13 }}>✉️ {member.email}</div>
-                          {member.phone && <div style={{ color: '#9aa3b2', fontSize: 13 }}>📱 {member.phone}</div>}
-                          {member.hourlyRate && (
-                            <div style={{ color: '#22c55e', fontSize: 14, fontWeight: 600, marginTop: 4 }}>
-                              💰 ${member.hourlyRate}/hr
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                    ➕ Add Team Member
+                  </Link>
+                </div>
 
-                      {/* Clock Status */}
-                      <div>
-                        <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 8 }}>CLOCK STATUS</div>
-                        {member.isClockedIn ? (
+                {teamData.length === 0 ? (
+                  <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 48, textAlign: 'center' }}>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>👥</div>
+                    <div style={{ color: '#9aa3b2', fontSize: 16 }}>No team members found</div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gap: 16 }}>
+                    {teamData.map((member: any) => (
+                      <div key={member.id} style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: member.isClockedIn ? '2px solid rgba(34,197,94,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: 12,
+                        padding: 24
+                      }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 24 }}>
+                          {/* Member Info */}
                           <div>
-                            <div style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 6,
-                              padding: '6px 12px',
-                              background: 'rgba(34,197,94,0.2)',
-                              border: '1px solid rgba(34,197,94,0.3)',
-                              borderRadius: 6,
-                              marginBottom: 8
-                            }}>
-                              <span style={{ color: '#22c55e', fontSize: 18 }}>●</span>
-                              <span style={{ color: '#22c55e', fontWeight: 700, fontSize: 14 }}>CLOCKED IN</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                              <div style={{ 
+                                width: 48, 
+                                height: 48, 
+                                borderRadius: '50%', 
+                                background: member.role === 'manager' ? 'rgba(139,92,246,0.2)' : 'rgba(59,130,246,0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: 20
+                              }}>
+                                {member.role === 'manager' ? '👔' : '🔧'}
+                              </div>
+                              <div>
+                                <div style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700 }}>{member.name}</div>
+                                <div style={{ color: '#9aa3b2', fontSize: 13, marginTop: 2 }}>
+                                  {member.role === 'manager' ? 'Manager' : 'Technician'}
+                                </div>
+                              </div>
                             </div>
-                            <div style={{ color: '#e5e7eb', fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-                              {Math.floor(member.currentSessionMinutes / 60)}h {member.currentSessionMinutes % 60}m
+                            {member.isClockedIn && (
+                              <div style={{ color: '#22c55e', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+                                🟢 Currently Clocked In
+                              </div>
+                            )}
+                            <div style={{ color: '#9aa3b2', fontSize: 12 }}>
+                              📧 {member.email}
                             </div>
                             <div style={{ color: '#9aa3b2', fontSize: 12 }}>
-                              Since {new Date(member.clockedInAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              📞 {member.phone || 'No phone'}
                             </div>
-                            {member.onBreak && (
-                              <div style={{
-                                marginTop: 8,
-                                padding: '4px 8px',
-                                background: 'rgba(245,158,11,0.2)',
-                                border: '1px solid rgba(245,158,11,0.3)',
-                                borderRadius: 4,
-                                color: '#f59e0b',
-                                fontSize: 11,
-                                fontWeight: 600
-                              }}>
-                                ☕ ON BREAK
+                            {member.isClockedIn && member.clockedInLocation && (
+                              <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 4 }}>
+                                📍 {member.clockedInLocation}
+                              </div>
+                            )}
+                            {member.isClockedIn && member.clockedInNotes && (
+                              <div style={{ color: '#9aa3b2', fontSize: 12 }}>
+                                📝 {member.clockedInNotes}
                               </div>
                             )}
                           </div>
-                        ) : (
-                          <div>
-                            <div style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 6,
-                              padding: '6px 12px',
-                              background: 'rgba(107,114,128,0.2)',
-                              border: '1px solid rgba(107,114,128,0.3)',
-                              borderRadius: 6
-                            }}>
-                              <span style={{ color: '#6b7280', fontSize: 18 }}>○</span>
-                              <span style={{ color: '#9aa3b2', fontWeight: 600, fontSize: 14 }}>CLOCKED OUT</span>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 4 }}>Weekly Hours</div>
+                            <div style={{ color: '#3b82f6', fontWeight: 700, fontSize: 18 }}>
+                              {member.weeklyHours.toFixed(1)}
                             </div>
                           </div>
-                        )}
-                      </div>
-
-                      {/* Week Stats */}
-                      <div>
-                        <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 8 }}>THIS WEEK</div>
-                        <div style={{ color: '#e5e7eb', fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
-                          {member.weeklyHours}h
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 4 }}>Hourly Rate</div>
+                            <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 16 }}>
+                              ${member.hourlyRate || 0}
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ color: '#9aa3b2', fontSize: 12 }}>{member.recentShifts} shifts</div>
-                        {member.weeklyHours > 0 && member.hourlyRate && (
-                          <div style={{ color: '#22c55e', fontSize: 14, fontWeight: 600, marginTop: 8 }}>
-                            ~${(member.weeklyHours * member.hourlyRate).toFixed(2)}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons and Additional Info */}
-                    <div style={{
-                      marginTop: 16,
-                      paddingTop: 16,
-                      borderTop: '1px solid rgba(255,255,255,0.1)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <div style={{ flex: 1 }}>
-                        {member.clockedInLocation && (
-                          <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 4 }}>
-                            📍 {member.clockedInLocation}
-                          </div>
-                        )}
-                        {member.clockedInNotes && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+                          <Link
+                            href={`/shop/admin/employee/${member.id}`}
+                            style={{
+                              padding: '8px 16px',
+                              background: 'rgba(59,130,246,0.2)',
+                              color: '#3b82f6',
+                              border: '1px solid rgba(59,130,246,0.3)',
+                              borderRadius: 6,
+                              textDecoration: 'none',
+                              fontSize: 13,
+                              fontWeight: 600,
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            👤 View Profile
+                          </Link>
                           <div style={{ color: '#9aa3b2', fontSize: 12 }}>
-                            📝 {member.clockedInNotes}
+                            Last active: {member.lastActive ? new Date(member.lastActive).toLocaleDateString() : 'Never'}
                           </div>
-                        )}
+                        </div>
                       </div>
-                      <Link
-                        href={`/shop/admin/employee/${member.id}`}
-                        style={{
-                          padding: '8px 16px',
-                          background: 'rgba(59,130,246,0.2)',
-                          color: '#3b82f6',
-                          border: '1px solid rgba(59,130,246,0.3)',
-                          borderRadius: 6,
-                          textDecoration: 'none',
-                          fontSize: 13,
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap'
-                        }}
-                      >
-                        👤 View Profile
-                      </Link>
+                    ))}
+                  </div>
+                )}
+
+                {/* Quick Stats Summary */}
+                <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+                  <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
+                    <div style={{ color: '#3b82f6', fontSize: 28, fontWeight: 700 }}>{teamData.length}</div>
+                    <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Members</div>
+                  </div>
+                  <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
+                    <div style={{ color: '#22c55e', fontSize: 28, fontWeight: 700 }}>
+                      {teamData.filter((m: any) => m.isClockedIn).length}
+                    </div>
+                    <div style={{ color: '#9aa3b2', fontSize: 12 }}>Clocked In Now</div>
+                  </div>
+                  <div style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
+                    <div style={{ color: '#8b5cf6', fontSize: 28, fontWeight: 700 }}>
+                      {teamData.reduce((sum: number, m: any) => sum + m.weeklyHours, 0).toFixed(1)}
+                    </div>
+                    <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Hours This Week</div>
+                  </div>
+                  <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
+                    <div style={{ color: '#f59e0b', fontSize: 28, fontWeight: 700 }}>
+                      {teamData.filter((m: any) => m.role === 'manager').length}
+                    </div>
+                    <div style={{ color: '#9aa3b2', fontSize: 12 }}>Managers</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Inventory Tab */}
+            {activeTab === 'inventory' && (
+              <div>
+                {/* Header with Filter */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                  <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>📦 Inventory Management</h2>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#e5e7eb', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={showLowStockOnly}
+                      onChange={(e) => {
+                        setShowLowStockOnly(e.target.checked);
+                        fetchInventoryStock(shopId);
+                      }}
+                    />
+                    Show Low Stock Only
+                  </label>
+                </div>
+
+                {/* Pending Requests Section */}
+                {inventoryRequests.length > 0 && (
+                  <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 12, padding: 24, marginBottom: 24 }}>
+                    <h3 style={{ color: '#ef4444', fontSize: 18, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span>⚠️</span>
+                      Pending Inventory Requests ({inventoryRequests.length})
+                    </h3>
+                    <div style={{ display: 'grid', gap: 12 }}>
+                      {inventoryRequests.map((request: any) => (
+                        <div key={request.id} style={{
+                          background: 'rgba(0,0,0,0.3)',
+                          border: '1px solid rgba(239,68,68,0.2)',
+                          borderRadius: 8,
+                          padding: 16,
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}>
+                          <div>
+                            <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 15, marginBottom: 4 }}>
+                              {request.itemName} (x{request.quantity})
+                            </div>
+                            <div style={{ color: '#9aa3b2', fontSize: 13 }}>
+                              Requested by: {request.requesterName} • {request.reason || 'No reason provided'}
+                            </div>
+                            <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 4 }}>
+                              Urgency: <span style={{ 
+                                color: request.urgency === 'urgent' ? '#ef4444' : 
+                                       request.urgency === 'high' ? '#f59e0b' : '#22c55e',
+                                fontWeight: 600
+                              }}>{request.urgency}</span>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <button
+                              onClick={async () => {
+                                const token = localStorage.getItem('token');
+                                await fetch('/api/shop/inventory-requests', {
+                                  method: 'PATCH',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                  body: JSON.stringify({
+                                    requestId: request.id,
+                                    status: 'approved',
+                                    approvedBy: localStorage.getItem('userId'),
+                                  }),
+                                });
+                                fetchInventoryRequests(shopId);
+                                fetchInventoryStock(shopId);
+                              }}
+                              style={{
+                                padding: '8px 16px',
+                                background: '#22c55e',
+                                border: 'none',
+                                borderRadius: 6,
+                                color: 'white',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              ✓ Approve
+                            </button>
+                            <button
+                              onClick={async () => {
+                                const token = localStorage.getItem('token');
+                                await fetch('/api/shop/inventory-requests', {
+                                  method: 'PATCH',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                  body: JSON.stringify({
+                                    requestId: request.id,
+                                    status: 'denied',
+                                    approvedBy: localStorage.getItem('userId'),
+                                  }),
+                                });
+                                fetchInventoryRequests(shopId);
+                              }}
+                              style={{
+                                padding: '8px 16px',
+                                background: 'rgba(239,68,68,0.2)',
+                                border: '1px solid rgba(239,68,68,0.3)',
+                                borderRadius: 6,
+                                color: '#ef4444',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              ✗ Deny
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                )}
 
-            {/* Quick Stats Summary */}
-            <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-              <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
-                <div style={{ color: '#3b82f6', fontSize: 28, fontWeight: 700 }}>{teamData.length}</div>
-                <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Members</div>
-              </div>
-              <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
-                <div style={{ color: '#22c55e', fontSize: 28, fontWeight: 700 }}>
-                  {teamData.filter((m: any) => m.isClockedIn).length}
-                </div>
-                <div style={{ color: '#9aa3b2', fontSize: 12 }}>Clocked In Now</div>
-              </div>
-              <div style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
-                <div style={{ color: '#8b5cf6', fontSize: 28, fontWeight: 700 }}>
-                  {teamData.reduce((sum: number, m: any) => sum + m.weeklyHours, 0).toFixed(1)}
-                </div>
-                <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Hours This Week</div>
-              </div>
-              <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: 16, textAlign: 'center' }}>
-                <div style={{ color: '#f59e0b', fontSize: 28, fontWeight: 700 }}>
-                  {teamData.filter((m: any) => m.role === 'manager').length}
-                </div>
-                <div style={{ color: '#9aa3b2', fontSize: 12 }}>Managers</div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Inventory Tab */}
-        {activeTab === 'inventory' && (
-          <div>
-            {/* Header with Filter */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>📦 Inventory Management</h2>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#e5e7eb', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={showLowStockOnly}
-                  onChange={(e) => {
-                    setShowLowStockOnly(e.target.checked);
-                    fetchInventoryStock(shopId);
-                  }}
-                />
-                Show Low Stock Only
-              </label>
-            </div>
-
-            {/* Pending Requests Section */}
-            {inventoryRequests.length > 0 && (
-              <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 12, padding: 24, marginBottom: 24 }}>
-                <h3 style={{ color: '#ef4444', fontSize: 18, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span>⚠️</span>
-                  Pending Inventory Requests ({inventoryRequests.length})
-                </h3>
-                <div style={{ display: 'grid', gap: 12 }}>
-                  {inventoryRequests.map((request: any) => (
-                    <div key={request.id} style={{
-                      background: 'rgba(0,0,0,0.3)',
-                      border: '1px solid rgba(239,68,68,0.2)',
-                      borderRadius: 8,
-                      padding: 16,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <div>
-                        <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 15, marginBottom: 4 }}>
-                          {request.itemName} (x{request.quantity})
-                        </div>
-                        <div style={{ color: '#9aa3b2', fontSize: 13 }}>
-                          Requested by: {request.requesterName} • {request.reason || 'No reason provided'}
-                        </div>
-                        <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 4 }}>
-                          Urgency: <span style={{ 
-                            color: request.urgency === 'urgent' ? '#ef4444' : 
-                                   request.urgency === 'high' ? '#f59e0b' : '#22c55e',
-                            fontWeight: 600
-                          }}>{request.urgency}</span>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <button
-                          onClick={async () => {
-                            const token = localStorage.getItem('token');
-                            await fetch('/api/shop/inventory-requests', {
-                              method: 'PATCH',
-                              headers: {
-                                'Content-Type': 'application/json',
-                                Authorization: `Bearer ${token}`,
-                              },
-                              body: JSON.stringify({
-                                requestId: request.id,
-                                status: 'approved',
-                                approvedBy: localStorage.getItem('userId'),
-                              }),
-                            });
-                            fetchInventoryRequests(shopId);
-                            fetchInventoryStock(shopId);
-                          }}
-                          style={{
-                            padding: '8px 16px',
-                            background: '#22c55e',
-                            border: 'none',
-                            borderRadius: 6,
-                            color: 'white',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                          }}
-                        >
-                          ✓ Approve
-                        </button>
-                        <button
-                          onClick={async () => {
-                            const token = localStorage.getItem('token');
-                            await fetch('/api/shop/inventory-requests', {
-                              method: 'PATCH',
-                              headers: {
-                                'Content-Type': 'application/json',
-                                Authorization: `Bearer ${token}`,
-                              },
-                              body: JSON.stringify({
-                                requestId: request.id,
-                                status: 'denied',
-                                approvedBy: localStorage.getItem('userId'),
-                              }),
-                            });
-                            fetchInventoryRequests(shopId);
-                          }}
-                          style={{
-                            padding: '8px 16px',
-                            background: 'rgba(239,68,68,0.2)',
-                            border: '1px solid rgba(239,68,68,0.3)',
-                            borderRadius: 6,
-                            color: '#ef4444',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                          }}
-                        >
-                          ✗ Deny
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Inventory Stock Table */}
-            <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, overflow: 'hidden' }}>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Item Name</th>
-                      <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>SKU</th>
-                      <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Category</th>
-                      <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Quantity</th>
-                      <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Reorder Point</th>
-                      <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Unit Cost</th>
-                      <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Location</th>
-                      <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {inventoryStock.length === 0 ? (
-                      <tr>
-                        <td colSpan={8} style={{ padding: 48, textAlign: 'center', color: '#9aa3b2' }}>
-                          <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
-                          <div>No inventory items found</div>
-                          <div style={{ fontSize: 13, marginTop: 8 }}>Add items using the API or import from CSV</div>
-                        </td>
-                      </tr>
-                    ) : (
-                      inventoryStock.map((item: any) => {
-                        const isLowStock = item.quantity <= item.reorderPoint;
-                        return (
-                          <tr key={item.id} style={{ 
-                            borderBottom: '1px solid rgba(255,255,255,0.05)',
-                            background: isLowStock ? 'rgba(239,68,68,0.05)' : 'transparent'
-                          }}>
-                            <td style={{ padding: 16, color: '#e5e7eb', fontWeight: 600 }}>{item.itemName}</td>
-                            <td style={{ padding: 16, color: '#9aa3b2', fontSize: 13 }}>{item.sku || '-'}</td>
-                            <td style={{ padding: 16, color: '#9aa3b2', fontSize: 13 }}>{item.category || '-'}</td>
-                            <td style={{ 
-                              padding: 16, 
-                              textAlign: 'center', 
-                              color: isLowStock ? '#ef4444' : '#e5e7eb',
-                              fontWeight: 700
-                            }}>
-                              {item.quantity}
-                            </td>
-                            <td style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13 }}>
-                              {item.reorderPoint}
-                            </td>
-                            <td style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13 }}>
-                              ${item.unitCost?.toFixed(2) || '0.00'}
-                            </td>
-                            <td style={{ padding: 16, color: '#9aa3b2', fontSize: 13 }}>{item.location || '-'}</td>
-                            <td style={{ padding: 16, textAlign: 'center' }}>
-                              {isLowStock ? (
-                                <span style={{
-                                  padding: '4px 12px',
-                                  background: 'rgba(239,68,68,0.2)',
-                                  border: '1px solid rgba(239,68,68,0.3)',
-                                  borderRadius: 12,
-                                  color: '#ef4444',
-                                  fontSize: 11,
-                                  fontWeight: 700,
-                                  display: 'inline-block'
-                                }}>
-                                  ⚠️ LOW STOCK
-                                </span>
-                              ) : (
-                                <span style={{
-                                  padding: '4px 12px',
-                                  background: 'rgba(34,197,94,0.2)',
-                                  border: '1px solid rgba(34,197,94,0.3)',
-                                  borderRadius: 12,
-                                  color: '#22c55e',
-                                  fontSize: 11,
-                                  fontWeight: 700,
-                                  display: 'inline-block'
-                                }}>
-                                  ✓ IN STOCK
-                                </span>
-                              )}
+                {/* Inventory Stock Table */}
+                <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, overflow: 'hidden' }}>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Item Name</th>
+                          <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>SKU</th>
+                          <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Category</th>
+                          <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Quantity</th>
+                          <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Reorder Point</th>
+                          <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Unit Cost</th>
+                          <th style={{ padding: 16, textAlign: 'left', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Location</th>
+                          <th style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13, fontWeight: 600 }}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inventoryStock.length === 0 ? (
+                          <tr>
+                            <td colSpan={8} style={{ padding: 48, textAlign: 'center', color: '#9aa3b2' }}>
+                              <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
+                              <div>No inventory items found</div>
+                              <div style={{ fontSize: 13, marginTop: 8 }}>Add items using the API or import from CSV</div>
                             </td>
                           </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                        ) : (
+                          inventoryStock.map((item: any) => {
+                            const isLowStock = item.quantity <= item.reorderPoint;
+                            return (
+                              <tr key={item.id} style={{ 
+                                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                background: isLowStock ? 'rgba(239,68,68,0.05)' : 'transparent'
+                              }}>
+                                <td style={{ padding: 16, color: '#e5e7eb', fontWeight: 600 }}>{item.itemName}</td>
+                                <td style={{ padding: 16, color: '#9aa3b2', fontSize: 13 }}>{item.sku || '-'}</td>
+                                <td style={{ padding: 16, color: '#9aa3b2', fontSize: 13 }}>{item.category || '-'}</td>
+                                <td style={{ 
+                                  padding: 16, 
+                                  textAlign: 'center', 
+                                  color: isLowStock ? '#ef4444' : '#e5e7eb',
+                                  fontWeight: 700
+                                }}>
+                                  {item.quantity}
+                                </td>
+                                <td style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13 }}>
+                                  {item.reorderPoint}
+                                </td>
+                                <td style={{ padding: 16, textAlign: 'center', color: '#9aa3b2', fontSize: 13 }}>
+                                  ${item.unitCost?.toFixed(2) || '0.00'}
+                                </td>
+                                <td style={{ padding: 16, color: '#9aa3b2', fontSize: 13 }}>{item.location || '-'}</td>
+                                <td style={{ padding: 16, textAlign: 'center' }}>
+                                  {isLowStock ? (
+                                    <span style={{
+                                      padding: '4px 12px',
+                                      background: 'rgba(239,68,68,0.2)',
+                                      border: '1px solid rgba(239,68,68,0.3)',
+                                      borderRadius: 12,
+                                      color: '#ef4444',
+                                      fontSize: 11,
+                                      fontWeight: 700,
+                                      display: 'inline-block'
+                                    }}>
+                                      ⚠️ LOW STOCK
+                                    </span>
+                                  ) : (
+                                    <span style={{
+                                      padding: '4px 12px',
+                                      background: 'rgba(34,197,94,0.2)',
+                                      border: '1px solid rgba(34,197,94,0.3)',
+                                      borderRadius: 12,
+                                      color: '#22c55e',
+                                      fontSize: 11,
+                                      fontWeight: 700,
+                                      display: 'inline-block'
+                                    }}>
+                                      ✓ IN STOCK
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-            {/* Add Inventory Button */}
-            <div style={{ marginTop: 24, textAlign: 'center' }}>
-              <div style={{ color: '#9aa3b2', fontSize: 13 }}>
-                To add new inventory items, use the <strong>POST /api/shop/inventory-stock</strong> endpoint or import from CSV
+                {/* Add Inventory Button */}
+                <div style={{ marginTop: 24, textAlign: 'center' }}>
+                  <div style={{ color: '#9aa3b2', fontSize: 13 }}>
+                    To add new inventory items, use the <strong>POST /api/shop/inventory-stock</strong> endpoint or import from CSV
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
-
+        </div>
       </div>
     </div>
   );
 }
+

@@ -4,10 +4,10 @@ import stripe from '@/lib/stripe';
 // DELETE /api/customers/payment-methods/[id] - Detach a payment method
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await stripe.paymentMethods.detach(id);
 
@@ -21,10 +21,10 @@ export async function DELETE(
 // PATCH /api/customers/payment-methods/[id] - Set as default
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { customerId } = body;
 

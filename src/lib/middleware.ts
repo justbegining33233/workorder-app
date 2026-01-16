@@ -13,6 +13,13 @@ export function getAuthToken(request: NextRequest): string | null {
   if (authHeader?.startsWith('Bearer ')) {
     return authHeader.substring(7);
   }
+  
+  // Also check for sos_auth cookie
+  const sosAuthCookie = request.cookies.get('sos_auth')?.value;
+  if (sosAuthCookie) {
+    return sosAuthCookie;
+  }
+  
   return null;
 }
 

@@ -57,7 +57,7 @@ export default function CustomerAppointmentsPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setAppointments(data);
+        setAppointments(data.appointments || []);
       }
     } catch (error) {
       console.error('Error fetching appointments:', error);

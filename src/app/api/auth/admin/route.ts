@@ -55,14 +55,16 @@ export async function POST(request: NextRequest) {
     const expiresAt = refreshExpiryDate();
     const userIp = request.headers.get('x-forwarded-for') || request.headers.get('host') || '';
     const userAgent = request.headers.get('user-agent') || '';
+    console.log('Creating refresh token for admin:', admin.id);
     const refresh = await (prisma as any).refreshToken.create({
       data: {
         tokenHash: refreshHash,
         adminId: admin.id,
-        metadata: { ip: userIp, agent: userAgent, csrfToken: csrf },
+        metadata: JSON.stringify({ ip: userIp, agent: userAgent, csrfToken: csrf }),
         expiresAt,
       }
     });
+    console.log('Refresh token created:', refresh.id);
 
     const response = NextResponse.json({
       id: admin.id,
@@ -75,14 +77,14 @@ export async function POST(request: NextRequest) {
     response.cookies.set('refresh_id', refresh.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
     response.cookies.set('refresh_sig', refreshRaw, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('csrf_token', csrf, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
@@ -98,7 +100,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('sos_auth', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 15, // 15 minutes
     });

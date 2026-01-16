@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     }
     const { workOrderId, amount, method, notes } = await request.json();
 
-    const workOrder = getWorkOrderById(workOrderId);
+    const workOrder = await getWorkOrderById(workOrderId);
     if (!workOrder) {
       return NextResponse.json({ error: 'Work order not found' }, { status: 404 });
     }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       status = 'closed';
     }
 
-    const updated = updateWorkOrder(workOrderId, { 
+    const updated = await updateWorkOrder(workOrderId, { 
       payments,
       status,
     });

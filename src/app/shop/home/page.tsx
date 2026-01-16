@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import TopNavBar from '@/components/TopNavBar';
+import Sidebar from '@/components/Sidebar';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import MessagingCard from '@/components/MessagingCard';
 
 interface Job {
@@ -33,6 +36,7 @@ interface InventoryItem {
 
 export default function ShopHome() {
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [shopId, setShopId] = useState('');
@@ -125,43 +129,21 @@ export default function ShopHome() {
   };
 
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
-      {/* Header */}
-      <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <div style={{display:'flex', alignItems:'center', gap:24}}>
-          <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>SOS</Link>
-          <div>
-            <div style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>{userName}</div>
-            <div style={{fontSize:12, color:'#9aa3b2'}}>Shop Dashboard</div>
-          </div>
-        </div>
-        <div style={{display:'flex', alignItems:'center', gap:16}}>
-          {/* Role-based back button */}
-          {userRole === 'admin' && (
-            <Link href="/admin/home" style={{padding:'8px 16px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:6, textDecoration:'none', fontSize:13, fontWeight:600}}>
-              ← Back to Admin Dashboard
-            </Link>
-          )}
-          {userRole === 'manager' && (
-            <Link href="/manager/home" style={{padding:'8px 16px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:6, textDecoration:'none', fontSize:13, fontWeight:600}}>
-              ← Back to Manager Dashboard
-            </Link>
-          )}
-          {userRole === 'tech' && (
-            <Link href="/tech/home" style={{padding:'8px 16px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:6, textDecoration:'none', fontSize:13, fontWeight:600}}>
-              ← Back to Tech Dashboard
-            </Link>
-          )}
-          <span style={{padding:'4px 12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', borderRadius:12, fontSize:12, fontWeight:600}}>
-            ● Open
-          </span>
-          <button onClick={handleSignOut} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
-            Sign Out
-          </button>
-        </div>
-      </div>
-
-      <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
+    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', display:'flex', flexDirection:'column'}}>
+      {/* Top Navigation */}
+      <TopNavBar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} showMenuButton={true} />
+      
+      {/* Breadcrumbs */}
+      <Breadcrumbs />
+      
+      {/* Main Layout with Sidebar */}
+      <div style={{display:'flex', flex:1}}>
+        {/* Sidebar */}
+        <Sidebar role="shop" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        
+        {/* Main Content */}
+        <div style={{flex:1, overflowY:'auto'}}>
+          <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
         {/* Shop Stats */}
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:16, marginBottom:32}}>
           <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
@@ -216,14 +198,7 @@ export default function ShopHome() {
                       <span style={{padding:'4px 12px', background:job.status === 'In Progress' ? 'rgba(34,197,94,0.2)' : job.status === 'Pending' ? 'rgba(245,158,11,0.2)' : 'rgba(59,130,246,0.2)', color:job.status === 'In Progress' ? '#22c55e' : job.status === 'Pending' ? '#f59e0b' : '#3b82f6', borderRadius:12, fontSize:12, fontWeight:600}}>
                         {job.status}
                       </span>
-                    </div>
-                    <div style={{display:'flex', gap:8}}>
-                      <Link href={`/workorders/${job.id}`} style={{flex:1}}>
-                        <button style={{width:'100%', padding:'8px', background:'#22c55e', color:'white', border:'none', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer'}}>
-                          Update Status
-                        </button>
-                      </Link>
-                      <Link href={`/workorders/${job.id}`} style={{flex:1}}>
+                      <Link href={`/workorders/${job.id}`}>
                         <button style={{width:'100%', padding:'8px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer'}}>
                           View Details
                         </button>
@@ -432,6 +407,8 @@ export default function ShopHome() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }

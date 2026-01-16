@@ -57,13 +57,14 @@ export async function POST(request: NextRequest) {
     const vehicle = await prisma.vehicle.create({
       data: {
         customerId: decoded.id,
+        vehicleType: 'car',
+        customer: { connect: { id: decoded.id } },
         make,
         model,
         year: parseInt(year),
         vin: vin || null,
         licensePlate: licensePlate || null,
-        color: color || null,
-        mileage: mileage ? parseInt(mileage) : null,
+        // mileage: mileage ? parseInt(mileage) : null,
       },
     });
 

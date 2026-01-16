@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
+import { customerLoginSchema } from '@/lib/validation';
+import { sanitizeObject } from '@/lib/sanitize';
 
 // @ts-ignore
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
@@ -9,14 +11,23 @@ import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/l
 // POST /api/auth/customer
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
-    if (!username || !password) {
-      return NextResponse.json({ error: 'Email/Username and password required' }, { status: 400 });
+    const body = await request.json();
+    const sanitizedBody = sanitizeObject(body);
+
+    // Validate input
+    const validationResult = customerLoginSchema.safeParse(sanitizedBody);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validationResult.error.issues },
+        { status: 400 }
+      );
     }
+
+    const { email, password } = validationResult.data;
 
     // Rate limiting - prevent brute force attacks
     const clientIP = getClientIP(request);
-    const rateLimitKey = `customer_login:${clientIP}:${username}`;
+    const rateLimitKey = `customer_login:${clientIP}:${email}`;
     const rateLimit = checkRateLimit(rateLimitKey);
     
     if (!rateLimit.success) {
@@ -26,12 +37,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find customer by username OR email
+    // Find customer by email OR username
     const customer = await prisma.customer.findFirst({
       where: {
         OR: [
-          { email: username },
-          { username: username }
+          { email: email },
+          { username: email } // Allow login with username too
         ]
       },
     });

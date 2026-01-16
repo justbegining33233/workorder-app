@@ -1,0 +1,11 @@
+console.log('\n=== Checking Your Current Login ===\n');
+console.log('Please run this in your browser console (F12):');
+console.log('');
+console.log('console.log("User Role:", localStorage.getItem("userRole"));');
+console.log('console.log("User Name:", localStorage.getItem("userName"));');
+console.log('console.log("User ID:", localStorage.getItem("userId"));');
+console.log('console.log("Shop ID:", localStorage.getItem("shopId"));');
+console.log('console.log("Is Shop Admin:", localStorage.getItem("isShopAdmin"));');
+console.log('console.log("Token:", localStorage.getItem("token"));');
+console.log('');
+console.log('This will tell us who you\'re logged in as!');

@@ -43,8 +43,9 @@ export async function GET(request: NextRequest) {
     const technicians = await prisma.tech.findMany({
       select: {
         id: true,
-        username: true,
         email: true,
+        firstName: true,
+        lastName: true,
         role: true,
         createdAt: true,
         updatedAt: true,
@@ -80,7 +81,7 @@ export async function GET(request: NextRequest) {
       })),
       ...technicians.map(tech => ({
         id: tech.id,
-        name: tech.username,
+        name: `${tech.firstName} ${tech.lastName}`,
         email: tech.email || '',
         role: tech.role === 'manager' ? 'manager' : 'technician',
         status: 'active',

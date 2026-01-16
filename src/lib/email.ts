@@ -126,3 +126,14 @@ export async function sendAppointmentReminder(
   `;
   await sendEmail(email, 'Appointment Reminder', html);
 }
+
+export async function sendLowStockEmail(email: string, itemName: string, quantity: number, reorderPoint: number) {
+  const html = `
+    <h1>Low Stock Alert</h1>
+    <p>Item: ${itemName}</p>
+    <p>Current quantity: ${quantity}</p>
+    <p>Reorder point: ${reorderPoint}</p>
+    <p>Please reorder soon.</p>
+  `;
+  await sendEmail(email, 'Low Stock Alert', html);
+}

@@ -1,15 +1,16 @@
-import winston from 'winston';
-
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    // Add file or external logging transports for production
-  ],
-});
+const logger = {
+  info: (message: string, ...args: any[]) => {
+    console.log(`[INFO] ${new Date().toISOString()}: ${message}`, ...args);
+  },
+  error: (message: string, ...args: any[]) => {
+    console.error(`[ERROR] ${new Date().toISOString()}: ${message}`, ...args);
+  },
+  warn: (message: string, ...args: any[]) => {
+    console.warn(`[WARN] ${new Date().toISOString()}: ${message}`, ...args);
+  },
+  debug: (message: string, ...args: any[]) => {
+    console.debug(`[DEBUG] ${new Date().toISOString()}: ${message}`, ...args);
+  },
+};
 
 export default logger;

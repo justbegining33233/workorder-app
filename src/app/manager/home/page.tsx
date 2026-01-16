@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TimeClock from '@/components/TimeClock';
 import MessagingCard from '@/components/MessagingCard';
+import TopNavBar from '@/components/TopNavBar';
+import Sidebar from '@/components/Sidebar';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function ManagerHome() {
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [shopId, setShopId] = useState('');
@@ -114,25 +118,21 @@ export default function ManagerHome() {
   };
 
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
-      {/* Header */}
-      <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <div style={{display:'flex', alignItems:'center', gap:24}}>
-          <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>SOS</Link>
-          <div>
-            <div style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}} suppressHydrationWarning>{shopName || 'Loading...'}</div>
-            <div style={{fontSize:12, color:'#9aa3b2'}}>Manager Dashboard</div>
-          </div>
-        </div>
-        <div style={{display:'flex', alignItems:'center', gap:16}}>
-          <span style={{fontSize:14, color:'#9aa3b2'}} suppressHydrationWarning>Welcome, {userName}</span>
-          <button onClick={handleSignOut} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
-            Sign Out
-          </button>
-        </div>
-      </div>
-
-      <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', display: 'flex', flexDirection: 'column' }}>
+      {/* Top Navigation */}
+      <TopNavBar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} showMenuButton={true} />
+      
+      {/* Breadcrumbs */}
+      <Breadcrumbs />
+      
+      {/* Main Layout with Sidebar */}
+      <div style={{ display: 'flex', flex: 1 }}>
+        {/* Sidebar */}
+        <Sidebar role="manager" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        
+        {/* Main Content */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
         <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:24}}>
           {/* Left Column */}
           <div style={{display:'grid', gap:24}}>
@@ -263,6 +263,9 @@ export default function ManagerHome() {
                 <Link href="/manager/assignments" style={{padding:12, background:'rgba(168,85,247,0.2)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:700, border:'1px solid rgba(168,85,247,0.3)'}}>
                   👥 Assign Work Orders
                 </Link>
+                <Link href="/manager/estimates" style={{padding:12, background:'rgba(34,197,94,0.2)', borderRadius:8, textDecoration:'none', color:'#22c55e', fontSize:14, fontWeight:700, border:'1px solid rgba(34,197,94,0.3)'}}>
+                  💰 Create Estimates
+                </Link>
                 <a href="/shop/home" style={{padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8, textDecoration:'none', color:'#3b82f6', fontSize:14, fontWeight:600, cursor:'pointer'}}>
                   📊 View Center Control
                 </a>
@@ -271,6 +274,8 @@ export default function ManagerHome() {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
           </div>
         </div>
       </div>

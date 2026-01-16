@@ -9,19 +9,17 @@ import { z } from 'zod';
 
 // Work Order Schemas
 export const workOrderUpdateSchema = z.object({
-  title: z.string().min(1).max(200).optional(),
-  description: z.string().max(5000).optional(),
+  issueDescription: z.string().max(5000).optional(),
   status: z.enum(['pending', 'in_progress', 'completed', 'cancelled', 'on_hold']).optional(),
-  priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   assignedTechId: z.string().uuid().nullable().optional(),
   customerId: z.string().uuid().optional(),
   vehicleId: z.string().uuid().nullable().optional(),
   estimatedCost: z.number().min(0).optional(),
-  actualCost: z.number().min(0).optional(),
   amountPaid: z.number().min(0).optional(),
   dueDate: z.string().datetime().optional(),
   completedAt: z.string().datetime().nullable().optional(),
   notes: z.string().max(2000).optional(),
+  statusReason: z.string().optional(),
 }).strict(); // Reject unknown fields
 
 // User Update Schemas

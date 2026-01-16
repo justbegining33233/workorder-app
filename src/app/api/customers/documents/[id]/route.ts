@@ -4,10 +4,10 @@ import prisma from '@/lib/prisma';
 // DELETE /api/customers/documents/[id] - Delete a document
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await prisma.customerDocument.delete({
       where: { id },

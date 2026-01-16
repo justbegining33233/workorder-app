@@ -28,34 +28,23 @@ export async function GET(
             firstName: true,
             lastName: true,
             email: true,
-            where: { id: DOMPurify.sanitize(id) },
-            include: {
-              customer: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                  phone: true,
-                },
-              },
-              shop: {
-                select: {
-                  id: true,
-                  shopName: true,
-                  phone: true,
-                  email: true,
-                },
-              },
-              assignedTo: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                },
-              },
-            },
-          });
+            phone: true,
+          },
+        },
+        shop: {
+          select: {
+            id: true,
+            shopName: true,
+            phone: true,
+            email: true,
+          },
+        },
+        assignedTo: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
         },
         messages: {
           orderBy: { createdAt: 'asc' },
@@ -135,7 +124,7 @@ export async function PUT(
           workOrderId: id,
           fromStatus: current.status,
           toStatus: data.status,
-          reason: data.statusReason,
+          reason: data.statusReason || 'Status updated',
           changedById: auth.role === 'tech' || auth.role === 'manager' ? auth.id : undefined,
         },
       });
@@ -151,40 +140,39 @@ export async function PUT(
           title: 'Work Order Status Updated',
           message: `Your work order ${id} status changed to ${data.status}`,
           workOrderId: id,
+          deliveryMethod: 'in-app',
         },
       });
     }
     
-    // Send estimate email if estimate added
-    if (data.estimate && !current.estimate) {
-      const estimate = data.estimate as Estimate;
-      if (estimate.amount) {
-        sendEstimateEmail(current.customer.email, id, estimate.amount).catch(console.error);
-      }
+    // Send estimate email if estimated cost added
+    if (data.estimatedCost && !current.estimatedCost) {
+      sendEstimateEmail(current.customer.email, id, data.estimatedCost).catch(console.error);
       
       await prisma.notification.create({
         data: {
           customerId: current.customerId,
           type: 'estimate',
           title: 'Estimate Ready',
-          message: `Your estimate for work order ${id} is ready: $${estimate.amount}`,
+          message: `Your estimate for work order ${id} is ready: $${data.estimatedCost}`,
           workOrderId: id,
+          deliveryMethod: 'in-app',
         },
       });
     }
     
-    // Update work order
     const updatedWorkOrder = await prisma.workOrder.update({
       where: { id },
       data: {
+        issueDescription: data.issueDescription,
         status: data.status,
-        assignedToId: data.assignedToId,
-        estimate: data.estimate,
-        techLabor: data.techLabor,
-        partsUsed: data.partsUsed,
-        workPhotos: data.workPhotos,
-        completion: data.completion,
-        completedAt: data.status === 'closed' ? new Date() : undefined,
+        assignedTechId: data.assignedTechId,
+        customerId: data.customerId,
+        vehicleId: data.vehicleId,
+        estimatedCost: data.estimatedCost,
+        amountPaid: data.amountPaid,
+        dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+        completedAt: data.completedAt ? new Date(data.completedAt) : (data.status === 'completed' ? new Date() : undefined),
       },
       include: {
         customer: true,

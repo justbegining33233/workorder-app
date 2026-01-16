@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function EmployeeProfile() {
   const router = useRouter();
   const params = useParams();
-  const employeeId = params.id as string;
+  const employeeId = (params?.id as string) || '';
   
   const [employee, setEmployee] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -18,14 +18,14 @@ export default function EmployeeProfile() {
   useEffect(() => {
     const role = localStorage.getItem('userRole');
     const admin = localStorage.getItem('isShopAdmin');
-    const id = localStorage.getItem('shopId');
+    const id = localStorage.getItem('shopId') || '';
 
     if (role !== 'shop' || admin !== 'true') {
       router.push('/shop/home');
       return;
     }
 
-    setShopId(id || '');
+    setShopId(id);
     if (id && employeeId) {
       fetchEmployeeData(id, employeeId);
     }

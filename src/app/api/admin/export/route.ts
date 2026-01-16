@@ -14,8 +14,8 @@ export async function GET(request: NextRequest) {
   // Export all work orders as CSV
   const workOrders = await prisma.workOrder.findMany();
   const csv = [
-    'ID,Title,Status,Priority,AssignedTo,DueDate',
-    ...workOrders.map(w => `${w.id},${w.title},${w.status},${w.priority},${w.assignedTo || ''},${w.dueDate || ''}`)
+    'ID,CustomerID,ShopID,Status,VehicleType,ServiceLocation,CreatedAt',
+    ...workOrders.map(w => `${w.id},${w.customerId},${w.shopId},${w.status},${w.vehicleType},${w.serviceLocation},${w.createdAt}`)
   ].join('\n');
   return new NextResponse(csv, {
     headers: {

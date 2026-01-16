@@ -15,7 +15,6 @@ export async function GET(request: Request) {
     // Get customer's stripe customer ID
     const customer = await prisma.customer.findUnique({
       where: { id: customerId },
-      select: { stripeCustomerId: true },
     });
 
     if (!customer?.stripeCustomerId) {
@@ -51,7 +50,6 @@ export async function POST(request: Request) {
     // Get or create stripe customer
     let customer = await prisma.customer.findUnique({
       where: { id: customerId },
-      select: { stripeCustomerId: true, email: true, username: true },
     });
 
     if (!customer) {
@@ -63,8 +61,8 @@ export async function POST(request: Request) {
     // Create stripe customer if doesn't exist
     if (!stripeCustomerId) {
       const stripeCustomer = await stripe.customers.create({
-        email: customer.email,
-        name: customer.username,
+        email: customer.email || '',
+        name: customer.username || `${customer.firstName} ${customer.lastName}`,
       });
       stripeCustomerId = stripeCustomer.id;
 
