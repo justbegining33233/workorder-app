@@ -165,15 +165,33 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (action === 'approve') {
-      // Update shop status to approved in database
+      // When approving, ensure the shop has usable credentials so the owner
+      // can immediately sign in. If username or password are missing we
+      // generate them here and return the plaintext password to the admin
+      // UI so it can be communicated to the shop owner.
+      const shouldSetUsername = !shop.username || shop.username.startsWith('pending_');
+      const newUsername = shouldSetUsername ? shop.email.split('@')[0] : shop.username;
+
+      // Generate a human-friendly temporary password when none exists
+      const { hashPassword, generateRandomToken } = await import('@/lib/auth');
+      let plainPassword: string | null = null;
+      let hashedPassword: string | undefined = undefined;
+
+      if (!shop.password) {
+        plainPassword = generateRandomToken(6); // 12 hex chars
+        hashedPassword = await hashPassword(plainPassword);
+      }
+
       const approvedShop = await prisma.shop.update({
         where: { id },
         data: {
           status: 'approved',
           approvedAt: new Date(),
+          username: newUsername || shop.username,
+          password: hashedPassword || shop.password,
         }
       });
-      
+
       return NextResponse.json({ 
         message: 'Shop approved successfully', 
         shop: {
@@ -181,6 +199,8 @@ export async function PATCH(request: NextRequest) {
           shopName: approvedShop.shopName,
           email: approvedShop.email,
           status: approvedShop.status,
+          username: approvedShop.username,
+          tempPassword: plainPassword || null,
         }
       });
     } else if (action === 'deny') {

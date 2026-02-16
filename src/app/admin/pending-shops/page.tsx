@@ -179,8 +179,14 @@ export default function PendingShops() {
       });
 
       if (response.ok) {
-        // Show success message
-        alert(`✅ ${shopToApprove.shopName} has been approved!\n\nThe shop will now be able to:\n• Log in to their account\n• Complete their profile (business license, insurance, services)\n• Access their dashboard\n• Receive work orders`);
+        const data = await response.json();
+        // Show success message and display generated credentials when present
+        let msg = `✅ ${shopToApprove.shopName} has been approved!\n\nThe shop will now be able to:\n• Log in to their account\n• Complete their profile (business license, insurance, services)\n• Access their dashboard\n• Receive work orders`;
+        if (data?.shop?.username && data?.shop?.tempPassword) {
+          msg += `\n\nCredentials:\nUsername: ${data.shop.username}\nPassword: ${data.shop.tempPassword}\n\nPlease tell the shop to change their password after first login.`;
+        }
+
+        alert(msg);
         fetchPendingShops();
         setShowDetails(false);
         setShowApproveConfirm(false);
