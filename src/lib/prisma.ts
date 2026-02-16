@@ -1,11 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 
-// Fallback: set DATABASE_URL from a tracked source if not already provided.
-// NOTE: this commits the production Neon connection string into the repo
-// (you requested it to be stored where Git won't ignore it).
-if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = 'postgresql://neondb_owner:npg_JxjuD0anSod6@ep-orange-silence-aichnpgk-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-}
+// IMPORTANT: do not hardcode DATABASE_URL here. Development should use `.env.local`
+// and production should set DATABASE_URL via environment variables. The previous
+// hard-coded Neon fallback has been removed so local dev can use a separate test
+// database (e.g. local Postgres) and Neon remains inert unless explicitly used.
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
