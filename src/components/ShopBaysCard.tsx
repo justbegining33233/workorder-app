@@ -30,15 +30,10 @@ interface ShopBaysCardProps {
   shopId: string;
 }
 
-interface Shop {
-  capacity: number;
-}
-
 export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
   const [bays, setBays] = useState<Bay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [shopCapacity, setShopCapacity] = useState<number>(1);
 
   useEffect(() => {
     fetchBayData();
@@ -55,19 +50,6 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
         return;
       }
 
-      // Fetch shop data to get capacity
-      const shopRes = await fetch(`/api/shops/${shopId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!shopRes.ok) {
-        throw new Error("Failed to fetch shop data");
-      }
-
-      const shopData = await shopRes.json();
-      const capacity = shopData.shop?.capacity || 1;
-      setShopCapacity(capacity);
-
       // Fetch active work orders with bay assignments
       const workOrdersRes = await fetch(`/api/workorders?shopId=${shopId}&status=in_progress&status=pending&limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -80,9 +62,9 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
       const workOrdersData = await workOrdersRes.json();
       const activeWorkOrders: WorkOrder[] = workOrdersData.workOrders || [];
 
-      // Create bays array based on shop capacity
+      // Create bays array (1-999)
       const baysArray: Bay[] = [];
-      for (let i = 1; i <= capacity; i++) {
+      for (let i = 1; i <= 999; i++) {
         baysArray.push({
           id: i,
           isOccupied: false,
@@ -184,7 +166,7 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
           🏪 Shop Bays
         </h2>
         <span style={{ color: "#9ca3af", fontSize: 12 }}>
-          {bays.filter(b => b.isOccupied).length} of {shopCapacity} bays occupied
+          {bays.filter(b => b.isOccupied).length} bays occupied
         </span>
       </div>
 
@@ -199,7 +181,7 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
           gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
           gap: 16
         }}>
-          {bays.map((bay) => (
+          {bays.slice(0, 50).map((bay) => ( // Show first 50 bays for demo
             <div
               key={bay.id}
               style={{
@@ -353,6 +335,17 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
             </div>
           ))}
         </div>
+
+        {bays.length > 50 && (
+          <div style={{
+            textAlign: "center",
+            marginTop: 20,
+            color: "#9ca3af",
+            fontSize: 12
+          }}>
+            Showing first 50 bays • Total: {bays.length} bays
+          </div>
+        )}
       </div>
     </div>
   );
