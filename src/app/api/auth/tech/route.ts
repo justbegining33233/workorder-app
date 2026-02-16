@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
+// `prisma` and `bcrypt` are lazy-imported inside the handler to avoid build-time
+// evaluation issues (native binaries / environment differences).
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
 // @ts-ignore
@@ -9,6 +9,11 @@ import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/l
 export async function POST(request: NextRequest) {
   try {
     const { username, password } = await request.json();
+
+    // Lazy-load runtime-sensitive modules to prevent import-time failures
+    const bcryptModule = await import('bcrypt');
+    const bcrypt = (bcryptModule && (bcryptModule.default ?? bcryptModule)) as typeof import('bcrypt');
+    const prisma = (await import('@/lib/prisma')).default;
 
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password required' }, { status: 400 });
