@@ -37,6 +37,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Lazy-load runtime-sensitive modules to avoid build-time import failures
+    const prisma = (await import('@/lib/prisma')).default;
+    const bcryptMod = await import('bcrypt');
+    const bcrypt = (bcryptMod && (bcryptMod.default ?? bcryptMod)) as typeof import('bcrypt');
+
     // Find customer by email OR username
     const customer = await prisma.customer.findFirst({
       where: {

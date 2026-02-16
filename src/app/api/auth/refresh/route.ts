@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
-
+// Lazy-load prisma & bcrypt inside handler
 // @ts-ignore
 import { generateAccessToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    // Lazy-load runtime-sensitive modules
+    const prisma = (await import('@/lib/prisma')).default;
+    const bcryptMod = await import('bcrypt');
+    const bcrypt = (bcryptMod && (bcryptMod.default ?? bcryptMod)) as typeof import('bcrypt');
+
     // Support new split cookies (`refresh_id` + `refresh_sig`) and legacy `refresh_token` cookie
     let id = request.cookies.get('refresh_id')?.value;
     let raw = request.cookies.get('refresh_sig')?.value;

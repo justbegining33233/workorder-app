@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+// Lazy-load prisma & bcrypt inside handler
 import { verifyPassword, generateToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
-import bcrypt from 'bcrypt';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -17,6 +16,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = loginSchema.parse(body);
     
+    // Lazy-load runtime-sensitive modules
+    const prisma = (await import('@/lib/prisma')).default;
+    const bcryptMod = await import('bcrypt');
+    const bcrypt = (bcryptMod && (bcryptMod.default ?? bcryptMod)) as typeof import('bcrypt');
+
     // Find customer by email or username
     const customer = await prisma.customer.findFirst({
       where: {

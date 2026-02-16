@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
+// Lazy-load `prisma` and `bcrypt` in the handler
 import { generateAccessToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
     const { username, password } = await request.json();
+
+    const prisma = (await import('@/lib/prisma')).default;
+    const bcryptMod = await import('bcrypt');
+    const bcrypt = (bcryptMod && (bcryptMod.default ?? bcryptMod)) as typeof import('bcrypt');
 
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password required' }, { status: 400 });
