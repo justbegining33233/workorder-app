@@ -1,8 +1,18 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-12-15.clover',
-});
+// Only instantiate Stripe when the secret key is provided. During build-time
+// (or in environments where Stripe isn't configured) constructing the Stripe
+// client with an empty key throws — that causes build failures when Next.js
+// collects page data. Export a safe proxy instead so imports don't throw.
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-12-15.clover' })
+  : new Proxy({}, {
+      get() {
+        return () => {
+          throw new Error('STRIPE_SECRET_KEY is not configured. Stripe methods are unavailable in this environment.');
+        };
+      },
+    }) as unknown as Stripe;
 
 export default stripe;
 
