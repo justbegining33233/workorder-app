@@ -65,4 +65,5 @@ const prisma = createPrisma();
 
 if (process.env.NODE_ENV !== 'production' && process.env.DATABASE_URL) globalForPrisma.prisma = prisma;
 
+export { prisma };
 export default prisma;
