@@ -11,6 +11,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // If Stripe is not configured in the environment (e.g. during build),
+    // return an empty list instead of calling the Stripe SDK.
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.warn('STRIPE_SECRET_KEY not set — returning empty payment methods');
+      return NextResponse.json({ paymentMethods: [] });
+    }
+
     // Get customer's stripe customer ID
     const customer = await prisma.customer.findUnique({
       where: { id: user.id },
