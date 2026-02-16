@@ -1,9 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 
-// IMPORTANT: do not hardcode DATABASE_URL here. Development should use `.env.local`
-// and production should set DATABASE_URL via environment variables. The previous
-// hard-coded Neon fallback has been removed so local dev can use a separate test
-// database (e.g. local Postgres) and Neon remains inert unless explicitly used.
+// IMPORTANT: do NOT commit production credentials.
+// `DATABASE_URL` must be supplied via environment variables (e.g. `.env.local` for dev
+// and your host provider's env settings for production). This prevents secrets from
+// being stored in source control.
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is required. Set it in .env.local or your deployment environment.');
+}
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
