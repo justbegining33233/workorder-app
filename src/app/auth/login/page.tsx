@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getCsrfToken } from '@/lib/clientCsrf';
+import { useAuth } from '@/contexts/AuthContext';
 import '@/styles/sos-theme.css';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
 
@@ -48,6 +50,7 @@ export default function LoginPage() {
 
   // Handle login submission
   const handleLoginSubmit = async (e: React.FormEvent) => {
+    console.log('🟢 [LOGIN] handleLoginSubmit called with:', loginForm);
     e.preventDefault();
     setErrors({});
 
@@ -82,12 +85,17 @@ export default function LoginPage() {
             const adminData = await adminResponse.json();
             console.log('🟢 [LOGIN] Admin data received:', adminData);
             console.log('🟢 [LOGIN] Access token:', adminData.accessToken);
-            localStorage.setItem('token', adminData.accessToken);
-            console.log('🟢 [LOGIN] Token saved to localStorage:', localStorage.getItem('token'));
-            localStorage.setItem('userRole', 'admin');
-            localStorage.setItem('userName', adminData.username);
-            localStorage.setItem('userId', adminData.id);
-            localStorage.setItem('isSuperAdmin', adminData.isSuperAdmin ? 'true' : 'false');
+            
+            // Use AuthContext login function
+            login({
+              token: adminData.accessToken,
+              role: 'admin',
+              name: adminData.username,
+              id: adminData.id,
+              isSuperAdmin: adminData.isSuperAdmin,
+            });
+            
+            console.log('🟢 [LOGIN] Calling router.push(/admin/home)');
             router.push('/admin/home');
             return;
           } else {
@@ -112,13 +120,15 @@ export default function LoginPage() {
           const techData = await techResponse.json();
           console.log('🟢 [LOGIN] Tech/Manager data received:', techData);
           console.log('🟢 [LOGIN] Access token:', techData.accessToken);
-          localStorage.setItem('token', techData.accessToken); // ✅ Save token!
-          console.log('🟢 [LOGIN] Token saved to localStorage:', localStorage.getItem('token'));
-          localStorage.setItem('userRole', techData.role); // 'tech' or 'manager'
-          localStorage.setItem('userName', techData.name);
-          localStorage.setItem('userId', techData.id);
-          localStorage.setItem('shopId', techData.shopId);
-          localStorage.removeItem('isShopAdmin');
+          
+          // Use AuthContext login function
+          login({
+            token: techData.accessToken,
+            role: techData.role,
+            name: techData.name,
+            id: techData.id,
+            shopId: techData.shopId,
+          });
           
           // Redirect based on role
           if (techData.role === 'tech') {
@@ -149,23 +159,25 @@ export default function LoginPage() {
 
           console.log('🟢 [FRONTEND] Shop login successful:', shopAccount);
 
-          // Shop login successful - store all auth data
-          localStorage.setItem('token', shopAccount.accessToken); // Store access token
-          localStorage.setItem('userRole', 'shop');
-          localStorage.setItem('userName', shopAccount.shopName);
-          localStorage.setItem('isShopAdmin', 'true');
-          localStorage.setItem('shopId', shopAccount.id);
-          localStorage.setItem('userId', shopAccount.id);
-
-          // Store profile completion status from database
-          if (shopAccount.profileComplete === true) {
-            localStorage.setItem('shopProfileComplete', 'true');
-          } else {
+          const profileComplete = !!shopAccount.profileComplete;
+          if (!profileComplete && typeof window !== 'undefined') {
             localStorage.removeItem('shopProfileComplete');
           }
 
-          console.log('🟢 [FRONTEND] Redirecting to /shop/admin');
-          router.push('/shop/admin');
+          // Use AuthContext login function
+          login({
+            token: shopAccount.accessToken,
+            role: 'shop',
+            name: shopAccount.shopName,
+            id: shopAccount.id,
+            shopId: shopAccount.id,
+            isShopAdmin: true,
+            shopProfileComplete: profileComplete,
+          });
+
+          const nextRoute = profileComplete ? '/shop/admin' : '/shop/complete-profile';
+          console.log('🟢 [FRONTEND] Redirecting to', nextRoute);
+          router.push(nextRoute);
           return;
         } else {
           // Handle non-JSON or non-OK bodies safely
@@ -205,7 +217,7 @@ export default function LoginPage() {
         const customerResponse = await fetch('/api/auth/customer', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: loginForm.username, password: loginForm.password }),
+          body: JSON.stringify({ email: loginForm.username, password: loginForm.password }),
           credentials: 'include',
         });
 
@@ -213,14 +225,21 @@ export default function LoginPage() {
           const customerData = await customerResponse.json();
           console.log('🟢 [FRONTEND] Customer login successful:', customerData);
 
-          localStorage.setItem('token', customerData.accessToken);
-          localStorage.setItem('userRole', 'customer');
-          localStorage.setItem('userName', customerData.fullName);
-          localStorage.setItem('userId', customerData.id);
-          localStorage.setItem('customerEmail', customerData.email);
+          // Map server response (accessToken + top-level user fields) to client shape
+          const token = customerData.token || customerData.accessToken || customerData.access_token;
+          const name = customerData.fullName || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
+          const id = customerData.id || (customerData.user && customerData.user.id);
 
-          console.log('🟢 [FRONTEND] Redirecting to /customer/features');
-          router.push('/customer/features');
+          // Use AuthContext login function
+          login({
+            token,
+            role: 'customer',
+            name: name || 'Customer',
+            id: id || '',
+          });
+
+          console.log('🟢 [FRONTEND] Redirecting to /customer/dashboard');
+          router.push('/customer/dashboard');
           return;
         } else {
           const text = await customerResponse.text().catch(() => '<<no body>>');

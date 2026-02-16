@@ -3,24 +3,42 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ReportsAnalytics() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth();
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
   const [dateRange, setDateRange] = useState('30days');
   const [selectedMetric, setSelectedMetric] = useState('revenue');
 
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
+
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const name = localStorage.getItem('userName');
-    if (!role) {
-      router.push('/auth/login');
-      return;
-    }
-    if (name) setUserName(name);
-    if (role) setUserRole(role);
-  }, [router]);
+    if (user?.name) setUserName(user.name);
+    if (user?.role) setUserRole(user.role);
+  }, [user]);
 
   const getDashboardLink = () => {
     switch (userRole) {

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface WorkOrder {
   id: string;
@@ -25,20 +26,38 @@ interface Tech {
 
 export default function AssignmentsPage() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['manager', 'shop']);
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
   const [techs, setTechs] = useState<Tech[]>([]);
   const [selectedWorkOrder, setSelectedWorkOrder] = useState<string | null>(null);
   const [selectedTech, setSelectedTech] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
+
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    if (role !== 'manager' && role !== 'shop') {
-      router.push('/auth/login');
-      return;
-    }
     fetchData();
-  }, [router]);
+  }, []);
 
   const fetchData = async () => {
     try {

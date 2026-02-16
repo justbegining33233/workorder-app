@@ -36,26 +36,34 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
         const now = new Date();
         const clockInTime = new Date(currentEntry.clockIn);
         let diff = now.getTime() - clockInTime.getTime();
-        
-        // Subtract break time if applicable
-        if (currentEntry.breakStart && currentEntry.breakEnd) {
-          const breakDuration = new Date(currentEntry.breakEnd).getTime() - new Date(currentEntry.breakStart).getTime();
-          diff -= breakDuration;
-        } else if (currentEntry.breakStart && onBreak) {
-          const breakSoFar = now.getTime() - new Date(currentEntry.breakStart).getTime();
+
+        // Support multiple breaks stored in `breaks` JSON (preferred) or legacy single breakStart/breakEnd
+        const breaksArray: any[] = currentEntry.breaks || [];
+        const activeBreak = breaksArray.length ? breaksArray[breaksArray.length - 1] : null;
+
+        // Subtract completed breaks
+        const completedBreakMinutes = breaksArray.reduce((acc, b) => acc + (b.durationMinutes || 0), 0);
+        diff -= (completedBreakMinutes * 60 * 1000);
+
+        // If an active break exists (no end) account for it in the live timer
+        if (activeBreak && !activeBreak.end) {
+          const breakSoFar = now.getTime() - new Date(activeBreak.start).getTime();
           diff -= breakSoFar;
-          
-          // Update break timer
+
           const breakHours = Math.floor(breakSoFar / (1000 * 60 * 60));
           const breakMinutes = Math.floor((breakSoFar % (1000 * 60 * 60)) / (1000 * 60));
           const breakSeconds = Math.floor((breakSoFar % (1000 * 60)) / 1000);
           setBreakTime(`${String(breakHours).padStart(2, '0')}:${String(breakMinutes).padStart(2, '0')}:${String(breakSeconds).padStart(2, '0')}`);
+        } else if (currentEntry.breakStart && currentEntry.breakEnd) {
+          // legacy single-break fallback (already accounted for in breakDuration)
+          const breakDuration = new Date(currentEntry.breakEnd).getTime() - new Date(currentEntry.breakStart).getTime();
+          diff -= breakDuration;
         }
-        
+
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        
+
         setElapsedTime(
           `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
         );
@@ -101,7 +109,9 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
         if (activeEntry) {
           setIsClockedIn(true);
           setCurrentEntry(activeEntry);
-          setOnBreak(activeEntry.breakStart && !activeEntry.breakEnd);
+          const breaksArray: any[] = activeEntry.breaks || [];
+          const lastBreak = breaksArray.length ? breaksArray[breaksArray.length - 1] : null;
+          setOnBreak((lastBreak && !lastBreak.end) || (activeEntry.breakStart && !activeEntry.breakEnd));
         }
       }
     } catch (error) {
@@ -411,7 +421,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
           <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>
             {onBreak ? '☕ On Break' : isClockedIn ? '⏰ Clocked In' : '⏱️ Time Clock'}
           </div>
-          <div style={{ fontSize: '20px', fontWeight: '600' }}>{techName}</div>
+          <div style={{ fontSize: '20px', fontWeight: '600' }}>{techName || 'You'}</div>
         </div>
         <div style={{
           width: '12px',

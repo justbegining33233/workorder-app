@@ -12,12 +12,12 @@ export interface LaborRate {
   rate: number; // per hour
 }
 
-let parts: InventoryPart[] = [
+const parts: InventoryPart[] = [
   { id: 'p1', name: 'Radiator', sku: 'RAD-001', quantity: 5, price: 320 },
   { id: 'p2', name: 'All-season tire', sku: 'TIRE-ALL-17', quantity: 24, price: 110 },
 ];
 
-let laborRates: LaborRate[] = [
+const laborRates: LaborRate[] = [
   { id: 'l1', name: 'Standard shop rate', rate: 120 },
   { id: 'l2', name: 'After-hours rate', rate: 160 },
 ];

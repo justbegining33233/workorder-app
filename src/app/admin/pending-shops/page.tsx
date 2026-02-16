@@ -3,6 +3,7 @@
 import { useEffect, useState, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 type PendingShop = {
   id: string;
@@ -22,6 +23,7 @@ type PendingShop = {
 
 export default function PendingShops() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['admin']);
   const [mounted, setMounted] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   const [previousPendingCount, setPreviousPendingCount] = useState(0);
@@ -33,19 +35,14 @@ export default function PendingShops() {
   const [shopToApprove, setShopToApprove] = useState<PendingShop | null>(null);
   const [approving, setApproving] = useState(false);
 
+  // All hooks must be called before any conditional returns
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || isLoading || !user) return;
     
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
-      return;
-    }
     fetchPendingShops();
     
     // Request notification permission
@@ -57,11 +54,11 @@ export default function PendingShops() {
         });
       }
     }
-  }, [mounted, router]);
+  }, [mounted, isLoading, user]);
 
   // Auto-refresh pending shops every 5 seconds
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || isLoading || !user) return;
 
     let refreshTimeout: NodeJS.Timeout;
     
@@ -116,7 +113,29 @@ export default function PendingShops() {
       clearInterval(interval);
       if (refreshTimeout) clearTimeout(refreshTimeout);
     };
-  }, [mounted, previousPendingCount, notificationPermission]);
+  }, [mounted, previousPendingCount, notificationPermission, isLoading, user]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   const fetchPendingShops = async () => {
     try {
@@ -149,9 +168,6 @@ export default function PendingShops() {
     setApproving(true);
     try {
       const token = localStorage.getItem('token');
-      console.log('🟡 [Frontend] Token from localStorage:', token);
-      console.log('🟡 [Frontend] Token length:', token?.length);
-      console.log('🟡 [Frontend] Authorization header will be:', `Bearer ${token}`);
       
       const response = await fetch('/api/shops/pending', {
         method: 'PATCH',
@@ -161,9 +177,6 @@ export default function PendingShops() {
         },
         body: JSON.stringify({ id: shopToApprove.id, action: 'approve' }),
       });
-      
-      console.log('🟡 [Frontend] Response status:', response.status);
-      console.log('🟡 [Frontend] Response ok:', response.ok);
 
       if (response.ok) {
         // Show success message

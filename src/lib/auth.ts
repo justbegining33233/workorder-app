@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
-const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '15m';
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '24h';
 const DEFAULT_REFRESH_EXPIRES_DAYS = Number(process.env.REFRESH_EXPIRES_DAYS || '30');
 
 export async function hashPassword(password: string): Promise<string> {
@@ -15,7 +15,7 @@ export async function verifyPassword(password: string, hashedPassword: string): 
   return bcrypt.compare(password, hashedPassword);
 }
 
-export function generateAccessToken(payload: Record<string, any>): string {
+export function generateAccessToken(payload: Record<string, unknown>): string {
   const options: SignOptions = { expiresIn: ACCESS_TOKEN_EXPIRES_IN as any };
   return jwt.sign(payload, JWT_SECRET, options);
 }
@@ -29,8 +29,14 @@ export function generateRandomToken(bytes = 48): string {
 
 export function verifyToken(token: string): any {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    const secret = JWT_SECRET;
+    console.log('Auth - JWT_SECRET length:', secret.length);
+    console.log('Auth - JWT_SECRET starts with:', secret.substring(0, 10));
+    const decoded = jwt.verify(token, secret);
+    console.log('Auth - Token verified successfully:', decoded);
+    return decoded;
   } catch (error) {
+    console.log('Auth - Token verification failed:', error instanceof Error ? error.message : String(error));
     return null;
   }
 }
@@ -63,14 +69,27 @@ export function requireRole(request: NextRequest, roles: string[]): NextResponse
 export interface AuthUser {
   id: string;
   email: string;
-  role: 'customer' | 'tech' | 'manager' | 'admin' | 'shop';
+  role: 'customer' | 'tech' | 'manager' | 'admin' | 'shop' | 'superadmin';
   shopId?: string;
 }
 
 export function getAuthToken(request: NextRequest): string | null {
+  // Prefer Authorization header
   const authHeader = request.headers.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     return authHeader.substring(7);
   }
+
+  // Check for sos_auth cookie (common login cookie)
+  try {
+    const sosAuthCookie = request.cookies.get('sos_auth')?.value;
+    if (sosAuthCookie) return sosAuthCookie;
+  } catch (e) {
+    // If cookies API isn't available, fall back to parsing Cookie header
+    const cookieHeader = request.headers.get('cookie') || '';
+    const match = cookieHeader.match(/sos_auth=([^;]+)/);
+    if (match) return match[1];
+  }
+
   return null;
 }

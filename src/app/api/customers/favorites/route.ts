@@ -1,22 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { authenticateRequest } from '@/lib/middleware';
 
 // GET - Get favorite shops
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== 'customer') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     const favorites = await prisma.favoriteShop.findMany({
-      where: { customerId: decoded.id },
+      where: { customerId: user.id },
       include: {
         // We can't include shop directly since we only store shopId
         // Frontend will need to fetch shop details separately
@@ -65,14 +60,9 @@ export async function GET(request: NextRequest) {
 // POST - Add favorite shop
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== 'customer') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -95,7 +85,7 @@ export async function POST(request: NextRequest) {
     const existing = await prisma.favoriteShop.findUnique({
       where: {
         customerId_shopId: {
-          customerId: decoded.id,
+          customerId: user.id,
           shopId,
         },
       },
@@ -107,12 +97,40 @@ export async function POST(request: NextRequest) {
 
     const favorite = await prisma.favoriteShop.create({
       data: {
-        customerId: decoded.id,
+        customerId: user.id,
         shopId,
       },
     });
 
-    return NextResponse.json({ favorite }, { status: 201 });
+    // Fetch shop details to return complete favorite object
+    const shopDetails = await prisma.shop.findUnique({
+      where: { id: shopId },
+      select: {
+        id: true,
+        shopName: true,
+        email: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        zipCode: true,
+        shopType: true,
+        services: {
+          select: {
+            serviceName: true,
+            category: true,
+          },
+        },
+      },
+    });
+
+    const favoriteWithShop = {
+      favoriteId: favorite.id,
+      createdAt: favorite.createdAt,
+      shop: shopDetails,
+    };
+
+    return NextResponse.json(favoriteWithShop, { status: 201 });
   } catch (error) {
     console.error('Error adding favorite:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

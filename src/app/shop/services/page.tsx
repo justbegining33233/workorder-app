@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ShopServicesPage() {
+  useRequireAuth(['shop', 'manager']);
   const router = useRouter();
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,13 +23,7 @@ export default function ShopServicesPage() {
   });
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
     const id = localStorage.getItem('shopId');
-
-    if (role !== 'shop' && role !== 'manager') {
-      router.push('/shop/home');
-      return;
-    }
 
     setShopId(id || '');
     fetchServices(id || '');

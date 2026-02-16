@@ -1,24 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { authenticateRequest } from '@/lib/middleware';
 
 // GET - Get customer vehicles
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== 'customer') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
     const vehicles = await prisma.vehicle.findMany({
-      where: {
-        customerId: decoded.id,
-      },
+      where: { customerId: user.id },
       orderBy: {
         createdAt: 'desc',
       },
@@ -34,14 +27,9 @@ export async function GET(request: NextRequest) {
 // POST - Add vehicle
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== 'customer') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -56,9 +44,8 @@ export async function POST(request: NextRequest) {
 
     const vehicle = await prisma.vehicle.create({
       data: {
-        customerId: decoded.id,
+        customerId: user.id,
         vehicleType: 'car',
-        customer: { connect: { id: decoded.id } },
         make,
         model,
         year: parseInt(year),

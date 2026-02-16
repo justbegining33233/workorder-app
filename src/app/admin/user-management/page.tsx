@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 type User = {
   id: string;
@@ -16,29 +17,24 @@ type User = {
 };
 
 export default function UserManagement() {
-  const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['admin']);
   const [users, setUsers] = useState<User[]>([]);
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
-      return;
-    }
-    
+    if (!user || isLoading) return;
+
     // Fetch all users
     fetch('/api/admin/users')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          const formattedUsers = data.map(user => ({
-            ...user,
-            joinedDate: new Date(user.joinedDate),
-            lastLogin: new Date(user.lastLogin)
+          const formattedUsers = data.map(u => ({
+            ...u,
+            joinedDate: new Date(u.joinedDate || u.createdAt || Date.now()),
+            lastLogin: new Date(u.lastLogin || Date.now())
           }));
           setUsers(formattedUsers);
         }
@@ -48,8 +44,7 @@ export default function UserManagement() {
         console.error('Error fetching users:', err);
         setLoading(false);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user, isLoading]);
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -81,6 +76,28 @@ export default function UserManagement() {
     if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     return 'Just now';
   };
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   let filteredUsers = users;
   if (filterRole !== 'all') filteredUsers = filteredUsers.filter(u => u.role === filterRole);
@@ -184,10 +201,10 @@ export default function UserManagement() {
                 <div style={{flex:1}}>
                   <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:8}}>
                     <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>{user.name}</h3>
-                    <span style={{padding:'4px 12px', background:`rgba(${getRoleColor(user.role)}20)`, color:getRoleColor(user.role), borderRadius:8, fontSize:11, fontWeight:600}}>
+                    <span style={{padding:'4px 12px', background:`${getRoleColor(user.role)}20`, color:getRoleColor(user.role), borderRadius:8, fontSize:11, fontWeight:600}}>
                       {user.role.toUpperCase()}
                     </span>
-                    <span style={{padding:'4px 12px', background:`rgba(${getStatusColor(user.status)}20)`, color:getStatusColor(user.status), borderRadius:8, fontSize:11, fontWeight:600}}>
+                    <span style={{padding:'4px 12px', background:`${getStatusColor(user.status)}20`, color:getStatusColor(user.status), borderRadius:8, fontSize:11, fontWeight:600}}>
                       {user.status.toUpperCase()}
                     </span>
                   </div>

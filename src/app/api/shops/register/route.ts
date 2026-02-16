@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
+import { createSubscription } from '@/lib/stripe';
+import { SUBSCRIPTION_PLANS } from '@/lib/subscription';
 
 export async function POST(request: Request) {
   try {
@@ -31,9 +33,16 @@ export async function POST(request: Request) {
       zipCode: z.string().optional(),
       dieselServices: z.array(z.string()).optional(),
       gasServices: z.array(z.string()).optional(),
+      smallEngineServices: z.array(z.string()).optional(),
+      heavyEquipmentServices: z.array(z.string()).optional(),
+      resurfacingServices: z.array(z.string()).optional(),
+      weldingServices: z.array(z.string()).optional(),
+      tireServices: z.array(z.string()).optional(),
       mobileServiceRadius: z.number().optional(),
       emergencyService24_7: z.boolean().optional(),
       acceptedPaymentMethods: z.array(z.string()).optional(),
+      subscriptionPlan: z.enum(['starter', 'growth', 'professional', 'business', 'enterprise']),
+      couponCode: z.string().optional(),
     });
     const data = schema.parse(body);
     console.log('✅ [REGISTER] Validation passed');
@@ -48,6 +57,7 @@ export async function POST(request: Request) {
         shopName: data.shopName,
         email: data.email,
         phone: data.phone || '',
+        ownerName: data.ownerName || '',
         address: data.address || '',
         city: data.city || '',
         state: data.state || '',
@@ -60,11 +70,60 @@ export async function POST(request: Request) {
     });
     
     console.log('✅ [REGISTER] Shop created successfully! ID:', newShop.id);
+
+    // Create Stripe customer and subscription with trial
+    try {
+      console.log('🔵 [REGISTER] Creating Stripe customer and subscription...');
+      
+      const planDetails = SUBSCRIPTION_PLANS[data.subscriptionPlan];
+      const stripeProduct = await import('@/lib/stripe').then(m => m.STRIPE_PRODUCTS[data.subscriptionPlan]);
+      
+      // Create Stripe customer
+      const stripeCustomer = await import('@/lib/stripe').then(m => m.createOrRetrieveCustomer(data.email, data.ownerName || data.shopName));
+      
+      // Calculate trial end date (7 days from now)
+      const trialEndDate = new Date();
+      trialEndDate.setDate(trialEndDate.getDate() + 7);
+      
+      // Create subscription with trial period
+      const subscription = await import('@/lib/stripe').then(m => m.default.subscriptions.create({
+        customer: stripeCustomer.id,
+        items: [{ price: stripeProduct.priceId }],
+        trial_end: Math.floor(trialEndDate.getTime() / 1000), // Unix timestamp
+        discounts: data.couponCode ? [{ coupon: data.couponCode }] : undefined, // Apply coupon if provided
+        metadata: {
+          shopId: newShop.id,
+          plan: data.subscriptionPlan,
+          couponCode: data.couponCode || '',
+        },
+      }));
+      
+      // Create subscription record in database
+      await prisma.subscription.create({
+        data: {
+          shopId: newShop.id,
+          plan: data.subscriptionPlan,
+          status: 'trialing',
+          stripeSubscriptionId: subscription.id,
+          stripeCustomerId: stripeCustomer.id,
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: trialEndDate,
+          maxUsers: planDetails.maxUsers,
+          maxShops: planDetails.maxShops,
+        }
+      });
+      
+      console.log('✅ [REGISTER] Subscription created with 7-day trial');
+    } catch (stripeError) {
+      console.error('🔴 [REGISTER] Stripe subscription creation failed:', stripeError);
+      // Don't fail registration if Stripe fails, but log it
+      // In production, you might want to handle this differently
+    }
     
     return NextResponse.json({ 
       success: true, 
       shopId: newShop.id,
-      message: 'Shop registration submitted. Awaiting admin approval.'
+      message: 'Shop registration submitted. Awaiting admin approval. Your 7-day free trial has started!'
     });
   } catch (error) {
     console.error('🔴 [REGISTER] ERROR:', error);

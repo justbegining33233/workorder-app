@@ -1,25 +1,38 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function BackupRestore() {
-  const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['admin']);
   const [backups] = useState([
     { id: 1, name: 'Daily Backup - Dec 31, 2025', size: '2.4 GB', date: '2025-12-31 03:00 AM', status: 'completed' },
     { id: 2, name: 'Daily Backup - Dec 30, 2025', size: '2.3 GB', date: '2025-12-30 03:00 AM', status: 'completed' },
     { id: 3, name: 'Daily Backup - Dec 29, 2025', size: '2.3 GB', date: '2025-12-29 03:00 AM', status: 'completed' },
   ]);
 
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>

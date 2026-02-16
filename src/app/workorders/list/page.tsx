@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '@/styles/sos-theme.css';
@@ -23,12 +23,9 @@ function WorkOrderListPageContent() {
   const filter = searchParams?.get('filter') || '';
   const status = searchParams?.get('status') || '';
 
-  const [userRole, setUserRole] = useState('');
+  const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || '');
 
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    if (role) setUserRole(role);
-  }, []);
+  // Removed useEffect for userRole as it's now initialized directly
 
   const getDashboardLink = () => {
     switch (userRole) {
@@ -41,24 +38,16 @@ function WorkOrderListPageContent() {
     }
   };
 
-  const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<WorkOrder[]>([]);
-
-  useEffect(() => {
-    // Load work orders from localStorage
-    const orders = getAllWorkOrdersClient();
-    setWorkOrders(orders);
-  }, []);
-
-  useEffect(() => {
+  const [workOrders, setWorkOrders] = useState<WorkOrder[]>(() => getAllWorkOrdersClient());
+  const filteredOrders = useMemo(() => {
     let filtered = [...workOrders];
-
     if (status) {
       filtered = filtered.filter(wo => wo.status === status);
     }
-
-    setFilteredOrders(filtered);
+    return filtered;
   }, [status, workOrders]);
+
+  // Removed useEffect for filteredOrders, now using useMemo
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -15,12 +15,15 @@ interface SidebarProps {
   role: 'shop' | 'manager' | 'tech';
   isOpen?: boolean;
   onClose?: () => void;
+  onSelectTab?: (tab: string) => void;
+  activeHash?: string;
 }
 
-export default function Sidebar({ role, isOpen = true, onClose }: SidebarProps) {
+export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, activeHash }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [currentHash, setCurrentHash] = useState('');
 
   useEffect(() => {
     const checkMobile = () => {
@@ -29,23 +32,31 @@ export default function Sidebar({ role, isOpen = true, onClose }: SidebarProps) 
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
+    const handleHashChange = () => setCurrentHash(window.location.hash || '');
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
     
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, []);
 
   const shopMenuItems: MenuItem[] = [
-    { icon: '📊', label: 'Dashboard', href: '/shop/admin' },
+    { icon: '📊', label: 'Dashboard', href: '/shop/admin#overview' },
     { icon: '🏪', label: 'Shop Home', href: '/shop/home' },
+    { icon: '🗂', label: 'Assign Work Orders', href: '/workorders/list' },
     { icon: '👥', label: 'Team Management', href: '/shop/manage-team' },
     { icon: '💰', label: 'Payroll', href: '/shop/admin#payroll' },
     { icon: '📦', label: 'Inventory', href: '/shop/admin#inventory' },
-    { icon: '⚙️', label: 'Settings', href: '/shop/settings' },
+    { icon: '⚙️', label: 'Settings', href: '/shop/admin/settings' },
     { icon: '💬', label: 'Messages', href: '/shop/admin#messages' },
-    { icon: '📈', label: 'Reports', href: '/reports' },
+    { icon: '📈', label: 'Tech Reports', href: '/shop/reports' },
   ];
 
   const managerMenuItems: MenuItem[] = [
     { icon: '🏠', label: 'Home', href: '/manager/home' },
+    { icon: '🗂', label: 'Assign Work Orders', href: '/workorders/list' },
     { icon: '⏰', label: 'Time Clock', href: '/manager/home#timeclock' },
     { icon: '📦', label: 'Inventory Requests', href: '/manager/home#inventory' },
     { icon: '💬', label: 'Messages', href: '/manager/home#messages' },
@@ -66,7 +77,9 @@ export default function Sidebar({ role, isOpen = true, onClose }: SidebarProps) 
 
   const isActive = (href: string) => {
     if (href.includes('#')) {
-      return pathname === href.split('#')[0];
+      const [base, hash] = href.split('#');
+      const hashValue = activeHash || currentHash;
+      return pathname === base && hashValue === `#${hash}`;
     }
     return pathname === href;
   };
@@ -135,11 +148,28 @@ export default function Sidebar({ role, isOpen = true, onClose }: SidebarProps) 
         <nav style={{ padding: collapsed ? '8px 4px' : '16px 8px' }}>
           {menuItems.map((item, index) => {
             const active = isActive(item.href);
-            
+
+            const handleClick = (e: React.MouseEvent) => {
+              // Let parent handle tab selection for hash links on the same page
+              if (onSelectTab && item.href.includes('#')) {
+                const [, hash] = item.href.split('#');
+                if (hash) {
+                  e.preventDefault();
+                  onSelectTab(hash);
+                  setCurrentHash(`#${hash}`);
+                }
+              }
+
+              if (isMobile && onClose) {
+                onClose();
+              }
+            };
+
             return (
               <Link
                 key={index}
                 href={item.href}
+                onClick={handleClick}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

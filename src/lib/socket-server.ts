@@ -17,12 +17,18 @@ interface AuthenticatedSocket extends Socket {
   userId?: string;
   role?: string;
   shopId?: string;
+  username?: string;
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-export const initSocketServer = (httpServer: NetServer) => {
-  const io = new ServerIO(httpServer, {
+// Global variable to store the io instance
+let io: ServerIO | null = null;
+
+export const initSocketServer = (httpServer: any) => {
+  if (io) return io; // Return existing instance
+
+  io = new ServerIO(httpServer, {
     path: '/api/socket',
     cors: {
       origin: process.env.NODE_ENV === 'production' ? false : '*',
@@ -39,9 +45,10 @@ export const initSocketServer = (httpServer: NetServer) => {
       }
 
       const decoded = jwt.verify(token, JWT_SECRET) as any;
-      socket.userId = decoded.id;
-      socket.role = decoded.role;
-      socket.shopId = decoded.shopId;
+      (socket as any).userId = decoded.id;
+      (socket as any).role = decoded.role;
+      (socket as any).shopId = decoded.shopId;
+      socket.username = decoded.username;
 
       next();
     } catch (error) {
@@ -65,130 +72,121 @@ export const initSocketServer = (httpServer: NetServer) => {
       socket.join(`shop_${socket.shopId}`);
     }
 
-    // Handle work order status updates
-    socket.on('workorder:status_update', async (data) => {
-      try {
-        const { workOrderId, status, updatedBy } = data;
+    // Handle work order updates
+    socket.on('work-order-update', (data) => {
+      // Broadcast to relevant users
+      const { workOrderId, shopId, assignedTo } = data;
 
-        // Update in database
-        await prisma.workOrder.update({
-          where: { id: workOrderId },
-          data: { status, updatedAt: new Date() },
+      // Notify shop admin
+      if (shopId) {
+        io?.to(`shop_${shopId}`).emit('work-order-updated', {
+          ...data,
+          updatedBy: socket.userId,
+          timestamp: new Date().toISOString(),
         });
+      }
 
-        // Broadcast to relevant users
-        const workOrder = await prisma.workOrder.findUnique({
-          where: { id: workOrderId },
-          include: { customer: true, shop: true },
+      // Notify assigned technician
+      if (assignedTo) {
+        io?.to(`user_${assignedTo}`).emit('work-order-updated', {
+          ...data,
+          updatedBy: socket.userId,
+          timestamp: new Date().toISOString(),
         });
-
-        if (workOrder) {
-          // Notify customer
-          io.to(`user_${workOrder.customerId}`).emit('workorder:updated', {
-            workOrderId,
-            status,
-            updatedBy,
-          });
-
-          // Notify shop team
-          io.to(`shop_${workOrder.shopId}`).emit('workorder:updated', {
-            workOrderId,
-            status,
-            updatedBy,
-          });
-        }
-      } catch (error) {
-        socket.emit('error', { message: 'Failed to update work order status' });
       }
     });
 
-    // Handle chat messages
-    socket.on('chat:send', async (data) => {
-      try {
-        const { workOrderId, message, senderId, senderRole } = data;
+    // Handle messaging
+    socket.on('send-message', (data) => {
+      const { receiverId, receiverRole, message } = data;
 
-        // Save message to database
-        const chatMessage = await prisma.message.create({
-          data: {
-            workOrderId,
-            sender: senderRole,
-            senderName: data.senderName || 'Unknown',
-            body: message,
-          },
-        });
+      const messageData = {
+        ...data,
+        senderId: socket.userId,
+        senderRole: socket.role,
+        timestamp: new Date().toISOString(),
+      };
 
-        // Broadcast to work order participants
-        const workOrder = await prisma.workOrder.findUnique({
-          where: { id: workOrderId },
-          include: { customer: true, shop: true },
-        });
+      // Send to specific receiver
+      if (receiverId) {
+        io?.to(`user_${receiverId}`).emit('new-message', messageData);
+      }
 
-        if (workOrder) {
-          const messageData = {
-            id: chatMessage.id,
-            message,
-            senderId,
-            senderRole,
-            createdAt: chatMessage.createdAt,
-          };
-
-          // Send to customer
-          io.to(`user_${workOrder.customerId}`).emit('chat:message', messageData);
-
-          // Send to shop team
-          io.to(`shop_${workOrder.shopId}`).emit('chat:message', messageData);
-        }
-      } catch (error) {
-        socket.emit('error', { message: 'Failed to send message' });
+      // Send to role-based receivers
+      if (receiverRole) {
+        io?.to(`role_${receiverRole}`).emit('new-message', messageData);
       }
     });
 
     // Handle typing indicators
-    socket.on('chat:typing', (data) => {
-      const { workOrderId, isTyping } = data;
-      socket.to(`workorder_${workOrderId}`).emit('chat:typing', {
-        userId: socket.userId,
-        isTyping,
-      });
+    socket.on('typing-start', (data) => {
+      const { receiverId } = data;
+      if (receiverId) {
+        socket.to(`user_${receiverId}`).emit('user-typing', {
+          from: socket.userId,
+          fromName: socket.username,
+        });
+      }
     });
 
-    // Handle tech location updates
-    socket.on('location:update', async (data) => {
-      try {
-        const { latitude, longitude, accuracy } = data;
+    socket.on('typing-stop', (data) => {
+      const { receiverId } = data;
+      if (receiverId) {
+        socket.to(`user_${receiverId}`).emit('user-stopped-typing', {
+          from: socket.userId,
+        });
+      }
+    });
 
-        if (socket.role === 'tech' && socket.userId) {
-          // Update tech location in database
-          await prisma.tech.update({
-            where: { id: socket.userId },
-            data: {
-              latitude,
-              longitude,
-              locationAccuracy: accuracy,
-              lastLocationUpdate: new Date(),
-            },
-          });
+    // Handle location updates for technicians (emit to shop and specific customer when workOrderId provided)
+    socket.on('location-update', async (data) => {
+      if (socket.role === 'tech' && socket.shopId) {
+        const payload = {
+          techId: socket.userId,
+          techName: socket.username,
+          location: data,
+          timestamp: new Date().toISOString(),
+        };
 
-          // Broadcast to shop team
-          if (socket.shopId) {
-            io.to(`shop_${socket.shopId}`).emit('tech:location_updated', {
-              techId: socket.userId,
-              latitude,
-              longitude,
-              accuracy,
-            });
+        // Broadcast location to shop admins
+        io?.to(`shop_${socket.shopId}`).emit('tech-location-updated', payload);
+
+        // If we have a workOrderId, notify the specific customer for that work order
+        try {
+          if (data && data.workOrderId) {
+            const workOrder = await prisma.workOrder.findUnique({ where: { id: data.workOrderId }, select: { customerId: true } });
+            if (workOrder && workOrder.customerId) {
+              io?.to(`user_${workOrder.customerId}`).emit('tech-location-updated', {
+                ...payload,
+                workOrderId: data.workOrderId,
+              });
+            }
           }
+        } catch (err) {
+          console.warn('Failed to lookup work order for location update:', err);
         }
-      } catch (error) {
-        socket.emit('error', { message: 'Failed to update location' });
+      }
+    });
+
+    // Handle clock status changes
+    socket.on('clock-status-change', (data) => {
+      if (socket.shopId) {
+        io?.to(`shop_${socket.shopId}`).emit('clock-status-changed', {
+          userId: socket.userId,
+          userName: socket.username,
+          ...data,
+          timestamp: new Date().toISOString(),
+        });
       }
     });
 
     // Handle disconnection
     socket.on('disconnect', () => {
-      console.log(`User ${socket.userId} disconnected`);
+      console.log(`User ${socket.username || socket.userId} disconnected`);
     });
   });
 
   return io;
 };
+
+export const getSocketServer = () => io;

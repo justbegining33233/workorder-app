@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         data: {
           shopId,
           defaultLaborRate: 85.0,
-          defaultProfitMargin: 0.30,
+          inventoryMarkup: 0.30, // 30% markup on parts
           taxRate: 0.08,
           allowTimeTracking: true,
           requireClockInOut: false,

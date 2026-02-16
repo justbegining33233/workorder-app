@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Notification } from '@/types/customer';
 
 export default function NotificationBell() {
@@ -15,16 +15,8 @@ export default function NotificationBell() {
     }
   }, []);
 
-  useEffect(() => {
-    if (customerId) {
-      fetchNotifications();
-      // Poll for new notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [customerId]);
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
+    if (!customerId) return;
     try {
       const res = await fetch(`/api/notifications?customerId=${customerId}`, { credentials: 'include' });
       const data = await res.json();
@@ -32,7 +24,16 @@ export default function NotificationBell() {
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
     }
-  };
+  }, [customerId]);
+
+  useEffect(() => {
+    if (customerId) {
+      fetchNotifications();
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [customerId, fetchNotifications]);
 
   const markAsRead = async (id: string) => {
     try {

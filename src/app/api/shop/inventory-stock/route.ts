@@ -133,6 +133,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized - Shop admin or manager only' }, { status: 403 });
     }
 
+    // Get shop settings for markup calculation
+    const shopSettings = await prisma.shopSettings.findUnique({
+      where: { shopId },
+      select: { inventoryMarkup: true },
+    });
+
+    const markup = shopSettings?.inventoryMarkup || 0.30; // Default 30% markup
+    const calculatedSellingPrice = unitCost ? unitCost * (1 + markup) : (sellingPrice || 0);
+
     const item = await prisma.inventoryStock.create({
       data: {
         shopId,
@@ -141,7 +150,7 @@ export async function POST(request: NextRequest) {
         category,
         quantity: quantity || 0,
         unitCost: unitCost || 0,
-        sellingPrice: sellingPrice || 0,
+        sellingPrice: sellingPrice || calculatedSellingPrice, // Use provided selling price or calculate from markup
         reorderPoint: reorderPoint || 10,
         reorderQuantity: reorderQuantity || 50,
         supplier,
@@ -214,6 +223,17 @@ export async function PUT(request: NextRequest) {
     }
 
     let updateData: any = updates;
+
+    // If unitCost is being updated, recalculate selling price based on markup
+    if (updates.unitCost !== undefined) {
+      const shopSettings = await prisma.shopSettings.findUnique({
+        where: { shopId: existingItem.shopId },
+        select: { inventoryMarkup: true },
+      });
+      
+      const markup = shopSettings?.inventoryMarkup || 0.30; // Default 30% markup
+      updateData.sellingPrice = updates.unitCost * (1 + markup);
+    }
 
     // Handle quantity adjustments
     if (action === 'add') {

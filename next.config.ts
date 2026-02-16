@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const nextConfig: NextConfig = {
+  // Disable pages router since we're using app router
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   images: {
     remotePatterns: [
       {
@@ -14,19 +16,6 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/webp", "image/avif"],
-  },
-  async headers() {
-    return [
-      {
-        source: "/:all*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable"
-          }
-        ]
-      }
-    ];
   },
   // Note: custom webpack function removed to avoid Turbopack/webpack detection
 };

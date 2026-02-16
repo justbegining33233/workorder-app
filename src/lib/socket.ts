@@ -31,58 +31,101 @@ export const useSocket = () => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    // Initialize socket connection
-    socket = io({
-      path: '/api/socket',
-      auth: {
-        token,
-      },
-    });
+    try {
+      // Improved connection flow: try in-app '/api/socket' first, then fallback to external socket server.
+      const primaryUrl = typeof window !== 'undefined' ? `${window.location.origin}` : 'http://localhost:3000';
+      const fallbackUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
+      let attemptedFallback = false;
 
-    socketRef.current = socket;
+      const createSocket = (url: string, path?: string) => {
+        console.log('[socket] createSocket', url, path || '(default path)');
+        const opts: any = {
+          auth: { token },
+          transports: ['websocket', 'polling'],
+          reconnectionAttempts: 5,
+          timeout: 5000,
+        };
+        if (path) opts.path = path;
 
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-      setIsConnected(true);
-    });
+        const s = io(url, opts);
+        socketRef.current = s as any;
+        socket = s as any;
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server');
-      setIsConnected(false);
-    });
+        s.on('connect', () => {
+          console.log('[socket] connected to', url, 'id', s.id);
+          setIsConnected(true);
+        });
 
-    socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
-      setIsConnected(false);
-    });
+        s.on('disconnect', (reason) => {
+          console.log('[socket] disconnected from', url, reason);
+          setIsConnected(false);
+        });
 
-    return () => {
-      if (socket) {
-        socket.disconnect();
-        socket = null;
-        socketRef.current = null;
-      }
-    };
+        s.on('connect_error', (err) => {
+          console.error('[socket] connect_error to', url, err && err.message ? err.message : err);
+          setIsConnected(false);
+
+          // Try fallback once when primary fails
+          if (!attemptedFallback && url === primaryUrl) {
+            attemptedFallback = true;
+            console.log('[socket] attempting fallback to', fallbackUrl, '/api/socket');
+            try { s.disconnect(); } catch (e) {}
+            createSocket(fallbackUrl, '/api/socket'); // ensure fallback uses /api/socket path
+          }
+        });
+
+        // wire server events to global window events so components can listen
+        s.on('work-order-updated', (data) => { window.dispatchEvent(new CustomEvent('work-order:updated', { detail: data })); });
+        s.on('new-message', (data) => { window.dispatchEvent(new CustomEvent('chat:new-message', { detail: data })); });
+        s.on('user-typing', (data) => { window.dispatchEvent(new CustomEvent('chat:typing', { detail: data })); });
+        s.on('user-stopped-typing', (data) => { window.dispatchEvent(new CustomEvent('chat:stopped-typing', { detail: data })); });
+        s.on('tech-location-updated', (data) => { window.dispatchEvent(new CustomEvent('tech:location_updated', { detail: data })); });
+        s.on('clock-status-changed', (data) => { window.dispatchEvent(new CustomEvent('clock:status_changed', { detail: data })); });
+
+        return s;
+      };
+
+      // Start with in-app path
+      createSocket(primaryUrl, '/api/socket');
+
+      return () => {
+        try {
+          if (socketRef.current) {
+            socketRef.current.disconnect();
+            socketRef.current = null;
+            socket = null;
+            setIsConnected(false);
+          }
+        } catch (e) {
+          // ignore
+        }
+      };
+    } catch (error) {
+      console.error('Failed to initialize socket connection:', error);
+      return;
+    }
   }, []);
 
   const emit = (event: keyof ClientToServerEvents, data: any) => {
-    if (socket && socket.connected) {
-      socket.emit(event, data);
+    if (socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit(event, data);
+    } else {
+      console.warn('Socket not connected, cannot emit:', event);
     }
   };
 
   const on = (event: keyof ServerToClientEvents, callback: (data: any) => void) => {
-    if (socket) {
-      socket.on(event, callback);
+    if (socketRef.current) {
+      socketRef.current.on(event, callback);
     }
   };
 
   const off = (event: keyof ServerToClientEvents, callback?: (data: any) => void) => {
-    if (socket) {
+    if (socketRef.current) {
       if (callback) {
-        socket.off(event, callback);
+        socketRef.current.off(event, callback);
       } else {
-        socket.off(event);
+        socketRef.current.off(event);
       }
     }
   };

@@ -1,64 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-const GAS_SERVICES = [
-  'Engine Diagnostics',
-  'Engine Repair',
-  'Transmission Service',
-  'Transmission Repair',
-  'Brake Service',
-  'Brake Replacement',
-  'Oil Change',
-  'Tune-up',
-  'Electrical Diagnostics',
-  'Electrical Repair',
-  'Battery Service',
-  'Tire Rotation',
-  'Tire Replacement',
-  'Wheel Alignment',
-  'Suspension Repair',
-  'Air Conditioning',
-  'Heating Repair',
-  'Exhaust Repair',
-  'Catalytic Converter',
-  'Emissions Testing',
-  'State Inspection',
-  'Windshield Replacement',
-  'Fluid Service',
-  'Coolant Flush',
-  'Fuel System Cleaning',
-  'Timing Belt',
-  'Roadside Assistance'
-];
-const DIESEL_SERVICES = [
-  'Engine Diagnostics',
-  'Engine Repair',
-  'Engine Rebuild',
-  'Transmission Repair',
-  'Brake System',
-  'Air Brake Service',
-  'Electrical Diagnostics',
-  'Electrical Repair',
-  'Tire Service',
-  'Tire Replacement',
-  'Wheel Alignment',
-  'Suspension Repair',
-  'Hydraulic Systems',
-  'Air Conditioning',
-  'Exhaust Repair',
-  'DEF System',
-  'DPF Cleaning',
-  'Oil Change',
-  'Preventive Maintenance',
-  'DOT Inspections',
-  'Trailer Repair',
-  'Reefer Repair',
-  'Welding',
-  'Roadside Assistance'
-];
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
+
+// Category color palettes
+const CATEGORY_COLORS: Record<string, { accent: string; bandBg: string; rowBg: string }> = {
+  gas: { accent: '#3b82f6', bandBg: 'rgba(59,130,246,0.08)', rowBg: 'rgba(59,130,246,0.06)' },
+  diesel: { accent: '#22c55e', bandBg: 'rgba(34,197,94,0.08)', rowBg: 'rgba(34,197,94,0.06)' },
+  'small-engine': { accent: '#a855f7', bandBg: 'rgba(168,85,247,0.10)', rowBg: 'rgba(168,85,247,0.08)' },
+  resurfacing: { accent: '#f97316', bandBg: 'rgba(249,115,22,0.12)', rowBg: 'rgba(249,115,22,0.08)' },
+  welding: { accent: '#ef4444', bandBg: 'rgba(239,68,68,0.12)', rowBg: 'rgba(239,68,68,0.08)' },
+  'heavy-equipment': { accent: '#eab308', bandBg: 'rgba(234,179,8,0.14)', rowBg: 'rgba(234,179,8,0.10)' },
+  tire: { accent: '#06b6d4', bandBg: 'rgba(6,182,212,0.12)', rowBg: 'rgba(6,182,212,0.08)' },
+  general: { accent: '#f59e0b', bandBg: 'rgba(245,158,11,0.12)', rowBg: 'rgba(245,158,11,0.08)' },
+};
+
+const getCategoryPalette = (category: string) => {
+  const key = (category || 'general').toLowerCase();
+  return CATEGORY_COLORS[key] || CATEGORY_COLORS.general;
+};
 
 type Part = {
   id: string;
@@ -80,6 +42,7 @@ type LaborRate = {
 export default function PartsAndLabor() {
 
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState<'parts' | 'labor'>('parts');
   const [showAddPart, setShowAddPart] = useState(false);
@@ -91,24 +54,12 @@ export default function PartsAndLabor() {
   // Remove inventory-based labor rates, use shop services only
   const [newPart, setNewPart] = useState({ name: '', stock: 0, reorderLevel: 0, price: 0, cost: 0, category: '' });
   const [newLabor, setNewLabor] = useState<{ name: string; rate: number; serviceType?: 'gas' | 'diesel' }>({ name: '', rate: 0 });
-  // Store rates for GAS_SERVICES and DIESEL_SERVICES as objects
-  const [gasRates, setGasRates] = useState<{[key:string]: string}>({});
-  const [dieselRates, setDieselRates] = useState<{[key:string]: string}>({});
+  // Service list comes from shop services chosen at signup
+  const [availableServices, setAvailableServices] = useState<{name: string; category: string}[]>([]);
+  const [pendingServiceRates, setPendingServiceRates] = useState<Record<string, string>>({});
   const [selectedGasServices, setSelectedGasServices] = useState<string[]>([]);
   const [selectedDieselServices, setSelectedDieselServices] = useState<string[]>([]);
   const [savingServices, setSavingServices] = useState(false);
-
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const name = localStorage.getItem('userName');
-    if (role !== 'shop') {
-      router.push('/auth/login');
-      return;
-    }
-    if (name) setUserName(name);
-    loadLaborRates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const getCsrf = () => {
     if (typeof document === 'undefined') return '';
@@ -116,10 +67,21 @@ export default function PartsAndLabor() {
     return m ? decodeURIComponent(m[1]) : '';
   };
 
+  const getAuthHeaders = (): Record<string, string> => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  const buildHeaders = (csrf: string, includeJson = false): Record<string, string> => {
+    const headers: Record<string, string> = { 'X-CSRF-Token': csrf, ...getAuthHeaders() };
+    if (includeJson) headers['Content-Type'] = 'application/json';
+    return headers;
+  };
+
   // Load labor rates from shop services
   const loadLaborRates = async () => {
     try {
-      const shopId = localStorage.getItem('shopId');
+      const shopId = localStorage.getItem('shopId') || user?.shopId;
       if (!shopId) return;
       const response = await fetch(`/api/shops/settings?shopId=${shopId}`, { credentials: 'include' });
       if (response.ok) {
@@ -134,11 +96,49 @@ export default function PartsAndLabor() {
             serviceType: s.category,
           }));
         setLaborRates(rates);
+
+        // Build available services list from saved shop services (what was chosen at signup)
+        const unique: Record<string, { name: string; category: string }> = {};
+        (data.shop.services || []).forEach((s: any) => {
+          const key = `${s.category || 'general'}|${s.serviceName}`;
+          if (!unique[key]) {
+            unique[key] = { name: s.serviceName, category: s.category || 'general' };
+          }
+        });
+        setAvailableServices(Object.values(unique));
       }
     } catch (error) {
       console.error('Error loading labor rates:', error);
     }
   };
+
+  useEffect(() => {
+    if (user?.name) setUserName(user.name);
+    loadLaborRates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   // Save selected services to API
   const handleSaveServices = async () => {
@@ -183,15 +183,16 @@ export default function PartsAndLabor() {
       return;
     }
     try {
-      const shopId = localStorage.getItem('shopId');
+                              const shopId = localStorage.getItem('shopId') || user?.shopId;
       if (!shopId) {
         alert('Shop ID not found. Please log in again.');
         return;
       }
       const csrf = getCsrf();
+      const headers = buildHeaders(csrf, true);
       const response = await fetch('/api/shops/services', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+        headers,
         body: JSON.stringify({
           shopId,
           serviceName: newLabor.name,
@@ -224,9 +225,10 @@ export default function PartsAndLabor() {
     if (!editingLabor) return;
     try {
       const csrf = getCsrf();
+      const headers = buildHeaders(csrf, true);
       const response = await fetch('/api/shops/services', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+        headers,
         body: JSON.stringify({
           serviceId: editingLabor.id,
           price: editingLabor.rate,
@@ -256,9 +258,10 @@ export default function PartsAndLabor() {
     if (!confirm('Are you sure you want to delete this labor rate?')) return;
     try {
       const csrf = getCsrf();
+      const headers = buildHeaders(csrf);
       const response = await fetch(`/api/shops/services?serviceId=${id}`, {
         method: 'DELETE',
-        headers: { 'X-CSRF-Token': csrf },
+        headers,
         credentials: 'include',
       });
       if (response.ok) {
@@ -400,169 +403,111 @@ export default function PartsAndLabor() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Render existing labor rates */}
-                  {laborRates.map(labor => (
-                    <tr key={labor.id} style={{borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
-                      <td style={{padding:'16px'}}>
-                        <div style={{fontSize:14, fontWeight:700, color:'#e5e7eb'}}>
-                          {(labor.serviceType === 'diesel' ? 'Diesel - ' : labor.serviceType === 'gas' ? 'Gas - ' : '') + labor.name}
-                        </div>
-                        <div style={{fontSize:11, color:'#6b7280', marginTop:4}}>{labor.id}</div>
-                      </td>
-                      <td style={{padding:'16px', textAlign:'center', fontSize:14, fontWeight:700, color:'#3b82f6'}}>
-                        ${labor.rate}
-                      </td>
-                      <td style={{padding:'16px'}}>
-                        <div style={{display:'flex', gap:8, justifyContent:'center'}}>
-                          <button onClick={() => setEditingLabor(labor)} style={{padding:'6px 12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer'}}>
-                            Edit
-                          </button>
-                          <button onClick={() => handleDeleteLabor(labor.id)} style={{padding:'6px 12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer'}}>
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {/* Render GAS_SERVICES and DIESEL_SERVICES as addable rows */}
-                  {GAS_SERVICES.map((service) => {
-                    const alreadyAdded = laborRates.some(lr => lr.name === service && lr.serviceType === 'gas');
-                    if (alreadyAdded) return null;
+                  {Array.from(new Set([
+                    ...availableServices.map(s => s.category || 'general'),
+                    ...laborRates.map(lr => lr.serviceType || 'general')
+                  ])).map((rawCategory) => {
+                    const category = (rawCategory || 'general').toString().trim().toLowerCase();
+                    const palette = getCategoryPalette(category);
+                    const { accent, bandBg, rowBg } = palette;
+                    const displayName = category === 'diesel' ? 'Diesel Services' : category === 'gas' ? 'Gas Services' : `${category.charAt(0).toUpperCase()}${category.slice(1)} Services`;
+
+                    const existing = laborRates.filter(lr => ((lr.serviceType || 'general').toString().trim().toLowerCase()) === category);
+                    const available = availableServices.filter(s => ((s.category || 'general').toString().trim().toLowerCase()) === category);
+
                     return (
-                      <tr key={'gas-' + service} style={{borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
-                        <td style={{padding:'16px'}}>
-                          <div style={{fontSize:14, fontWeight:700, color:'#3b82f6'}}>{service}</div>
-                          <div style={{fontSize:11, color:'#6b7280', marginTop:4}}>Gas</div>
-                        </td>
-                        <td style={{padding:'16px', textAlign:'center', fontSize:14, fontWeight:700, color:'#3b82f6'}}>
-                          <input
-                            type="number"
-                            placeholder="Rate ($)"
-                            style={{width:80, padding:4, borderRadius:6, border:'1px solid #3b82f6', background:'rgba(59,130,246,0.1)', color:'#e5e7eb'}}
-                            value={typeof gasRates[service] !== 'undefined' ? gasRates[service] : ""}
-                            onChange={e => setGasRates(r => ({...r, [service]: e.target.value}))}
-                          />
-                        </td>
-                        <td style={{padding:'16px', textAlign:'center'}}>
-                          <button
-                            style={{padding:'6px 12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:!gasRates[service] ? 'not-allowed' : 'pointer'}}
-                            disabled={!gasRates[service]}
-                            onClick={async () => {
-                              if (!gasRates[service]) return;
-                              // Add to inventory (legacy)
-                              const csrf = getCsrf();
-                              const response = await fetch('/api/inventory', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-                                body: JSON.stringify({
-                                  type: 'labor',
-                                  name: service,
-                                  rate: Number(gasRates[service]),
-                                  serviceType: 'gas',
-                                }),
-                                credentials: 'include',
-                              });
-                              // Add to shop services (for settings page)
-                              const shopId = localStorage.getItem('shopId');
-                              if (!shopId) {
-                                alert('Shop ID not found. Please log in again.');
-                                return;
-                              }
-                              const serviceRes = await fetch('/api/shops/services', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-                                body: JSON.stringify({
-                                  shopId,
-                                  serviceName: service,
-                                  category: 'gas',
-                                  price: Number(gasRates[service]),
-                                }),
-                                credentials: 'include',
-                              });
-                              if (response.ok && serviceRes.ok) {
-                                const data = await response.json();
-                                setLaborRates(prev => [...prev, {...data, serviceType: 'gas'}]);
-                                setGasRates(r => ({...r, [service]: ""}));
-                                alert('Labor rate added and synced!');
-                              } else {
-                                alert('Failed to add labor rate to shop services.');
-                              }
-                            }}
-                          >
-                            Add
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                  {DIESEL_SERVICES.map((service) => {
-                    const alreadyAdded = laborRates.some(lr => lr.name === service && lr.serviceType === 'diesel');
-                    if (alreadyAdded) return null;
-                    return (
-                      <tr key={'diesel-' + service} style={{borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
-                        <td style={{padding:'16px'}}>
-                          <div style={{fontSize:14, fontWeight:700, color:'#22c55e'}}>{service}</div>
-                          <div style={{fontSize:11, color:'#6b7280', marginTop:4}}>Diesel</div>
-                        </td>
-                        <td style={{padding:'16px', textAlign:'center', fontSize:14, fontWeight:700, color:'#22c55e'}}>
-                          <input
-                            type="number"
-                            placeholder="Rate ($)"
-                            style={{width:80, padding:4, borderRadius:6, border:'1px solid #22c55e', background:'rgba(34,197,94,0.1)', color:'#e5e7eb'}}
-                            value={typeof dieselRates[service] !== 'undefined' ? dieselRates[service] : ""}
-                            onChange={e => setDieselRates(r => ({...r, [service]: e.target.value}))}
-                          />
-                        </td>
-                        <td style={{padding:'16px', textAlign:'center'}}>
-                          <button
-                            style={{padding:'6px 12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:!dieselRates[service] ? 'not-allowed' : 'pointer'}}
-                            disabled={!dieselRates[service]}
-                            onClick={async () => {
-                              if (!dieselRates[service]) return;
-                              // Add to inventory (legacy)
-                              const csrf = getCsrf();
-                              const response = await fetch('/api/inventory', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-                                body: JSON.stringify({
-                                  type: 'labor',
-                                  name: service,
-                                  rate: Number(dieselRates[service]),
-                                  serviceType: 'diesel',
-                                }),
-                                credentials: 'include',
-                              });
-                              // Add to shop services (for settings page)
-                              const shopId = localStorage.getItem('shopId');
-                              if (!shopId) {
-                                alert('Shop ID not found. Please log in again.');
-                                return;
-                              }
-                              const serviceRes = await fetch('/api/shops/services', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-                                body: JSON.stringify({
-                                  shopId,
-                                  serviceName: service,
-                                  category: 'diesel',
-                                  price: Number(dieselRates[service]),
-                                }),
-                                credentials: 'include',
-                              });
-                              if (response.ok && serviceRes.ok) {
-                                const data = await response.json();
-                                setLaborRates(prev => [...prev, {...data, serviceType: 'diesel'}]);
-                                setDieselRates(r => ({...r, [service]: ""}));
-                                alert('Labor rate added and synced!');
-                              } else {
-                                alert('Failed to add labor rate to shop services.');
-                              }
-                            }}
-                          >
-                            Add
-                          </button>
-                        </td>
-                      </tr>
+                      <>
+                        <tr style={{borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
+                          <td colSpan={3} style={{padding:'12px 16px', background:bandBg}}>
+                            <div style={{fontSize:13, fontWeight:700, color:accent}}>{displayName}</div>
+                          </td>
+                        </tr>
+
+                        {existing.map(labor => (
+                          <tr key={labor.id} style={{borderBottom:'1px solid rgba(255,255,255,0.05)', background:rowBg}}>
+                            <td style={{padding:'16px'}}>
+                              <div style={{fontSize:14, fontWeight:700, color:'#e5e7eb'}}>{labor.name}</div>
+                              <div style={{fontSize:11, color:'#6b7280', marginTop:4}}>{labor.id}</div>
+                            </td>
+                            <td style={{padding:'16px', textAlign:'center', fontSize:14, fontWeight:700, color:accent}}>
+                              ${labor.rate}
+                            </td>
+                            <td style={{padding:'16px'}}>
+                              <div style={{display:'flex', gap:8, justifyContent:'center'}}>
+                                <button onClick={() => setEditingLabor(labor)} style={{padding:'6px 12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer'}}>
+                                  Edit
+                                </button>
+                                <button onClick={() => handleDeleteLabor(labor.id)} style={{padding:'6px 12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer'}}>
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+
+                        {available.map((service) => {
+                          const alreadyAdded = laborRates.some(lr => lr.name === service.name && (lr.serviceType || 'general') === category);
+                          if (alreadyAdded) return null;
+
+                          const key = `${service.category}-${service.name}`;
+                          const pendingValue = typeof pendingServiceRates[key] !== 'undefined' ? pendingServiceRates[key] : "";
+
+                          return (
+                            <tr key={key} style={{borderBottom:'1px solid rgba(255,255,255,0.05)', background:rowBg}}>
+                              <td style={{padding:'16px'}}>
+                                <div style={{fontSize:14, fontWeight:700, color:accent}}>{service.name}</div>
+                                <div style={{fontSize:11, color:'#6b7280', marginTop:4}}>{service.category || 'General'}</div>
+                              </td>
+                              <td style={{padding:'16px', textAlign:'center', fontSize:14, fontWeight:700, color:accent}}>
+                                <input
+                                  type="number"
+                                  placeholder="Rate ($)"
+                                  style={{width:80, padding:4, borderRadius:6, border:`1px solid ${accent}`, background:'rgba(255,255,255,0.05)', color:'#e5e7eb'}}
+                                  value={pendingValue}
+                                  onChange={e => setPendingServiceRates(r => ({...r, [key]: e.target.value}))}
+                                />
+                              </td>
+                              <td style={{padding:'16px', textAlign:'center'}}>
+                                <button
+                                  style={{padding:'6px 12px', background:`${accent}33`, color:accent, border:`1px solid ${accent}55`, borderRadius:6, fontSize:11, fontWeight:600, cursor:!pendingValue ? 'not-allowed' : 'pointer'}}
+                                  disabled={!pendingValue}
+                                  onClick={async () => {
+                                    if (!pendingValue) return;
+                                    const csrf = getCsrf();
+                                    const shopId = localStorage.getItem('shopId') || user?.shopId;
+                                    if (!shopId) {
+                                      alert('Shop ID not found. Please log in again.');
+                                      return;
+                                    }
+                                    const headers = buildHeaders(csrf, true);
+                                    const serviceRes = await fetch('/api/shops/services', {
+                                      method: 'POST',
+                                      headers,
+                                      body: JSON.stringify({
+                                        shopId,
+                                        serviceName: service.name,
+                                        category: service.category || 'general',
+                                        price: Number(pendingValue),
+                                      }),
+                                      credentials: 'include',
+                                    });
+                                    if (serviceRes.ok) {
+                                      await loadLaborRates();
+                                      setPendingServiceRates(r => ({...r, [key]: ''}));
+                                      alert('Labor rate added and synced!');
+                                    } else {
+                                      const error = await serviceRes.json().catch(() => ({}));
+                                      alert(error?.error || 'Failed to add labor rate to shop services.');
+                                    }
+                                  }}
+                                >
+                                  Add
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </>
                     );
                   })}
                 </tbody>

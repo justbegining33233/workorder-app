@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 type ActivityLog = {
   id: string;
@@ -19,22 +19,16 @@ type ActivityLog = {
 };
 
 export default function ActivityLogs() {
-  const router = useRouter();
+  const { user, isLoading: authLoading } = useRequireAuth(['admin']);
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>('all');
   const [filterSeverity, setFilterSeverity] = useState<string>('all');
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
-      return;
-    }
+    if (!user || authLoading) return;
     fetchLogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterType, filterSeverity]);
+  }, [filterType, filterSeverity, user, authLoading]);
 
   const fetchLogs = async () => {
     try {
@@ -105,6 +99,28 @@ export default function ActivityLogs() {
       default: return '•';
     }
   };
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
@@ -190,7 +206,7 @@ export default function ActivityLogs() {
                   )}
                   
                   {/* Icon */}
-                  <div style={{width:40, height:40, borderRadius:'50%', background:`rgba(${getTypeColor(log.type)}15)`, border:`2px solid ${getTypeColor(log.type)}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0, zIndex:1, backgroundColor:'#3d3d3d'}}>
+                  <div style={{width:40, height:40, borderRadius:'50%', background:`${getTypeColor(log.type)}15`, border:`2px solid ${getTypeColor(log.type)}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0, zIndex:1, backgroundColor:'#3d3d3d'}}>
                     {getTypeIcon(log.type)}
                   </div>
 
@@ -200,7 +216,7 @@ export default function ActivityLogs() {
                       <div style={{flex:1}}>
                         <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:4}}>
                           <h3 style={{fontSize:16, fontWeight:700, color:'#e5e7eb'}}>{log.action}</h3>
-                          <span style={{padding:'2px 8px', background:`rgba(${getSeverityColor(log.severity)}20)`, color:getSeverityColor(log.severity), borderRadius:6, fontSize:11, fontWeight:600}}>
+                          <span style={{padding:'2px 8px', background:`${getSeverityColor(log.severity)}20`, color:getSeverityColor(log.severity), borderRadius:6, fontSize:11, fontWeight:600}}>
                             {getSeverityBadge(log.severity)} {log.severity.toUpperCase()}
                           </span>
                         </div>

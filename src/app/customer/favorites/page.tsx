@@ -1,20 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function Favorites() {
+  useRequireAuth(['customer']);
   const [userName, setUserName] = useState('');
   const [favorites] = useState<{id: string; name: string; type: string; location: string; rating: number; distance: string; address: string; services: string[]}[]>([]);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
-
-    if (role !== 'customer') {
-      window.location.href = '/auth/login';
-      return;
-    }
   }, []);
 
   const handleSignOut = () => {

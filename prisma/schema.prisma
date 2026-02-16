@@ -4,23 +4,23 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // Customer model
 model Customer {
-  id        String   @id @default(cuid())
-  username  String?  @unique
-  email     String   @unique
-  password  String
-  firstName String
-  lastName  String
-  phone     String?
-  company   String?
-  stripeCustomerId String? @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String   @id @default(cuid())
+  username         String?  @unique
+  email            String   @unique
+  password         String
+  firstName        String
+  lastName         String
+  phone            String?
+  company          String?
+  stripeCustomerId String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   workOrders     WorkOrder[]
   notifications  Notification[]
@@ -37,22 +37,26 @@ model Customer {
 
 // Shop model
 model Shop {
-  id       String  @id @default(cuid())
-  username String  @unique
-  password String
-  shopName String
+  id        String  @id @default(cuid())
+  username  String  @unique
+  password  String
+  shopName  String
   ownerName String? // Owner's full name
-  email    String
-  phone    String
-  zipCode  String
-  address  String?
-  city     String?
-  state    String?
+  email     String
+  phone     String
+  zipCode   String
+  address   String?
+  city      String?
+  state     String?
 
   businessLicense String?
   insurancePolicy String?
   shopType        String? // diesel, gas, both
   profileComplete Boolean @default(false)
+
+  // Scheduling capacity
+  capacity        Int     @default(1) // Number of bays/simultaneous appointments
+  slotDuration    Int     @default(30) // Default time slot duration in minutes
 
   status String @default("pending") // pending, approved, suspended
 
@@ -68,8 +72,48 @@ model Shop {
   settings       ShopSettings?
   reviews        Review[]
   appointments   Appointment[]
+  subscription   Subscription?
+  schedules      ShopSchedule[]
+  blockedDates   ShopBlockedDate[]
+  purchaseOrders PurchaseOrder[]
 
   @@map("shops")
+}
+
+// Shop Business Hours (per day of week)
+model ShopSchedule {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  dayOfWeek Int      // 0=Sunday, 1=Monday, ... 6=Saturday
+  isOpen    Boolean  @default(true)
+  openTime  String   // "09:00" format (24hr)
+  closeTime String   // "17:00" format (24hr)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([shopId, dayOfWeek])
+  @@index([shopId])
+  @@map("shop_schedules")
+}
+
+// Shop Blocked Dates (vacations, holidays, closures)
+model ShopBlockedDate {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  date   DateTime // The blocked date
+  reason String?  // "Holiday", "Vacation", "Maintenance", etc.
+
+  createdAt DateTime @default(now())
+
+  @@unique([shopId, date])
+  @@index([shopId])
+  @@index([date])
+  @@map("shop_blocked_dates")
 }
 
 // Shop Services (51 services)
@@ -93,13 +137,13 @@ model ShopService {
 
 // Labor rates for shops
 model ShopLaborRate {
-  id        String   @id @default(cuid())
-  shopId    String
-  shop      Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 
-  name      String
-  rate      Float
-  category  String
+  name     String
+  rate     Float
+  category String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -127,9 +171,9 @@ model Tech {
   hourlyRate Float @default(0)
 
   // Location tracking
-  latitude         Float?
-  longitude        Float?
-  locationAccuracy Float?
+  latitude           Float?
+  longitude          Float?
+  locationAccuracy   Float?
   lastLocationUpdate DateTime?
 
   createdAt DateTime @default(now())
@@ -149,12 +193,12 @@ model Vehicle {
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  vehicleType   String // semi-truck, trailer, equipment, personal-vehicle
-  make          String?
-  model         String?
-  year          Int?
-  vin           String?
-  licensePlate  String?
+  vehicleType  String // semi-truck, trailer, equipment, personal-vehicle
+  make         String?
+  model        String?
+  year         Int?
+  vin          String?
+  licensePlate String?
 
   createdAt DateTime @default(now())
 
@@ -198,6 +242,7 @@ model WorkOrder {
   // Assignment
   assignedTechId String?
   assignedTo     Tech?   @relation(fields: [assignedTechId], references: [id])
+  bay            Int?    // Bay number (1-999) where work is being performed
 
   // Status
   status String @default("pending") // pending, assigned, in-progress, waiting-estimate, waiting-for-payment, closed, denied-estimate
@@ -214,7 +259,7 @@ model WorkOrder {
   completion String? // CompletionVerification
 
   // Payment
-  paymentStatus   String  @default("unpaid") // unpaid, pending, paid, refunded
+  paymentStatus   String    @default("unpaid") // unpaid, pending, paid, refunded
   paymentIntentId String?
   amountPaid      Float?
   estimatedCost   Float? // Total cost estimate for the work order
@@ -224,11 +269,13 @@ model WorkOrder {
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
 
-  reviews       Review[]
-  messages      Message[]
-  statusHistory StatusHistory[]
+  reviews          Review[]
+  messages         Message[]
+  statusHistory    StatusHistory[]
   customerMessages CustomerMessage[]
-  tracking      TechTracking?
+  tracking         TechTracking?
+  purchaseOrderItems PurchaseOrderItem[]
+  timeEntries      TimeEntry[]
 
   @@index([customerId])
   @@index([shopId])
@@ -278,21 +325,21 @@ model Notification {
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  type        String   // status_update, estimate_ready, payment_due, appointment_reminder, etc.
-  title       String
-  message     String
-  read        Boolean  @default(false)
-  readAt      DateTime?
+  type    String // status_update, estimate_ready, payment_due, appointment_reminder, etc.
+  title   String
+  message String
+  read    Boolean   @default(false)
+  readAt  DateTime?
 
   // Related entities
-  workOrderId String?
+  workOrderId   String?
   appointmentId String?
 
   // Delivery methods
   deliveryMethod String // 'email,sms,push,in-app' (comma-separated)
 
   // Metadata
-  metadata    String?  // JSON string for additional data
+  metadata String? // JSON string for additional data
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -416,10 +463,26 @@ model TimeEntry {
   clockIn  DateTime
   clockOut DateTime?
 
-  // Break tracking
-  breakStart DateTime?
-  breakEnd   DateTime?
+  // Break tracking (backwards-compatible single break fields kept for older code)
+  breakStart    DateTime?
+  breakEnd      DateTime?
   breakDuration Float? // Minutes
+
+  // Support multiple breaks and historical break records
+  breaks Json?        // [{ start: string, end?: string, durationMinutes?: number, type?: 'break'|'pto' }]
+
+  // Link a time entry to a Work Order (optional)
+  workOrderId String?
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id])
+
+  // PTO / manual entries
+  isPto Boolean @default(false)
+
+  // Approval & locking workflow
+  approved   Boolean  @default(false)
+  approvedBy String?
+  approvedAt DateTime?
+  locked     Boolean  @default(false)
 
   // Calculated fields
   hoursWorked Float? // Calculated when clocked out (excluding breaks)
@@ -427,7 +490,7 @@ model TimeEntry {
 
   // Location tracking (optional)
   location String?
-  
+
   // Photo verification (optional - stored as URLs)
   clockInPhoto  String?
   clockOutPhoto String?
@@ -438,6 +501,7 @@ model TimeEntry {
   @@index([techId])
   @@index([shopId])
   @@index([clockIn])
+  @@index([workOrderId])
   @@map("time_entries")
 }
 
@@ -448,27 +512,34 @@ model ShopSettings {
   shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 
   // Labor settings
-  defaultLaborRate    Float @default(0) // Default hourly rate for labor
-  defaultProfitMargin Float @default(0.30) // 30% default margin on parts
-  overtimeMultiplier  Float @default(1.5) // Overtime pay multiplier (1.5x standard)
+  defaultLaborRate   Float @default(0) // Default hourly rate for labor
+  overtimeMultiplier Float @default(1.5) // Overtime pay multiplier (1.5x standard)
+
+  // Inventory markup (profit margin for parts)
+  inventoryMarkup Float @default(0.30) // 30% markup on parts cost
 
   // Business hours
   businessHours String? // { monday: { open: '08:00', close: '17:00' }, ... }
 
   // Other settings
-  taxRate            Float   @default(0)
-  allowTimeTracking  Boolean @default(true)
-  requireClockInOut  Boolean @default(false)
-  
+  taxRate           Float   @default(0)
+  allowTimeTracking Boolean @default(true)
+  requireClockInOut Boolean @default(false)
+
   // GPS verification settings
   gpsVerificationEnabled Boolean @default(false)
   shopLatitude           Float?
   shopLongitude          Float?
   gpsRadiusMeters        Int?    @default(100) // Allow clock in within 100m
-  
+
   // Payroll budgets
   weeklyPayrollBudget  Float?
   monthlyPayrollBudget Float?
+
+  // Shop-wide notification preferences
+  notificationsEnabled      Boolean @default(true)
+  notificationSoundEnabled  Boolean @default(true)
+  notificationPreferences   Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -478,24 +549,24 @@ model ShopSettings {
 
 // Inventory requests from managers
 model InventoryRequest {
-  id        String @id @default(cuid())
-  shopId    String
+  id            String @id @default(cuid())
+  shopId        String
   requestedById String // Tech ID (manager)
-  
-  itemName    String
-  quantity    Int
-  reason      String?
-  urgency     String @default("normal") // low, normal, high, urgent
-  status      String @default("pending") // pending, approved, ordered, received, denied
-  
-  approvedBy  String?
-  approvedAt  DateTime?
-  
+
+  itemName String
+  quantity Int
+  reason   String?
+  urgency  String  @default("normal") // low, normal, high, urgent
+  status   String  @default("pending") // pending, approved, ordered, received, denied
+
+  approvedBy String?
+  approvedAt DateTime?
+
   // Link to actual inventory item if approved
   inventoryItemId String?
-  
+
   orderDetails String? // Purchase order info, tracking, etc.
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -509,27 +580,29 @@ model InventoryRequest {
 model InventoryStock {
   id     String @id @default(cuid())
   shopId String
-  
-  itemName    String
-  sku         String?
-  category    String? // parts, fluids, tires, tools, etc.
-  
-  quantity        Int     @default(0)
-  unitCost        Float   @default(0)
-  sellingPrice    Float   @default(0)
-  reorderPoint    Int     @default(10)
-  reorderQuantity Int     @default(50)
-  
-  supplier      String?
-  supplierSKU   String?
-  location      String? // shelf/bin location in shop
-  
+
+  itemName String
+  sku      String?
+  category String? // parts, fluids, tires, tools, etc.
+
+  quantity        Int   @default(0)
+  unitCost        Float @default(0)
+  sellingPrice    Float @default(0)
+  reorderPoint    Int   @default(10)
+  reorderQuantity Int   @default(50)
+
+  supplier    String?
+  supplierSKU String?
+  location    String? // shelf/bin location in shop
+
   // Tracking
   lastRestocked DateTime?
   notes         String?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  purchaseOrderItems PurchaseOrderItem[]
 
   @@index([shopId])
   @@index([category])
@@ -537,17 +610,62 @@ model InventoryStock {
   @@map("inventory_stock")
 }
 
+model PurchaseOrder {
+  id          String   @id @default(cuid())
+  shopId      String
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  vendor      String?
+  status      String   @default("ordered") // ordered, shipped, received, cancelled
+  expectedDate DateTime?
+  notes       String?
+  createdById String?
+  totalCost   Float?
+
+  items      PurchaseOrderItem[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([shopId])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id               String         @id @default(cuid())
+  purchaseOrderId  String
+  purchaseOrder    PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+  workOrderId      String?
+  workOrder        WorkOrder?     @relation(fields: [workOrderId], references: [id])
+
+  inventoryStockId String?
+  inventoryStock   InventoryStock? @relation(fields: [inventoryStockId], references: [id])
+
+  itemName String
+  sku      String?
+  quantity Int
+  unitCost Float   @default(0)
+  status   String  @default("ordered") // ordered, shipped, received, cancelled
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([purchaseOrderId])
+  @@index([workOrderId])
+  @@index([inventoryStockId])
+  @@map("purchase_order_items")
+}
+
 // Audit Log for admin actions
 model AuditLog {
-  id        String   @id @default(cuid())
-  adminId   String
-  action    String   // user_updated, user_deleted, shop_approved, etc.
-  targetId  String?  // ID of affected resource
+  id         String  @id @default(cuid())
+  adminId    String
+  action     String // user_updated, user_deleted, shop_approved, etc.
+  targetId   String? // ID of affected resource
   targetType String? // user, shop, workorder, etc.
-  details   String?    // Additional context
-  ipAddress String?
-  userAgent String?
-  
+  details    String? // Additional context
+  ipAddress  String?
+  userAgent  String?
+
   createdAt DateTime @default(now())
 
   @@index([adminId])
@@ -558,34 +676,34 @@ model AuditLog {
 
 // Direct Messages (Manager ↔ Tech, Manager ↔ Admin, Manager ↔ Customer)
 model DirectMessage {
-  id         String   @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   // Sender
   senderId   String
   senderRole String // manager, tech, admin, customer, shop
   senderName String
-  
+
   // Receiver
   receiverId   String
   receiverRole String // manager, tech, admin, customer, shop
   receiverName String
-  
+
   // Shop context (for managers/techs)
-  shopId     String?
-  
+  shopId String?
+
   // Message content
-  subject    String?
-  body       String
-  
+  subject String?
+  body    String
+
   // Status
-  isRead     Boolean  @default(false)
-  readAt     DateTime?
-  
+  isRead Boolean   @default(false)
+  readAt DateTime?
+
   // Reply thread
-  threadId   String? // ID of the first message in conversation
-  
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  threadId String? // ID of the first message in conversation
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([senderId, senderRole])
   @@index([receiverId, receiverRole])
@@ -597,23 +715,25 @@ model DirectMessage {
 
 // Appointments - Customer booking system
 model Appointment {
-  id          String   @id @default(cuid())
-  customerId  String
-  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  shopId      String
-  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  
-  vehicleId   String?
-  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
-  
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
   scheduledDate DateTime
-  serviceType   String   // oil-change, inspection, repair, etc.
+  serviceType   String // oil-change, inspection, repair, etc.
   notes         String?
   status        String   @default("scheduled") // scheduled, confirmed, completed, cancelled, no-show
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages CustomerMessage[]
 
   @@index([customerId])
   @@index([shopId])
@@ -624,21 +744,21 @@ model Appointment {
 
 // Reviews - Customer feedback system
 model Review {
-  id          String    @id @default(cuid())
-  customerId  String
-  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  shopId      String
-  shop        Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
   workOrderId String
   workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
-  
-  rating      Int       // 1-5 stars
-  comment     String?
-  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+
+  rating  Int // 1-5 stars
+  comment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([workOrderId, customerId])
   @@index([customerId])
@@ -652,10 +772,10 @@ model FavoriteShop {
   id         String   @id @default(cuid())
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  shopId     String
-  
-  createdAt  DateTime @default(now())
+
+  shopId String
+
+  createdAt DateTime @default(now())
 
   @@unique([customerId, shopId])
   @@index([customerId])
@@ -664,18 +784,18 @@ model FavoriteShop {
 
 // Customer Documents - Invoices, receipts, warranties
 model CustomerDocument {
-  id          String    @id @default(cuid())
-  customerId  String
-  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  name        String
-  type        String    @default("other") // invoice, receipt, warranty, contract, other
-  url         String    // Cloudinary URL
-  fileSize    Int       @default(0)
-  
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  name     String
+  type     String @default("other") // invoice, receipt, warranty, contract, other
+  url      String // Cloudinary URL
+  fileSize Int    @default(0)
+
   workOrderId String?
-  
-  uploadedAt  DateTime  @default(now())
+
+  uploadedAt DateTime @default(now())
 
   @@index([customerId])
   @@index([workOrderId])
@@ -687,32 +807,37 @@ model CustomerMessage {
   id          String    @id @default(cuid())
   customerId  String
   customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  workOrderId String
-  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
   
-  from        String    // 'customer' or 'tech'
-  content     String
-  read        Boolean   @default(false)
-  
-  sentAt      DateTime  @default(now())
+  // Can be linked to workOrder OR appointment (at least one required)
+  workOrderId   String?
+  workOrder     WorkOrder?   @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  from    String // 'customer' or 'tech' or 'shop'
+  content String
+  read    Boolean @default(false)
+
+  sentAt DateTime @default(now())
 
   @@index([customerId])
   @@index([workOrderId])
+  @@index([appointmentId])
   @@index([read])
   @@map("customer_messages")
 }
 
 // Tech Tracking - Real-time GPS location for active work orders
 model TechTracking {
-  id              String    @id @default(cuid())
-  workOrderId     String    @unique
-  workOrder       WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
-  
-  latitude        Float
-  longitude       Float
+  id          String    @id @default(cuid())
+  workOrderId String    @unique
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  latitude         Float
+  longitude        Float
   estimatedArrival DateTime?
-  
-  updatedAt       DateTime  @updatedAt
+
+  updatedAt DateTime @updatedAt
 
   @@index([workOrderId])
   @@map("tech_tracking")
@@ -720,13 +845,81 @@ model TechTracking {
 
 // Push Subscriptions - Web push notifications
 model PushSubscription {
-  id           String   @id @default(cuid())
-  customerId   String   @unique
-  subscription String   // JSON string of push subscription
-  
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id           String @id @default(cuid())
+  customerId   String @unique
+  subscription String // JSON string of push subscription
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([customerId])
   @@map("push_subscriptions")
+}
+
+// Subscription Management
+model Subscription {
+  id     String @id @default(cuid())
+  shopId String @unique
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  plan                 String
+  status               String  @default("active")
+  stripeSubscriptionId String? @unique
+  stripeCustomerId     String?
+
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean   @default(false)
+  canceledAt         DateTime?
+
+  trialStart DateTime?
+  trialEnd   DateTime?
+
+  lastPaymentDate   DateTime?
+  lastPaymentAmount Float?
+
+  maxUsers Int @default(1)
+  maxShops Int @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([stripeSubscriptionId])
+  @@index([stripeCustomerId])
+  @@map("subscriptions")
+}
+
+model PaymentHistory {
+  id                    String    @id @default(cuid())
+  subscriptionId        String?
+  stripeInvoiceId       String?   @unique
+  stripeSubscriptionId  String?
+  stripePaymentIntentId String?
+  amount                Float
+  currency              String    @default("usd")
+  status                String
+  description           String?
+  receiptUrl            String?
+  paidAt                DateTime?
+  createdAt             DateTime  @default(now())
+
+  @@index([subscriptionId])
+  @@index([stripeInvoiceId])
+  @@map("payment_history")
+}
+
+// Analytics tracking for website visits
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  userAgent String?
+  ipHash    String?  // Hashed IP for privacy
+  sessionId String?
+  referrer  String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+  @@map("page_views")
 }

@@ -1,0 +1,80 @@
+Starting Socket.IO server on port 3001 JWT secret present
+Verbose logging enabled for socket server (DEBUG includes "socket" or NODE_ENV=development)
+Socket.IO server initialized and ready
+Socket.IO server listening on port 3001
+Socket.IO HTTP server listening on port 3001 and path /api/socket
+[HTTP] upgrade request GET /api/socket/?EIO=4&transport=websocket headers: {
+  origin: undefined,
+  upgrade: 'websocket',
+  connection: 'Upgrade',
+  'sec-websocket-version': '13',
+  'sec-websocket-key': 'N9/4JolM21aH7wDIA3cV+A=='
+}
+[Engine] connection QCRAfI5EsDwwlJAQAAAA transport= websocket
+[HTTP] upgrade request GET /api/socket/?EIO=4&transport=websocket headers: {
+  origin: undefined,
+  upgrade: 'websocket',
+  connection: 'Upgrade',
+  'sec-websocket-version': '13',
+  'sec-websocket-key': 'IMxkgG608SOT4/szjLfj8Q=='
+}
+[Engine] connection 9myw73TwoLinDqSUAAAB transport= websocket
+[Engine] packet message from QCRAfI5EsDwwlJAQAAAA
+Socket handshake auth present: true handshakeKeys: [ 'token' ]
+Socket handshake headers: {
+  origin: undefined,
+  host: 'localhost:3001',
+  cookie: false,
+  'user-agent': undefined
+}
+Socket handshake query: { EIO: '4', transport: 'websocket' }
+Verifying token length 211
+Socket auth succeeded for id: e2e-shop role: shop
+User e2e (shop) connected: EdU9Fba2ISqYz_-wAAAC
+[Engine] packet message from 9myw73TwoLinDqSUAAAB
+Socket handshake auth present: true handshakeKeys: [ 'token' ]
+Socket handshake headers: {
+  origin: undefined,
+  host: 'localhost:3001',
+  cookie: false,
+  'user-agent': undefined
+}
+Socket handshake query: { EIO: '4', transport: 'websocket' }
+Verifying token length 211
+Socket auth succeeded for id: e2e-shop role: shop
+User e2e (shop) connected: 0apoSK4HDR_Y42HrAAAD
+[Engine] packet message from QCRAfI5EsDwwlJAQAAAA
+[Engine] packet message from QCRAfI5EsDwwlJAQAAAA
+User e2e disconnected: EdU9Fba2ISqYz_-wAAAC
+[Engine] packet message from 9myw73TwoLinDqSUAAAB
+User e2e disconnected: 0apoSK4HDR_Y42HrAAAD
+[HTTP] request GET /health headers: {
+  origin: undefined,
+  'user-agent': 'Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.19041.6456',
+  'content-type': undefined
+}
+[HTTP] request GET /health headers: {
+  origin: undefined,
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0',
+  'content-type': undefined
+}
+[HTTP] request GET /health headers: {
+  origin: undefined,
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0',
+  'content-type': undefined
+}
+[HTTP] request GET /favicon.ico headers: {
+  origin: undefined,
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0',
+  'content-type': undefined
+}
+[HTTP] request GET /favicon.ico headers: {
+  origin: undefined,
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0',
+  'content-type': undefined
+}
+[HTTP] request GET /health headers: {
+  origin: undefined,
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0',
+  'content-type': undefined
+}

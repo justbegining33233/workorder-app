@@ -1,15 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateCsrf } from '@/lib/csrf';
+import { validateCsrf, validatePublicCsrf } from '@/lib/csrf';
 
 export async function POST(request: NextRequest) {
   try {
     if (!request.headers.get('authorization')) {
-      const ok = await validateCsrf(request);
+      // Allow public double-submit CSRF when not using auth header
+      const ok = validatePublicCsrf(request) || await validateCsrf(request);
       if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
     }
     const body = await request.json();
-    const { shopId, businessLicense, insurancePolicy, shopType, dieselServices, gasServices } = body;
+    const {
+      shopId,
+      businessLicense,
+      insurancePolicy,
+      shopType,
+      dieselServices = [],
+      gasServices = [],
+      smallEngineServices = [],
+      heavyEquipmentServices = [],
+      resurfacingServices = [],
+      weldingServices = [],
+      tireServices = [],
+    } = body;
 
     console.log('Complete profile request:', { shopId, businessLicense, insurancePolicy, shopType });
 
@@ -22,14 +35,32 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate that services are selected based on shop type
-    const hasRequiredServices = shopType === 'diesel-heavy-duty' 
-      ? dieselServices && dieselServices.length > 0
-      : shopType === 'gas-automotive'
-      ? gasServices && gasServices.length > 0
-      : (dieselServices && dieselServices.length > 0) || (gasServices && gasServices.length > 0);
+    const totalSelected =
+      (dieselServices?.length || 0) +
+      (gasServices?.length || 0) +
+      (smallEngineServices?.length || 0) +
+      (heavyEquipmentServices?.length || 0) +
+      (resurfacingServices?.length || 0) +
+      (weldingServices?.length || 0) +
+      (tireServices?.length || 0);
 
-    if (!hasRequiredServices) {
+    if (!totalSelected) {
       return NextResponse.json({ error: 'Please select at least one service' }, { status: 400 });
+    }
+
+    const selectedByType: Record<string, number> = {
+      diesel: dieselServices?.length || 0,
+      gas: gasServices?.length || 0,
+      'small-engine': smallEngineServices?.length || 0,
+      'heavy-equipment': heavyEquipmentServices?.length || 0,
+      resurfacing: resurfacingServices?.length || 0,
+      welding: weldingServices?.length || 0,
+      tire: tireServices?.length || 0,
+      mixed: totalSelected,
+    };
+
+    if (!selectedByType[shopType]) {
+      return NextResponse.json({ error: 'Please select at least one service that matches your shop type' }, { status: 400 });
     }
 
     // First check if shop exists
@@ -59,16 +90,13 @@ export async function POST(request: NextRequest) {
 
     // Store services in the database
     const allServices = [
-      ...(dieselServices || []).map((serviceName: string) => ({
-        shopId,
-        serviceName,
-        category: 'diesel',
-      })),
-      ...(gasServices || []).map((serviceName: string) => ({
-        shopId,
-        serviceName,
-        category: 'gas',
-      })),
+      ...(dieselServices || []).map((serviceName: string) => ({ shopId, serviceName, category: 'diesel' })),
+      ...(gasServices || []).map((serviceName: string) => ({ shopId, serviceName, category: 'gas' })),
+      ...(smallEngineServices || []).map((serviceName: string) => ({ shopId, serviceName, category: 'small-engine' })),
+      ...(heavyEquipmentServices || []).map((serviceName: string) => ({ shopId, serviceName, category: 'heavy-equipment' })),
+      ...(resurfacingServices || []).map((serviceName: string) => ({ shopId, serviceName, category: 'resurfacing' })),
+      ...(weldingServices || []).map((serviceName: string) => ({ shopId, serviceName, category: 'welding' })),
+      ...(tireServices || []).map((serviceName: string) => ({ shopId, serviceName, category: 'tire' })),
     ];
 
     // Delete existing services first
@@ -106,7 +134,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log('Shop profile completed:', { shopId, dieselCount: dieselServices?.length || 0, gasCount: gasServices?.length || 0 });
+    console.log('Shop profile completed:', {
+      shopId,
+      dieselCount: dieselServices?.length || 0,
+      gasCount: gasServices?.length || 0,
+      smallEngineCount: smallEngineServices?.length || 0,
+      heavyEquipmentCount: heavyEquipmentServices?.length || 0,
+      resurfacingCount: resurfacingServices?.length || 0,
+      weldingCount: weldingServices?.length || 0,
+      tireCount: tireServices?.length || 0,
+    });
 
     return NextResponse.json({ 
       message: 'Shop profile completed successfully',
@@ -117,6 +154,11 @@ export async function POST(request: NextRequest) {
         shopType,
         dieselServices: dieselServices || [],
         gasServices: gasServices || [],
+        smallEngineServices: smallEngineServices || [],
+        heavyEquipmentServices: heavyEquipmentServices || [],
+        resurfacingServices: resurfacingServices || [],
+        weldingServices: weldingServices || [],
+        tireServices: tireServices || [],
         profileComplete: true,
         completedAt: updatedShop.updatedAt,
       }
@@ -153,6 +195,11 @@ export async function GET(request: NextRequest) {
     // Group services by category
     const dieselServices = shop.services.filter(s => s.category === 'diesel').map(s => s.serviceName);
     const gasServices = shop.services.filter(s => s.category === 'gas').map(s => s.serviceName);
+    const smallEngineServices = shop.services.filter(s => s.category === 'small-engine').map(s => s.serviceName);
+    const heavyEquipmentServices = shop.services.filter(s => s.category === 'heavy-equipment').map(s => s.serviceName);
+    const resurfacingServices = shop.services.filter(s => s.category === 'resurfacing').map(s => s.serviceName);
+    const weldingServices = shop.services.filter(s => s.category === 'welding').map(s => s.serviceName);
+    const tireServices = shop.services.filter(s => s.category === 'tire').map(s => s.serviceName);
 
     const profile = {
       shopId: shop.id,
@@ -161,6 +208,11 @@ export async function GET(request: NextRequest) {
       shopType: shop.shopType,
       dieselServices,
       gasServices,
+      smallEngineServices,
+      heavyEquipmentServices,
+      resurfacingServices,
+      weldingServices,
+      tireServices,
       profileComplete: shop.profileComplete,
       completedAt: shop.updatedAt,
     };

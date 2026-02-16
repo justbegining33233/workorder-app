@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function AdminTools() {
-  const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['admin']);
   const [stats, setStats] = useState({
     totalRevenue: '$0',
     activeShops: 0,
@@ -14,12 +14,7 @@ export default function AdminTools() {
   });
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
-      return;
-    }
+    if (!user || isLoading) return;
     
     // Fetch platform statistics
     fetch('/api/admin/stats', { cache: 'no-store' })
@@ -35,14 +30,36 @@ export default function AdminTools() {
         }
       })
       .catch(err => console.error('Error fetching stats:', err));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user, isLoading]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   const tools = [
+    { name: 'Manage Customers', description: 'View and manage all paying customers (shop owners)', icon: '👥', href: '/admin/manage-customers', color: '#22c55e' },
     { name: 'Manage Tenants', description: 'Manage all tenant organizations and subscriptions', icon: '🏢', href: '/admin/manage-tenants', color: '#3b82f6' },
     { name: 'Manage Shops', description: 'Manage all auto repair shops in the network', icon: '🏪', href: '/admin/manage-shops', color: '#22c55e' },
     { name: 'Financial Reports', description: 'Revenue, payouts, and financial analytics', icon: '💰', href: '/admin/financial-reports', color: '#f59e0b' },
-    { name: 'User Management', description: 'Manage all platform users and roles', icon: '👥', href: '/admin/user-management', color: '#a855f7' },
+    { name: 'User Management', description: 'Manage all platform users and roles', icon: '🔧', href: '/admin/user-management', color: '#a855f7' },
     { name: 'Approved Shops', description: 'View all verified and active shop partners', icon: '✓', href: '/admin/accepted-shops', color: '#22c55e' },
     { name: 'Pending Shops', description: 'Review and approve new shop applications', icon: '⏳', href: '/admin/pending-shops', color: '#e5332a' },
     { name: 'Activity Logs', description: 'Complete system activity history', icon: '📋', href: '/admin/activity-logs', color: '#3b82f6' },
@@ -69,7 +86,7 @@ export default function AdminTools() {
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:20}}>
           {tools.map((tool, idx) => (
             <Link key={idx} href={tool.href} style={{textDecoration:'none'}}>
-              <div style={{background:'rgba(0,0,0,0.3)', border:`1px solid rgba(${parseInt(tool.color.slice(1,3),16)},${parseInt(tool.color.slice(3,5),16)},${parseInt(tool.color.slice(5,7),16)},0.3)`, borderRadius:12, padding:24, cursor:'pointer', transition:'all 0.3s', height:'100%'}}>
+              <div style={{background:'rgba(0,0,0,0.3)', border:`1px solid ${tool.color}50`, borderRadius:12, padding:24, cursor:'pointer', transition:'all 0.3s', height:'100%'}}>
                 <div style={{fontSize:40, marginBottom:16}}>{tool.icon}</div>
                 <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>{tool.name}</h3>
                 <p style={{fontSize:14, color:'#9aa3b2', lineHeight:1.5}}>{tool.description}</p>

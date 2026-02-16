@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useRequireAuth } from '@/contexts/AuthContext';
 import {
   LineChart,
   Line,
@@ -16,6 +17,7 @@ import {
 } from 'recharts';
 
 export default function AnalyticsPage() {
+  useRequireAuth(['shop', 'manager']);
   const router = useRouter();
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -26,13 +28,7 @@ export default function AnalyticsPage() {
   });
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
     const id = localStorage.getItem('shopId');
-
-    if (role !== 'shop' && role !== 'manager') {
-      router.push('/shop/home');
-      return;
-    }
 
     setShopId(id || '');
     fetchAnalytics(id || '');

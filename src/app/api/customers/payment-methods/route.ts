@@ -1,24 +1,23 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import stripe from '@/lib/stripe';
+import { authenticateRequest } from '@/lib/middleware';
 
 // GET /api/customers/payment-methods - Get all payment methods for a customer
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const customerId = searchParams.get('customerId');
-
-    if (!customerId) {
-      return NextResponse.json({ error: 'Customer ID required' }, { status: 400 });
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get customer's stripe customer ID
     const customer = await prisma.customer.findUnique({
-      where: { id: customerId },
+      where: { id: user.id },
     });
 
     if (!customer?.stripeCustomerId) {
-      return NextResponse.json([]);
+      return NextResponse.json({ paymentMethods: [] });
     }
 
     // Fetch payment methods from Stripe
@@ -27,7 +26,7 @@ export async function GET(request: Request) {
       type: 'card',
     });
 
-    return NextResponse.json(paymentMethods.data);
+    return NextResponse.json({ paymentMethods: paymentMethods.data });
   } catch (error) {
     console.error('Error fetching payment methods:', error);
     return NextResponse.json({ error: 'Failed to fetch payment methods' }, { status: 500 });
@@ -35,21 +34,26 @@ export async function GET(request: Request) {
 }
 
 // POST /api/customers/payment-methods - Add a new payment method
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { customerId, paymentMethodId } = body;
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    if (!customerId || !paymentMethodId) {
+    const body = await request.json();
+    const { paymentMethodId } = body;
+
+    if (!paymentMethodId) {
       return NextResponse.json(
-        { error: 'Customer ID and payment method ID required' },
+        { error: 'Payment method ID required' },
         { status: 400 }
       );
     }
 
     // Get or create stripe customer
     let customer = await prisma.customer.findUnique({
-      where: { id: customerId },
+      where: { id: user.id },
     });
 
     if (!customer) {
@@ -67,7 +71,7 @@ export async function POST(request: Request) {
       stripeCustomerId = stripeCustomer.id;
 
       await prisma.customer.update({
-        where: { id: customerId },
+        where: { id: customer.id },
         data: { stripeCustomerId },
       });
     }

@@ -1,12 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import MessagingCard from '@/components/MessagingCard';
+import RealTimeWorkOrders from '@/components/RealTimeWorkOrders';
+import ShopBaysCard from '@/components/ShopBaysCard';
+import MobileLayout from '@/components/MobileLayout';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Job {
   id: string;
@@ -34,14 +38,21 @@ interface InventoryItem {
   status: string;
 }
 
+type QuickAction = {
+  label: string;
+  href: string;
+  tint: string;
+  color: string;
+  border: string;
+  requiresAdmin?: boolean;
+  hideForAdmin?: boolean;
+  requiresManagerOrAdmin?: boolean;
+};
+
 export default function ShopHome() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [userName, setUserName] = useState('');
-  const [userId, setUserId] = useState('');
-  const [shopId, setShopId] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [isShopAdmin, setIsShopAdmin] = useState(false); // Track if user is shop owner/admin
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState({
     name: '',
@@ -61,34 +72,89 @@ export default function ShopHome() {
   });
   const [teamMembers] = useState<TeamMember[]>([]);
   const [inventory] = useState<InventoryItem[]>([]);
+  const [selectedDestinations, setSelectedDestinations] = useState<Record<string, string>>({});
+  const [pendingWorkOrders, setPendingWorkOrders] = useState<Job[]>([
+    { id: 'WO-1045', service: 'Brake Pads & Rotors', priority: 'High', customer: 'K. Larkin', vehicle: '2018 F-150', time: '9:15 AM', tech: 'Unassigned', status: 'Pending' },
+    { id: 'WO-1046', service: 'Oil & Filter', priority: 'Low', customer: 'M. Nguyen', vehicle: '2020 Civic', time: '9:30 AM', tech: 'Unassigned', status: 'Pending' },
+    { id: 'WO-1047', service: 'Check Engine Diagnostic', priority: 'Medium', customer: 'S. Patel', vehicle: '2016 Forester', time: '9:45 AM', tech: 'Unassigned', status: 'Pending' }
+  ]);
+  const [bays, setBays] = useState<Array<{ id: string; name: string; tech: string; jobs: Job[] }>>([
+    { id: 'bay-1', name: 'Bay 1', tech: 'Alex R.', jobs: [] },
+    { id: 'bay-2', name: 'Bay 2', tech: 'Jamie L.', jobs: [] },
+    { id: 'bay-3', name: 'Bay 3', tech: 'Chris M.', jobs: [] }
+  ]);
+  const [roadcallJobs, setRoadcallJobs] = useState<Job[]>([]);
+  const userId = (user as any)?.id ?? 'shop-user';
+  const shopId = (user as any)?.shopId ?? 'shop-001';
+  const quickActions: QuickAction[] = [
+    { label: '🧰 Parts', href: '/shop/parts-labor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' },
+    {
+      label:
+        user?.role === 'manager'
+          ? '📊 Manager Panel'
+          : user?.role === 'tech'
+          ? '🔧 Tech Panel'
+          : '⚙️ Shop Admin Panel',
+      href:
+        user?.role === 'manager'
+          ? '/shop/manager'
+          : user?.role === 'tech'
+          ? '/shop/tech'
+          : '/shop/admin',
+      tint:
+        user?.role === 'manager'
+          ? 'rgba(59,130,246,0.18)'
+          : user?.role === 'tech'
+          ? 'rgba(34,197,94,0.18)'
+          : 'rgba(229,51,42,0.2)',
+      color:
+        user?.role === 'manager'
+          ? '#3b82f6'
+          : user?.role === 'tech'
+          ? '#22c55e'
+          : '#e5332a',
+      border:
+        user?.role === 'manager'
+          ? 'rgba(59,130,246,0.28)'
+          : user?.role === 'tech'
+          ? 'rgba(34,197,94,0.28)'
+          : 'rgba(229,51,42,0.3)',
+      requiresAdmin: user?.role === 'admin',
+      requiresManagerOrAdmin: user?.role === 'manager',
+      hideForAdmin: user?.role === 'tech',
+    },
+    { label: '📊 Reports & Analytics', href: '/shop/reports', tint: 'rgba(168,85,247,0.18)', color: '#a855f7', border: 'rgba(168,85,247,0.28)' },
+    { label: '🏢 Order from Distributors', href: '/shop/distributors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
+    { label: '👥 Manage Team', href: '/shop/manage-team', tint: 'rgba(245,158,11,0.18)', color: '#f59e0b', border: 'rgba(245,158,11,0.28)' },
+    { label: '⚙️ Shop Settings', href: '/shop/settings', tint: 'rgba(107,114,128,0.2)', color: '#e5e7eb', border: 'rgba(107,114,128,0.35)' }
+  ];
+  const priorityStyles: Record<string, { bg: string; color: string }> = {
+    High: { bg: 'rgba(229,51,42,0.2)', color: '#e5332a' },
+    Medium: { bg: 'rgba(245,158,11,0.2)', color: '#f59e0b' },
+    Low: { bg: 'rgba(59,130,246,0.18)', color: '#3b82f6' }
+  };
 
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const name = localStorage.getItem('userName');
-    const id = localStorage.getItem('userId');
-    const shop = localStorage.getItem('shopId');
-    const shopAdmin = localStorage.getItem('isShopAdmin'); // Check if user created the shop
-    const profileComplete = localStorage.getItem('shopProfileComplete');
-    
-    // Allow shop owners and managers to access
-    if (role !== 'shop' && role !== 'manager') {
-      router.push('/auth/login');
-      return;
-    }
-    
-    // Only check profile completion for shop owners, not managers
-    if (role === 'shop' && profileComplete !== 'true') {
-      router.push('/shop/complete-profile');
-      return;
-    }
-    
-    if (name) setUserName(name);
-    if (id) setUserId(id);
-    if (shop) setShopId(shop);
-    if (role) setUserRole(role);
-    if (shopAdmin === 'true') setIsShopAdmin(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const isManager = user.role === 'manager';
 
   const handleSignOut = () => {
     localStorage.removeItem('userRole');
@@ -105,7 +171,7 @@ export default function ShopHome() {
       email: newMember.email,
       phone: newMember.phone,
       password: newMember.password,
-      shopName: userName, // Link to the shop
+      shopName: user.name, // Link to the shop
       createdAt: new Date().toISOString()
     };
     employees.push(newEmployee);
@@ -128,22 +194,107 @@ export default function ShopHome() {
     }
   };
 
+  const handleOpenWorkorder = (orderId: string) => {
+    router.push(`/workorders/${orderId}`);
+  };
+
+  const handleAssign = (orderId: string, destinationId: string) => {
+    setPendingWorkOrders(prev => {
+      const order = prev.find(o => o.id === orderId);
+      if (!order) return prev;
+
+      if (destinationId === 'roadcall') {
+        setRoadcallJobs(current => {
+          const exists = current.some(job => job.id === order.id);
+          return exists ? current : [...current, { ...order, status: 'Roadcall' }];
+        });
+      } else {
+        setBays(current =>
+          current.map(bay => {
+            if (bay.id !== destinationId) return bay;
+            const exists = bay.jobs.some(job => job.id === order.id);
+            return exists ? bay : { ...bay, jobs: [...bay.jobs, { ...order, status: 'In Bay' }] };
+          })
+        );
+      }
+
+      return prev.filter(o => o.id !== orderId);
+    });
+  };
+
+  const handleReturnToPending = (bayId: string, orderId: string) => {
+    let moved: Job | undefined;
+    setBays(current => {
+      const updated = current.map(bay => {
+        if (bay.id !== bayId) return bay;
+        const job = bay.jobs.find(j => j.id === orderId);
+        if (job) {
+          moved = job;
+        }
+        return { ...bay, jobs: bay.jobs.filter(j => j.id !== orderId) };
+      });
+      return updated;
+    });
+
+    if (moved) {
+      const movedJob: Job = moved;
+      setPendingWorkOrders(prev => [...prev, { ...movedJob, status: 'Pending' }]);
+    }
+  };
+
+  const handleReturnRoadcallToPending = (orderId: string) => {
+    let moved: Job | undefined;
+    setRoadcallJobs(current => {
+      moved = current.find(j => j.id === orderId);
+      return current.filter(j => j.id !== orderId);
+    });
+    if (!moved) return;
+    const movedJob: Job = moved;
+    setPendingWorkOrders(prev => [...prev, { ...movedJob, status: 'Pending' }]);
+  };
+
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', display:'flex', flexDirection:'column'}}>
-      {/* Top Navigation */}
-      <TopNavBar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} showMenuButton={true} />
-      
-      {/* Breadcrumbs */}
-      <Breadcrumbs />
-      
-      {/* Main Layout with Sidebar */}
-      <div style={{display:'flex', flex:1}}>
-        {/* Sidebar */}
-        <Sidebar role="shop" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        
-        {/* Main Content */}
-        <div style={{flex:1, overflowY:'auto'}}>
-          <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
+    <MobileLayout
+      role="shop"
+      showSidebar={true}
+      sidebarContent={<Sidebar role="shop" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+      topNavContent={
+        <>
+          <TopNavBar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} showMenuButton={true} />
+          <Breadcrumbs />
+        </>
+      }
+    >
+      <div style={{maxWidth:1400, margin:'0 auto', padding: sidebarOpen ? '0 32px 32px 32px' : '0 32px 32px 32px'}}>
+        <div style={{display:'flex', flexWrap:'nowrap', gap:12, alignItems:'center', margin:'0 0 20px 0', overflowX:'auto', paddingBottom:4}}>
+          <span style={{fontSize:13, color:'#9aa3b2', fontWeight:700}}>Quick Actions</span>
+          {quickActions.map(action => {
+            if (action.requiresAdmin && !user.isShopAdmin) return null;
+            if (action.hideForAdmin && user.isShopAdmin) return null;
+            if (action.requiresManagerOrAdmin && !(user.isShopAdmin || isManager)) return null;
+            return (
+              <Link
+                key={action.href}
+                href={action.href}
+                style={{
+                  padding:'10px 14px',
+                  background:action.tint,
+                  color:action.color,
+                  border:`1px solid ${action.border}`,
+                  borderRadius:10,
+                  fontSize:13,
+                  fontWeight:700,
+                  textDecoration:'none',
+                  whiteSpace:'nowrap',
+                  flexShrink:0
+                }}
+              >
+                {action.label}
+              </Link>
+            );
+          })}
+        </div>
+
         {/* Shop Stats */}
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:16, marginBottom:32}}>
           <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
@@ -172,52 +323,86 @@ export default function ShopHome() {
           </div>
         </div>
 
-        <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:24}}>
-          {/* Left Column */}
+        <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:24, alignItems:'start'}}>
+          {/* Main Column */}
           <div>
-            {/* Today's Schedule */}
-            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginBottom:24}}>
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
-                <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>Today's Schedule</h2>
-                <Link href="/workorders/list" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All →</Link>
-              </div>
-              <div style={{display:'flex', flexDirection:'column', gap:12}}>
-                {todayJobs.map(job => (
-                  <div key={job.id} style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, padding:16}}>
-                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12}}>
-                      <div style={{flex:1}}>
-                        <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
-                          <span style={{fontSize:15, fontWeight:700, color:'#e5e7eb'}}>{job.service}</span>
-                          {job.priority === 'High' && (
-                            <span style={{padding:'2px 8px', background:'rgba(229,51,42,0.2)', color:'#e5332a', borderRadius:8, fontSize:11, fontWeight:700}}>HIGH</span>
-                          )}
-                        </div>
-                        <div style={{fontSize:13, color:'#9aa3b2', marginBottom:4}}>{job.customer} • {job.vehicle}</div>
-                        <div style={{fontSize:12, color:'#6b7280'}}>{job.id} • {job.time} • Tech: {job.tech}</div>
-                      </div>
-                      <span style={{padding:'4px 12px', background:job.status === 'In Progress' ? 'rgba(34,197,94,0.2)' : job.status === 'Pending' ? 'rgba(245,158,11,0.2)' : 'rgba(59,130,246,0.2)', color:job.status === 'In Progress' ? '#22c55e' : job.status === 'Pending' ? '#f59e0b' : '#3b82f6', borderRadius:12, fontSize:12, fontWeight:600}}>
-                        {job.status}
-                      </span>
-                      <Link href={`/workorders/${job.id}`}>
-                        <button style={{width:'100%', padding:'8px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer'}}>
-                          View Details
-                        </button>
-                      </Link>
-                    </div>
+            {/* Tall Insight Card above today's schedule */}
+            <div style={{background:'rgba(0,0,0,0.35)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:12, padding:24, marginBottom:24, minHeight:800}}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16, gap:12, flexWrap:'wrap'}}>
+                <div>
+                  <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>Ops Overview</h2>
+                  <div style={{display:'flex', gap:8, marginTop:6, flexWrap:'wrap'}}>
+                    <span style={{padding:'4px 10px', background:'rgba(229,51,42,0.16)', color:'#e5332a', borderRadius:12, fontSize:11, fontWeight:700}}>
+                      Pending: {pendingWorkOrders.length}
+                    </span>
+                    <span style={{padding:'4px 10px', background:'rgba(59,130,246,0.16)', color:'#60a5fa', borderRadius:12, fontSize:11, fontWeight:700}}>
+                      Bays: {bays.reduce((sum, bay) => sum + bay.jobs.length, 0)} active
+                    </span>
                   </div>
-                ))}
+                </div>
+                <span style={{padding:'4px 10px', background:'rgba(34,197,94,0.2)', color:'#22c55e', borderRadius:12, fontSize:11, fontWeight:700}}>
+                  Drag-free handoff
+                </span>
               </div>
-              <div style={{display:'flex', gap:12, marginTop:16}}>
-                <Link href="/workorders/new" style={{flex:1}}>
-                  <button style={{width:'100%', padding:'12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}>
-                    + Roadside Job
-                  </button>
-                </Link>
-                <Link href="/shop/new-inshop-job" style={{flex:1}}>
-                  <button style={{width:'100%', padding:'12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}>
-                    + In-Shop Job
-                  </button>
-                </Link>
+
+              <div style={{display:'grid', gridTemplateColumns:'1fr', gap:16, alignItems:'start'}}>
+                {/* Pending Queue */}
+                <div style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:14, minHeight:220}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+                    <div style={{fontSize:15, fontWeight:700, color:'#e5e7eb'}}>Pending Queue</div>
+                    <span style={{fontSize:12, color:'#9aa3b2'}}>Tap a bay to dispatch</span>
+                  </div>
+                  <div style={{display:'flex', flexDirection:'column', gap:10}}>
+                    {pendingWorkOrders.length === 0 && (
+                      <div style={{color:'#9aa3b2', fontSize:13, padding:12, border:'1px dashed rgba(255,255,255,0.15)', borderRadius:10}}>
+                        No customers waiting — nice work.
+                      </div>
+                    )}
+                    {pendingWorkOrders.map(order => {
+                      const style = priorityStyles[order.priority] || priorityStyles.Medium;
+                      const destinationOptions = [...bays.map(b => ({ id: b.id, label: b.name })), { id: 'roadcall', label: '🚚 Roadcall' }];
+                      const selected = selectedDestinations[order.id] || destinationOptions[0]?.id || 'roadcall';
+                      return (
+                        <div key={order.id} style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:8}}>
+                          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                            <div style={{fontSize:14, fontWeight:700, color:'#e5e7eb'}}>{order.service}</div>
+                            <span style={{padding:'4px 8px', background:style.bg, color:style.color, borderRadius:8, fontSize:11, fontWeight:700}}>{order.priority}</span>
+                          </div>
+                          <div style={{fontSize:12, color:'#9aa3b2'}}>
+                            {order.customer} • {order.vehicle} • {order.id}
+                          </div>
+                          <div style={{display:'flex', gap:8, alignItems:'stretch'}}>
+                            <div style={{flex:1, display:'flex', flexDirection:'column', gap:6}}>
+                              <div style={{fontSize:12, color:'#9aa3b2'}}>Destination</div>
+                              <div style={{background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, padding:4, maxHeight:200, overflowY:'auto', height:'100%'}}>
+                                <select
+                                  value={selected}
+                                  onChange={(e) => setSelectedDestinations(prev => ({ ...prev, [order.id]: e.target.value }))}
+                                  size={destinationOptions.length}
+                                  style={{width:'100%', background:'transparent', color:'#e5e7eb', border:'none', outline:'none', fontSize:12, cursor:'pointer', height:'100%'}}
+                                >
+                                  {destinationOptions.map(opt => (
+                                    <option key={opt.id} value={opt.id} style={{background:'#111827', color:'#e5e7eb'}}>
+                                      {opt.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                            <div style={{display:'flex', alignItems:'flex-end'}}>
+                              <button
+                                onClick={() => handleAssign(order.id, selected)}
+                                style={{padding:'8px 12px', background:'rgba(34,197,94,0.16)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:12, fontWeight:700, cursor:'pointer', alignSelf:'stretch'}}
+                              >
+                                Dispatch to {destinationOptions.find(opt => opt.id === selected)?.label || 'Bay'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -225,7 +410,7 @@ export default function ShopHome() {
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
                 <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>Team Status</h2>
-                {isShopAdmin && (
+                {user.isShopAdmin && (
                   <button onClick={() => setShowAddMember(true)} style={{padding:'8px 16px', background:'#22c55e', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600}}>
                     + Add Team Member
                   </button>
@@ -257,98 +442,19 @@ export default function ShopHome() {
             </div>
           </div>
 
-          {/* Right Column */}
-          <div>
-            {/* Parts and Set Labor */}
-            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginBottom:24}}>
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
-                <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>Parts and Set Labor</h2>
-                <span style={{padding:'4px 8px', background:'#e5332a', color:'white', borderRadius:12, fontSize:11, fontWeight:700}}>
-                  {inventory.filter(p => p.status !== 'good').length} Alert
-                </span>
-              </div>
-              <div style={{display:'flex', flexDirection:'column', gap:12}}>
-                {inventory.map((item, idx) => (
-                  <div key={idx} style={{background:'rgba(255,255,255,0.05)', border:`1px solid ${item.status === 'critical' ? 'rgba(229,51,42,0.3)' : item.status === 'low' ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, padding:12}}>
-                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
-                      <div style={{fontSize:13, fontWeight:700, color:'#e5e7eb'}}>{item.part}</div>
-                      <span style={{fontSize:16, fontWeight:700, color:item.status === 'critical' ? '#e5332a' : item.status === 'low' ? '#f59e0b' : '#22c55e'}}>
-                        {item.stock}
-                      </span>
-                    </div>
-                    <div style={{fontSize:11, color:'#9aa3b2'}}>Reorder at: {item.reorder}</div>
-                    {item.status !== 'good' && (
-                      <button 
-                        onClick={() => handleOrderPart(item.part, item.stock, item.reorder)}
-                        style={{width:'100%', marginTop:8, padding:'6px', background:item.status === 'critical' ? '#e5332a' : '#f59e0b', color:'white', border:'none', borderRadius:4, fontSize:11, fontWeight:600, cursor:'pointer'}}
-                      >
-                        Order Now
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <Link href="/shop/parts-labor">
-                <button style={{width:'100%', marginTop:16, padding:'12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}>
-                  View Full Parts & Labor Management →
-                </button>
-              </Link>
+          {/* Customer Messages */}
+          <div style={{background:'rgba(0,0,0,0.32)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:14, padding:16, boxShadow:'0 10px 30px rgba(0,0,0,0.35)'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+              <h2 style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>Customer Messages</h2>
+              <span style={{fontSize:12, color:'#9aa3b2'}}>Live inbox</span>
             </div>
-
-            {/* Quick Actions */}
-            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-              <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>Quick Actions</h2>
-              <div style={{display:'flex', flexDirection:'column', gap:12}}>
-                {isShopAdmin && (
-                  <Link href="/shop/admin">
-                    <button style={{width:'100%', padding:'12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer', textAlign:'left'}}>
-                      ⚙️ Shop Admin Panel
-                    </button>
-                  </Link>
-                )}
-                <Link href="/manager/dashboard">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(168,85,247,0.2)', color:'#a855f7', border:'1px solid rgba(168,85,247,0.3)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer', textAlign:'left'}}>
-                    📊 Manager Dashboard
-                  </button>
-                </Link>
-                <Link href="/manager/assignments">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(168,85,247,0.2)', color:'#a855f7', border:'1px solid rgba(168,85,247,0.3)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer', textAlign:'left'}}>
-                    👥 Assign Work Orders
-                  </button>
-                </Link>
-                <Link href="/workorders/list">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    📋 All Work Orders
-                  </button>
-                </Link>
-                <Link href="/reports">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    📊 Reports & Analytics
-                  </button>
-                </Link>
-                <Link href="/shop/distributors">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(139,92,246,0.2)', color:'#8b5cf6', border:'1px solid rgba(139,92,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    🏢 Order from Distributors
-                  </button>
-                </Link>
-                <Link href="/shop/manage-team">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(245,158,11,0.2)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    👥 Manage Team
-                  </button>
-                </Link>
-                <Link href="/shop/customer-messages">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(168,85,247,0.2)', color:'#a855f7', border:'1px solid rgba(168,85,247,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    💬 Customer Messages
-                  </button>
-                </Link>
-                <Link href="/shop/settings">
-                  <button style={{width:'100%', padding:'12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left'}}>
-                    ⚙️ Shop Settings
-                  </button>
-                </Link>
-              </div>
-            </div>
+            <MessagingCard userId={userId} shopId={shopId} />
           </div>
+        </div>
+
+        {/* Shop Bays */}
+        <div style={{marginTop: 32}}>
+          <ShopBaysCard shopId={shopId} />
         </div>
       </div>
 
@@ -407,8 +513,9 @@ export default function ShopHome() {
           </div>
         </div>
       )}
-        </div>
-      </div>
-    </div>
+
+      {/* Real-Time Work Orders Updates */}
+      <RealTimeWorkOrders userId={user.id} />
+    </MobileLayout>
   );
 }

@@ -75,13 +75,26 @@ export async function GET(request: NextRequest) {
 
     // Group messages into conversations
     const conversations = new Map();
+    const missingShopIds = new Set<string>();
     
     messages.forEach((msg) => {
-      // Determine the "other person" in the conversation
+      // Determine the "other party"; for customers, normalize by shopId to keep a single thread per shop
       const isRecipient = msg.receiverId === userId;
-      const otherId = isRecipient ? msg.senderId : msg.receiverId;
-      const otherRole = isRecipient ? msg.senderRole : msg.receiverRole;
-      const otherName = isRecipient ? msg.senderName : msg.receiverName;
+      let otherId = isRecipient ? msg.senderId : msg.receiverId;
+      let otherRole = isRecipient ? msg.senderRole : msg.receiverRole;
+      let otherName = isRecipient ? msg.senderName : msg.receiverName;
+
+      // If the logged-in user is a customer and the message is associated with a shop, collapse by shopId
+      if (userRole === 'customer' && msg.shopId) {
+        otherId = msg.shopId;
+        otherRole = 'shop';
+        if (msg.receiverRole === 'shop') otherName = msg.receiverName;
+        else if (msg.senderRole === 'shop') otherName = msg.senderName;
+        if (!otherName || otherName === 'Shop') {
+          missingShopIds.add(msg.shopId);
+          otherName = otherName || 'Shop';
+        }
+      }
       
       const conversationKey = `${otherRole}_${otherId}`;
       
@@ -94,6 +107,7 @@ export async function GET(request: NextRequest) {
           lastMessageAt: msg.createdAt,
           unreadCount: 0,
           messages: [],
+          shopId: msg.shopId,
         });
       }
       
@@ -105,6 +119,20 @@ export async function GET(request: NextRequest) {
         conv.unreadCount++;
       }
     });
+
+    // Fill in shop names if missing
+    if (missingShopIds.size > 0) {
+      const shops = await prisma.shop.findMany({
+        where: { id: { in: Array.from(missingShopIds) } },
+        select: { id: true, shopName: true },
+      });
+      const lookup = new Map(shops.map((s) => [s.id, s.shopName]));
+      conversations.forEach((conv) => {
+        if (conv.shopId && lookup.has(conv.shopId)) {
+          conv.contactName = lookup.get(conv.shopId) || conv.contactName;
+        }
+      });
+    }
 
     // Convert to array and sort by last message time
     const conversationsArray = Array.from(conversations.values()).sort(
@@ -210,22 +238,58 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const message = await prisma.directMessage.create({
-      data: {
-        senderId,
-        senderRole,
-        senderName,
-        receiverId,
-        receiverRole,
-        receiverName,
-        subject: subject || null,
-        body: messageBody,
-        shopId,
-        threadId: threadId || null,
-      },
-    });
+    // Ensure shop receiver names use the actual shop name
+    let normalizedReceiverName = receiverName;
+    if (receiverRole === 'shop') {
+      const shop = await prisma.shop.findUnique({
+        where: { id: receiverId },
+        select: { shopName: true },
+      });
+      if (shop?.shopName) {
+        normalizedReceiverName = shop.shopName;
+        shopId = shopId || receiverId;
+      }
+    }
 
-    return NextResponse.json({ message, success: true });
+    // Route customer → shop messages: deliver to shop owner and also to the shop's manager (if any)
+    const targets: { id: string; role: string; name: string }[] = [
+      { id: receiverId, role: receiverRole, name: normalizedReceiverName },
+    ];
+
+    if (senderRole === 'customer' && receiverRole === 'shop') {
+      shopId = receiverId; // preserve shop context for all copies
+      const manager = await prisma.tech.findFirst({
+        where: { shopId: receiverId, role: 'manager' },
+        select: { id: true, firstName: true, lastName: true },
+      });
+
+      if (manager) {
+        targets.push({
+          id: manager.id,
+          role: 'manager',
+          name: `${manager.firstName} ${manager.lastName}`,
+        });
+      }
+    }
+
+    const created = await Promise.all(targets.map((t) =>
+      prisma.directMessage.create({
+        data: {
+          senderId,
+          senderRole,
+          senderName,
+          receiverId: t.id,
+          receiverRole: t.role,
+          receiverName: t.name,
+          subject: subject || null,
+          body: messageBody,
+          shopId,
+          threadId: threadId || null,
+        },
+      })
+    ));
+
+    return NextResponse.json({ message: created[0], copies: created.length, success: true });
   } catch (error) {
     console.error('Error sending message:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

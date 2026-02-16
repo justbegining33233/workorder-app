@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Vehicle {
   id: string;
@@ -17,6 +18,7 @@ interface Vehicle {
 
 export default function CustomerVehiclesPage() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['customer']);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -30,15 +32,7 @@ export default function CustomerVehiclesPage() {
     licensePlate: ''
   });
 
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    if (role !== 'customer') {
-      router.push('/auth/login');
-      return;
-    }
-    fetchVehicles();
-  }, [router]);
-
+  // Fetch vehicles (hook declared before conditional returns to preserve hook order)
   const fetchVehicles = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -48,7 +42,8 @@ export default function CustomerVehiclesPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setVehicles(data);
+        // API returns { vehicles: [...] }
+        setVehicles(Array.isArray(data) ? data : (data?.vehicles || []));
       }
     } catch (error) {
       console.error('Error fetching vehicles:', error);
@@ -56,6 +51,34 @@ export default function CustomerVehiclesPage() {
       setLoading(false);
     }
   };
+
+  // Effect: declared before early returns so hook order stays stable
+  useEffect(() => {
+    if (isLoading || !user) return;
+    fetchVehicles();
+  }, [router, isLoading, user]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   const handleAddVehicle = async () => {
     if (!formData.make || !formData.model) {

@@ -4,7 +4,7 @@ import { verifyToken } from './auth';
 export interface AuthUser {
   id: string;
   email: string;
-  role: 'customer' | 'tech' | 'manager' | 'admin' | 'shop';
+  role: 'customer' | 'tech' | 'manager' | 'admin' | 'shop' | 'superadmin';
   shopId?: string;
 }
 

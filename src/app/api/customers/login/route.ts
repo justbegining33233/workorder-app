@@ -5,8 +5,11 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().optional(),
+  username: z.string().optional(),
   password: z.string(),
+}).refine(data => data.email || data.username, {
+  message: "Either email or username must be provided",
 });
 
 export async function POST(request: NextRequest) {
@@ -14,9 +17,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = loginSchema.parse(body);
     
-    // Find customer
-    const customer = await prisma.customer.findUnique({
-      where: { email: data.email },
+    // Find customer by email or username
+    const customer = await prisma.customer.findFirst({
+      where: {
+        OR: [
+          { email: data.email },
+          { username: data.username },
+        ].filter(Boolean),
+      },
     });
     
     if (!customer) {

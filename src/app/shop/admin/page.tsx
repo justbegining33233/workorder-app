@@ -7,8 +7,10 @@ import MessagingCard from '@/components/MessagingCard';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ShopAdminPage() {
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
   const [userName, setUserName] = useState('');
@@ -36,6 +38,11 @@ export default function ShopAdminPage() {
   // Inventory management
   const [inventoryStock, setInventoryStock] = useState<any[]>([]);
   const [inventoryRequests, setInventoryRequests] = useState<any[]>([]);
+  const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
+  const [poForm, setPoForm] = useState({ vendor: '', itemName: '', quantity: 1, unitCost: 0, workOrderId: '' });
+  const [workOrderSearch, setWorkOrderSearch] = useState('');
+  const [workOrderOptions, setWorkOrderOptions] = useState<any[]>([]);
+  const [loadingWorkOrders, setLoadingWorkOrders] = useState(false);
   const [showLowStockOnly, setShowLowStockOnly] = useState(false);
 
   // Shop messages
@@ -45,14 +52,63 @@ export default function ShopAdminPage() {
   // Team management
   const [teamData, setTeamData] = useState<any[]>([]);
 
+  const getLiveHours = (emp: any) => {
+    if (typeof emp?.currentHours === 'number' && !Number.isNaN(emp.currentHours)) {
+      return emp.currentHours;
+    }
+
+    if (emp?.clockedInAt) {
+      const start = new Date(emp.clockedInAt).getTime();
+      if (!Number.isNaN(start)) {
+        const hours = (Date.now() - start) / 36e5;
+        return Math.max(0, hours);
+      }
+    }
+
+    return 0;
+  };
+
+  // Keep tab selection in sync with URL hashes so sidebar anchor clicks switch cards
+  const setTab = (tab: 'overview' | 'settings' | 'payroll' | 'team' | 'inventory') => {
+    setActiveTab(tab);
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', `#${tab}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
+    const syncTabFromHash = () => {
+      const hash = (typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '') as typeof activeTab;
+      if (hash && ['overview', 'settings', 'payroll', 'team', 'inventory'].includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    syncTabFromHash();
+    window.addEventListener('hashchange', syncTabFromHash);
+    return () => window.removeEventListener('hashchange', syncTabFromHash);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (user && !user.isShopAdmin) {
+      router.replace('/shop/home');
+      return;
+    }
+
     const admin = localStorage.getItem('isShopAdmin');
     const id = localStorage.getItem('shopId');
     const name = localStorage.getItem('userName');
+    const profileComplete = localStorage.getItem('shopProfileComplete') === 'true';
 
-    if (role !== 'shop' || admin !== 'true') {
+    if (admin !== 'true') {
       router.push('/shop/home');
+      return;
+    }
+
+    if (!profileComplete) {
+      router.push('/shop/complete-profile');
       return;
     }
 
@@ -64,6 +120,10 @@ export default function ShopAdminPage() {
     fetchBudgetData(id || '');
     fetchInventoryStock(id || '');
     fetchInventoryRequests(id || '');
+    fetchPurchaseOrders(id || '');
+    fetchWorkOrderOptions(id || '', '');
+    fetchWorkOrderOptions(id || '', workOrderSearch);
+    fetchPurchaseOrders(id || '');
     fetchShopMessages(id || '');
     fetchTeamData(id || '');
     
@@ -88,7 +148,7 @@ export default function ShopAdminPage() {
       fetchPayrollData(id || '', currentStart.toISOString(), currentEnd.toISOString());
     }, 5000);
     return () => clearInterval(interval);
-  }, [router]);
+  }, [router, user, isLoading]);
 
   const fetchShopStats = async (id: string) => {
     try {
@@ -179,7 +239,7 @@ export default function ShopAdminPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        setInventoryStock(data.inventory || []);
+        setInventoryStock(data.items || data.inventory || []);
       }
     } catch (error) {
       console.error('Error fetching inventory stock:', error);
@@ -198,6 +258,41 @@ export default function ShopAdminPage() {
       }
     } catch (error) {
       console.error('Error fetching inventory requests:', error);
+    }
+  };
+
+  const fetchWorkOrderOptions = async (id: string, searchTerm: string) => {
+    if (!id) return;
+    setLoadingWorkOrders(true);
+    try {
+      const token = localStorage.getItem('token');
+      const url = `/api/workorders?shopId=${id}&status=pending&limit=20${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`;
+      const response = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setWorkOrderOptions(data.workOrders || []);
+      }
+    } catch (error) {
+      console.error('Error fetching work orders:', error);
+    } finally {
+      setLoadingWorkOrders(false);
+    }
+  };
+
+  const fetchPurchaseOrders = async (id: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/purchase-orders?shopId=${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setPurchaseOrders(data.orders || []);
+      }
+    } catch (error) {
+      console.error('Error fetching purchase orders:', error);
     }
   };
 
@@ -418,6 +513,75 @@ export default function ShopAdminPage() {
     }
   };
 
+  const handleCreatePurchaseOrder = async () => {
+    if (!shopId || !poForm.itemName) {
+      alert('Shop ID and item name are required');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const payload = {
+        shopId,
+        vendor: poForm.vendor || undefined,
+        createdById: userId,
+        items: [
+          {
+            itemName: poForm.itemName,
+            quantity: Number(poForm.quantity) || 0,
+            unitCost: Number(poForm.unitCost) || 0,
+            workOrderId: poForm.workOrderId || undefined,
+          },
+        ],
+      };
+
+      const response = await fetch('/api/purchase-orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        setPoForm({ vendor: '', itemName: '', quantity: 1, unitCost: 0, workOrderId: '' });
+        fetchPurchaseOrders(shopId);
+      } else {
+        const data = await response.json().catch(() => ({}));
+        alert(data.error || 'Failed to create purchase order');
+      }
+    } catch (error) {
+      console.error('Error creating purchase order:', error);
+      alert('Failed to create purchase order');
+    }
+  };
+
+  const handleReceivePurchaseOrder = async (poId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/purchase-orders/${poId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ receiveItems: true, status: 'received' }),
+      });
+
+      if (response.ok) {
+        fetchPurchaseOrders(shopId);
+        fetchInventoryStock(shopId);
+      } else {
+        const data = await response.json().catch(() => ({}));
+        alert(data.error || 'Failed to receive purchase order');
+      }
+    } catch (error) {
+      console.error('Error receiving purchase order:', error);
+      alert('Failed to receive purchase order');
+    }
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)', display: 'flex', flexDirection: 'column' }}>
       {/* Top Navigation */}
@@ -427,14 +591,20 @@ export default function ShopAdminPage() {
       {/* Main Layout with Sidebar */}
       <div style={{ display: 'flex', flex: 1 }}>
         {/* Sidebar */}
-        <Sidebar role="shop" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar
+          role="shop"
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          onSelectTab={(tab) => setTab(tab as typeof activeTab)}
+          activeHash={`#${activeTab}`}
+        />
         {/* Main Content */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: 32 }}>
             {/* Tabs */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
               <button
-                onClick={() => setActiveTab('overview')}
+                onClick={() => setTab('overview')}
                 style={{
                   padding: '12px 24px',
                   background: activeTab === 'overview' ? 'rgba(229,51,42,0.2)' : 'transparent',
@@ -448,7 +618,7 @@ export default function ShopAdminPage() {
                 📊 Overview
               </button>
               <button
-                onClick={() => setActiveTab('settings')}
+                onClick={() => setTab('settings')}
                 style={{
                   padding: '12px 24px',
                   background: activeTab === 'settings' ? 'rgba(229,51,42,0.2)' : 'transparent',
@@ -462,7 +632,7 @@ export default function ShopAdminPage() {
                 ⚙️ Settings
               </button>
               <button
-                onClick={() => setActiveTab('payroll')}
+                onClick={() => setTab('payroll')}
                 style={{
                   padding: '12px 24px',
                   background: activeTab === 'payroll' ? 'rgba(229,51,42,0.2)' : 'transparent',
@@ -476,7 +646,7 @@ export default function ShopAdminPage() {
                 💰 Payroll
               </button>
               <button
-                onClick={() => setActiveTab('team')}
+                onClick={() => setTab('team')}
                 style={{
                   padding: '12px 24px',
                   background: activeTab === 'team' ? 'rgba(229,51,42,0.2)' : 'transparent',
@@ -491,7 +661,7 @@ export default function ShopAdminPage() {
               </button>
               <button
                 onClick={() => {
-                  setActiveTab('inventory');
+                  setTab('inventory');
                   fetchInventoryStock(shopId);
                   fetchInventoryRequests(shopId);
                 }}
@@ -577,7 +747,7 @@ export default function ShopAdminPage() {
                           </div>
                         </div>
                         <button
-                          onClick={() => setActiveTab('inventory')}
+                          onClick={() => setTab('inventory')}
                           style={{
                             padding: '8px 16px',
                             background: 'rgba(99,102,241,0.2)',
@@ -611,7 +781,7 @@ export default function ShopAdminPage() {
                             }}>
                               <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 4 }}>Total Value</div>
                               <div style={{ fontSize: 24, fontWeight: 700, color: '#22c55e' }}>
-                                ${inventoryStock.reduce((sum: number, item: any) => sum + (item.quantity * item.unitCost), 0).toFixed(2)}
+                                ${inventoryStock.reduce((sum: number, item: any) => sum + (item.quantity * item.sellingPrice), 0).toFixed(2)}
                               </div>
                               <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
                                 {inventoryStock.reduce((sum: number, item: any) => sum + item.quantity, 0)} total units
@@ -675,6 +845,7 @@ export default function ShopAdminPage() {
                                   <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Item</th>
                                   <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>SKU</th>
                                   <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Quantity</th>
+                                  <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Cost/Sell</th>
                                   <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Supplier</th>
                                   <th style={{ padding: 12, textAlign: 'left', color: '#9aa3b2', fontWeight: 600 }}>Status</th>
                                 </tr>
@@ -686,6 +857,10 @@ export default function ShopAdminPage() {
                                     <td style={{ padding: 12, color: '#9aa3b2' }}>{item.sku || '-'}</td>
                                     <td style={{ padding: 12, color: item.quantity <= item.reorderPoint ? '#f59e0b' : '#22c55e', fontWeight: 600 }}>
                                       {item.quantity}
+                                    </td>
+                                    <td style={{ padding: 12, color: '#9aa3b2', fontSize: 12 }}>
+                                      <div>${item.unitCost?.toFixed(2) || '0.00'}</div>
+                                      <div style={{ color: '#60a5fa' }}>${item.sellingPrice?.toFixed(2) || '0.00'}</div>
                                     </td>
                                     <td style={{ padding: 12, color: '#9aa3b2' }}>{item.supplier || '-'}</td>
                                     <td style={{ padding: 12 }}>
@@ -724,7 +899,7 @@ export default function ShopAdminPage() {
                           {inventoryStock.length > 10 && (
                             <div style={{ textAlign: 'center', marginTop: 16 }}>
                               <button
-                                onClick={() => setActiveTab('inventory')}
+                                onClick={() => setTab('inventory')}
                                 style={{
                                   padding: '8px 16px',
                                   background: 'transparent',
@@ -741,6 +916,58 @@ export default function ShopAdminPage() {
                           )}
                         </>
                       )}
+                    </div>
+
+                    {/* Parts and Set Labor (overview) */}
+                    <div style={{background:'rgba(0,0,0,0.2)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:20, marginBottom:24}}>
+                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16}}>
+                        <div>
+                          <div style={{fontSize:14, fontWeight:700, color:'#e5e7eb'}}>Parts and Set Labor</div>
+                          <div style={{fontSize:12, color:'#9aa3b2'}}>Quick glance at stock and labor items</div>
+                        </div>
+                        <span style={{padding:'4px 10px', background:'rgba(229,51,42,0.2)', color:'#e5332a', borderRadius:10, fontSize:11, fontWeight:700}}>
+                          {inventoryStock.filter((item: any) => item.quantity <= (item.reorderPoint || 0)).length} Alerts
+                        </span>
+                      </div>
+
+                      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))', gap:12}}>
+                        {inventoryStock.slice(0, 6).map((item: any, idx: number) => {
+                          const critical = item.quantity <= (item.reorderPoint || 0) / 2;
+                          const low = item.quantity <= (item.reorderPoint || 0) && !critical;
+                          const border = critical ? 'rgba(229,51,42,0.3)' : low ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.12)';
+                          const text = critical ? '#e5332a' : low ? '#f59e0b' : '#22c55e';
+                          const badgeBg = critical ? 'rgba(229,51,42,0.18)' : low ? 'rgba(245,158,11,0.18)' : 'rgba(34,197,94,0.18)';
+                          const badgeLabel = critical ? 'Critical' : low ? 'Low' : 'Good';
+                          return (
+                            <div key={idx} style={{background:'rgba(255,255,255,0.03)', border:`1px solid ${border}`, borderRadius:10, padding:12}}>
+                              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6}}>
+                                <div style={{fontSize:13, fontWeight:700, color:'#e5e7eb'}}>{item.itemName || 'Part'}</div>
+                                <span style={{padding:'3px 8px', background:badgeBg, color:text, borderRadius:8, fontSize:11, fontWeight:700}}>{badgeLabel}</span>
+                              </div>
+                              <div style={{fontSize:12, color:'#9aa3b2', marginBottom:6}}>SKU: {item.sku || '—'}</div>
+                              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                <div style={{fontSize:11, color:'#9aa3b2'}}>On Hand</div>
+                                <div style={{fontSize:16, fontWeight:700, color:text}}>{item.quantity}</div>
+                              </div>
+                              <div style={{fontSize:11, color:'#9aa3b2'}}>Reorder at: {item.reorderPoint ?? 0}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div style={{marginTop:16, display:'flex', gap:12}}>
+                        <Link href="/shop/parts-labor">
+                          <button style={{padding:'10px 14px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer'}}>
+                            Open Parts & Labor →
+                          </button>
+                        </Link>
+                        <button
+                          onClick={() => setTab('inventory')}
+                          style={{padding:'10px 14px', background:'rgba(255,255,255,0.06)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.12)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer'}}
+                        >
+                          Go to Inventory →
+                        </button>
+                      </div>
                     </div>
 
                     {/* Shop Communications - MessagingCard */}
@@ -979,7 +1206,7 @@ export default function ShopAdminPage() {
                                   </div>
                                 </div>
                                 <div style={{ color: '#22c55e', fontWeight: 700, fontSize: 14 }}>
-                                  {emp.currentHours?.toFixed(1) || '0.0'}h
+                                  {getLiveHours(emp).toFixed(1)}h
                                 </div>
                               </div>
                             ))}
@@ -999,7 +1226,7 @@ export default function ShopAdminPage() {
 
                         <div style={{ display: 'grid', gap: 12 }}>
                           <button
-                            onClick={() => setActiveTab('team')}
+                            onClick={() => setTab('team')}
                             style={{
                               width: '100%',
                               padding: 16,
@@ -1024,7 +1251,7 @@ export default function ShopAdminPage() {
                           </button>
 
                           <button
-                            onClick={() => setActiveTab('payroll')}
+                            onClick={() => setTab('payroll')}
                             style={{
                               width: '100%',
                               padding: 16,
@@ -1049,7 +1276,7 @@ export default function ShopAdminPage() {
                           </button>
 
                           <button
-                            onClick={() => setActiveTab('settings')}
+                            onClick={() => setTab('settings')}
                             style={{
                               width: '100%',
                               padding: 16,
@@ -1144,15 +1371,15 @@ export default function ShopAdminPage() {
 
                   <div>
                     <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
-                      Default Profit Margin (0-1, e.g., 0.30 = 30%)
+                      Inventory Markup (0-5, e.g., 0.30 = 30%)
                     </label>
                     <input
                       type="number"
                       min="0"
-                      max="1"
+                      max="5"
                       step="0.01"
-                      value={settings.defaultProfitMargin}
-                      onChange={(e) => setSettings({ ...settings, defaultProfitMargin: parseFloat(e.target.value) })}
+                      value={settings.inventoryMarkup}
+                      onChange={(e) => setSettings({ ...settings, inventoryMarkup: parseFloat(e.target.value) })}
                       style={{
                         width: '100%',
                         padding: 12,
@@ -1643,6 +1870,150 @@ export default function ShopAdminPage() {
                     />
                     Show Low Stock Only
                   </label>
+                </div>
+
+                {/* Purchase Orders */}
+                <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 20, marginBottom: 24 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Purchase Orders</h3>
+                    <div style={{ color: '#9aa3b2', fontSize: 12 }}>{purchaseOrders.length} total</div>
+                  </div>
+
+                  {/* Creation card with banner */}
+                  <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, background: 'rgba(0,0,0,0.35)', marginBottom: 16, overflow: 'hidden' }}>
+                    <div style={{ background: 'linear-gradient(90deg,#22c55e,#16a34a)', color: 'white', padding: '10px 14px', fontWeight: 700, letterSpacing: 0.25 }}>
+                      Create Purchase Order
+                    </div>
+                    <div style={{ padding: 12 }}>
+                      <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', marginBottom: 12 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Vendor (optional)</span>
+                          <input
+                            type="text"
+                            value={poForm.vendor}
+                            onChange={(e) => setPoForm({ ...poForm, vendor: e.target.value })}
+                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Item Name</span>
+                          <input
+                            type="text"
+                            value={poForm.itemName}
+                            onChange={(e) => setPoForm({ ...poForm, itemName: e.target.value })}
+                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Quantity</span>
+                          <input
+                            type="number"
+                            min={1}
+                            placeholder="Quantity"
+                            value={poForm.quantity}
+                            onChange={(e) => setPoForm({ ...poForm, quantity: Number(e.target.value) })}
+                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Unit Cost</span>
+                          <input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            placeholder="Unit cost"
+                            value={poForm.unitCost}
+                            onChange={(e) => setPoForm({ ...poForm, unitCost: Number(e.target.value) })}
+                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Choose Work Order</span>
+                          <div style={{ maxHeight: 160, overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, background: 'rgba(0,0,0,0.35)', padding: 8 }}>
+                            {loadingWorkOrders ? (
+                              <div style={{ color: '#9aa3b2', fontSize: 12 }}>Loading...</div>
+                            ) : workOrderOptions.length === 0 ? (
+                              <div style={{ color: '#9aa3b2', fontSize: 12 }}>No work orders found</div>
+                            ) : (
+                              workOrderOptions.map((wo: any) => {
+                                const label = `${wo.id} • ${wo.status} • ${wo.issueDescription?.symptoms || ''}`;
+                                return (
+                                  <div
+                                    key={wo.id}
+                                    onClick={() => {
+                                      setPoForm({ ...poForm, workOrderId: wo.id });
+                                      setWorkOrderSearch(wo.id);
+                                    }}
+                                    style={{ padding: '6px 8px', cursor: 'pointer', color: '#e5e7eb', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                                  >
+                                    {label}
+                                  </div>
+                                );
+                              })
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={handleCreatePurchaseOrder}
+                          style={{ padding: '10px 18px', background: '#22c55e', border: 'none', borderRadius: 8, color: 'white', fontWeight: 700, cursor: 'pointer' }}
+                        >
+                          + Create PO
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* List card with banner */}
+                  <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, background: 'rgba(0,0,0,0.35)', overflow: 'hidden' }}>
+                    <div style={{ background: 'linear-gradient(90deg,#38bdf8,#6366f1)', color: 'white', padding: '10px 14px', fontWeight: 700, letterSpacing: 0.25 }}>
+                      Existing Purchase Orders
+                    </div>
+                    <div style={{ padding: 12, display: 'grid', gap: 12 }}>
+                      {purchaseOrders.length === 0 ? (
+                        <div style={{ color: '#9aa3b2', fontSize: 13 }}>No purchase orders yet.</div>
+                      ) : (
+                        purchaseOrders.map((po) => {
+                          const bannerColor = po.status === 'received' ? 'linear-gradient(90deg,#22c55e,#16a34a)' : 'linear-gradient(90deg,#3b82f6,#1d4ed8)';
+                          return (
+                            <div key={po.id} style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, background: 'rgba(0,0,0,0.25)', overflow: 'hidden' }}>
+                              <div style={{ background: bannerColor, color: 'white', padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 700 }}>
+                                <div>PO-{po.id.slice(-6)} {po.vendor ? `• ${po.vendor}` : ''}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                  <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                    {po.status.toUpperCase()}
+                                  </span>
+                                  {po.status !== 'received' && (
+                                    <button
+                                      onClick={() => handleReceivePurchaseOrder(po.id)}
+                                      style={{ padding: '6px 12px', background: '#0ea5e9', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 8, color: 'white', fontWeight: 700, cursor: 'pointer' }}
+                                    >
+                                      Mark Received
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                              <div style={{ padding: 12 }}>
+                                <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 6 }}>
+                                  Vendor: {po.vendor || 'N/A'} • Items: {po.items?.length || 0} • Created: {new Date(po.createdAt).toLocaleDateString()}
+                                </div>
+                                <div style={{ display: 'grid', gap: 6 }}>
+                                  {po.items?.map((item: any) => (
+                                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1', fontSize: 13 }}>
+                                      <span>{item.itemName} (x{item.quantity})</span>
+                                      <span>${(item.unitCost || 0).toFixed(2)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Pending Requests Section */}

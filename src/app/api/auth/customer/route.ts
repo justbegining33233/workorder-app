@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       data: {
         tokenHash: refreshHash,
         adminId: null,
-        metadata: { customerId: customer.id, ip: userIp, agent: userAgent, csrfToken: csrf },
+        metadata: JSON.stringify({ customerId: customer.id, ip: userIp, agent: userAgent, csrfToken: csrf }),
         expiresAt,
       }
     });

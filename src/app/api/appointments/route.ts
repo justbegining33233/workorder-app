@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { requireAuth } from '@/lib/middleware';
 
 // GET - Get appointments
 export async function GET(request: NextRequest) {
+  // Use cookie/header-aware auth
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const customerId = searchParams.get('customerId');
     const shopId = searchParams.get('shopId');
@@ -23,13 +17,13 @@ export async function GET(request: NextRequest) {
     const where: any = {};
 
     // Filter by user role
-    if (decoded.role === 'customer') {
-      where.customerId = decoded.id;
-    } else if (decoded.role === 'shop' || decoded.role === 'manager') {
-      where.shopId = shopId || decoded.shopId;
+    if ((auth as any).role === 'customer') {
+      where.customerId = (auth as any).id;
+    } else if ((auth as any).role === 'shop' || (auth as any).role === 'manager') {
+      where.shopId = shopId || (auth as any).shopId;
     }
 
-    if (customerId && (decoded.role === 'shop' || decoded.role === 'admin')) {
+    if (customerId && ((auth as any).role === 'shop' || (auth as any).role === 'admin')) {
       where.customerId = customerId;
     }
 
@@ -83,17 +77,11 @@ export async function GET(request: NextRequest) {
 
 // POST - Create appointment
 export async function POST(request: NextRequest) {
+  // Use cookie/header-aware auth
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { shopId, vehicleId, scheduledDate, serviceType, notes } = body;
 
@@ -104,12 +92,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify customer owns the vehicle if provided
+    // Get vehicle info if provided
+    let vehicle = null;
     if (vehicleId) {
-      const vehicle = await prisma.vehicle.findFirst({
+      vehicle = await prisma.vehicle.findFirst({
         where: {
           id: vehicleId,
-          customerId: decoded.id,
+          customerId: (auth as any).id,
         },
       });
 
@@ -118,9 +107,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Create appointment
     const appointment = await prisma.appointment.create({
       data: {
-        customerId: decoded.id,
+        customerId: (auth as any).id,
         shopId,
         vehicleId: vehicleId || null,
         scheduledDate: new Date(scheduledDate),
@@ -148,12 +138,45 @@ export async function POST(request: NextRequest) {
             make: true,
             model: true,
             year: true,
+            vehicleType: true,
           },
         },
       },
     });
 
-    return NextResponse.json({ appointment }, { status: 201 });
+    // Create a work order for this appointment
+    const workOrder = await prisma.workOrder.create({
+      data: {
+        customerId: (auth as any).id,
+        shopId,
+        vehicleId: vehicleId || null,
+        vehicleType: vehicle?.vehicleType || appointment.vehicle?.vehicleType || 'gas',
+        serviceLocation: 'in-shop',
+        issueDescription: `Appointment: ${serviceType}${notes ? `\n\nCustomer Notes: ${notes}` : ''}`,
+        maintenance: serviceType,
+        status: 'pending',
+        dueDate: new Date(scheduledDate),
+      },
+    });
+
+    // If customer provided notes, start a message thread
+    if (notes && notes.trim()) {
+      await prisma.customerMessage.create({
+        data: {
+          customerId: (auth as any).id,
+          workOrderId: workOrder.id,
+          from: 'customer',
+          content: notes.trim(),
+          read: false,
+        },
+      });
+    }
+
+    return NextResponse.json({ 
+      appointment,
+      workOrderId: workOrder.id,
+      messageThreadStarted: !!(notes && notes.trim()),
+    }, { status: 201 });
   } catch (error) {
     console.error('Error creating appointment:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

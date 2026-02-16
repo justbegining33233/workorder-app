@@ -1,20 +1,18 @@
 'use client';
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function Documents() {
+  useRequireAuth(['customer']);
   const [userName, setUserName] = useState('');
   const [documents] = useState<{id: string; type: string; title: string; name: string; shop: string; date: string; size: string; amount?: number}[]>([]);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
-
-    if (role !== 'customer') {
-      window.location.href = '/auth/login';
-      return;
-    }
   }, []);
 
   const handleSignOut = () => {

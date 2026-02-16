@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Appointment {
   id: string;
@@ -11,6 +12,7 @@ interface Appointment {
   status: string;
   notes?: string;
   shop: {
+    id: string;
     shopName: string;
     phone: string;
     address: string;
@@ -23,6 +25,7 @@ interface Appointment {
 }
 
 export default function CustomerAppointmentsPage() {
+  useRequireAuth(['customer']);
   const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,11 +41,6 @@ export default function CustomerAppointmentsPage() {
   });
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    if (role !== 'customer') {
-      router.push('/auth/login');
-      return;
-    }
     fetchAppointments();
     fetchShops();
     fetchVehicles();
@@ -91,6 +89,48 @@ export default function CustomerAppointmentsPage() {
       }
     } catch (error) {
       console.error('Error fetching vehicles:', error);
+    }
+  };
+
+  // Message modal state and handlers for appointments
+  const [messageModal, setMessageModal] = useState<{ isOpen: boolean; appointment: Appointment | null; message: string; sending: boolean }>({
+    isOpen: false,
+    appointment: null,
+    message: '',
+    sending: false,
+  });
+
+  const openMessageModal = (appointment: Appointment) => {
+    setMessageModal({ isOpen: true, appointment, message: '', sending: false });
+  };
+
+  const closeMessageModal = () => {
+    setMessageModal({ isOpen: false, appointment: null, message: '', sending: false });
+  };
+
+  const sendMessage = async () => {
+    if (!messageModal.appointment || !messageModal.message.trim()) return;
+    setMessageModal(prev => ({ ...prev, sending: true }));
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/customers/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ appointmentId: messageModal.appointment.id, content: messageModal.message.trim() }),
+      });
+
+      if (response.ok) {
+        alert('Message sent successfully!');
+        closeMessageModal();
+      } else {
+        alert('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setMessageModal(prev => ({ ...prev, sending: false }));
     }
   };
 
@@ -170,7 +210,7 @@ export default function CustomerAppointmentsPage() {
               <p style={{ fontSize: 14, color: '#9aa3b2' }}>Book and manage your service appointments</p>
             </div>
             <button
-              onClick={() => setShowBookForm(true)}
+              onClick={() => router.push('/customer/appointments/new')}
               style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
             >
               + Book Appointment
@@ -188,7 +228,7 @@ export default function CustomerAppointmentsPage() {
               <h3 style={{ color: '#e5e7eb', fontSize: 20, marginBottom: 8 }}>No Appointments Yet</h3>
               <p style={{ color: '#9aa3b2', fontSize: 14, marginBottom: 20 }}>Book your first appointment to get started</p>
               <button
-                onClick={() => setShowBookForm(true)}
+                onClick={() => router.push('/customer/appointments/new')}
                 style={{ padding: '12px 24px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
               >
                 Book Appointment
@@ -247,17 +287,18 @@ export default function CustomerAppointmentsPage() {
                 )}
 
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <a href={`tel:${apt.shop.phone}`} style={{ flex: 1, padding: '10px', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'center', textDecoration: 'none' }}>
-                    📞 Call Shop
+                  {/* Track button - goes to shop page */}
+                  <a href={`/customer/shop/${apt.shop.id}`} style={{ flex: 1, padding: '10px', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'inline-block' }}>
+                    📍 Track
                   </a>
-                  {apt.status === 'scheduled' && (
-                    <button
-                      onClick={() => handleCancelAppointment(apt.id)}
-                      style={{ flex: 1, padding: '10px', background: 'rgba(229,51,42,0.2)', color: '#e5332a', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
-                    >
-                      Cancel
-                    </button>
-                  )}
+
+                  {/* Message button - opens modal for this appointment */}
+                  <button
+                    onClick={() => openMessageModal(apt)}
+                    style={{ flex: 1, padding: '10px', background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    💬 Message
+                  </button>
                 </div>
               </div>
             ))
@@ -361,6 +402,30 @@ export default function CustomerAppointmentsPage() {
           </div>
         </div>
       )}
+
+      {/* Message Modal for appointments */}
+      {messageModal.isOpen && messageModal.appointment && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: 'rgba(0,0,0,0.9)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 12, padding: 24, maxWidth: 500, width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
+            <h3 style={{fontSize: 20, fontWeight: 700, color: '#e5e7eb', marginBottom: 16}}>Message Shop</h3>
+            <div style={{fontSize: 14, color: '#9aa3b2', marginBottom: 16}}>
+              Appointment: {messageModal.appointment.scheduledDate}
+              <div>Shop: {messageModal.appointment.shop.shopName}</div>
+            </div>
+            <textarea
+              value={messageModal.message}
+              onChange={(e) => setMessageModal(prev => ({ ...prev, message: e.target.value }))}
+              placeholder="Type your message here..."
+              style={{ width: '100%', minHeight: 120, padding: 12, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: '#e5e7eb', fontSize: 14, resize: 'vertical', marginBottom: 16 }}
+            />
+            <div style={{display: 'flex', gap: 12, justifyContent: 'flex-end'}}>
+              <button onClick={closeMessageModal} style={{ padding: '8px 16px', background: 'transparent', color: '#9aa3b2', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6, cursor: 'pointer', fontSize: 14 }}>Cancel</button>
+              <button onClick={sendMessage} disabled={!messageModal.message.trim() || messageModal.sending} style={{ padding: '8px 16px', background: '#a855f7', color: 'white', border: 'none', borderRadius: 6, cursor: messageModal.message.trim() && !messageModal.sending ? 'pointer' : 'not-allowed', fontSize: 14, fontWeight: 600, opacity: messageModal.message.trim() && !messageModal.sending ? 1 : 0.5 }}>{messageModal.sending ? 'Sending...' : 'Send Message'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

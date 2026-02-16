@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function EmployeeProfile() {
+  useRequireAuth(['shop']);
   const router = useRouter();
   const params = useParams();
   const employeeId = (params?.id as string) || '';
@@ -16,11 +18,10 @@ export default function EmployeeProfile() {
   const [formData, setFormData] = useState<any>({});
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
     const admin = localStorage.getItem('isShopAdmin');
     const id = localStorage.getItem('shopId') || '';
 
-    if (role !== 'shop' || admin !== 'true') {
+    if (admin !== 'true') {
       router.push('/shop/home');
       return;
     }

@@ -1,22 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { authenticateRequest } from '@/lib/middleware';
 
 // GET /api/customers/documents - Get all documents for a customer
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const customerId = searchParams.get('customerId');
-
-    if (!customerId) {
-      return NextResponse.json({ error: 'Customer ID required' }, { status: 400 });
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const documents = await prisma.customerDocument.findMany({
-      where: { customerId },
+      where: { customerId: user.id },
       orderBy: { uploadedAt: 'desc' },
     });
 
-    return NextResponse.json(documents);
+    return NextResponse.json({ documents });
   } catch (error) {
     console.error('Error fetching documents:', error);
     return NextResponse.json({ error: 'Failed to fetch documents' }, { status: 500 });
@@ -24,21 +23,26 @@ export async function GET(request: Request) {
 }
 
 // POST /api/customers/documents - Upload a new document
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { customerId, name, type, url, fileSize, workOrderId } = body;
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    if (!customerId || !name || !url) {
+    const body = await request.json();
+    const { name, type, url, fileSize, workOrderId } = body;
+
+    if (!name || !url) {
       return NextResponse.json(
-        { error: 'Customer ID, name, and URL are required' },
+        { error: 'Name and URL are required' },
         { status: 400 }
       );
     }
 
     const document = await prisma.customerDocument.create({
       data: {
-        customerId,
+        customerId: user.id,
         name,
         type: type || 'other',
         url,

@@ -1,22 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { authenticateRequest } from '@/lib/middleware';
 
 // GET /api/customers/messages - Get all messages for a customer
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const customerId = searchParams.get('customerId');
-    const workOrderId = searchParams.get('workOrderId');
-
-    if (!customerId && !workOrderId) {
-      return NextResponse.json(
-        { error: 'Customer ID or Work Order ID required' },
-        { status: 400 }
-      );
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const where: any = {};
-    if (customerId) where.customerId = customerId;
+    const { searchParams } = new URL(request.url);
+    const workOrderId = searchParams.get('workOrderId');
+
+    const where: any = { customerId: user.id };
     if (workOrderId) where.workOrderId = workOrderId;
 
     const messages = await prisma.customerMessage.findMany({
@@ -32,7 +29,7 @@ export async function GET(request: Request) {
       },
     });
 
-    return NextResponse.json(messages);
+    return NextResponse.json({ messages });
   } catch (error) {
     console.error('Error fetching messages:', error);
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
@@ -40,27 +37,36 @@ export async function GET(request: Request) {
 }
 
 // POST /api/customers/messages - Send a new message
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { customerId, workOrderId, from, content } = body;
+    const user = authenticateRequest(request);
+    if (!user || user.role !== 'customer') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    if (!customerId || !workOrderId || !from || !content) {
+    const body = await request.json();
+    const { workOrderId, appointmentId, content } = body;
+
+    if ((!workOrderId && !appointmentId) || !content) {
       return NextResponse.json(
-        { error: 'Customer ID, Work Order ID, from, and content are required' },
+        { error: 'Work Order ID or Appointment ID and content are required' },
         { status: 400 }
       );
     }
 
+    const data: any = {
+      customerId: user.id,
+      from: 'customer',
+      content,
+      read: true, // Mark customer messages as read by default
+      sentAt: new Date(),
+    };
+
+    if (workOrderId) data.workOrderId = workOrderId;
+    if (appointmentId) data.appointmentId = appointmentId;
+
     const message = await prisma.customerMessage.create({
-      data: {
-        customerId,
-        workOrderId,
-        from, // 'customer' or 'tech'
-        content,
-        read: from === 'customer', // Mark customer messages as read by default
-        sentAt: new Date(),
-      },
+      data,
     });
 
     return NextResponse.json(message, { status: 201 });

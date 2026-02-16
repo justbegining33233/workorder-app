@@ -5,10 +5,10 @@ import prisma from '@/lib/prisma';
 export async function POST(request: Request) {
   try {
     const subscription = await request.json();
-    const customerId = request.headers.get('x-customer-id');
+    const customerId = request.headers.get('x-customer-id') || request.headers.get('x-user-id') || request.headers.get('x-shop-id');
 
     if (!customerId) {
-      return NextResponse.json({ error: 'Customer ID required' }, { status: 400 });
+      return NextResponse.json({ error: 'Customer or user ID required' }, { status: 400 });
     }
 
     // Save subscription to database

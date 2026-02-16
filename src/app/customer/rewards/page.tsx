@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Reward {
   id: string;
@@ -14,18 +15,13 @@ interface Reward {
 }
 
 export default function Rewards() {
+  useRequireAuth(['customer']);
   const [userName, setUserName] = useState('');
   const [rewards] = useState<Reward[]>([]);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
-
-    if (role !== 'customer') {
-      window.location.href = '/auth/login';
-      return;
-    }
   }, []);
 
   const handleSignOut = () => {

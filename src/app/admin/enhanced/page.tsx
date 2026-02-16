@@ -5,23 +5,16 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
+import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 
 function AdminPortalEnhancedContent() {
+  const { user, isLoading: authLoading } = useRequireAuth(['admin']);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
   const [tenants, setTenants] = useState<any[]>([]);
-
-  useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
-    if (!userRole || userRole !== 'admin') {
-      router.push('/auth/login');
-      return;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const tab = searchParams?.get('tab');
@@ -31,15 +24,17 @@ function AdminPortalEnhancedContent() {
   }, [searchParams]);
 
   useEffect(() => {
+    if (authLoading || !user) return;
     fetchWorkOrders();
     fetchTenants();
-  }, []);
+  }, [user, authLoading]);
 
   const fetchWorkOrders = async () => {
     try {
-      const res = await fetch('/api/workorders');
+      const res = await fetch('/api/workorders', { credentials: 'include' });
       const data = await res.json();
-      setWorkOrders(data || []);
+      const normalized = Array.isArray(data) ? data : Array.isArray(data?.workOrders) ? data.workOrders : [];
+      setWorkOrders(normalized);
     } catch (error) {
       console.error('Failed to fetch work orders:', error);
     }
@@ -47,9 +42,10 @@ function AdminPortalEnhancedContent() {
 
   const fetchTenants = async () => {
     try {
-      const res = await fetch('/api/admin/tenants');
+      const res = await fetch('/api/admin/tenants', { credentials: 'include' });
       const data = await res.json();
-      setTenants(data || []);
+      const normalized = Array.isArray(data) ? data : Array.isArray(data?.tenants) ? data.tenants : [];
+      setTenants(normalized);
     } catch (error) {
       console.error('Failed to fetch tenants:', error);
     }
@@ -66,6 +62,20 @@ function AdminPortalEnhancedContent() {
     { id: 'settings', icon: '⚙️', name: 'Settings' },
   ];
 
+  if (authLoading) {
+    return (
+      <div className="sos-wrap">
+        <div className="sos-card" style={{maxWidth:1400, textAlign:'center', padding:'100px 20px'}}>
+          <p style={{color:'#9aa3b2'}}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="sos-wrap">
       <div className="sos-card" style={{maxWidth:1400}}>
@@ -78,9 +88,8 @@ function AdminPortalEnhancedContent() {
             <NotificationBell />
             <button
               onClick={() => {
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('userName');
-                router.push('/auth/login');
+                localStorage.clear();
+                router.push('/admin/login');
               }}
               className="btn-outline"
             >
@@ -135,9 +144,12 @@ function AdminPortalEnhancedContent() {
 }
 
 function OverviewTab({ workOrders, tenants }: { workOrders: WorkOrder[], tenants: any[] }) {
-  const totalRevenue = workOrders.filter(w => w.status === 'closed').reduce((sum, w) => sum + (w.estimate?.amount || 0), 0);
-  const activeTenants = tenants.filter(t => t.status === 'active').length;
-  const activeOrders = workOrders.filter(w => w.status !== 'closed' && w.status !== 'denied-estimate').length;
+  const safeWorkOrders = Array.isArray(workOrders) ? workOrders : [];
+  const safeTenants = Array.isArray(tenants) ? tenants : [];
+
+  const totalRevenue = safeWorkOrders.filter(w => w.status === 'closed').reduce((sum, w) => sum + (w.estimate?.amount || 0), 0);
+  const activeTenants = safeTenants.filter(t => t.status === 'active').length;
+  const activeOrders = safeWorkOrders.filter(w => w.status !== 'closed' && w.status !== 'denied-estimate').length;
 
   return (
     <div>
@@ -279,8 +291,8 @@ function MonitoringTab() {
 function FinancialsTab({ workOrders }: { workOrders: WorkOrder[] }) {
   const completedOrders = workOrders.filter(w => w.status === 'closed');
   const totalRevenue = completedOrders.reduce((sum, w) => sum + (w.estimate?.amount || 0), 0);
-  const platformFees = totalRevenue * 0.05; // 5% platform fee
-  const netRevenue = totalRevenue - platformFees;
+  const platformFees = 0; // No platform fees in subscription model
+  const netRevenue = totalRevenue;
 
   return (
     <div>
@@ -290,7 +302,7 @@ function FinancialsTab({ workOrders }: { workOrders: WorkOrder[] }) {
       <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:16, marginTop:24}}>
         {[
           { label: 'Total Processed', value: `$${totalRevenue.toFixed(2)}`, color: '#60a5fa' },
-          { label: 'Platform Fees (5%)', value: `$${platformFees.toFixed(2)}`, color: '#4ade80' },
+          { label: 'Platform Fees', value: `$${platformFees.toFixed(2)}`, color: '#4ade80' },
           { label: 'Net Revenue', value: `$${netRevenue.toFixed(2)}`, color: '#a78bfa' },
         ].map((stat, i) => (
           <div key={i} className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
@@ -453,10 +465,10 @@ function SettingsTab() {
         <div className="sos-item">
           <div>
             <div style={{fontWeight:600}}>Platform Fee</div>
-            <div style={{fontSize:12, color:'#9aa3b2'}}>Commission on work orders</div>
+            <div style={{fontSize:12, color:'#9aa3b2'}}>Subscription-based pricing (no commission)</div>
           </div>
           <div style={{display:'flex', alignItems:'center', gap:8}}>
-            <input className="sos-input" defaultValue="5" style={{width:60}} />
+            <input className="sos-input" defaultValue="0" style={{width:60}} disabled />
             <span>%</span>
           </div>
         </div>

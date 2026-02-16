@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useSocket } from '@/lib/socket';
 
 interface TopNavBarProps {
@@ -11,83 +10,157 @@ interface TopNavBarProps {
 }
 
 export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopNavBarProps) {
-  const pathname = usePathname();
   const { isConnected, emit, on, off } = useSocket();
-  const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
   const [shopName, setShopName] = useState('');
   const [shopId, setShopId] = useState('');
   const [userId, setUserId] = useState('');
-  const [unreadMessages, setUnreadMessages] = useState(0);
   const [isClockedIn, setIsClockedIn] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState<Array<{ id: string; title: string; body: string; time: string; read?: boolean; type?: string }>>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [notificationSoundEnabled, setNotificationSoundEnabled] = useState(true);
+  const [notificationPreferences, setNotificationPreferences] = useState<Record<string, boolean>>({});
+  const lastUnreadRef = useRef(0);
 
   useEffect(() => {
-    // Only run on client side
     if (typeof window === 'undefined') return;
 
     const role = localStorage.getItem('userRole');
-    const name = localStorage.getItem('userName');
     const shop = localStorage.getItem('shopId');
     const user = localStorage.getItem('userId');
-    
+
     setUserRole(role || '');
-    setUserName(name || '');
-    setShopId(shop || '');
     setUserId(user || '');
-    
+
     if (shop) {
+      setShopId(shop);
       fetchShopName(shop);
     }
-    
-    if (user) {
+
+    if (user && (role === 'tech' || role === 'manager')) {
       checkClockInStatus(user);
     }
-    
-    fetchUnreadMessages();
-    
-    // Refresh every 10 seconds
+
     const interval = setInterval(() => {
-      if (user) checkClockInStatus(user);
-      fetchUnreadMessages();
+      if (user && (role === 'tech' || role === 'manager')) checkClockInStatus(user);
     }, 10000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
-  // Socket event listeners for real-time updates
+  useEffect(() => {
+    if (!shopId) return;
+
+    const fetchNotificationSettings = async () => {
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const response = await fetch(`/api/shops/settings?shopId=${shopId}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const settings = data.settings || data.shop?.settings || {};
+          if (settings) {
+            setNotificationsEnabled(settings.notificationsEnabled ?? true);
+            setNotificationSoundEnabled(settings.notificationSoundEnabled ?? true);
+            setNotificationPreferences(settings.notificationPreferences || {});
+          }
+        }
+      } catch (error) {
+        console.error('Error loading notification settings:', error);
+      }
+    };
+
+    fetchNotificationSettings();
+    const interval = setInterval(fetchNotificationSettings, 30000);
+    return () => clearInterval(interval);
+  }, [shopId]);
+
+  const formatTimeAgo = (dateValue: string) => {
+    const date = new Date(dateValue);
+    const diffMs = Date.now() - date.getTime();
+    const minutes = Math.floor(diffMs / 60000);
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
+
+  const fetchMessageNotifications = async () => {
+    try {
+      if (typeof window === 'undefined') return;
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('/api/messages', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) return;
+      const data = await response.json();
+      const conversations = Array.isArray(data?.conversations) ? data.conversations : [];
+
+      const messageNotifications = conversations
+        .filter((conv: any) => conv.unreadCount > 0)
+        .map((conv: any) => ({
+          id: `msg-${conv.contactRole}-${conv.contactId}`,
+          title: `New message from ${conv.contactName || 'Contact'}`,
+          body: conv.lastMessage,
+          time: formatTimeAgo(conv.lastMessageAt),
+          read: false,
+          type: 'messages',
+        }));
+
+      setNotifications(messageNotifications);
+    } catch (error) {
+      console.error('Error fetching message notifications:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessageNotifications();
+    const interval = setInterval(fetchMessageNotifications, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   useEffect(() => {
     if (!isConnected) return;
 
-    // Listen for new messages
-    const handleNewMessage = (data: any) => {
-      fetchUnreadMessages();
-    };
-
-    // Listen for clock status changes from other users
     const handleClockStatusChanged = (data: any) => {
-      // If this is about the current user, update their status
       if (data.userId === userId) {
         setIsClockedIn(data.isClockedIn);
       }
     };
 
-    on('new-message', handleNewMessage);
     on('clock-status-changed', handleClockStatusChanged);
 
     return () => {
-      off('new-message', handleNewMessage);
       off('clock-status-changed', handleClockStatusChanged);
     };
   }, [isConnected, on, off, userId]);
 
-  const fetchShopName = async (shopId: string) => {
-    if (typeof window === 'undefined') return;
-
+  const fetchShopName = async (id: string) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/shop?shopId=${shopId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const response = await fetch(`/api/shop?shopId=${id}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (response.ok) {
         const { shop } = await response.json();
@@ -98,13 +171,11 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     }
   };
 
-  const checkClockInStatus = async (userId: string) => {
-    if (typeof window === 'undefined') return;
-
+  const checkClockInStatus = async (id: string) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/timeclock/status?userId=${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const response = await fetch(`/api/timeclock/status?userId=${id}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (response.ok) {
         const { isClockedIn: status } = await response.json();
@@ -112,27 +183,6 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       }
     } catch (error) {
       console.error('Error checking clock-in status:', error);
-    }
-  };
-
-  const fetchUnreadMessages = async () => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      
-      const response = await fetch('/api/messages', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      if (response.ok) {
-        const { unreadByRole } = await response.json();
-        const total = Object.values(unreadByRole).reduce((sum: number, count: any) => sum + count, 0);
-        setUnreadMessages(total as number);
-      }
-    } catch (error) {
-      // Silent fail
     }
   };
 
@@ -144,9 +194,9 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       admin: { icon: '⚙️', label: 'Admin', color: '#8b5cf6' },
       customer: { icon: '👤', label: 'Customer', color: '#6b7280' },
     };
-    
+
     const role = roles[userRole] || { icon: '👤', label: 'User', color: '#6b7280' };
-    
+
     return (
       <span style={{
         padding: '4px 10px',
@@ -192,23 +242,16 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          userId,
-          action,
-        }),
+        body: JSON.stringify({ userId, action }),
       });
 
       if (response.ok) {
         const result = await response.json();
         setIsClockedIn(!isClockedIn);
-        // Show success message
         alert(result.message);
 
-        // Emit real-time update
         if (emit) {
-          emit('clock-status-change', {
-            isClockedIn: !isClockedIn,
-          });
+          emit('clock-status-change', { isClockedIn: !isClockedIn });
         }
       } else {
         const error = await response.json();
@@ -233,6 +276,124 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     window.location.href = '/auth/login';
   };
 
+  const filteredNotifications = notificationsEnabled
+    ? notifications.filter((n) => (n.type ? notificationPreferences[n.type] !== false : true))
+    : [];
+
+  const unreadCount = filteredNotifications.filter(n => !n.read).length;
+
+  const markAsRead = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const playNotificationChime = () => {
+    if (!notificationSoundEnabled) return;
+    try {
+      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 880;
+      gain.gain.value = 0.04;
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.12);
+    } catch (error) {
+      console.warn('Notification chime blocked:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!notificationsEnabled) return;
+    if (unreadCount > lastUnreadRef.current) {
+      playNotificationChime();
+    }
+    lastUnreadRef.current = unreadCount;
+  }, [unreadCount, notificationsEnabled, notificationSoundEnabled]);
+
+  const NotificationButton = () => (
+    <div style={{ position: 'relative' }} ref={dropdownRef}>
+      <button
+        onClick={() => setShowNotifications(prev => !prev)}
+        style={{
+          position: 'relative',
+          padding: '8px 12px',
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          color: '#e5e7eb',
+          borderRadius: 8,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <span role="img" aria-label="Notifications">🔔</span>
+        {unreadCount > 0 && (
+          <span style={{
+            background: '#ef4444',
+            color: 'white',
+            borderRadius: 999,
+            padding: '2px 8px',
+            fontSize: 11,
+            fontWeight: 700,
+            lineHeight: 1,
+          }}>{unreadCount}</span>
+        )}
+      </button>
+
+      {showNotifications && (
+        <div style={{
+          position: 'absolute',
+          right: 0,
+          marginTop: 8,
+          width: 320,
+          background: '#0f172a',
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 12px 30px rgba(0,0,0,0.35)',
+          borderRadius: 12,
+          overflow: 'hidden',
+          zIndex: 2000,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 14 }}>Notifications</div>
+            <button onClick={markAllAsRead} style={{ background: 'transparent', border: 'none', color: '#93c5fd', fontSize: 12, cursor: 'pointer' }}>
+              Mark all read
+            </button>
+          </div>
+
+          <div style={{ maxHeight: 360, overflowY: 'auto' }}>
+            {filteredNotifications.length === 0 ? (
+              <div style={{ padding: 16, color: '#9ca3af', fontSize: 13 }}>No notifications</div>
+            ) : filteredNotifications.map(n => (
+              <div key={n.id} style={{ padding: 12, borderBottom: '1px solid rgba(255,255,255,0.05)', background: n.read ? 'transparent' : 'rgba(37,99,235,0.08)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                  <div style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 13 }}>{n.title}</div>
+                  <span style={{ color: '#9ca3af', fontSize: 12 }}>{n.time}</span>
+                </div>
+                <div style={{ color: '#cbd5e1', fontSize: 12, marginTop: 4 }}>{n.body}</div>
+                {!n.read && (
+                  <button onClick={() => markAsRead(n.id)} style={{ marginTop: 8, background: 'transparent', border: 'none', color: '#93c5fd', fontSize: 12, cursor: 'pointer' }}>
+                    Mark read
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const liveIndicator = true;
+
   return (
     <nav style={{
       background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
@@ -251,7 +412,6 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
         justifyContent: 'space-between',
         gap: 12,
       }}>
-        {/* Left Section */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {showMenuButton && (
             <button
@@ -271,7 +431,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               ☰
             </button>
           )}
-          
+
           <Link href={getHomeLink()} style={{ textDecoration: 'none' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{
@@ -284,7 +444,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               </div>
             </div>
           </Link>
-          
+
           {shopName && (
             <div style={{
               padding: '4px 12px',
@@ -292,44 +452,20 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               borderRadius: 6,
               fontSize: 12,
               color: '#9ca3af',
+              border: '1px solid rgba(255,255,255,0.1)',
+              whiteSpace: 'nowrap',
             }}>
               {shopName}
             </div>
           )}
         </div>
 
-        {/* Center Section - User Info */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 8,
-        }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: 2,
-          }}>
-            <div style={{ 
-              color: '#e5e7eb', 
-              fontWeight: 600, 
-              fontSize: 13,
-              display: typeof window !== 'undefined' && window.innerWidth < 640 ? 'none' : 'block',
-            }}>
-              {userName}
-            </div>
-            {getRoleBadge()}
-          </div>
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {getRoleBadge()}
 
-        {/* Right Section - Actions */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 12,
-        }}>
-          {/* Clock In/Out Button */}
-          {(userRole === 'tech' || userRole === 'manager') && (
+          <NotificationButton />
+
+          {userRole === 'tech' || userRole === 'manager' ? (
             <button
               onClick={handleClockToggle}
               disabled={loading}
@@ -352,52 +488,16 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               <span>{isClockedIn ? '⏸️' : '▶️'}</span>
               {isClockedIn ? 'Clock Out' : 'Clock In'}
             </button>
-          )}
+          ) : null}
 
-          {/* Messages */}
-          <Link 
-            href={userRole === 'shop' ? '/shop/admin' : userRole === 'manager' ? '/manager/home' : '/tech/home'}
-            style={{ textDecoration: 'none', position: 'relative' }}
+          <div
+            title={liveIndicator ? 'Connected to real-time server' : 'Disconnected from real-time server'}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.05)' }}
           >
-            <button style={{
-              padding: '8px 16px',
-              background: 'rgba(59,130,246,0.2)',
-              border: '1px solid rgba(59,130,246,0.5)',
-              color: '#3b82f6',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontSize: 12,
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              position: 'relative',
-            }}>
-              <span>💬</span>
-              <span>Messages</span>
-              {unreadMessages > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: -6,
-                  right: -6,
-                  background: '#e5332a',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: 18,
-                  height: 18,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 10,
-                  fontWeight: 700,
-                }}>
-                  {unreadMessages > 9 ? '9+' : unreadMessages}
-                </span>
-              )}
-            </button>
-          </Link>
+            <span style={{ width: 10, height: 10, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#6b7280', display: 'inline-block' }} />
+            <span style={{ fontSize: 12, color: liveIndicator ? '#22c55e' : '#9ca3b2', fontWeight: 600 }}>{liveIndicator ? 'Live' : 'Offline'}</span>
+          </div>
 
-          {/* Sign Out */}
           <button
             onClick={handleSignOut}
             style={{

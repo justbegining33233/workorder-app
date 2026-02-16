@@ -41,7 +41,7 @@ interface MessagingCardProps {
 
 export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
   console.log('💬 MessagingCard props - userId:', userId, 'shopId:', shopId);
-  const [activeTab, setActiveTab] = useState<'techs' | 'managers' | 'shopAdmin' | 'customers'>('techs');
+  const [activeTab, setActiveTab] = useState<'customers'>('customers');
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [unreadCounts, setUnreadCounts] = useState<UnreadCounts>({
     tech: 0,
@@ -178,11 +178,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
   };
 
   const getFilteredConversations = () => {
-    let roleFilter = 'customer';
-    if (activeTab === 'techs') roleFilter = 'tech';
-    else if (activeTab === 'managers') roleFilter = 'manager';
-    else if (activeTab === 'shopAdmin') roleFilter = 'shop';
-    return conversations.filter((c) => c.contactRole === roleFilter);
+    return conversations.filter((c) => c.contactRole === 'customer');
   };
 
   const handleSelectConversation = async (conv: Conversation) => {
@@ -314,7 +310,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       {/* Header */}
       <div style={{ padding: 20, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>💬 Messages</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>💬 Customer Messages</h2>
           <button
             onClick={() => {
               console.log('🆕 New button clicked, fetching contacts...');
@@ -339,11 +335,8 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
         
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 8 }}>
-          {(['techs', 'managers', 'shopAdmin', 'customers'] as const).map((tab) => {
+          {(['customers'] as const).map((tab) => {
             const getUnreadCount = () => {
-              if (tab === 'techs') return unreadCounts.tech;
-              if (tab === 'managers') return unreadCounts.manager;
-              if (tab === 'shopAdmin') return unreadCounts.admin + unreadCounts.shop;
               if (tab === 'customers') return unreadCounts.customer;
               return 0;
             };
@@ -352,7 +345,10 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
             return (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab);
+                setSelectedConversation(null);
+              }}
               style={{
                 flex: 1,
                 padding: '8px 12px',
@@ -366,7 +362,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
                 position: 'relative',
               }}
             >
-              {tab === 'techs' ? '👷 Techs' : tab === 'managers' ? '👔 Managers' : tab === 'shopAdmin' ? '🏪 Shop Admin' : '👤 Customers'}
+              {tab === 'customers' ? '👤 Customers' : '👤 Customers'}
               {unreadCount > 0 && (
                 <span style={{
                   position: 'absolute',
@@ -397,8 +393,9 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
         {/* Conversations List */}
         <div style={{ borderRight: '1px solid rgba(255,255,255,0.1)', overflowY: 'auto' }}>
           {filteredConversations.length === 0 ? (
-            <div style={{ padding: 20, textAlign: 'center', color: '#6b7280', fontSize: 13 }}>
-              No conversations yet
+            <div style={{ padding: 20, textAlign: 'center', color: '#6b7280', fontSize: 13, display:'flex', flexDirection:'column', gap:6 }}>
+              <div>No conversations yet</div>
+              <div style={{color:'#9aa3b2', fontSize:12}}>Select a conversation or compose a new message</div>
             </div>
           ) : (
             filteredConversations.map((conv) => (
@@ -472,7 +469,6 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
                   ))}
                 </select>
               </div>
-              
               <textarea
                 placeholder="Type your message..."
                 value={messageText}
@@ -489,7 +485,6 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
                   marginBottom: 12,
                 }}
               />
-              
               <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={handleSendMessage}
@@ -531,7 +526,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
               </div>
             </div>
           ) : selectedConversation ? (
-            // Show conversation thread
+            // Only show conversation thread and reply box if a conversation is selected
             <>
               <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {selectedConversation.messages
@@ -563,12 +558,11 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
                     );
                   })}
               </div>
-              
               {/* Reply box */}
               <div style={{ padding: 16, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <textarea
-                    placeholder="Type your reply..."
+                    placeholder={'Type your reply...'}
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     style={{
@@ -604,9 +598,9 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
               </div>
             </>
           ) : (
-            // No conversation selected
+            // Nothing selected: show prompt only
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280', fontSize: 14 }}>
-              Select a conversation or compose a new message
+              Select a conversation to view messages
             </div>
           )}
         </div>

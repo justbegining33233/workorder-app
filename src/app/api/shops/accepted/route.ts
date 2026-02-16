@@ -12,6 +12,7 @@ export async function GET() {
       orderBy: {
         createdAt: 'desc'
       },
+      take: 3,
       include: {
         workOrders: {
           select: {
@@ -30,6 +31,16 @@ export async function GET() {
             price: true,
             duration: true,
             description: true
+          }
+        },
+        subscription: {
+          select: {
+            id: true,
+            plan: true,
+            status: true,
+            currentPeriodStart: true,
+            currentPeriodEnd: true,
+            trialEnd: true
           }
         }
       }
@@ -80,8 +91,15 @@ export async function GET() {
         zipCode: shop.zipCode,
         shopType: shop.shopType,
         joinedDate: shop.createdAt,
+        createdAt: shop.createdAt,
         dieselServices: dieselServices,
         gasServices: gasServices,
+        subscription: shop.subscription ? {
+          plan: shop.subscription.plan,
+          status: shop.subscription.status,
+          currentPeriodEnd: shop.subscription.currentPeriodEnd,
+          trialEnd: shop.subscription.trialEnd
+        } : null,
       };
     }));
 

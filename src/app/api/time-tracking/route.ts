@@ -226,14 +226,17 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'No active clock-in found' }, { status: 400 });
       }
 
-      if (activeEntry.breakStart) {
-        return NextResponse.json({ error: 'Break already started' }, { status: 400 });
-      }
+      // Append a break record into the JSON `breaks` field (supports multiple breaks)
+      const existingBreaks = (activeEntry as any).breaks || [];
+      const newBreak = { start: new Date().toISOString(), end: null, durationMinutes: null, type: 'break' };
 
-      const updatedEntry = await prisma.timeEntry.update({
+      const updatedEntry = await (prisma as any).timeEntry.update({
         where: { id: activeEntry.id },
         data: {
+          breaks: { push: newBreak },
+          // maintain backward-compatible single-break fields for older UI
           breakStart: new Date(),
+          breakEnd: null,
         },
       });
 
@@ -254,18 +257,47 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'No active clock-in found' }, { status: 400 });
       }
 
-      if (!activeEntry.breakStart) {
-        return NextResponse.json({ error: 'No break in progress' }, { status: 400 });
+      // Find last break without an end
+      const breaksArray: any[] = (activeEntry as any).breaks || [];
+      const lastIdx = breaksArray.length - 1;
+      if (lastIdx < 0 || breaksArray[lastIdx].end) {
+        // fallback to legacy single breakStart
+        if (!activeEntry.breakStart) {
+          return NextResponse.json({ error: 'No break in progress' }, { status: 400 });
+        }
+        const breakEndLegacy = new Date();
+        const breakDurationLegacy = (breakEndLegacy.getTime() - new Date(activeEntry.breakStart).getTime()) / (1000 * 60); // minutes
+
+        const updatedEntryLegacy = await (prisma as any).timeEntry.update({
+          where: { id: activeEntry.id },
+          data: {
+            breakEnd: breakEndLegacy,
+            breakDuration: Math.round(breakDurationLegacy * 100) / 100,
+            // also push into JSON breaks for consistency
+            breaks: { push: { start: activeEntry.breakStart.toISOString(), end: breakEndLegacy.toISOString(), durationMinutes: Math.round(breakDurationLegacy * 100) / 100, type: 'break' } },
+          },
+        });
+
+        return NextResponse.json({ success: true, message: 'Break ended', timeEntry: updatedEntryLegacy, breakDuration: updatedEntryLegacy.breakDuration });
       }
 
       const breakEnd = new Date();
-      const breakDuration = (breakEnd.getTime() - new Date(activeEntry.breakStart).getTime()) / (1000 * 60); // minutes
+      const started = new Date(breaksArray[lastIdx].start);
+      const breakDuration = (breakEnd.getTime() - started.getTime()) / (1000 * 60); // minutes
 
-      const updatedEntry = await prisma.timeEntry.update({
+      // update the breaks array entry and cumulative breakDuration
+      breaksArray[lastIdx].end = breakEnd.toISOString();
+      breaksArray[lastIdx].durationMinutes = Math.round(breakDuration * 100) / 100;
+
+      // compute total breakDuration (minutes)
+      const totalBreakMinutes = breaksArray.reduce((acc, b) => acc + (b.durationMinutes || 0), 0);
+
+      const updatedEntry = await (prisma as any).timeEntry.update({
         where: { id: activeEntry.id },
         data: {
-          breakEnd,
-          breakDuration: Math.round(breakDuration * 100) / 100,
+          breaks: breaksArray,
+          breakEnd: breakEnd,
+          breakDuration: Math.round(totalBreakMinutes * 100) / 100,
         },
       });
 
@@ -275,6 +307,29 @@ export async function POST(request: NextRequest) {
         timeEntry: updatedEntry,
         breakDuration: updatedEntry.breakDuration,
       });
+    } else if (action === 'manual-entry') {
+      // Create manual / PTO or retroactive time entry (manager or tech)
+      const { clockIn: ci, clockOut: co, notes: manualNotes, isPto } = await request.json();
+      if (!ci || !co) return NextResponse.json({ error: 'clockIn and clockOut required for manual entries' }, { status: 400 });
+
+      const clockIn = new Date(ci);
+      const clockOut = new Date(co);
+      const ms = clockOut.getTime() - clockIn.getTime();
+      const hoursWorked = Math.round((ms / (1000 * 60 * 60)) * 100) / 100;
+
+      const timeEntry = await (prisma as any).timeEntry.create({
+        data: {
+          techId,
+          shopId,
+          clockIn,
+          clockOut,
+          isPto: !!isPto,
+          hoursWorked,
+          notes: manualNotes || (isPto ? 'PTO' : ''),
+        },
+      });
+
+      return NextResponse.json({ success: true, timeEntry });
     } else {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }

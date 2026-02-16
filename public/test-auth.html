@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Auth Setup</title>
+</head>
+<body>
+    <h1>Test Authentication Setup</h1>
+    <p>Click the button below to set test authentication data in localStorage.</p>
+    <button onclick="setTestAuth()">Set Test Authentication</button>
+    <p>Then visit: <a href="/customer/tracking" target="_blank">/customer/tracking</a></p>
+
+    <script>
+        function setTestAuth() {
+            const testAuthData = {
+                userId: 'cml2xno8900009g6v46n0if0q', // Correct customer ID
+                userName: 'Test Customer',
+                userRole: 'customer',
+                token: 'test-token'
+            };
+
+            // Set localStorage values
+            Object.keys(testAuthData).forEach(key => {
+                localStorage.setItem(key, testAuthData[key]);
+            });
+
+            // Verify the values were set
+            console.log('Set localStorage values:');
+            Object.keys(testAuthData).forEach(key => {
+                console.log(key + ':', localStorage.getItem(key));
+            });
+
+            alert('Test authentication data set! Check console for details. Now visit /customer/tracking');
+        }
+
+        // Check current localStorage values on page load
+        window.onload = function() {
+            console.log('Current localStorage values:');
+            console.log('userId:', localStorage.getItem('userId'));
+            console.log('userName:', localStorage.getItem('userName'));
+            console.log('userRole:', localStorage.getItem('userRole'));
+            console.log('token:', localStorage.getItem('token'));
+        };
+    </script>
+</body>
+</html>

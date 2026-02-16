@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MaintenanceType } from '../../../types/workorder';
 import { createWorkOrderClient } from '@/lib/workordersClient';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function NewInShopJob() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['tech', 'manager']);
   const [userName, setUserName] = useState('');
   const [formData, setFormData] = useState({
     customerName: '',
@@ -27,15 +29,20 @@ export default function NewInShopJob() {
   });
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const name = localStorage.getItem('userName');
-    if (role !== 'tech' && role !== 'manager') {
-      router.push('/auth/login');
-      return;
-    }
-    if (name) setUserName(name);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (user?.name) setUserName(user.name);
+  }, [user]);
+
+  if (isLoading) {
+    return (
+      <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <div style={{color: '#e5e7eb', fontSize: 18}}>Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // useRequireAuth handles redirect
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

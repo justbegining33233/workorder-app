@@ -12,7 +12,7 @@ export const customerRegistrationSchema = z.object({
 });
 
 export const customerLoginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().min(1, 'Email or username is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -30,7 +30,7 @@ export const shopRegistrationSchema = z.object({
   state: z.string().optional(),
   businessLicense: z.string().optional(),
   insurancePolicy: z.string().optional(),
-  shopType: z.enum(['diesel', 'gas', 'both']).optional(),
+  shopType: z.enum(['diesel', 'gas', 'small-engine', 'heavy-equipment', 'resurfacing', 'welding', 'tire', 'mixed']).optional(),
 });
 
 // Work order validation
@@ -75,7 +75,7 @@ export const techCreateSchema = z.object({
 export const serviceCreateSchema = z.object({
   shopId: z.string().min(1, 'Shop ID is required'),
   serviceName: z.string().min(1, 'Service name is required'),
-  category: z.enum(['diesel', 'gas']),
+  category: z.enum(['diesel', 'gas', 'small-engine', 'heavy-equipment', 'resurfacing', 'welding', 'tire']),
   price: z.number().min(0).optional(),
   duration: z.number().min(0).optional(),
   description: z.string().optional(),

@@ -1,30 +1,46 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { verifyToken } from '@/lib/auth';
+import { getSocketServer } from '@/lib/socket-server';
 
 // GET /api/customers/tracking - Get real-time tech location for active work order
 export async function GET(request: Request) {
   try {
+    // Verify authentication
+    const authHeader = request.headers.get('authorization');
+    console.log('Tracking API - Auth header:', authHeader);
+    
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.log('Tracking API - No Bearer token');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const token = authHeader.substring(7);
+    console.log('Tracking API - Token:', token.substring(0, 20) + '...');
+    
+    const payload = verifyToken(token);
+    console.log('Tracking API - Token payload:', payload);
+    console.log('Tracking API - Payload role:', payload?.role);
+
+    if (!payload || payload.role !== 'customer') {
+      console.log('Tracking API - Invalid payload or not customer role');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const workOrderId = searchParams.get('workOrderId');
     const customerId = searchParams.get('customerId');
 
-    if (!workOrderId && !customerId) {
-      return NextResponse.json(
-        { error: 'Work Order ID or Customer ID required' },
-        { status: 400 }
-      );
-    }
-
     // Find active work orders for customer
     const where: any = {
-      status: { in: ['In Progress', 'En Route'] },
+      status: { in: ['in-progress', 'en-route'] },
+      customerId: payload.id, // Only allow access to own work orders
     };
 
     if (workOrderId) {
       where.id = workOrderId;
-    } else if (customerId) {
-      where.customerId = customerId;
     }
+    // customerId parameter is ignored since we filter by authenticated user's ID
 
     const workOrders = await prisma.workOrder.findMany({
       where,
@@ -37,6 +53,13 @@ export async function GET(request: Request) {
             phone: true,
           },
         },
+        shop: {
+          select: {
+            shopName: true,
+            phone: true,
+            address: true,
+          },
+        },
         tracking: true,
       },
     });
@@ -45,18 +68,32 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: 'No active work orders' }, { status: 404 });
     }
 
-    const trackingData = workOrders.map(wo => ({
-      workOrderId: wo.id,
-      issueDescription: wo.issueDescription,
-      status: wo.status,
-      tech: wo.assignedTo ? {
-        id: wo.assignedTo.id,
-        name: `${wo.assignedTo.firstName} ${wo.assignedTo.lastName}`,
-        phone: wo.assignedTo.phone,
-      } : null,
-      location: wo.tracking || null,
-      estimatedArrival: wo.tracking?.estimatedArrival || null,
-    }));
+    const trackingData = workOrders.map(wo => {
+      // If this is an in-shop job, expose shop address and appointment time instead of tech GPS
+      const isInShop = wo.serviceLocation && wo.serviceLocation.toLowerCase() !== 'roadside';
+
+      return {
+        workOrderId: wo.id,
+        issueDescription: wo.issueDescription,
+        status: wo.status,
+        serviceLocation: wo.serviceLocation,
+        tech: wo.assignedTo ? {
+          id: wo.assignedTo.id,
+          name: `${wo.assignedTo.firstName} ${wo.assignedTo.lastName}`,
+          phone: wo.assignedTo.phone,
+        } : null,
+        shop: {
+          shopName: wo.shop.shopName,
+          address: wo.shop.address,
+          phone: wo.shop.phone,
+        },
+        serviceTime: wo.dueDate?.toISOString() || wo.createdAt.toISOString(),
+        // For in-shop work orders, return shop address (no coordinates); otherwise return tech tracking if available
+        location: isInShop ? { shopAddress: wo.shop.address } : (wo.tracking || null),
+        estimatedArrival: isInShop ? wo.dueDate?.toISOString() || null : wo.tracking?.estimatedArrival || null,
+        isInShop,
+      };
+    });
 
     return NextResponse.json(trackingData);
   } catch (error) {
@@ -103,6 +140,23 @@ export async function POST(request: Request) {
           estimatedArrival,
         },
       });
+    }
+
+    // Emit socket event to notify customer (if socket server available)
+    try {
+      const io = getSocketServer();
+      if (io) {
+        const wo = await prisma.workOrder.findUnique({ where: { id: workOrderId }, select: { customerId: true } });
+        if (wo && wo.customerId) {
+          io.to(`user_${wo.customerId}`).emit('tech-location-updated', {
+            workOrderId,
+            location: { latitude, longitude, estimatedArrival },
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to emit tech location update via socket server:', err);
     }
 
     return NextResponse.json(tracking);

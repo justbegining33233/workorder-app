@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 type FinancialStats = {
   totalRevenue: string;
@@ -29,6 +30,7 @@ type TopShop = {
 
 export default function FinancialReports() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['admin']);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<FinancialStats>({
     totalRevenue: '$0',
@@ -42,12 +44,7 @@ export default function FinancialReports() {
   const [topEarningShops, setTopEarningShops] = useState<TopShop[]>([]);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
-      return;
-    }
+    if (isLoading || !user) return;
     
     // Fetch financial data
     const fetchData = async () => {
@@ -80,8 +77,29 @@ export default function FinancialReports() {
     };
     
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoading, user]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
@@ -118,7 +136,7 @@ export default function FinancialReports() {
           <div style={{background:'rgba(245,158,11,0.1)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:20}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Platform Fees</div>
             <div style={{fontSize:28, fontWeight:700, color:'#f59e0b'}}>{stats.platformFees}</div>
-            <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>20% commission</div>
+            <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>Subscription-based (no commission)</div>
           </div>
           <div style={{background:'rgba(229,51,42,0.1)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:12, padding:20}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Pending Payouts</div>
@@ -204,8 +222,8 @@ export default function FinancialReports() {
               <div style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>{stats.averageTransaction}</div>
             </div>
             <div style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:16}}>
-              <div style={{fontSize:13, color:'#9aa3b2', marginBottom:4}}>Commission Rate</div>
-              <div style={{fontSize:24, fontWeight:700, color:'#f59e0b'}}>20%</div>
+              <div style={{fontSize:13, color:'#9aa3b2', marginBottom:4}}>Pricing Model</div>
+              <div style={{fontSize:24, fontWeight:700, color:'#f59e0b'}}>Subscription</div>
             </div>
           </div>
         </div>

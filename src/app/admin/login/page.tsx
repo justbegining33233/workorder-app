@@ -30,12 +30,21 @@ export default function AdminLoginPage() {
         // Store admin credentials
         localStorage.setItem('token', data.token);
         localStorage.setItem('userRole', 'admin');
+        // Keep legacy admin keys and populate shared user keys for AuthContext
         localStorage.setItem('adminId', data.admin.id);
         localStorage.setItem('adminUsername', data.admin.username);
         localStorage.setItem('isSuperAdmin', data.admin.isSuperAdmin.toString());
 
-        // Redirect to admin dashboard
-        router.push('/admin/dashboard');
+        // Also set shared user keys so the AuthContext picks up the admin as an authenticated user
+        localStorage.setItem('userId', data.admin.id);
+        localStorage.setItem('userName', data.admin.username);
+
+        // Redirect to super-admin portal if flagged, otherwise admin dashboard
+        if (data.admin?.isSuperAdmin) {
+          router.push('/admin/home');
+        } else {
+          router.push('/admin/dashboard');
+        }
       } else {
         setError(data.error || 'Login failed');
       }

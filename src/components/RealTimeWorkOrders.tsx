@@ -39,18 +39,8 @@ export default function RealTimeWorkOrders({
   }, [isConnected, on, off, onWorkOrderUpdate]);
 
   if (!isConnected) {
-    return (
-      <div style={{
-        padding: '12px',
-        background: 'rgba(239,68,68,0.1)',
-        border: '1px solid rgba(239,68,68,0.3)',
-        borderRadius: 6,
-        color: '#f87171',
-        fontSize: 12,
-      }}>
-        🔴 Real-time updates disconnected
-      </div>
-    );
+    // Don't show a disconnected banner in the UI — keep it silent for UX.
+    return null;
   }
 
   return (

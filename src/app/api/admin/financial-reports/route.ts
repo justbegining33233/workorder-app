@@ -25,14 +25,14 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Calculate total revenue
+    // Calculate total revenue from work orders
     const totalRevenue = workOrders.reduce((sum, wo) => sum + (wo.amountPaid || 0), 0);
     
-    // Calculate platform fees (20% commission)
-    const platformFees = totalRevenue * 0.2;
+    // Platform fees are now subscription-based, not commission-based
+    const platformFees = 0;
     
-    // Calculate total payouts to shops (80%)
-    const totalPayouts = totalRevenue * 0.8;
+    // Total payouts to shops (100% since no commission)
+    const totalPayouts = totalRevenue;
 
     // Get pending work orders for pending payouts
     const pendingWorkOrders = await prisma.workOrder.findMany({
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
         paymentStatus: 'pending',
       },
     });
-    const pendingPayouts = pendingWorkOrders.reduce((sum, wo) => sum + (wo.amountPaid || 0), 0) * 0.8;
+    const pendingPayouts = pendingWorkOrders.reduce((sum, wo) => sum + (wo.amountPaid || 0), 0);
 
     // Calculate average transaction
     const averageTransaction = workOrders.length > 0 ? totalRevenue / workOrders.length : 0;
@@ -75,8 +75,8 @@ export async function GET(req: NextRequest) {
     const formattedMonthlyData = Object.entries(monthlyData).map(([key, revenue]) => {
       const [year, month] = key.split('-');
       const monthName = months[parseInt(month) - 1];
-      const payouts = revenue * 0.8;
-      const fees = revenue * 0.2;
+      const payouts = revenue; // 100% payout since no commission
+      const fees = 0; // No commission fees
       
       return {
         month: `${monthName} ${year}`,
@@ -113,8 +113,8 @@ export async function GET(req: NextRequest) {
         });
         
         const revenue = item._sum?.amountPaid || 0;
-        const fees = revenue * 0.2;
-        const payout = revenue * 0.8;
+        const fees = 0; // No commission fees
+        const payout = revenue; // 100% payout
         
         return {
           name: shop?.shopName || 'Unknown Shop',

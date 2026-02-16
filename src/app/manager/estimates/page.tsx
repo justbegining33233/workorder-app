@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '../../../contexts/AuthContext';
 
 interface EstimateLineItem {
   id: string;
@@ -23,6 +24,7 @@ interface EstimateData {
 }
 
 function ManagerEstimatesContent() {
+  useRequireAuth(['manager', 'shop']);
   const router = useRouter();
   const searchParams = useSearchParams();
   const workOrderId = searchParams?.get('workOrderId') || '';
@@ -41,12 +43,6 @@ function ManagerEstimatesContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    if (role !== 'manager' && role !== 'shop') {
-      router.push('/auth/login');
-      return;
-    }
-
     if (workOrderId) {
       fetchWorkOrder();
     } else {

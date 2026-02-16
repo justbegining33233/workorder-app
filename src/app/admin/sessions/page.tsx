@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 type Session = {
   id: string;
@@ -10,6 +11,7 @@ type Session = {
 };
 
 export default function AdminSessionsPage() {
+  const { user, isLoading: authLoading } = useRequireAuth(['admin']);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +28,19 @@ export default function AdminSessionsPage() {
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { 
+    if (user && !authLoading) load(); 
+  }, [user, authLoading]);
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return <div className="p-4">Loading...</div>;
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   async function revoke(id: string) {
     if (!confirm('Revoke this session?')) return;

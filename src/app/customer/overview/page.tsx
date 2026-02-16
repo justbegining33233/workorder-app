@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function CustomerOverview() {
+  useRequireAuth(['customer']);
   const [userName] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('userName') || '';
@@ -11,12 +13,7 @@ export default function CustomerOverview() {
   });
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-
-    if (role !== 'customer') {
-      window.location.href = '/auth/login';
-      return;
-    }
+    // Component mounted, no additional auth checks needed
   }, []);
 
   const handleSignOut = () => {

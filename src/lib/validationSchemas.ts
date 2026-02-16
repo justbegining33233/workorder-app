@@ -45,7 +45,7 @@ export const techUpdateSchema = z.object({
 // Shop Settings Update Schema
 export const shopSettingsUpdateSchema = z.object({
   defaultLaborRate: z.number().min(0).optional(),
-  defaultProfitMargin: z.number().min(0).max(100).optional(),
+  inventoryMarkup: z.number().min(0).max(5).optional(), // Allow up to 500% markup
   overtimeMultiplier: z.number().min(1).max(3).optional(),
   businessHours: z.string().optional(),
   taxRate: z.number().min(0).max(100).optional(),
@@ -66,6 +66,14 @@ export const timeEntrySchema = z.object({
   clockOut: z.string().datetime().optional(),
   breakStart: z.string().datetime().nullable().optional(),
   breakEnd: z.string().datetime().nullable().optional(),
+  breaks: z.any().optional(), // array of break records (stored as JSON)
+  workOrderId: z.string().optional(),
+  isPto: z.boolean().optional(),
+  approved: z.boolean().optional(),
+  approvedBy: z.string().optional(),
+  approvedAt: z.string().datetime().optional(),
+  locked: z.boolean().optional(),
+  hoursWorked: z.number().optional(),
   notes: z.string().max(500).optional(),
   location: z.string().max(200).optional(),
 }).strict();

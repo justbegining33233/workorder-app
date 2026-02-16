@@ -1,6 +1,11 @@
-"use client";
-import { ErrorBoundary } from "../components/ErrorBoundary";
+// import { ErrorBoundary } from "../components/ErrorBoundary";
+// import ServiceWorkerRegister from "../components/ServiceWorkerRegister";
+// import { AuthProvider } from "../contexts/AuthContext";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  return <ErrorBoundary>{children}</ErrorBoundary>;
+  return (
+    // <AuthProvider>
+      {children}
+    // </AuthProvider>
+  );
 }

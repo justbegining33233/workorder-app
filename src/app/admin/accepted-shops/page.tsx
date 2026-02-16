@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
+
+export const dynamic = 'force-dynamic';
 
 type AcceptedShop = {
   id: string;
@@ -26,7 +28,7 @@ type AcceptedShop = {
 };
 
 export default function AcceptedShops() {
-  const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['admin']);
   const [acceptedShops, setAcceptedShops] = useState<AcceptedShop[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedShop, setSelectedShop] = useState<AcceptedShop | null>(null);
@@ -36,15 +38,9 @@ export default function AcceptedShops() {
   const [sortBy, setSortBy] = useState<'revenue' | 'rating' | 'jobs'>('revenue');
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
-      return;
-    }
+    if (!user || isLoading) return;
     fetchAcceptedShops();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user, isLoading]);
 
   const fetchAcceptedShops = async () => {
     try {
@@ -97,6 +93,28 @@ export default function AcceptedShops() {
     if (months === 1) return '1 month';
     return `${months} months`;
   };
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>

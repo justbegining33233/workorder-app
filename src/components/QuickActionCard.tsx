@@ -12,17 +12,18 @@ interface QuickActionCardProps {
   status?: 'success' | 'warning' | 'danger' | 'info';
 }
 
-export default function QuickActionCard({
-  icon,
-  title,
-  description,
-  href,
-  onClick,
-  value,
-  color = '#3b82f6',
-  badge,
-  status,
-}: QuickActionCardProps) {
+export default function QuickActionCard(props: QuickActionCardProps) {
+  const {
+    icon,
+    title,
+    description,
+    href,
+    onClick,
+    value,
+    color = '#3b82f6',
+    badge,
+    status,
+  } = props;
   const statusColors = {
     success: { bg: 'rgba(34,197,94,0.2)', border: 'rgba(34,197,94,0.3)', text: '#22c55e' },
     warning: { bg: 'rgba(245,158,11,0.2)', border: 'rgba(245,158,11,0.3)', text: '#f59e0b' },
@@ -36,7 +37,7 @@ export default function QuickActionCard({
     text: color,
   };
 
-  const CardContent = () => (
+  const renderContent = () => (
     <div style={{
       position: 'relative',
       padding: 20,
@@ -147,7 +148,7 @@ export default function QuickActionCard({
   if (href) {
     return (
       <a href={href} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
-        <CardContent />
+        {renderContent()}
       </a>
     );
   }
@@ -155,10 +156,10 @@ export default function QuickActionCard({
   if (onClick) {
     return (
       <div onClick={onClick} style={{ height: '100%' }}>
-        <CardContent />
+        {renderContent()}
       </div>
     );
   }
 
-  return <CardContent />;
+  return renderContent();
 }

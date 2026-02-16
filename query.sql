@@ -1,1 +1,0 @@
-SELECT * FROM shops ORDER BY "createdAt" DESC LIMIT 10;

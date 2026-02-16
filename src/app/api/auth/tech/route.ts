@@ -71,8 +71,8 @@ export async function POST(request: NextRequest) {
       data: {
         tokenHash: refreshHash,
         adminId: null,
-        // associate tech sessions via metadata for now
-        metadata: { techId: tech.id, ip: userIp, agent: userAgent, csrfToken: csrf },
+        // associate tech sessions via metadata (store as JSON string)
+        metadata: JSON.stringify({ techId: tech.id, ip: userIp, agent: userAgent, csrfToken: csrf }),
         expiresAt,
       }
     });
@@ -121,8 +121,8 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 15,
     });
     return response;
-  } catch (error) {
-    console.error('Tech login error:', error);
-    return NextResponse.json({ error: 'Login failed' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Tech login error:', error, error?.stack);
+    return NextResponse.json({ error: 'Login failed', details: error?.message || 'unknown' }, { status: 500 });
   }
 }

@@ -18,12 +18,19 @@ export async function GET(request: NextRequest) {
       where: { id: shopId },
       include: {
         services: true, // Include related services
+        subscription: true, // Include subscription data
       },
     });
 
     if (!shop) {
       return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
     }
+
+    const shopSettings = await prisma.shopSettings.upsert({
+      where: { shopId },
+      update: {},
+      create: { shopId },
+    });
 
     return NextResponse.json({
       shop: {
@@ -44,7 +51,20 @@ export async function GET(request: NextRequest) {
           category: s.category,
           price: s.price,
         })),
-      }
+        subscription: shop.subscription ? {
+          plan: shop.subscription.plan,
+          status: shop.subscription.status,
+          currentPeriodEnd: shop.subscription.currentPeriodEnd,
+          trialEnd: shop.subscription.trialEnd,
+          stripeCustomerId: shop.subscription.stripeCustomerId,
+          cancelAtPeriodEnd: shop.subscription.cancelAtPeriodEnd,
+        } : null,
+      },
+      settings: {
+        notificationsEnabled: shopSettings.notificationsEnabled,
+        notificationSoundEnabled: shopSettings.notificationSoundEnabled,
+        notificationPreferences: shopSettings.notificationPreferences || {},
+      },
     }, { status: 200 });
   } catch (error) {
     console.error('Error fetching shop settings:', error);
@@ -65,7 +85,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { shopId, shopName, email, phone, address, city, state, zipCode } = body;
+    const { shopId, shopName, email, phone, address, city, state, zipCode, notificationSettings } = body;
 
     if (!shopId) {
       return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
@@ -90,6 +110,23 @@ export async function PUT(request: NextRequest) {
         updatedAt: new Date(),
       },
     });
+
+    if (notificationSettings) {
+      await prisma.shopSettings.upsert({
+        where: { shopId },
+        update: {
+          notificationsEnabled: notificationSettings.notificationsEnabled,
+          notificationSoundEnabled: notificationSettings.notificationSoundEnabled,
+          notificationPreferences: notificationSettings.notificationPreferences || {},
+        },
+        create: {
+          shopId,
+          notificationsEnabled: notificationSettings.notificationsEnabled ?? true,
+          notificationSoundEnabled: notificationSettings.notificationSoundEnabled ?? true,
+          notificationPreferences: notificationSettings.notificationPreferences || {},
+        },
+      });
+    }
 
     return NextResponse.json({
       message: 'Shop settings updated successfully',

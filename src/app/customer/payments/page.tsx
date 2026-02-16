@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 // Utility function for generating transaction IDs
 const generateTransactionId = () => {
@@ -20,6 +21,7 @@ interface Payment {
 }
 
 export default function Payments() {
+  useRequireAuth(['customer']);
   const [userName] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('userName') || '';
@@ -30,12 +32,7 @@ export default function Payments() {
   const [processingPayment, setProcessingPayment] = useState<string | null>(null);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-
-    if (role !== 'customer') {
-      window.location.href = '/auth/login';
-      return;
-    }
+    // Component mounted, no additional auth checks needed
   }, []);
 
   const handleSignOut = () => {

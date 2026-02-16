@@ -1,0 +1,50 @@
+{
+  "name": "FixTray - Work Order Management",
+  "short_name": "FixTray",
+  "description": "Streamlined work order management for roadside and in-shop services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#3d3d3d",
+  "theme_color": "#e5332a",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "256x256",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "256x256",
+      "type": "image/x-icon",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Work Order",
+      "short_name": "New Job",
+      "description": "Create a new work order",
+      "url": "/workorders/new",
+      "icons": [{ "src": "/favicon.ico", "sizes": "256x256" }]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/shop/home",
+      "icons": [{ "src": "/favicon.ico", "sizes": "256x256" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}

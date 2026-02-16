@@ -2,11 +2,17 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import NotificationBell from '../../../components/NotificationBell';
+import TopNavBar from '../../../components/TopNavBar';
+import RealTimeWorkOrders from '../../../components/RealTimeWorkOrders';
+import CustomerMessagingCard from '../../../components/CustomerMessagingCard';
+import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 
 export default function CustomerDashboard() {
+  useRequireAuth(['customer']);
   // Placeholder data - will be replaced with real API calls
   const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState('');
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('discover');
   const [loyaltyPoints, setLoyaltyPoints] = useState(250);
@@ -55,22 +61,54 @@ export default function CustomerDashboard() {
 
   useEffect(() => {
     setMounted(true);
-    const role = localStorage.getItem('userRole');
     const name = localStorage.getItem('userName');
-    
-    if (role !== 'customer') {
-      window.location.href = '/auth/login';
-      return;
-    }
+    const id = localStorage.getItem('userId');
     
     if (name) setUserName(name);
+    if (id) setUserId(id);
     fetchStats();
+  }, []);
+
+  // Live updates: listen for socket events dispatched by `useSocket`
+  useEffect(() => {
+    const onWorkOrderUpdated = (e: any) => {
+      const data = e?.detail || e;
+      // Prepend to recent history and refresh counts
+      setRecentData(prev => ({ ...prev, history: [data, ...prev.history].slice(0, 3) }));
+      // Refresh counts to keep UI consistent
+      fetchStats();
+    };
+
+    const onNewMessage = (e: any) => {
+      const data = e?.detail || e;
+      // Prepend to recent messages and increment unread count
+      setRecentData(prev => ({ ...prev, messages: [data, ...prev.messages].slice(0, 3) }));
+      setStats(prev => ({ ...prev, unreadMessages: (prev.unreadMessages || 0) + 1 }));
+    };
+
+    const onLocationUpdate = (e: any) => {
+      // For live tracking card (if viewing an active tracking work order), we might refresh tracking data
+      // For now just refresh stats to pick up any tracking-based changes
+      fetchStats();
+    };
+
+    window.addEventListener('work-order:updated', onWorkOrderUpdated as EventListener);
+    window.addEventListener('chat:new-message', onNewMessage as EventListener);
+    window.addEventListener('tech:location_updated', onLocationUpdate as EventListener);
+
+    return () => {
+      window.removeEventListener('work-order:updated', onWorkOrderUpdated as EventListener);
+      window.removeEventListener('chat:new-message', onNewMessage as EventListener);
+      window.removeEventListener('tech:location_updated', onLocationUpdate as EventListener);
+    };
   }, []);
 
   const fetchStats = async () => {
     try {
+      const fetchOpts = { credentials: 'include' } as RequestInit;
+
       // Fetch appointments
-      const apptRes = await fetch('/api/appointments');
+      const apptRes = await fetch('/api/appointments', fetchOpts);
       const apptData = await apptRes.json();
       const appointments = apptData.appointments || [];
       const upcoming = appointments.filter((a: any) => 
@@ -78,35 +116,35 @@ export default function CustomerDashboard() {
       ).length;
       
       // Fetch vehicles
-      const vehicleRes = await fetch('/api/customers/vehicles');
+      const vehicleRes = await fetch('/api/customers/vehicles', fetchOpts);
       const vehicles = await vehicleRes.json();
       
       // Fetch reviews
-      const reviewRes = await fetch('/api/reviews');
+      const reviewRes = await fetch('/api/reviews', fetchOpts);
       const reviews = await reviewRes.json();
       
       // Fetch favorites
-      const favRes = await fetch('/api/customers/favorites');
+      const favRes = await fetch('/api/customers/favorites', fetchOpts);
       const favorites = await favRes.json();
       
       // Fetch work orders for history
-      const historyRes = await fetch('/api/workorders');
+      const historyRes = await fetch('/api/workorders', fetchOpts);
       const workorders = await historyRes.json();
       const completed = Array.isArray(workorders) ? workorders.filter((w: any) => w.status === 'Completed') : [];
       
       // Fetch documents
-      const docRes = await fetch('/api/customers/documents');
+      const docRes = await fetch('/api/customers/documents', fetchOpts);
       const documents = await docRes.json();
       
       // Fetch messages
-      const msgRes = await fetch('/api/customers/messages');
+      const msgRes = await fetch('/api/customers/messages', fetchOpts);
       const messages = await msgRes.json();
       const unread = Array.isArray(messages) ? messages.filter((m: any) => !m.read && m.from !== 'customer').length : 0;
       
       // Fetch payment methods
-      const paymentRes = await fetch('/api/customers/payment-methods');
+      const paymentRes = await fetch('/api/customers/payment-methods', fetchOpts);
       const paymentMethods = await paymentRes.json();
-      
+
       setStats({
         appointmentCount: appointments.length,
         upcomingAppointments: upcoming,
@@ -120,16 +158,16 @@ export default function CustomerDashboard() {
       });
       
       // Store recent data (last 3 items)
-      setRecentData({
+      setRecentData(prev => ({
         appointments: appointments.slice(0, 3),
         vehicles: Array.isArray(vehicles) ? vehicles.slice(0, 3) : [],
-        messages: Array.isArray(messages) ? messages.slice(0, 3) : [],
+        messages: Array.isArray(messages) ? messages.slice(0, 3) : prev.messages,
         reviews: Array.isArray(reviews) ? reviews.slice(0, 3) : [],
         favorites: Array.isArray(favorites) ? favorites.slice(0, 3) : [],
         history: completed.slice(0, 3),
         documents: Array.isArray(documents) ? documents.slice(0, 3) : [],
         payments: Array.isArray(paymentMethods) ? paymentMethods.slice(0, 3) : [],
-      });
+      }));
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
@@ -167,12 +205,12 @@ export default function CustomerDashboard() {
     { 
       id: 'quotes', 
       icon: '💰', 
-      name: 'Price Quotes', 
-      desc: 'Request and compare quotes', 
+      name: 'MY ESTIMATES', 
+      desc: 'View and manage your service estimates', 
       detail: 'Get estimates before service', 
       badge: '', 
       badgeColor: '', 
-      link: '/customer/quotes',
+      link: '/customer/estimates',
       getData: () => []
     },
   ];
@@ -298,25 +336,10 @@ export default function CustomerDashboard() {
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
-      {/* Header */}
-      <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <div style={{display:'flex', alignItems:'center', gap:24}}>
-          <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>FixTray</Link>
-          <div>
-            <div style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>Customer Portal</div>
-            <div style={{fontSize:12, color:'#9aa3b2'}}>Dashboard</div>
-          </div>
-        </div>
-        <div style={{display:'flex', alignItems:'center', gap:16}}>
-          <div style={{fontSize:12, color:'#b8beca'}}>
-            {tier} • {loyaltyPoints} pts
-          </div>
-          <NotificationBell />
-          {mounted && <span style={{fontSize:14, color:'#9aa3b2'}}>Welcome, {userName}</span>}
-          <button onClick={handleSignOut} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
-            Sign Out
-          </button>
-        </div>
+      {/* Top Navigation */}
+      <TopNavBar showMenuButton={false} />
+      <div style={{background:'rgba(0,0,0,0.15)', padding:'8px 32px', display:'flex', justifyContent:'flex-end'}}>
+        <div style={{fontSize:12, color:'#b8beca'}}>{tier} • {loyaltyPoints} pts</div>
       </div>
 
       <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
@@ -339,6 +362,13 @@ export default function CustomerDashboard() {
             <div style={{fontSize:32, fontWeight:700, color:'#e5332a'}}>{loyaltyPoints}</div>
           </div>
         </div>
+
+        {/* Real-Time Work Orders Updates */}
+        <RealTimeWorkOrders userId={userId} onWorkOrderUpdate={(data) => {
+          // Mirror what the window listener does so updates from this component bubble up immediately
+          setRecentData(prev => ({ ...prev, history: [data, ...prev.history].slice(0, 3) }));
+          fetchStats();
+        }} />
 
         {/* Tab Navigation */}
         <div style={{marginBottom:32}}>

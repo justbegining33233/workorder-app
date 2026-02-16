@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
       },
       orderBy: {
         createdAt: 'desc'
-      }
+      },
+      take: 3
     });
 
     // Format the response to match the expected frontend structure

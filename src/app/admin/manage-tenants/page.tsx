@@ -3,59 +3,202 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 type Tenant = {
   id: string;
   name: string;
-  domain: string;
-  plan: string;
-  shops: number;
-  users: number;
-  status: 'active' | 'suspended' | 'trial';
-  joinedDate: Date;
-  monthlyRevenue: string;
+  ownerName: string;
+  email: string;
+  phone: string;
+  location: string;
+  shopType: string;
+  profileComplete: boolean;
+  createdAt: string;
+  // Live metrics
+  totalJobs: number;
+  completedJobs: number;
+  completionRate: number;
+  totalRevenue: number;
+  revenueThisMonth: number;
+  jobsThisMonth: number;
+  rating: number;
+  reviewCount: number;
+  // Team
+  teamMembers: number;
+  activeTeamMembers: number;
+  // Health
+  healthScore: number;
+  lifetimeMonths: number;
+  // Subscription
+  subscription?: {
+    id: string;
+    plan: string;
+    status: string;
+    isTrialing: boolean;
+    isActive: boolean;
+    trialDaysLeft: number;
+    monthlyFee: number;
+    currentPeriodStart: string;
+    currentPeriodEnd: string;
+    hasStripe: boolean;
+  } | null;
 };
+
+type LiveMetrics = {
+  totalCustomers: number;
+  newCustomersThisMonth: number;
+  customerGrowth: string;
+  mrr: number;
+  arr: number;
+  arpu: number;
+  ltv: number;
+  churnRate: string;
+  retentionRate: string;
+  totalWorkOrderRevenue: number;
+  totalJobs: number;
+  totalJobsThisMonth: number;
+  jobsGrowth: string;
+  planDistribution: Record<string, number>;
+  healthDistribution: {
+    excellent: number;
+    good: number;
+    fair: number;
+    poor: number;
+  };
+  customerTrend: number[];
+  revenueTrend: number[];
+};
+
+// Mini chart component
+function MiniLineChart({ data, color, height = 40 }: { data: number[]; color: string; height?: number }) {
+  if (!data || data.length === 0) return null;
+  const max = Math.max(...data, 1);
+  const min = Math.min(...data, 0);
+  const range = max - min || 1;
+  const width = 100;
+  const points = data.map((value, index) => {
+    const x = (index / (data.length - 1)) * width;
+    const y = height - ((value - min) / range) * height;
+    return `${x},${y}`;
+  }).join(' ');
+  
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full" style={{ height }}>
+      <polyline fill="none" stroke={color} strokeWidth="2" points={points} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default function ManageTenants() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['admin']);
   const [loading, setLoading] = useState(true);
   const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [liveMetrics, setLiveMetrics] = useState<LiveMetrics | null>(null);
   const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showSubscription, setShowSubscription] = useState(false);
+  const [updatingSubscription, setUpdatingSubscription] = useState(false);
 
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const isSuperAdmin = localStorage.getItem('isSuperAdmin');
-    if (role !== 'admin' || isSuperAdmin !== 'true') {
-      router.push('/auth/login');
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const handleUpdatePlan = async (shopId: string, newPlan: string) => {
+    setUpdatingSubscription(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/subscriptions/${shopId}/update-plan`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          plan: newPlan,
+          billingCycle: 'monthly'
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`✅ ${result.message}`);
+        window.location.reload();
+      } else {
+        const error = await response.json();
+        alert(`❌ Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating plan:', error);
+      alert('❌ Failed to update subscription plan');
+    } finally {
+      setUpdatingSubscription(false);
+    }
+  };
+
+  const handleCancelSubscription = async (shopId: string) => {
+    if (!confirm('Are you sure you want to cancel this subscription? This action cannot be undone.')) {
       return;
     }
+
+    setUpdatingSubscription(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/subscriptions/${shopId}/cancel`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          reason: 'Admin cancellation',
+          immediate: false
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`✅ ${result.message}`);
+        window.location.reload();
+      } else {
+        const error = await response.json();
+        alert(`❌ Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error cancelling subscription:', error);
+      alert('❌ Failed to cancel subscription');
+    } finally {
+      setUpdatingSubscription(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoading || !user) return;
     
-    // Fetch shop data as tenants
     const fetchTenants = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/shops/accepted', {
+        const response = await fetch('/api/admin/customers', {
+          credentials: 'include',
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
         
         if (response.ok) {
-          const shops = await response.json();
-          // Transform shops into tenant format
-          const tenantData = shops.map((shop: any) => ({
-            id: shop.id,
-            name: shop.shopName,
-            domain: `${shop.shopName.toLowerCase().replace(/\s+/g, '-')}.fixtray.com`,
-            plan: shop.completedJobs > 50 ? 'Professional' : shop.completedJobs > 20 ? 'Business' : 'Trial',
-            shops: 1,
-            users: shop.techCount || 1,
-            status: shop.status === 'approved' ? 'active' : 'trial',
-            joinedDate: new Date(shop.createdAt),
-            monthlyRevenue: shop.totalRevenue || '$0.00',
-          }));
-          setTenants(tenantData);
+          const data = await response.json();
+          if (data.success) {
+            setTenants(data.customers);
+            setLiveMetrics(data.liveMetrics);
+          }
         }
       } catch (error) {
         console.error('Error fetching tenants:', error);
@@ -65,26 +208,50 @@ export default function ManageTenants() {
     };
     
     fetchTenants();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    
+    // Auto-refresh every 2 minutes
+    const interval = setInterval(fetchTenants, 2 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [isLoading, user]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return '#22c55e';
-      case 'trial': return '#f59e0b';
-      case 'suspended': return '#e5332a';
-      default: return '#9aa3b2';
-    }
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const getHealthColor = (score: number) => {
+    if (score >= 80) return '#22c55e';
+    if (score >= 60) return '#3b82f6';
+    if (score >= 40) return '#f59e0b';
+    return '#e5332a';
   };
 
   const getPlanColor = (plan: string) => {
-    switch (plan) {
-      case 'Enterprise': return '#8b5cf6';
-      case 'Professional': return '#3b82f6';
-      case 'Business': return '#22c55e';
-      case 'Trial': return '#f59e0b';
-      default: return '#9aa3b2';
-    }
+    const colors: Record<string, string> = {
+      enterprise: '#8b5cf6',
+      professional: '#3b82f6',
+      business: '#22c55e',
+      growth: '#06b6d4',
+      starter: '#f59e0b',
+      free: '#6b7280',
+    };
+    return colors[plan?.toLowerCase()] || '#9aa3b2';
   };
 
   return (
@@ -100,6 +267,75 @@ export default function ManageTenants() {
       </div>
 
       <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
+        {/* Live Metrics Overview */}
+        {liveMetrics && (
+          <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:16, marginBottom:24}}>
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:20}}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                <div>
+                  <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>Total Tenants</div>
+                  <div style={{fontSize:28, fontWeight:700, color:'#22c55e'}}>{liveMetrics.totalCustomers}</div>
+                </div>
+                <span style={{padding:'4px 8px', background:'rgba(34,197,94,0.2)', color:'#22c55e', borderRadius:6, fontSize:11, fontWeight:600}}>
+                  {liveMetrics.customerGrowth}
+                </span>
+              </div>
+              <MiniLineChart data={liveMetrics.customerTrend} color="#22c55e" height={30} />
+            </div>
+            
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
+              <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>MRR</div>
+              <div style={{fontSize:28, fontWeight:700, color:'#3b82f6'}}>{formatCurrency(liveMetrics.mrr)}</div>
+              <div style={{fontSize:11, color:'#6b7280', marginTop:4}}>ARR: {formatCurrency(liveMetrics.arr)}</div>
+            </div>
+            
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(139,92,246,0.3)', borderRadius:12, padding:20}}>
+              <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>Total Revenue</div>
+              <div style={{fontSize:28, fontWeight:700, color:'#8b5cf6'}}>{formatCurrency(liveMetrics.totalWorkOrderRevenue)}</div>
+              <MiniLineChart data={liveMetrics.revenueTrend} color="#8b5cf6" height={30} />
+            </div>
+            
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:20}}>
+              <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>ARPU / LTV</div>
+              <div style={{fontSize:28, fontWeight:700, color:'#f59e0b'}}>{formatCurrency(liveMetrics.arpu)}</div>
+              <div style={{fontSize:11, color:'#6b7280', marginTop:4}}>LTV: {formatCurrency(liveMetrics.ltv)}</div>
+            </div>
+
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:20}}>
+              <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>Retention</div>
+              <div style={{fontSize:28, fontWeight:700, color:'#22c55e'}}>{liveMetrics.retentionRate}</div>
+              <div style={{fontSize:11, color:'#e5332a', marginTop:4}}>Churn: {liveMetrics.churnRate}</div>
+            </div>
+            
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(6,182,212,0.3)', borderRadius:12, padding:20}}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                <div>
+                  <div style={{fontSize:12, color:'#9aa3b2', marginBottom:4}}>Total Jobs</div>
+                  <div style={{fontSize:28, fontWeight:700, color:'#06b6d4'}}>{liveMetrics.totalJobs}</div>
+                </div>
+                <span style={{padding:'4px 8px', background:'rgba(6,182,212,0.2)', color:'#06b6d4', borderRadius:6, fontSize:11, fontWeight:600}}>
+                  {liveMetrics.jobsGrowth}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Plan Distribution */}
+        {liveMetrics && (
+          <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20, marginBottom:24}}>
+            <h3 style={{fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>📊 Plan Distribution</h3>
+            <div style={{display:'flex', gap:12, flexWrap:'wrap'}}>
+              {Object.entries(liveMetrics.planDistribution).map(([plan, count]) => (
+                <div key={plan} style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:'12px 20px', textAlign:'center', minWidth:80}}>
+                  <div style={{fontSize:24, fontWeight:700, color:getPlanColor(plan)}}>{count}</div>
+                  <div style={{fontSize:11, color:'#9aa3b2', textTransform:'capitalize'}}>{plan}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
             <div style={{fontSize:32, marginBottom:16}}>⏳</div>
@@ -118,34 +354,55 @@ export default function ManageTenants() {
                 <div>
                   <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:8}}>
                     <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>{tenant.name}</h2>
-                    <span style={{padding:'4px 12px', background:`rgba(${getStatusColor(tenant.status)}20)`, color:getStatusColor(tenant.status), borderRadius:8, fontSize:11, fontWeight:600}}>
-                      {tenant.status.toUpperCase()}
-                    </span>
-                    <span style={{padding:'4px 12px', background:`rgba(${getPlanColor(tenant.plan)}20)`, color:getPlanColor(tenant.plan), borderRadius:8, fontSize:11, fontWeight:600}}>
-                      {tenant.plan}
+                    {tenant.subscription && (
+                      <span style={{padding:'4px 12px', background:`${getPlanColor(tenant.subscription.plan)}20`, color:getPlanColor(tenant.subscription.plan), borderRadius:8, fontSize:11, fontWeight:600}}>
+                        {tenant.subscription.plan?.toUpperCase() || 'FREE'}
+                      </span>
+                    )}
+                    <span style={{
+                      padding:'4px 12px', 
+                      background:`${getHealthColor(tenant.healthScore)}20`, 
+                      color:getHealthColor(tenant.healthScore), 
+                      borderRadius:8, 
+                      fontSize:11, 
+                      fontWeight:600
+                    }}>
+                      Health: {tenant.healthScore}
                     </span>
                   </div>
-                  <div style={{fontSize:14, color:'#9aa3b2'}}>🌐 {tenant.domain}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2'}}>📍 {tenant.location} • Owner: {tenant.ownerName}</div>
                 </div>
               </div>
 
-              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap:12, marginBottom:16, padding:16, background:'rgba(255,255,255,0.05)', borderRadius:8}}>
+              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:12, marginBottom:16, padding:16, background:'rgba(255,255,255,0.05)', borderRadius:8}}>
                 <div>
-                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Shops</div>
-                  <div style={{fontSize:18, color:'#3b82f6', fontWeight:700}}>{tenant.shops}</div>
+                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Team</div>
+                  <div style={{fontSize:18, color:'#8b5cf6', fontWeight:700}}>{tenant.teamMembers}</div>
+                  <div style={{fontSize:10, color:'#6b7280'}}>{tenant.activeTeamMembers} active</div>
                 </div>
                 <div>
-                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Users</div>
-                  <div style={{fontSize:18, color:'#8b5cf6', fontWeight:700}}>{tenant.users}</div>
+                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Jobs</div>
+                  <div style={{fontSize:18, color:'#3b82f6', fontWeight:700}}>{tenant.completedJobs}/{tenant.totalJobs}</div>
+                  <div style={{fontSize:10, color:'#6b7280'}}>{tenant.completionRate}% done</div>
                 </div>
                 <div>
-                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Monthly Revenue</div>
-                  <div style={{fontSize:18, color:'#22c55e', fontWeight:700}}>{tenant.monthlyRevenue}</div>
+                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Revenue</div>
+                  <div style={{fontSize:18, color:'#22c55e', fontWeight:700}}>{formatCurrency(tenant.totalRevenue)}</div>
+                  <div style={{fontSize:10, color:'#6b7280'}}>This mo: {formatCurrency(tenant.revenueThisMonth)}</div>
                 </div>
                 <div>
-                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Joined</div>
-                  <div style={{fontSize:14, color:'#e5e7eb', fontWeight:600}}>{tenant.joinedDate.toLocaleDateString()}</div>
+                  <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Lifetime</div>
+                  <div style={{fontSize:18, color:'#f59e0b', fontWeight:700}}>{tenant.lifetimeMonths} mo</div>
                 </div>
+                {tenant.subscription && (
+                  <div>
+                    <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Subscription</div>
+                    <div style={{fontSize:14, fontWeight:700, color: tenant.subscription.isActive ? '#22c55e' : tenant.subscription.isTrialing ? '#f59e0b' : '#e5332a'}}>
+                      {tenant.subscription.isTrialing ? `Trial (${tenant.subscription.trialDaysLeft}d)` : tenant.subscription.status}
+                    </div>
+                    <div style={{fontSize:10, color:'#6b7280'}}>{formatCurrency(tenant.subscription.monthlyFee)}/mo</div>
+                  </div>
+                )}
               </div>
 
               <div style={{display:'flex', gap:12}}>
@@ -155,8 +412,11 @@ export default function ManageTenants() {
                 >
                   View Details
                 </button>
-                <button style={{padding:'12px 24px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                  Manage
+                <button 
+                  onClick={() => { setSelectedTenant(tenant); setShowSubscription(true); }}
+                  style={{padding:'12px 24px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
+                >
+                  Manage Subscription
                 </button>
               </div>
             </div>
@@ -165,23 +425,192 @@ export default function ManageTenants() {
         )}
       </div>
 
+      {showSubscription && selectedTenant && (
+        <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.8)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000, padding:32}}>
+          <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'2px solid rgba(59,130,246,0.3)', borderRadius:16, padding:32, maxWidth:800, width:'100%', maxHeight:'90vh', overflow:'auto'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
+              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>💳 Subscription Management</h2>
+              <button onClick={() => setShowSubscription(false)} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
+                ✕ Close
+              </button>
+            </div>
+
+            <div style={{marginBottom:24}}>
+              <h3 style={{fontSize:18, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>{selectedTenant.name}</h3>
+              <p style={{fontSize:14, color:'#9aa3b2'}}>Manage subscription and billing settings</p>
+            </div>
+
+            {/* Current Plan */}
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:24, marginBottom:24}}>
+              <h4 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>📋 Current Plan</h4>
+              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap:16}}>
+                <div>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Plan</div>
+                  <div style={{fontSize:18, color:getPlanColor(selectedTenant.subscription?.plan || 'free'), fontWeight:600}}>
+                    {selectedTenant.subscription?.plan || 'Free'}
+                  </div>
+                </div>
+                <div>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Status</div>
+                  <span style={{
+                    padding:'4px 12px', 
+                    background: selectedTenant.subscription?.isActive ? '#22c55e20' : selectedTenant.subscription?.isTrialing ? '#f59e0b20' : '#e5332a20', 
+                    color: selectedTenant.subscription?.isActive ? '#22c55e' : selectedTenant.subscription?.isTrialing ? '#f59e0b' : '#e5332a', 
+                    borderRadius:8, 
+                    fontSize:12, 
+                    fontWeight:600
+                  }}>
+                    {selectedTenant.subscription?.status?.toUpperCase() || 'NONE'}
+                  </span>
+                </div>
+                <div>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Monthly Fee</div>
+                  <div style={{fontSize:18, color:'#22c55e', fontWeight:600}}>{formatCurrency(selectedTenant.subscription?.monthlyFee || 0)}</div>
+                </div>
+                {selectedTenant.subscription?.isTrialing && (
+                  <div>
+                    <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Trial Days Left</div>
+                    <div style={{fontSize:18, color:'#f59e0b', fontWeight:600}}>{selectedTenant.subscription.trialDaysLeft} days</div>
+                  </div>
+                )}
+              </div>
+              {selectedTenant.subscription?.currentPeriodEnd && (
+                <div style={{marginTop:16}}>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Current Period Ends</div>
+                  <div style={{fontSize:14, color:'#e5e7eb'}}>{new Date(selectedTenant.subscription.currentPeriodEnd).toLocaleDateString()}</div>
+                </div>
+              )}
+            </div>
+
+            {/* Usage Statistics */}
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:24, marginBottom:24}}>
+              <h4 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>📊 Current Usage</h4>
+              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:16}}>
+                <div>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Jobs Completed</div>
+                  <div style={{fontSize:24, color:'#3b82f6', fontWeight:700}}>{selectedTenant.completedJobs}</div>
+                </div>
+                <div>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Total Revenue</div>
+                  <div style={{fontSize:24, color:'#22c55e', fontWeight:700}}>{formatCurrency(selectedTenant.totalRevenue)}</div>
+                </div>
+                <div>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Team Members</div>
+                  <div style={{fontSize:24, color:'#8b5cf6', fontWeight:700}}>{selectedTenant.teamMembers}</div>
+                </div>
+                <div>
+                  <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Health Score</div>
+                  <div style={{fontSize:24, color:getHealthColor(selectedTenant.healthScore), fontWeight:700}}>{selectedTenant.healthScore}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{display:'flex', gap:12, justifyContent:'flex-end'}}>
+              <button 
+                onClick={() => setShowSubscription(false)}
+                style={{padding:'12px 24px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleUpdatePlan(selectedTenant.id, selectedTenant.subscription?.plan === 'starter' ? 'growth' : selectedTenant.subscription?.plan === 'growth' ? 'professional' : 'enterprise')}
+                disabled={updatingSubscription}
+                style={{
+                  padding:'12px 24px',
+                  background: updatingSubscription ? 'rgba(59,130,246,0.5)' : 'rgba(59,130,246,0.8)',
+                  color:'#ffffff',
+                  border:'none',
+                  borderRadius:8,
+                  fontSize:14,
+                  fontWeight:600,
+                  cursor: updatingSubscription ? 'not-allowed' : 'pointer',
+                  opacity: updatingSubscription ? 0.6 : 1
+                }}
+              >
+                {updatingSubscription ? 'Updating...' : 'Upgrade Plan'}
+              </button>
+              <button
+                onClick={() => handleCancelSubscription(selectedTenant.id)}
+                disabled={updatingSubscription}
+                style={{
+                  padding:'12px 24px',
+                  background: updatingSubscription ? 'rgba(239,68,68,0.5)' : 'rgba(239,68,68,0.8)',
+                  color:'#ffffff',
+                  border:'none',
+                  borderRadius:8,
+                  fontSize:14,
+                  fontWeight:600,
+                  cursor: updatingSubscription ? 'not-allowed' : 'pointer',
+                  opacity: updatingSubscription ? 0.6 : 1
+                }}
+              >
+                {updatingSubscription ? 'Cancelling...' : 'Cancel Subscription'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showDetails && selectedTenant && (
         <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.8)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000, padding:32}}>
-          <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'2px solid rgba(59,130,246,0.3)', borderRadius:16, padding:32, maxWidth:600, width:'100%'}}>
+          <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'2px solid rgba(59,130,246,0.3)', borderRadius:16, padding:32, maxWidth:700, width:'100%', maxHeight:'90vh', overflow:'auto'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
-              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>Tenant Details</h2>
+              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>🏢 Tenant Details</h2>
               <button onClick={() => setShowDetails(false)} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
                 ✕ Close
               </button>
             </div>
-            <div style={{fontSize:16, color:'#e5e7eb', lineHeight:1.8}}>
-              <p><strong>Name:</strong> {selectedTenant.name}</p>
-              <p><strong>Domain:</strong> {selectedTenant.domain}</p>
-              <p><strong>Plan:</strong> {selectedTenant.plan}</p>
-              <p><strong>Status:</strong> {selectedTenant.status}</p>
-              <p><strong>Shops:</strong> {selectedTenant.shops}</p>
-              <p><strong>Users:</strong> {selectedTenant.users}</p>
-              <p><strong>Revenue:</strong> {selectedTenant.monthlyRevenue}</p>
+
+            <div style={{display:'grid', gap:16}}>
+              {/* Business Info */}
+              <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
+                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>🏪 Business Info</h3>
+                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                  <div><span style={{color:'#6b7280'}}>Shop Name:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.name}</span></div>
+                  <div><span style={{color:'#6b7280'}}>Owner:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.ownerName}</span></div>
+                  <div><span style={{color:'#6b7280'}}>Email:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.email}</span></div>
+                  <div><span style={{color:'#6b7280'}}>Phone:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.phone}</span></div>
+                  <div><span style={{color:'#6b7280'}}>Location:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.location}</span></div>
+                  <div><span style={{color:'#6b7280'}}>Shop Type:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.shopType}</span></div>
+                </div>
+              </div>
+
+              {/* Performance Metrics */}
+              <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
+                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>📊 Performance</h3>
+                <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:12}}>
+                  <div style={{textAlign:'center', padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8}}>
+                    <div style={{fontSize:24, fontWeight:700, color:'#3b82f6'}}>{selectedTenant.completedJobs}</div>
+                    <div style={{fontSize:11, color:'#9aa3b2'}}>Jobs Done</div>
+                  </div>
+                  <div style={{textAlign:'center', padding:12, background:'rgba(34,197,94,0.1)', borderRadius:8}}>
+                    <div style={{fontSize:24, fontWeight:700, color:'#22c55e'}}>{formatCurrency(selectedTenant.totalRevenue)}</div>
+                    <div style={{fontSize:11, color:'#9aa3b2'}}>Revenue</div>
+                  </div>
+                  <div style={{textAlign:'center', padding:12, background:'rgba(139,92,246,0.1)', borderRadius:8}}>
+                    <div style={{fontSize:24, fontWeight:700, color:'#8b5cf6'}}>{selectedTenant.completionRate}%</div>
+                    <div style={{fontSize:11, color:'#9aa3b2'}}>Completion</div>
+                  </div>
+                  <div style={{textAlign:'center', padding:12, background:`${getHealthColor(selectedTenant.healthScore)}15`, borderRadius:8}}>
+                    <div style={{fontSize:24, fontWeight:700, color:getHealthColor(selectedTenant.healthScore)}}>{selectedTenant.healthScore}</div>
+                    <div style={{fontSize:11, color:'#9aa3b2'}}>Health</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Subscription */}
+              {selectedTenant.subscription && (
+                <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
+                  <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>💳 Subscription</h3>
+                  <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                    <div><span style={{color:'#6b7280'}}>Plan:</span> <span style={{color:getPlanColor(selectedTenant.subscription.plan), fontWeight:600}}>{selectedTenant.subscription.plan}</span></div>
+                    <div><span style={{color:'#6b7280'}}>Status:</span> <span style={{color: selectedTenant.subscription.isActive ? '#22c55e' : '#f59e0b', fontWeight:600}}>{selectedTenant.subscription.status}</span></div>
+                    <div><span style={{color:'#6b7280'}}>Monthly:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{formatCurrency(selectedTenant.subscription.monthlyFee)}</span></div>
+                    <div><span style={{color:'#6b7280'}}>Stripe:</span> <span style={{color: selectedTenant.subscription.hasStripe ? '#22c55e' : '#6b7280', fontWeight:600}}>{selectedTenant.subscription.hasStripe ? 'Connected' : 'Not Connected'}</span></div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

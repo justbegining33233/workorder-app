@@ -1,0 +1,615 @@
+'use client';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
+
+interface Estimate {
+  id: string;
+  status: 'pending' | 'accepted' | 'denied';
+  service: string;
+  price: number;
+  shop: string;
+  description: string;
+  validUntil: string;
+}
+
+export default function Estimates() {
+  useRequireAuth(['customer']);
+  const [userName, setUserName] = useState('');
+  const [activeTab, setActiveTab] = useState('my-estimates');
+  const [estimates, setEstimates] = useState<Estimate[]>([
+    {
+      id: '1',
+      status: 'pending',
+      service: 'Oil Change Service',
+      price: 89.99,
+      shop: 'Allentown 24/7 Auto & Diesel',
+      description: 'Complete oil change with synthetic oil, oil filter replacement, and multi-point inspection.',
+      validUntil: '2026-02-15T17:00:00.000Z'
+    },
+    {
+      id: '2',
+      status: 'pending',
+      service: 'Brake Pad Replacement',
+      price: 245.50,
+      shop: 'Allentown 24/7 Auto & Diesel',
+      description: 'Front brake pads and rotors replacement. Includes ceramic brake pads for better performance.',
+      validUntil: '2026-02-10T17:00:00.000Z'
+    },
+    {
+      id: '3',
+      status: 'accepted',
+      service: 'Tire Rotation & Balance',
+      price: 45.00,
+      shop: 'Allentown 24/7 Auto & Diesel',
+      description: 'Complete tire rotation, balance, and pressure check. Recommended every 5,000 miles.',
+      validUntil: '2026-01-25T17:00:00.000Z'
+    },
+    {
+      id: '4',
+      status: 'accepted',
+      service: 'Battery Replacement',
+      price: 189.99,
+      shop: 'Allentown 24/7 Auto & Diesel',
+      description: 'New heavy-duty battery with 3-year warranty. Includes testing and installation.',
+      validUntil: '2026-01-20T17:00:00.000Z'
+    },
+    {
+      id: '5',
+      status: 'denied',
+      service: 'Transmission Service',
+      price: 299.99,
+      shop: 'Allentown 24/7 Auto & Diesel',
+      description: 'Complete transmission fluid flush and filter replacement. Price too high for service needed.',
+      validUntil: '2026-01-15T17:00:00.000Z'
+    },
+    {
+      id: '6',
+      status: 'denied',
+      service: 'AC System Recharge',
+      price: 175.00,
+      shop: 'Allentown 24/7 Auto & Diesel',
+      description: 'AC system inspection, recharge, and leak test. Not needed at this time.',
+      validUntil: '2026-01-12T17:00:00.000Z'
+    }
+  ]);
+  const [loading, setLoading] = useState<string | null>(null);
+
+  useEffect(() => {
+    const name = localStorage.getItem('userName') || '';
+    setUserName(name);
+  }, []);
+
+  const handleAccept = async (estimateId: string) => {
+    setLoading(estimateId);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Authentication required');
+        return;
+      }
+
+      const response = await fetch(`/api/customers/estimates/${estimateId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ action: 'accept' }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update local state to move estimate to approved
+        setEstimates(prev => prev.map(est =>
+          est.id === estimateId
+            ? { ...est, status: 'accepted' as const }
+            : est
+        ));
+        alert('Estimate accepted successfully!');
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error accepting estimate:', error);
+      alert('Failed to accept estimate. Please try again.');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleDeny = async (estimateId: string) => {
+    setLoading(estimateId);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Authentication required');
+        return;
+      }
+
+      const response = await fetch(`/api/customers/estimates/${estimateId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ action: 'deny' }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update local state to move estimate to denied
+        setEstimates(prev => prev.map(est =>
+          est.id === estimateId
+            ? { ...est, status: 'denied' as const }
+            : est
+        ));
+        alert('Estimate denied successfully!');
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Error denying estimate:', error);
+      alert('Failed to deny estimate. Please try again.');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  // Request a new estimate from the shop/manager for a denied estimate
+  const handleRequestEstimate = async (estimate: Estimate) => {
+    setLoading(estimate.id);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Authentication required');
+        return;
+      }
+
+      const body = {
+        workOrderId: estimate.id, // when real data includes workOrderId use that
+        message: `Customer requested a new estimate for ${estimate.service}`,
+      };
+
+      const response = await fetch('/api/customers/estimates/request-new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        alert('Request sent to shop manager successfully!');
+      } else {
+        const err = await response.json();
+        alert(`Failed to request new estimate: ${err.error || 'unknown'}`);
+      }
+    } catch (error) {
+      console.error('Error requesting new estimate:', error);
+      alert('Failed to request new estimate. Please try again.');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userName');
+    window.location.href = '/auth/login';
+  };
+
+  return (
+    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+      {/* Header */}
+      <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+        <div style={{display:'flex', alignItems:'center', gap:24}}>
+          <Link href="/customer/dashboard" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>FixTray</Link>
+          <div>
+            <div style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>Customer Portal</div>
+            <div style={{fontSize:12, color:'#9aa3b2'}}>My Estimates</div>
+          </div>
+        </div>
+        <div style={{display:'flex', alignItems:'center', gap:16}}>
+          <span style={{fontSize:14, color:'#9aa3b2'}}>Welcome, {userName}</span>
+          <button onClick={handleSignOut} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <div style={{maxWidth:1200, margin:'0 auto', padding:32}}>
+        {/* Tab Navigation */}
+        <div style={{marginBottom:32}}>
+          <div style={{display:'flex', gap:8, borderBottom:'2px solid rgba(255,255,255,0.1)', paddingBottom:2, overflowX:'auto'}}>
+            <button
+              onClick={() => setActiveTab('my-estimates')}
+              style={{
+                padding:'12px 24px',
+                background: activeTab === 'my-estimates' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                border:'none',
+                borderBottom: activeTab === 'my-estimates' ? '3px solid #e5332a' : '3px solid transparent',
+                color: activeTab === 'my-estimates' ? '#e5332a' : '#9aa3b2',
+                cursor:'pointer',
+                fontSize:15,
+                fontWeight:700,
+                transition:'all 0.2s',
+                borderRadius:'8px 8px 0 0',
+                whiteSpace:'nowrap'
+              }}
+            >
+              MY ESTIMATES
+            </button>
+            <button
+              onClick={() => setActiveTab('request-estimate')}
+              style={{
+                padding:'12px 24px',
+                background: activeTab === 'request-estimate' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                border:'none',
+                borderBottom: activeTab === 'request-estimate' ? '3px solid #e5332a' : '3px solid transparent',
+                color: activeTab === 'request-estimate' ? '#e5332a' : '#9aa3b2',
+                cursor:'pointer',
+                fontSize:15,
+                fontWeight:700,
+                transition:'all 0.2s',
+                borderRadius:'8px 8px 0 0',
+                whiteSpace:'nowrap'
+              }}
+            >
+              REQUEST ESTIMATE
+            </button>
+            <button
+              onClick={() => setActiveTab('denied-estimates')}
+              style={{
+                padding:'12px 24px',
+                background: activeTab === 'denied-estimates' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                border:'none',
+                borderBottom: activeTab === 'denied-estimates' ? '3px solid #e5332a' : '3px solid transparent',
+                color: activeTab === 'denied-estimates' ? '#e5332a' : '#9aa3b2',
+                cursor:'pointer',
+                fontSize:15,
+                fontWeight:700,
+                transition:'all 0.2s',
+                borderRadius:'8px 8px 0 0',
+                whiteSpace:'nowrap'
+              }}
+            >
+              DENIED ESTIMATES
+            </button>
+            <button
+              onClick={() => setActiveTab('approved-estimates')}
+              style={{
+                padding:'12px 24px',
+                background: activeTab === 'approved-estimates' ? 'rgba(229,51,42,0.2)' : 'transparent',
+                border:'none',
+                borderBottom: activeTab === 'approved-estimates' ? '3px solid #e5332a' : '3px solid transparent',
+                color: activeTab === 'approved-estimates' ? '#e5332a' : '#9aa3b2',
+                cursor:'pointer',
+                fontSize:15,
+                fontWeight:700,
+                transition:'all 0.2s',
+                borderRadius:'8px 8px 0 0',
+                whiteSpace:'nowrap'
+              }}
+            >
+              APPROVED ESTIMATES
+            </button>
+          </div>
+        </div>
+        {/* Tab Content */}
+        {activeTab === 'my-estimates' && (
+          <div>
+            <h1 style={{fontSize:32, fontWeight:700, color:'#e5e7eb', marginBottom:32}}>My Estimates</h1>
+            <p style={{fontSize:16, color:'#9aa3b2', marginBottom:24}}>Review and respond to pending estimate requests from shops</p>
+
+            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap:24}}>
+              {estimates.filter(estimate => estimate.status === 'pending').map(estimate => (
+                <div key={estimate.id} style={{
+                  background:'rgba(0,0,0,0.3)',
+                  border:'1px solid rgba(255,255,255,0.1)',
+                  borderRadius:12,
+                  padding:24
+                }}>
+                  <div style={{marginBottom:20}}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                      <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>{estimate.service}</h3>
+                      <span style={{
+                        padding:'4px 12px',
+                        background: 'rgba(245,158,11,0.2)',
+                        color: '#f59e0b',
+                        borderRadius:12,
+                        fontSize:12,
+                        fontWeight:600
+                      }}>
+                        {estimate.status === 'pending' ? 'PENDING' : estimate.status === 'accepted' ? 'APPROVED' : 'DENIED'}
+                      </span>
+                    </div>
+                    <div style={{fontSize:18, color:'#3b82f6', fontWeight:700, marginBottom:8}}>${estimate.price.toFixed(2)}</div>
+                    <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{estimate.shop}</div>
+                    <div style={{fontSize:14, color:'#e5e7eb', lineHeight:1.5, marginBottom:12}}>{estimate.description}</div>
+                    <div style={{fontSize:12, color:'#6b7280'}}>Valid until: {estimate.validUntil}</div>
+                  </div>
+                  <div style={{display:'flex', gap:12}}>
+                    <button
+                      onClick={() => handleAccept(estimate.id)}
+                      disabled={loading === estimate.id}
+                      style={{
+                        flex:1,
+                        padding:'12px',
+                        background: loading === estimate.id ? '#16a34a' : '#22c55e',
+                        color:'white',
+                        border:'none',
+                        borderRadius:8,
+                        fontSize:14,
+                        fontWeight:600,
+                        cursor: loading === estimate.id ? 'not-allowed' : 'pointer',
+                        opacity: loading === estimate.id ? 0.7 : 1
+                      }}
+                    >
+                      {loading === estimate.id ? 'Accepting...' : '✅ Accept Estimate'}
+                    </button>
+                    <button
+                      onClick={() => handleDeny(estimate.id)}
+                      disabled={loading === estimate.id}
+                      style={{
+                        flex:1,
+                        padding:'12px',
+                        background: loading === estimate.id ? '#dc2626' : '#ef4444',
+                        color:'white',
+                        border:'none',
+                        borderRadius:8,
+                        fontSize:14,
+                        fontWeight:600,
+                        cursor: loading === estimate.id ? 'not-allowed' : 'pointer',
+                        opacity: loading === estimate.id ? 0.7 : 1
+                      }}
+                    >
+                      {loading === estimate.id ? 'Denying...' : '❌ Deny Estimate'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {estimates.filter(estimate => estimate.status === 'pending').length === 0 && (
+              <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>
+                No pending estimates to review
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'request-estimate' && (
+          <div>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32}}>
+              <h1 style={{fontSize:32, fontWeight:700, color:'#e5e7eb'}}>Request Estimate</h1>
+              <button style={{
+                padding:'12px 24px',
+                background:'#3b82f6',
+                color:'white',
+                border:'none',
+                borderRadius:8,
+                fontSize:16,
+                fontWeight:600,
+                cursor:'pointer'
+              }}>
+                Submit Request
+              </button>
+            </div>
+            <div style={{maxWidth:600, margin:'0 auto'}}>
+              <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:32}}>
+                <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:24}}>Request a New Estimate</h2>
+                <div style={{display:'grid', gap:20}}>
+                  <div>
+                    <label style={{display:'block', fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>Service Type</label>
+                    <select style={{
+                      width:'100%',
+                      padding:'12px',
+                      background:'rgba(255,255,255,0.1)',
+                      border:'1px solid rgba(255,255,255,0.2)',
+                      borderRadius:8,
+                      color:'#e5e7eb',
+                      fontSize:16
+                    }}>
+                      <option value="">Select a service</option>
+                      <option value="oil-change">Oil Change</option>
+                      <option value="brake-service">Brake Service</option>
+                      <option value="tire-service">Tire Service</option>
+                      <option value="engine-repair">Engine Repair</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{display:'block', fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>Description</label>
+                    <textarea 
+                      placeholder="Describe the service you need..."
+                      style={{
+                        width:'100%',
+                        padding:'12px',
+                        background:'rgba(255,255,255,0.1)',
+                        border:'1px solid rgba(255,255,255,0.2)',
+                        borderRadius:8,
+                        color:'#e5e7eb',
+                        fontSize:16,
+                        minHeight:100,
+                        resize:'vertical'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{display:'block', fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>Preferred Shop (Optional)</label>
+                    <select style={{
+                      width:'100%',
+                      padding:'12px',
+                      background:'rgba(255,255,255,0.1)',
+                      border:'1px solid rgba(255,255,255,0.2)',
+                      borderRadius:8,
+                      color:'#e5e7eb',
+                      fontSize:16
+                    }}>
+                      <option value="">Any available shop</option>
+                      <option value="allentown">Allentown 24/7 Auto & Diesel</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'denied-estimates' && (
+          <div>
+            <h1 style={{fontSize:32, fontWeight:700, color:'#e5e7eb', marginBottom:32}}>Denied Estimates</h1>
+            <p style={{fontSize:16, color:'#9aa3b2', marginBottom:24}}>Estimates you have declined</p>
+
+            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap:24}}>
+              {estimates.filter(estimate => estimate.status === 'denied').map(estimate => (
+                <div key={estimate.id} style={{
+                  background:'rgba(0,0,0,0.3)',
+                  border:'1px solid rgba(255,255,255,0.1)',
+                  borderRadius:12,
+                  padding:24,
+                  opacity: 0.7
+                }}>
+                  <div style={{marginBottom:20}}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                      <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>{estimate.service}</h3>
+                      <span style={{
+                        padding:'4px 12px',
+                        background: 'rgba(239,68,68,0.2)',
+                        color: '#ef4444',
+                        borderRadius:12,
+                        fontSize:12,
+                        fontWeight:600
+                      }}>
+                        {estimate.status}
+                      </span>
+                    </div>
+                    <div style={{fontSize:18, color:'#6b7280', fontWeight:700, marginBottom:8, textDecoration:'line-through'}}>${estimate.price.toFixed(2)}</div>
+                    <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{estimate.shop}</div>
+                    <div style={{fontSize:14, color:'#e5e7eb', lineHeight:1.5, marginBottom:12}}>{estimate.description}</div>
+                    <div style={{fontSize:12, color:'#6b7280'}}>Denied on: {estimate.validUntil}</div>
+                  </div>
+                  <div style={{textAlign:'center'}}>
+                    <button onClick={() => handleRequestEstimate(estimate)} disabled={loading === estimate.id} style={{
+                      padding:'8px 16px',
+                      background: loading === estimate.id ? 'rgba(59,130,246,0.06)' : 'rgba(59,130,246,0.1)',
+                      color:'#3b82f6',
+                      border:'1px solid rgba(59,130,246,0.3)',
+                      borderRadius:8,
+                      fontSize:12,
+                      fontWeight:600,
+                      cursor: loading === estimate.id ? 'not-allowed' : 'pointer'
+                    }}>
+                      {loading === estimate.id ? 'Requesting...' : 'Request New Estimate'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {estimates.filter(estimate => estimate.status === 'denied').length === 0 && (
+              <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>
+                No denied estimates
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'approved-estimates' && (
+          <div>
+            <h1 style={{fontSize:32, fontWeight:700, color:'#e5e7eb', marginBottom:32}}>Approved Estimates</h1>
+            <p style={{fontSize:16, color:'#9aa3b2', marginBottom:24}}>Estimates you have accepted and approved</p>
+
+            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap:24}}>
+              {estimates.filter(estimate => estimate.status === 'accepted').map(estimate => (
+                <div key={estimate.id} style={{
+                  background:'rgba(0,0,0,0.3)',
+                  border:'1px solid rgba(255,255,255,0.1)',
+                  borderRadius:12,
+                  padding:24
+                }}>
+                  <div style={{marginBottom:20}}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8}}>
+                      <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>{estimate.service}</h3>
+                      <span style={{
+                        padding:'4px 12px',
+                        background: 'rgba(34,197,94,0.2)',
+                        color: '#22c55e',
+                        borderRadius:12,
+                        fontSize:12,
+                        fontWeight:600
+                      }}>
+                        {estimate.status}
+                      </span>
+                    </div>
+                    <div style={{fontSize:18, color:'#22c55e', fontWeight:700, marginBottom:8}}>${estimate.price.toFixed(2)}</div>
+                    <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{estimate.shop}</div>
+                    <div style={{fontSize:14, color:'#e5e7eb', lineHeight:1.5, marginBottom:12}}>{estimate.description}</div>
+                    <div style={{fontSize:12, color:'#6b7280'}}>Approved on: {estimate.validUntil}</div>
+                  </div>
+                  <div style={{display:'flex', gap:12}}>
+                    <button style={{
+                      flex:1,
+                      padding:'12px',
+                      background:'#3b82f6',
+                      color:'white',
+                      border:'none',
+                      borderRadius:8,
+                      fontSize:14,
+                      fontWeight:600,
+                      cursor:'pointer'
+                    }}>
+                      📅 Schedule Service
+                    </button>
+                    <button style={{
+                      flex:1,
+                      padding:'12px',
+                      background:'rgba(245,158,11,0.1)',
+                      color:'#f59e0b',
+                      border:'1px solid rgba(245,158,11,0.3)',
+                      borderRadius:8,
+                      fontSize:14,
+                      fontWeight:600,
+                      cursor:'pointer'
+                    }}>
+                      💬 Contact Shop
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {estimates.filter(estimate => estimate.status === 'accepted').length === 0 && (
+              <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>
+                No approved estimates yet
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Back to Dashboard */}
+        <div style={{marginTop:32, textAlign:'center'}}>
+          <Link href="/customer/dashboard" style={{
+            padding:'12px 24px',
+            background:'#3b82f6',
+            color:'white',
+            border:'none',
+            borderRadius:8,
+            fontSize:16,
+            fontWeight:600,
+            textDecoration:'none',
+            cursor:'pointer'
+          }}>
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

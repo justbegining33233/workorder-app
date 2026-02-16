@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MaintenanceType } from '../../../types/workorder';
+import { useRequireAuth } from '@/contexts/AuthContext';
 import { createWorkOrderClient } from '@/lib/workordersClient';
 
 export default function ShopNewInShopJob() {
   const router = useRouter();
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [userName, setUserName] = useState('');
   const [formData, setFormData] = useState({
     customerName: '',
@@ -26,16 +28,31 @@ export default function ShopNewInShopJob() {
     notes: '',
   });
 
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
+
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    const name = localStorage.getItem('userName');
-    if (role !== 'shop') {
-      router.push('/auth/login');
-      return;
-    }
-    if (name) setUserName(name);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (user?.name) setUserName(user.name);
+  }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

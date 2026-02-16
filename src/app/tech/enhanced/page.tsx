@@ -5,24 +5,17 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
+import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 
 function TechPortalEnhancedContent() {
+  useRequireAuth(['tech']);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('assignments');
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
   const [techName, setTechName] = useState('Mike');
   const [location, setLocation] = useState({ lat: 0, lng: 0 });
-
-  useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
-    if (!userRole || userRole !== 'tech') {
-      router.push('/auth/login');
-      return;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const tab = searchParams?.get('tab');

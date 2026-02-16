@@ -7,7 +7,7 @@ export default function CustomerRedirect() {
   const router = useRouter();
   
   useEffect(() => {
-    router.replace('/customer/features');
+    router.replace('/customer/dashboard');
   }, [router]);
   
   return (

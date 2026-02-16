@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     const total = await prisma.workOrder.count({ where });
     
     // Get paginated results
-    const workOrders = await prisma.workOrder.findMany({
+    const rawWorkOrders = await prisma.workOrder.findMany({
       where,
       include: {
         customer: {
@@ -94,6 +94,26 @@ export async function GET(request: NextRequest) {
       skip: (page - 1) * limit,
       take: limit,
     });
+    
+    // Parse JSON fields
+    const workOrders = rawWorkOrders.map(wo => ({
+      ...wo,
+      services: wo.repairs || wo.maintenance ? {
+        repairs: wo.repairs ? JSON.parse(wo.repairs) : undefined,
+        maintenance: wo.maintenance ? JSON.parse(wo.maintenance) : undefined,
+      } : undefined,
+      partsMaterials: wo.partsMaterials ? JSON.parse(wo.partsMaterials) : undefined,
+      issueDescription: {
+        symptoms: wo.issueDescription,
+        pictures: wo.pictures ? JSON.parse(wo.pictures) : [],
+      },
+      location: wo.location ? JSON.parse(wo.location) : undefined,
+      estimate: wo.estimate ? JSON.parse(wo.estimate) : undefined,
+      techLabor: wo.techLabor ? JSON.parse(wo.techLabor) : undefined,
+      partsUsed: wo.partsUsed ? JSON.parse(wo.partsUsed) : undefined,
+      workPhotos: wo.workPhotos ? JSON.parse(wo.workPhotos) : [],
+      completion: wo.completion ? JSON.parse(wo.completion) : undefined,
+    }));
     
     return NextResponse.json({
       workOrders,

@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Review {
   id: string;
@@ -13,18 +14,13 @@ interface Review {
 }
 
 export default function Reviews() {
+  useRequireAuth(['customer']);
   const [userName, setUserName] = useState('');
   const [reviews] = useState<Review[]>([]);
 
   useEffect(() => {
-    const role = localStorage.getItem('userRole');
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
-
-    if (role !== 'customer') {
-      window.location.href = '/auth/login';
-      return;
-    }
   }, []);
 
   const handleSignOut = () => {

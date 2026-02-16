@@ -18,11 +18,11 @@ import {
 
 interface AnalyticsChartsProps {
   data: {
-    revenue: any[];
-    completionTimes: any[];
-    techPerformance: any[];
-    statusDistribution: any[];
-    monthlyTrends: any[];
+    revenue: { month: string; amount: number }[];
+    completionTimes: { time: string; count: number }[];
+    techPerformance: { name: string; jobs: number; rating: number }[];
+    statusDistribution: { status: string; count: number }[];
+    monthlyTrends: { month: string; jobs: number; revenue: number }[];
   };
 }
 

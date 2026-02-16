@@ -180,6 +180,7 @@ export interface WorkOrder {
   updatedAt: Date;
   createdBy?: string;
   assignedTo?: string;
+  bay?: number; // Bay number (1-999) where work is being performed
   shop?: {
     shopName: string;
     phone?: string;
