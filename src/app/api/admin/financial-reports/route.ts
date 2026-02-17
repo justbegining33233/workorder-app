@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
+  // Enforce Neon-only DB: fail fast if DATABASE_URL is missing
+  if (!process.env.DATABASE_URL) {
+    console.error('DATABASE_URL not configured — set it to your Neon connection string');
+    return NextResponse.json({ error: 'DATABASE_URL not configured' }, { status: 503 });
+  }
+
   try {
     // Verify admin authentication
     const authHeader = req.headers.get('authorization');

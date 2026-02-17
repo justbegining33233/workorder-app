@@ -234,8 +234,8 @@ export default function AppGuidePage() {
       description: 'Technical system features',
       features: [
         { name: 'Health Check Endpoint', description: 'API health monitoring', status: 'ready', apiEndpoint: '/api/health' },
-        { name: 'SQLite Database', description: 'Local database storage', status: 'ready', notes: 'Using Prisma ORM' },
-        { name: 'PostgreSQL Support', description: 'Production database option', status: 'setup-required', notes: 'Change DATABASE_URL in .env' },
+        { name: 'Neon (Postgres)', description: 'Production & development database (Neon)', status: 'ready', notes: 'Set DATABASE_URL to your Neon connection string' },
+        { name: 'PostgreSQL Support', description: 'Production database option', status: 'ready', notes: 'Using Neon' },
         { name: 'Multi-tenant Architecture', description: 'Shop data isolation', status: 'ready', apiEndpoint: '/api/tenants' },
         { name: 'Audit Logging', description: 'Track system changes', status: 'ready', apiEndpoint: '/api/admin/audit-logs' },
         { name: 'Backup & Restore', description: 'Database backups', status: 'partial', notes: 'Manual backup scripts available' },

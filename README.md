@@ -10,7 +10,7 @@ A comprehensive work order management application for diesel/gas shops, technici
 - **Payment Processing**: Stripe integration
 - **File Management**: Cloudinary upload system
 - **Authentication**: JWT with role-based access
-- **Database**: SQLite (dev) / PostgreSQL (production)
+- **Database**: PostgreSQL (Neon) — Neon is the single supported database (development & production)
 - **Work Order Management**: Full CRUD with status tracking
 - **Shop Management**: Labor rates, services, inventory
 - **Analytics & Reporting**: Real-time dashboards
