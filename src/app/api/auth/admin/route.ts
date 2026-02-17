@@ -80,36 +80,56 @@ export async function POST(request: NextRequest) {
       role: 'admin',
       accessToken,
     });
-    response.cookies.set('refresh_id', refresh.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-    });
-    response.cookies.set('refresh_sig', refreshRaw, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-    });
+    try {
+      response.cookies.set('refresh_id', refresh.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
+      });
+    } catch (err) {
+      console.error('[admin/login] cookie set failed (refresh_id):', err);
+    }
+
+    try {
+      response.cookies.set('refresh_sig', refreshRaw, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
+      });
+    } catch (err) {
+      console.error('[admin/login] cookie set failed (refresh_sig):', err);
+    }
+
     // Expose CSRF token in a readable cookie for client-side fetches
-    response.cookies.set('csrf_token', csrf, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-    });
+    try {
+      response.cookies.set('csrf_token', csrf, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
+      });
+    } catch (err) {
+      console.error('[admin/login] cookie set failed (csrf_token):', err);
+    }
+
     // Optionally set the access token cookie as well for browser-based auth
-    response.cookies.set('sos_auth', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 15, // 15 minutes
-    });
+    try {
+      response.cookies.set('sos_auth', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 15, // 15 minutes
+      });
+    } catch (err) {
+      console.error('[admin/login] cookie set failed (sos_auth):', err);
+    }
+
     return response;
 
   } catch (error) {
