@@ -132,8 +132,9 @@ export async function POST(request: NextRequest) {
 
     return response;
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Admin login error:', error);
-    return NextResponse.json({ error: 'Login failed' }, { status: 500 });
+    const details = process.env.NODE_ENV === 'development' ? (error?.message || String(error)) : 'Login failed';
+    return NextResponse.json({ error: 'Login failed', details }, { status: 500 });
   }
 }
