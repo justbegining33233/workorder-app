@@ -11,11 +11,16 @@ export async function GET(
 ) {
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.CORS_ORIGINS || '*',
-    'Access-Control-Allow-Methods': 'GET,PUT,DELETE,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  };
+  // Only include CORS headers when a specific origin is configured; otherwise
+  // omit them and let browsers enforce their default same-origin policy.
+  const corsOrigin = process.env.CORS_ORIGINS;
+  const corsHeaders: Record<string, string> = corsOrigin
+    ? {
+        'Access-Control-Allow-Origin': corsOrigin,
+        'Access-Control-Allow-Methods': 'GET,PUT,DELETE,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }
+    : {};
   
   try {
     const { id } = await params;

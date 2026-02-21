@@ -28,8 +28,10 @@ export async function GET(request: NextRequest) {
     const shopId = searchParams.get('shopId');
     const customerId = searchParams.get('customerId');
     const search = searchParams.get('search');
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const ALLOWED_SORT_FIELDS = ['createdAt', 'updatedAt', 'status', 'priority', 'dueDate'] as const;
+    const sortByRaw = searchParams.get('sortBy') || 'createdAt';
+    const sortBy: string = (ALLOWED_SORT_FIELDS as readonly string[]).includes(sortByRaw) ? sortByRaw : 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc';
     
     // Build where clause
     const where: any = {};
