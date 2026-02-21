@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import { generateNumericOTP, generateTokenHex, hashTokenSha256 } from '@/lib/verification';
 import { getClientIP } from '@/lib/rateLimit';
-
-const prisma = new PrismaClient();
 
 async function sendByEmail(email: string, raw: string, siteUrl: string) {
   if (process.env.SENDGRID_API_KEY) {
@@ -16,7 +14,7 @@ async function sendByEmail(email: string, raw: string, siteUrl: string) {
   // Fallback: log to server console for dev
   console.log('Verification token for', email, raw);
   try {
-    const req: any = eval('require');
+    const req = require;
     const fs = req('fs');
     const path = req('path');
     const dir = path.join(process.cwd(), 'tmp');
@@ -32,7 +30,7 @@ async function sendByEmail(email: string, raw: string, siteUrl: string) {
 async function sendBySms(phone: string, raw: string) {
   if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM) {
     try {
-      const req: any = eval('require');
+      const req = require;
       const twilioLib = req('twilio');
       const client = twilioLib(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
       await client.messages.create({ to: phone, from: process.env.TWILIO_FROM, body: `Your verification code: ${raw}` });

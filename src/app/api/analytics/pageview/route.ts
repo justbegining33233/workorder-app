@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const forwardedFor = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
     const ip = forwardedFor?.split(',')[0] || realIp || 'Unknown';
-    const ipHash = crypto.createHash('sha256').update(ip + process.env.NEXTAUTH_SECRET || 'salt').digest('hex').substring(0, 16);
+    const ipHash = crypto.createHash('sha256').update(ip + (process.env.NEXTAUTH_SECRET || 'salt')).digest('hex').substring(0, 16);
     
     // Create page view record
     const pageView = await prisma.pageView.create({

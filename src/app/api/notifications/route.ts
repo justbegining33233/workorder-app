@@ -4,8 +4,11 @@ import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
 
 export async function GET(request: NextRequest) {
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   const { searchParams } = new URL(request.url);
-  const customerId = searchParams.get('customerId') || 'demo-customer';
+  const customerId = searchParams.get('customerId') || auth.id;
   
   const notifications = getNotifications(customerId);
   return NextResponse.json(notifications);

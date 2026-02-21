@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getWorkOrderById, updateWorkOrder } from '@/lib/workorders';
+import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
 
 export async function POST(request: NextRequest) {
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  // Only shops/managers/admins can record payments
+  if (!['shop', 'manager', 'admin'].includes(auth.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   try {
     if (!request.headers.get('authorization')) {
       const ok = await validateCsrf(request);
