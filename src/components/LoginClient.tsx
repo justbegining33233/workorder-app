@@ -7,6 +7,9 @@ import { getCsrfToken } from '@/lib/clientCsrf';
 import { useAuth } from '@/contexts/AuthContext';
 import '@/styles/sos-theme.css';
 
+const MIN_USERNAME_LENGTH = 3;
+const MIN_PASSWORD_LENGTH = 8;
+
 export default function LoginClient() {
   const router = useRouter();
   const { login } = useAuth();
@@ -43,6 +46,7 @@ export default function LoginClient() {
         if (adminResponse.ok) {
           const adminData = await adminResponse.json();
           login({ token: adminData.accessToken, role: 'admin', name: adminData.username, id: adminData.id, isSuperAdmin: adminData.isSuperAdmin });
+          setLoading(false);
           router.push('/admin/home');
           return;
         }
@@ -54,6 +58,7 @@ export default function LoginClient() {
         if (techResponse.ok) {
           const techData = await techResponse.json();
           login({ token: techData.accessToken, role: techData.role, name: techData.name, id: techData.id, shopId: techData.shopId });
+          setLoading(false);
           if (techData.role === 'tech') router.push('/tech/home'); else if (techData.role === 'manager') router.push('/manager/home');
           return;
         }
@@ -67,6 +72,7 @@ export default function LoginClient() {
           const profileComplete = !!shopAccount.profileComplete;
           if (!profileComplete && typeof window !== 'undefined') localStorage.removeItem('shopProfileComplete');
           login({ token: shopAccount.accessToken, role: 'shop', name: shopAccount.shopName, id: shopAccount.id, shopId: shopAccount.id, isShopAdmin: true, shopProfileComplete: profileComplete });
+          setLoading(false);
           const nextRoute = profileComplete ? '/shop/admin' : '/shop/complete-profile';
           router.push(nextRoute);
           return;
@@ -82,6 +88,7 @@ export default function LoginClient() {
           const name = customerData.fullName || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
           const id = customerData.id || (customerData.user && customerData.user.id);
           login({ token, role: 'customer', name: name || 'Customer', id: id || '' });
+          setLoading(false);
           router.push('/customer/dashboard');
           return;
         }
@@ -99,7 +106,40 @@ export default function LoginClient() {
     e.preventDefault();
     setErrors({});
     const newErrors: Record<string, string> = {};
-    if (!accountType) newErrors.accountType = 'Please select account type';
+
+    if (!accountType) {
+      newErrors.accountType = 'Please select account type';
+    }
+
+    if (accountType === 'customer') {
+      if (!signupForm.fullName.trim()) newErrors.fullName = 'Full name is required';
+      if (!signupForm.username.trim()) newErrors.username = 'Username is required';
+      else if (signupForm.username.trim().length < MIN_USERNAME_LENGTH) newErrors.username = `Username must be at least ${MIN_USERNAME_LENGTH} characters`;
+      if (!signupForm.email.trim()) newErrors.email = 'Email is required';
+      if (!signupForm.password) newErrors.password = 'Password is required';
+      else if (signupForm.password.length < MIN_PASSWORD_LENGTH) newErrors.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
+      if (!signupForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+      else if (signupForm.password !== signupForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+      if (!signupForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the Terms of Service';
+    }
+
+    if (accountType === 'shop') {
+      if (!shopSignupForm.shopName.trim()) newErrors.shopName = 'Shop name is required';
+      if (!shopSignupForm.address.trim()) newErrors.address = 'Address is required';
+      if (!shopSignupForm.city.trim()) newErrors.city = 'City is required';
+      if (!shopSignupForm.state.trim()) newErrors.state = 'State is required';
+      if (!shopSignupForm.zip.trim()) newErrors.zip = 'ZIP code is required';
+      if (!shopSignupForm.phone.trim()) newErrors.phone = 'Phone number is required';
+      if (!shopSignupForm.email.trim()) newErrors.email = 'Email is required';
+      if (!shopSignupForm.username.trim()) newErrors.username = 'Username is required';
+      else if (shopSignupForm.username.trim().length < MIN_USERNAME_LENGTH) newErrors.username = `Username must be at least ${MIN_USERNAME_LENGTH} characters`;
+      if (!shopSignupForm.password) newErrors.password = 'Password is required';
+      else if (shopSignupForm.password.length < MIN_PASSWORD_LENGTH) newErrors.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
+      if (!shopSignupForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+      else if (shopSignupForm.password !== shopSignupForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+      if (!shopSignupForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the Terms of Service';
+    }
+
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
 
     setLoading(true);
@@ -113,7 +153,19 @@ export default function LoginClient() {
       } catch (error) { alert('Error submitting registration. Please try again.'); setLoading(false); }
     } else {
       try {
-        const csrfToken = getCsrfToken();
+        // Ensure a fresh CSRF cookie+token is available for the registration endpoint
+        let csrfToken = getCsrfToken();
+        if (!csrfToken) {
+          try {
+            const csrfRes = await fetch('/api/auth/csrf');
+            if (csrfRes.ok) {
+              const csrfData = await csrfRes.json();
+              csrfToken = csrfData.csrfToken;
+            }
+          } catch (csrfErr) {
+            console.error('Failed to fetch CSRF token:', csrfErr);
+          }
+        }
         const nameParts = signupForm.fullName.trim().split(' ');
         const firstName = nameParts[0] || signupForm.fullName;
         const lastName = nameParts.slice(1).join(' ') || 'User';
@@ -146,7 +198,7 @@ export default function LoginClient() {
               <form onSubmit={handleLoginSubmit} className="sos-form">
                 <div className="sos-field">
                   <label>Username</label>
-                  <input type="text" value={loginForm.username} onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} className="sos-input" placeholder="Enter your username" />
+                  <input type="text" value={loginForm.username} onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} className="sos-input" placeholder="Username or email" />
                   {errors.username && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.username}</p>)}
                 </div>
                 <div className="sos-field">
