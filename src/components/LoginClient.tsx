@@ -33,7 +33,13 @@ export default function LoginClient() {
     try {
       // Admin
       try {
-        const adminResponse = await fetch('/api/auth/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
+        let adminResponse = await fetch('/api/auth/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
+        // Fallback for deployments that expose the admin login at a different path
+        if (adminResponse.status === 404) {
+          try {
+            adminResponse = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
+          } catch (e) { /* ignore */ }
+        }
         if (adminResponse.ok) {
           const adminData = await adminResponse.json();
           login({ token: adminData.accessToken, role: 'admin', name: adminData.username, id: adminData.id, isSuperAdmin: adminData.isSuperAdmin });
