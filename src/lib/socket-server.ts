@@ -20,7 +20,12 @@ interface AuthenticatedSocket extends Socket {
   username?: string;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const fallbackJwt = 'fixtray-default-secret';
+const JWT_SECRET = process.env.JWT_SECRET || fallbackJwt;
+
+if (!process.env.JWT_SECRET) {
+  console.warn('Socket - WARNING: JWT_SECRET not set in environment, using fallback secret. Set JWT_SECRET to a secure value in production.');
+}
 
 // Global variable to store the io instance
 let io: ServerIO | null = null;

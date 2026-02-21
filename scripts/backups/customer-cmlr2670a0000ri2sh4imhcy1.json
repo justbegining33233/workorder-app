@@ -1,0 +1,13 @@
+{
+  "id": "cmlr2670a0000ri2sh4imhcy1",
+  "email": "test@example.com",
+  "username": null,
+  "password": "TempPass123!",
+  "firstName": "Test",
+  "lastName": "User",
+  "phone": null,
+  "company": null,
+  "stripeCustomerId": null,
+  "createdAt": "2026-02-17T20:31:14.167Z",
+  "updatedAt": "2026-02-17T20:31:14.167Z"
+}

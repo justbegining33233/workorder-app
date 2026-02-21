@@ -36,13 +36,7 @@ export default function AcceptedShops() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactShop, setContactShop] = useState<AcceptedShop | null>(null);
   const [sortBy, setSortBy] = useState<'revenue' | 'rating' | 'jobs'>('revenue');
-
-  useEffect(() => {
-    if (!user || isLoading) return;
-    fetchAcceptedShops();
-  }, [user, isLoading]);
-
-  const fetchAcceptedShops = async () => {
+  async function fetchAcceptedShops() {
     try {
       const response = await fetch('/api/shops/accepted');
       if (response.ok) {
@@ -54,7 +48,12 @@ export default function AcceptedShops() {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    if (!user || isLoading) return;
+    fetchAcceptedShops();
+  }, [user, isLoading]);
 
   const handleViewDetails = (shop: AcceptedShop) => {
     setSelectedShop(shop);

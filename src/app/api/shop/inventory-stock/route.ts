@@ -222,7 +222,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized - Shop admin or manager only' }, { status: 403 });
     }
 
-    let updateData: any = updates;
+    const updateData: any = updates;
 
     // If unitCost is being updated, recalculate selling price based on markup
     if (updates.unitCost !== undefined) {

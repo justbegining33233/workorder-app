@@ -21,6 +21,13 @@ export async function POST(request: NextRequest) {
     const ok = validatePublicCsrf(request);
     if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
     const body = await request.json();
+
+    // Guard: reject shop-like payloads sent to the customer registration
+    // endpoint — client should use /api/shops/register for shop owners.
+    if (body && (body.shopName || body.ownerName || body.shopType || body.address || body.subscriptionPlan)) {
+      return NextResponse.json({ error: 'Shop registration detected. Use /api/shops/register to register a shop.' }, { status: 400 });
+    }
+
     const data = registerSchema.parse(body);
     
     // Check if customer exists

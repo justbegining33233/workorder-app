@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SUBSCRIPTION_PLANS, getUpgradeSuggestions, type SubscriptionPlan, type SubscriptionFeatures } from '@/lib/subscription';
+import { SUBSCRIPTION_PLANS, type SubscriptionPlan, type SubscriptionFeatures } from '@/lib/subscription';
 
 interface UpgradePromptProps {
   shopId: string;
@@ -33,7 +33,8 @@ export default function UpgradePrompt({
       let suggestionData: any[] = [];
 
       if (trigger === 'user-limit' || trigger === 'manual') {
-        suggestionData = await getUpgradeSuggestions(shopId);
+        const res = await fetch(`/api/subscriptions/${shopId}/suggestions`);
+        if (res.ok) suggestionData = await res.json();
       } else if (trigger === 'feature-limit' && feature) {
         // Generate suggestion based on feature
         suggestionData = [{

@@ -99,7 +99,7 @@ export default function DistributorManagement() {
 
   useEffect(() => {
     if (user?.name) setUserName(user.name);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   const getDistributor = (id: string) => distributors.find(d => d.id === id);

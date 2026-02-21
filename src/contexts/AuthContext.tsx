@@ -215,9 +215,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuth() {
+  // If running on the server, avoid calling React hooks (useContext) during SSR
+  if (typeof window === 'undefined') {
+    return {
+      user: null,
+      isLoading: true,
+      login: () => {},
+      logout: () => {},
+      isAuthenticated: false,
+    };
+  }
+
   const context = useContext(AuthContext);
   if (context === undefined) {
-    // During SSR or when AuthProvider is not available, return a default context
     return {
       user: null,
       isLoading: true,

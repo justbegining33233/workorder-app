@@ -115,7 +115,7 @@ export default function PartsAndLabor() {
   useEffect(() => {
     if (user?.name) setUserName(user.name);
     loadLaborRates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   // Show loading state while checking authentication

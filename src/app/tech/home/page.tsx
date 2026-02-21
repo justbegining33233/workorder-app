@@ -97,7 +97,7 @@ export default function TechHome() {
   // Geocode address to lat/lng using OpenStreetMap Nominatim
   const geocodeAddress = async (address: string, city?: string, state?: string, zip?: string) => {
     try {
-      let query = encodeURIComponent([address, city, state, zip].filter(Boolean).join(', '));
+      const query = encodeURIComponent([address, city, state, zip].filter(Boolean).join(', '));
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}`;
       const res = await fetch(url);
       const data = await res.json();

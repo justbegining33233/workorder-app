@@ -44,25 +44,7 @@ export default function ManagerHome() {
   const [teamSchedule, setTeamSchedule] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [urgentAlerts, setUrgentAlerts] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (user?.name) setUserName(user.name);
-    if (user?.id) setUserId(user.id);
-    if (user?.shopId) {
-      setShopId(user.shopId);
-      fetchShopName(user.shopId);
-      fetchInventoryRequests(user.shopId);
-      fetchTeamPerformance(user.shopId);
-      fetchWorkOrderStats(user.shopId);
-      fetchFinancialSummary(user.shopId);
-      fetchTeamSchedule(user.shopId);
-      fetchRecentActivity(user.shopId);
-      fetchUrgentAlerts(user.shopId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchShopName = async (shop: string) => {
+  async function fetchShopName(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop?shopId=${shop}`, {
@@ -75,9 +57,9 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching shop name:', error);
     }
-  };
+  }
 
-  const fetchInventoryRequests = async (shop: string) => {
+  async function fetchInventoryRequests(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop/inventory-requests?shopId=${shop}`, {
@@ -91,9 +73,9 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching inventory requests:', error);
     }
-  };
+  }
 
-  const fetchTeamPerformance = async (shop: string) => {
+  async function fetchTeamPerformance(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop/team-performance?shopId=${shop}`, {
@@ -107,9 +89,9 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching team performance:', error);
     }
-  };
+  }
 
-  const fetchWorkOrderStats = async (shop: string) => {
+  async function fetchWorkOrderStats(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop/workorder-stats?shopId=${shop}`, {
@@ -128,9 +110,9 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching work order stats:', error);
     }
-  };
+  }
 
-  const fetchFinancialSummary = async (shop: string) => {
+  async function fetchFinancialSummary(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop/financial-summary?shopId=${shop}`, {
@@ -149,9 +131,9 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching financial summary:', error);
     }
-  };
+  }
 
-  const fetchTeamSchedule = async (shop: string) => {
+  async function fetchTeamSchedule(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop/team-schedule?shopId=${shop}`, {
@@ -165,9 +147,9 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching team schedule:', error);
     }
-  };
+  }
 
-  const fetchRecentActivity = async (shop: string) => {
+  async function fetchRecentActivity(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop/recent-activity?shopId=${shop}`, {
@@ -181,9 +163,9 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching recent activity:', error);
     }
-  };
+  }
 
-  const fetchUrgentAlerts = async (shop: string) => {
+  async function fetchUrgentAlerts(shop: string) {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/shop/urgent-alerts?shopId=${shop}`, {
@@ -197,7 +179,24 @@ export default function ManagerHome() {
     } catch (error) {
       console.error('Error fetching urgent alerts:', error);
     }
-  };
+  }
+
+  useEffect(() => {
+    if (user?.name) setUserName(user.name);
+    if (user?.id) setUserId(user.id);
+    if (user?.shopId) {
+      setShopId(user.shopId);
+      fetchShopName(user.shopId);
+      fetchInventoryRequests(user.shopId);
+      fetchTeamPerformance(user.shopId);
+      fetchWorkOrderStats(user.shopId);
+      fetchFinancialSummary(user.shopId);
+      fetchTeamSchedule(user.shopId);
+      fetchRecentActivity(user.shopId);
+      fetchUrgentAlerts(user.shopId);
+    }
+     
+  }, [user?.id, user?.name, user?.shopId]);
 
   const handleSignOut = () => {
     localStorage.removeItem('userRole');

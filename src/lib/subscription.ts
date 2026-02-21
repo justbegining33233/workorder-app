@@ -1,4 +1,7 @@
-import { prisma } from '@/lib/prisma';
+// Note: avoid importing `prisma` at module top-level because this file is
+// imported by client components (e.g. pricing page). Import prisma dynamically
+// inside server-only functions to prevent bundling server-only modules into
+// client bundles.
 
 // Subscription plan definitions
 export const SUBSCRIPTION_PLANS = {
@@ -143,132 +146,6 @@ export const SUBSCRIPTION_PLANS = {
 export type SubscriptionPlan = keyof typeof SUBSCRIPTION_PLANS;
 
 export type SubscriptionFeatures = typeof SUBSCRIPTION_PLANS.starter.features;
-
-/**
- * Get subscription details for a shop
- */
-export async function getShopSubscription(shopId: string) {
-  try {
-    const subscription = await prisma.subscription.findUnique({
-      where: { shopId },
-    });
-
-    if (!subscription) {
-      // Return default starter plan for shops without subscription
-      return {
-        ...SUBSCRIPTION_PLANS.starter,
-        plan: 'starter' as SubscriptionPlan,
-        status: 'active',
-        shopId,
-      };
-    }
-
-    const planDetails = SUBSCRIPTION_PLANS[subscription.plan as SubscriptionPlan];
-    if (!planDetails) {
-      throw new Error(`Invalid subscription plan: ${subscription.plan}`);
-    }
-
-    return {
-      ...planDetails,
-      plan: subscription.plan as SubscriptionPlan,
-      status: subscription.status,
-      shopId: subscription.shopId,
-      stripeSubscriptionId: subscription.stripeSubscriptionId,
-      currentPeriodStart: subscription.currentPeriodStart,
-      currentPeriodEnd: subscription.currentPeriodEnd,
-      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
-      maxUsers: subscription.maxUsers,
-      maxShops: subscription.maxShops,
-    };
-  } catch (error) {
-    console.error('Error getting shop subscription:', error);
-    // Return starter plan as fallback
-    return {
-      ...SUBSCRIPTION_PLANS.starter,
-      plan: 'starter' as SubscriptionPlan,
-      status: 'active',
-      shopId,
-    };
-  }
-}
-
-/**
- * Check if a shop has access to a specific feature
- */
-export async function hasFeatureAccess(shopId: string, feature: string): Promise<boolean> {
-  const subscription = await getShopSubscription(shopId);
-  return (subscription.features as any)[feature] || false;
-}
-
-/**
- * Check if a shop can add more users
- */
-export async function canAddUsers(shopId: string, currentUserCount: number): Promise<boolean> {
-  const subscription = await getShopSubscription(shopId);
-  if (subscription.maxUsers === -1) return true; // unlimited
-  return currentUserCount < subscription.maxUsers;
-}
-
-/**
- * Check if a shop can add more shops (for multi-shop plans)
- */
-export async function canAddShops(shopId: string, currentShopCount: number): Promise<boolean> {
-  const subscription = await getShopSubscription(shopId);
-  if (subscription.maxShops === -1) return true; // unlimited
-  return currentShopCount < subscription.maxShops;
-}
-
-/**
- * Get user count for a shop
- */
-export async function getShopUserCount(shopId: string): Promise<number> {
-  const techCount = await prisma.tech.count({
-    where: { shopId },
-  });
-
-  // Add 1 for the shop owner/admin
-  return techCount + 1;
-}
-
-/**
- * Get shop count for an organization (for enterprise plans)
- */
-export async function getOrganizationShopCount(organizationId: string): Promise<number> {
-  // This would need to be implemented based on your organization structure
-  // For now, return 1
-  return 1;
-}
-
-/**
- * Check subscription status
- */
-export async function isSubscriptionActive(shopId: string): Promise<boolean> {
-  const subscription = await getShopSubscription(shopId);
-  return subscription.status === 'active';
-}
-
-/**
- * Get upgrade suggestions based on current usage
- */
-export async function getUpgradeSuggestions(shopId: string) {
-  const subscription = await getShopSubscription(shopId);
-  const userCount = await getShopUserCount(shopId);
-
-  const suggestions = [];
-
-  if (userCount >= subscription.maxUsers && subscription.maxUsers !== -1) {
-    suggestions.push({
-      reason: `You have ${userCount} users, but your plan only allows ${subscription.maxUsers}`,
-      recommendedPlan: getNextPlanForUsers(subscription.plan, userCount),
-    });
-  }
-
-  // Add more upgrade suggestions based on feature usage
-  // This could be expanded to track feature usage patterns
-
-  return suggestions;
-}
-
 function getNextPlanForUsers(currentPlan: SubscriptionPlan, userCount: number): SubscriptionPlan {
   const plans: SubscriptionPlan[] = ['starter', 'growth', 'professional', 'business', 'enterprise'];
 

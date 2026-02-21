@@ -42,7 +42,7 @@ export default function TechTimesheet() {
     // refresh every 20s so active timers update
     refreshRef.current = window.setInterval(() => { if (user) fetchEntries(false); }, 20000);
     return () => { if (refreshRef.current) window.clearInterval(refreshRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user, range]);
 
   const getRangeDates = () => {

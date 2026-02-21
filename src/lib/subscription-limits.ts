@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getShopSubscription, canAddUsers, getShopUserCount, isSubscriptionActive } from '@/lib/subscription';
+import { getShopSubscription, canAddUsers, getShopUserCount, isSubscriptionActive } from '@/lib/subscription.server';
 import { verifyToken } from '@/lib/auth';
 
 /**

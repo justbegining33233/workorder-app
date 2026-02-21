@@ -3,7 +3,8 @@ import jwt, { SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
+const fallbackJwt = 'fixtray-default-secret';
+const JWT_SECRET = process.env.JWT_SECRET || fallbackJwt;
 const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '24h';
 const DEFAULT_REFRESH_EXPIRES_DAYS = Number(process.env.REFRESH_EXPIRES_DAYS || '30');
 
@@ -29,11 +30,10 @@ export function generateRandomToken(bytes = 48): string {
 
 export function verifyToken(token: string): any {
   try {
-    const secret = JWT_SECRET;
-    console.log('Auth - JWT_SECRET length:', secret.length);
-    console.log('Auth - JWT_SECRET starts with:', secret.substring(0, 10));
-    const decoded = jwt.verify(token, secret);
-    console.log('Auth - Token verified successfully:', decoded);
+    if (!process.env.JWT_SECRET) {
+      console.warn('Auth - WARNING: JWT_SECRET not set in environment, using fallback secret. Set JWT_SECRET to a secure value in production.');
+    }
+    const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
     console.log('Auth - Token verification failed:', error instanceof Error ? error.message : String(error));

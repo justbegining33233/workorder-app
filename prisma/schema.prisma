@@ -9,10 +9,14 @@ datasource db {
 }
 
 // Customer model
+// IMPORTANT: Do NOT commit connection strings or secrets into the repo.
+// Keep the real connection string in a local `.env` file and in your
+// deployment platform's env settings (Vercel/Neon). Set `DATABASE_URL` in
+// your local `.env` (do not commit the file with real credentials).
 model Customer {
   id               String   @id @default(cuid())
-  username         String?  @unique
   email            String   @unique
+  username         String?  @unique
   password         String
   firstName        String
   lastName         String
@@ -33,6 +37,19 @@ model Customer {
   messages       CustomerMessage[]
 
   @@map("customers")
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  tokenHash String   @unique
+  expiresAt DateTime
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("verification_tokens")
 }
 
 // Shop model

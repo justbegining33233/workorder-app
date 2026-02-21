@@ -363,7 +363,7 @@ function ShopSettingsPageContent() {
       setPaymentMessage({ type: 'error', text: 'Payment was canceled. Your subscription has not been changed.' });
       router.replace('/shop/settings', { scroll: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [router, searchParams]);
 
   // Show loading state while checking authentication

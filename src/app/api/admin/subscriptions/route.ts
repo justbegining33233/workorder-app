@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
       const nextDate = new Date(date);
       nextDate.setDate(nextDate.getDate() + 1);
       
-      let dayJobs = 0;
+      const dayJobs = 0;
       subscriptionsWithDetails.forEach((sub: any) => {
         // Count work orders created on this day from the metrics we gathered
         // We need to fetch from the original data

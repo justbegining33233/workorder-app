@@ -2,7 +2,9 @@
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
-import { AuthProvider } from "@/contexts/AuthContext";
+import ClientAuthProvider from '@/components/ClientAuthProvider';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "FixTray - Work Order Management",
@@ -17,9 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
+        <ClientAuthProvider>
           {children}
-        </AuthProvider>
+        </ClientAuthProvider>
       </body>
     </html>
   );
