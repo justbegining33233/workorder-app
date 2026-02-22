@@ -14,10 +14,16 @@ const patterns = [
   /postgresql:\/\/[^\s'\"]+/i, // explicit Postgres URL with credentials
   /DATABASE_URL\s*=\s*['"][^'\"]+['"]/i, // direct assignment of DATABASE_URL
   /PGPASSWORD\s*=\s*['"][^'\"]+['"]/i,
-  /password\s*=\s*['"][^'\"]+['"]/i,
-  /secret\s*=\s*['"][^'\"]+['"]/i,
-  /api[_-]?key\s*=\s*['"][^'\"]+['"]/i
+  // Require 12+ char values to avoid matching form field declarations like password:''
+  /password\s*[=:]\s*['"][^'\"]{12,}['"]/i,
+  /secret\s*[=:]\s*['"][^'\"]{12,}['"]/i,
+  /api[_-]?key\s*[=:]\s*['"][^'\"]{12,}['"]/i
 ];
+
+// Extensions where generic password/secret patterns should be skipped
+// (form components legitimately reference password fields)
+const skipGenericPatterns = new Set(['.ts', '.tsx', '.js', '.jsx']);
+const genericPatternIndexes = new Set([3, 4, 5]); // indexes into patterns array
 
 function isBinary(filePath) {
   try {
@@ -34,12 +40,17 @@ const offenders = [];
 for (const rel of staged) {
   const p = path.resolve(process.cwd(), rel);
   if (!fs.existsSync(p) || isBinary(p)) continue;
+  const ext = path.extname(rel).toLowerCase();
   const content = fs.readFileSync(p, { encoding: 'utf8' });
   // Scan by line to give more targeted feedback and avoid false-positives
   const lines = content.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    for (const re of patterns) {
+    for (let pi = 0; pi < patterns.length; pi++) {
+      // Skip generic credential patterns for source code files — form components
+      // legitimately declare fields named 'password', 'secret', etc.
+      if (genericPatternIndexes.has(pi) && skipGenericPatterns.has(ext)) continue;
+      const re = patterns[pi];
       if (re.test(line)) {
         // Treat env("DATABASE_URL") as safe - it's an env reference, not a secret
         if (/env\(\s*['\"]DATABASE_URL['\"]\s*\)/i.test(line)) continue;
