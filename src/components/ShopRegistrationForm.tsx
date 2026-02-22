@@ -346,14 +346,27 @@ export default function ShopRegistrationForm() {
     setError(null);
     try {
       // Obtain a public CSRF token (double-submit) and set cookie
-      await fetch('/api/auth/csrf', { method: 'GET', credentials: 'include' });
-      // Read CSRF token from cookie
-      const m = document.cookie.match("(?:^|; )csrf_token=([^;]+)");
-      const csrf = m ? decodeURIComponent(m[1]) : '';
+      let csrf = '';
+      try {
+        const csrfRes = await fetch('/api/auth/csrf', { method: 'GET', credentials: 'include' });
+        if (csrfRes.ok) {
+          const csrfData = await csrfRes.json();
+          csrf = csrfData.csrfToken || '';
+        }
+      } catch {
+        // Fallback: try cookie
+        const m = document.cookie.match("(?:^|; )csrf_token=([^;]+)");
+        csrf = m ? decodeURIComponent(m[1]) : '';
+      }
+      if (!csrf) {
+        setError('Security token missing. Please refresh the page and try again.');
+        setLoading(false);
+        return;
+      }
       const res = await fetch('/api/shops/register', {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf || '' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf },
         body: JSON.stringify(formData),
       });
 

@@ -34,10 +34,11 @@ export default function LoginClient() {
 
     setLoading(true);
     try {
+      let serverError = false;
+
       // Admin
       try {
         let adminResponse = await fetch('/api/auth/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
-        // Fallback for deployments that expose the admin login at a different path
         if (adminResponse.status === 404) {
           try {
             adminResponse = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
@@ -50,7 +51,8 @@ export default function LoginClient() {
           router.push('/admin/home');
           return;
         }
-      } catch (e) { /* ignore */ }
+        if (adminResponse.status >= 500) serverError = true;
+      } catch (e) { serverError = true; }
 
       // Tech/Manager
       try {
@@ -62,7 +64,8 @@ export default function LoginClient() {
           if (techData.role === 'tech') router.push('/tech/home'); else if (techData.role === 'manager') router.push('/manager/home');
           return;
         }
-      } catch (e) { /* ignore */ }
+        if (techResponse.status >= 500) serverError = true;
+      } catch (e) { serverError = true; }
 
       // Shop
       try {
@@ -77,7 +80,8 @@ export default function LoginClient() {
           router.push(nextRoute);
           return;
         }
-      } catch (e) { /* ignore */ }
+        if (shopResponse.status >= 500) serverError = true;
+      } catch (e) { serverError = true; }
 
       // Customer
       try {
@@ -92,9 +96,14 @@ export default function LoginClient() {
           router.push('/customer/dashboard');
           return;
         }
-      } catch (e) { /* ignore */ }
+        if (customerResponse.status >= 500) serverError = true;
+      } catch (e) { serverError = true; }
 
-      setErrors({ username: 'Invalid username or password' });
+      if (serverError) {
+        setErrors({ username: 'Server error — please try again in a moment.' });
+      } else {
+        setErrors({ username: 'Invalid username or password' });
+      }
       setLoading(false);
     } catch (error) {
       setErrors({ username: 'An error occurred during login. Please try again.' });
@@ -153,23 +162,28 @@ export default function LoginClient() {
       } catch (error) { alert('Error submitting registration. Please try again.'); setLoading(false); }
     } else {
       try {
-        // Ensure a fresh CSRF cookie+token is available for the registration endpoint
-        let csrfToken = getCsrfToken();
-        if (!csrfToken) {
-          try {
-            const csrfRes = await fetch('/api/auth/csrf');
-            if (csrfRes.ok) {
-              const csrfData = await csrfRes.json();
-              csrfToken = csrfData.csrfToken;
-            }
-          } catch (csrfErr) {
-            console.error('Failed to fetch CSRF token:', csrfErr);
+        // Always fetch a fresh CSRF token immediately before registration
+        let csrfToken: string | null = null;
+        try {
+          const csrfRes = await fetch('/api/auth/csrf', { credentials: 'include' });
+          if (csrfRes.ok) {
+            const csrfData = await csrfRes.json();
+            csrfToken = csrfData.csrfToken;
           }
+        } catch (csrfErr) {
+          console.error('Failed to fetch CSRF token:', csrfErr);
+          // Fallback: try reading from cookie
+          csrfToken = getCsrfToken();
+        }
+        if (!csrfToken) {
+          alert('Security token missing. Please refresh the page and try again.');
+          setLoading(false);
+          return;
         }
         const nameParts = signupForm.fullName.trim().split(' ');
         const firstName = nameParts[0] || signupForm.fullName;
         const lastName = nameParts.slice(1).join(' ') || 'User';
-        const response = await fetch('/api/customers/register', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken || '' }, body: JSON.stringify({ email: signupForm.email, username: signupForm.username || signupForm.email.split('@')[0], password: signupForm.password, firstName, lastName }) });
+        const response = await fetch('/api/customers/register', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken }, body: JSON.stringify({ email: signupForm.email, username: signupForm.username || signupForm.email.split('@')[0], password: signupForm.password, firstName, lastName }) });
         if (response.ok) { const data = await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you'); setLoading(false); }, 1000); } else { const errorData = await response.json(); alert(errorData.error || 'Failed to create customer account. Please try again.'); setLoading(false); }
       } catch (error) { alert('Error creating account. Please try again.'); setLoading(false); }
     }
