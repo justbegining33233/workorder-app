@@ -4,6 +4,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Disable pages router since we're using app router
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  // Prevent Next.js from bundling optional server-side packages that are
+  // dynamically imported at runtime only (e.g. email/SMS providers).
+  serverExternalPackages: ['@sendgrid/mail', 'twilio'],
   images: {
     remotePatterns: [
       {
