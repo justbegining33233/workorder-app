@@ -4,26 +4,27 @@ const bcrypt = require('bcrypt');
 (async () => {
   const prisma = new PrismaClient();
   const username = 'admin1006';
-  const password = '10062001';
+  const password = 'SupAdm1006';
   const email = 'admin@example.com';
 
   try {
+    const hashed = await bcrypt.hash(password, 12);
     const existing = await prisma.admin.findUnique({ where: { username } });
     if (existing) {
-      console.log('Admin already exists:', existing.username);
-      return;
+      await prisma.admin.update({ where: { username }, data: { password: hashed, isSuperAdmin: true } });
+      console.log('Admin password updated:', username);
+    } else {
+      await prisma.admin.create({
+        data: {
+          username,
+          password: hashed,
+          email,
+          isSuperAdmin: true,
+        },
+      });
+      console.log('Admin created:', username);
     }
-
-    const hashed = await bcrypt.hash(password, 12);
-    await prisma.admin.create({
-      data: {
-        username,
-        password: hashed,
-        email,
-        isSuperAdmin: true,
-      },
-    });
-    console.log('Admin created:', username, 'password:', password);
+    console.log('Login with username:', username);
   } catch (err) {
     console.error('Failed to seed admin:', err);
   } finally {

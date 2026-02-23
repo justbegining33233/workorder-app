@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function updateAdmin() {
   try {
-    const hashed = await bcrypt.hash('10062001', 12);
+    const hashed = await bcrypt.hash('SupAdm1006', 12);
     const result = await prisma.admin.updateMany({
       where: { username: 'admin1006' },
       data: { password: hashed }
