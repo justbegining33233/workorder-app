@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load `prisma` and `bcrypt` inside the handler to avoid import-time issues
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
-// @ts-ignore
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {

@@ -1,12 +1,12 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
 async function setupAdmin() {
   try {
     console.log('\n=== Setting up super admin account ===\n');
-    
+
     const username = 'admin1006';
     const password = 'SupAdm1006';
     const email = 'joseruizvilla391@gmail.com';
@@ -39,7 +39,7 @@ async function setupAdmin() {
       console.log(`   Email: ${admin.email}`);
     }
 
-    console.log(`\nLogin at /auth/login or /admin/login`);
+    console.log('\nLogin at /auth/login or /admin/login');
     console.log(`  Username: ${username}`);
 
     await prisma.$disconnect();
