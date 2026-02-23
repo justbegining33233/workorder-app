@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       phone: tech.phone,
       role: tech.role,
       shopId: tech.shopId,
-      shopName: tech.shop.shopName,
+      shopName: tech.shop?.shopName ?? '',
       accessToken,
     }, { status: 200 });
 
