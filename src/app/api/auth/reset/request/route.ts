@@ -4,11 +4,11 @@ import { generateNumericOTP, generateTokenHex, hashTokenSha256 } from '@/lib/ver
 import { getClientIP } from '@/lib/rateLimit';
 
 async function sendByEmail(email: string, raw: string, siteUrl: string) {
-  if (process.env.SENDGRID_API_KEY) {
-    const sg = (await import('@sendgrid/mail')).default;
-    sg.setApiKey(process.env.SENDGRID_API_KEY);
-    const from = process.env.EMAIL_FROM || 'no-reply@example.com';
-    await sg.send({ to: email, from, subject: 'Your verification code', text: `Your code: ${raw}`, html: `<p>Your code: <strong>${raw}</strong></p><p>Or click <a href="${siteUrl}/auth/reset?token=${raw}">here</a></p>` });
+  if (process.env.RESEND_API_KEY) {
+    const { Resend } = await import('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const from = process.env.RESEND_FROM_EMAIL || process.env.EMAIL_FROM || 'no-reply@example.com';
+    await resend.emails.send({ to: email, from, subject: 'Your verification code', text: `Your code: ${raw}`, html: `<p>Your code: <strong>${raw}</strong></p><p>Or click <a href="${siteUrl}/auth/reset?token=${raw}">here</a></p>` });
     return true;
   }
   // Fallback: log to server console for dev

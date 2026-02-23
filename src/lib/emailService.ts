@@ -133,30 +133,6 @@ export async function sendEmail({ to, subject, html, from }: EmailOptions): Prom
       return true;
     }
 
-    // For SendGrid
-    if (process.env.SENDGRID_API_KEY) {
-      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          personalizations: [{ to: [{ email: to }] }],
-          from: { email: from || process.env.SENDGRID_FROM_EMAIL || 'notifications@yourdomain.com' },
-          subject,
-          content: [{ type: 'text/html', value: html }],
-        }),
-      });
-
-      if (!response.ok) {
-        console.error('SendGrid API error:', await response.text());
-        return false;
-      }
-
-      return true;
-    }
-
     // No email service configured - log to console in development
     console.log('📧 Email would be sent:');
     console.log(`To: ${to}`);
