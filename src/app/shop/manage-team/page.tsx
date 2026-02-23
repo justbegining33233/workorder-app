@@ -180,12 +180,26 @@ export default function ManageTeamPage() {
     }
   };
 
-  const handleRemoveMember = (id: string) => {
-    if (confirm('Are you sure you want to remove this team member?')) {
-      // TODO: Replace with API call
-      const filtered = teamMembers.filter(m => m.id !== id);
-      setTeamMembers(filtered);
-      alert('Team member removed');
+  const handleRemoveMember = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this team member?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/techs/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setTeamMembers((prev) => prev.filter((m) => m.id !== id));
+        // Also clean localStorage
+        const employees = JSON.parse(localStorage.getItem('shopEmployees') || '[]');
+        localStorage.setItem('shopEmployees', JSON.stringify(employees.filter((e: any) => e.id !== id)));
+        alert('Team member removed successfully.');
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to remove team member');
+      }
+    } catch {
+      alert('Failed to remove team member. Please try again.');
     }
   };
 

@@ -221,7 +221,7 @@ export async function sendEmail({ to, subject, html, from }: EmailOptions): Prom
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: from || process.env.RESEND_FROM_EMAIL || 'notifications@yourdomain.com',
+          from: from || process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
           to,
           subject,
           html,
