@@ -7,7 +7,7 @@
 export const SUBSCRIPTION_PLANS = {
   starter: {
     name: 'Starter',
-    price: 99,
+    price: 99.88,
     maxUsers: 1,
     maxShops: 1,
     features: {
@@ -35,7 +35,7 @@ export const SUBSCRIPTION_PLANS = {
   },
   growth: {
     name: 'Growth',
-    price: 199,
+    price: 249.88,
     maxUsers: 5,
     maxShops: 1,
     features: {
@@ -59,7 +59,7 @@ export const SUBSCRIPTION_PLANS = {
   },
   professional: {
     name: 'Professional',
-    price: 349,
+    price: 499.88,
     maxUsers: 15,
     maxShops: 1,
     features: {
@@ -83,7 +83,7 @@ export const SUBSCRIPTION_PLANS = {
   },
   business: {
     name: 'Business',
-    price: 599,
+    price: 749.88,
     maxUsers: 40,
     maxShops: 5,
     features: {
@@ -110,7 +110,7 @@ export const SUBSCRIPTION_PLANS = {
   },
   enterprise: {
     name: 'Enterprise',
-    price: 999,
+    price: 999.88,
     maxUsers: -1, // unlimited
     maxShops: -1, // unlimited
     features: {

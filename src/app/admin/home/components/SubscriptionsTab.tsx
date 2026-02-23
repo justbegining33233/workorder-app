@@ -163,11 +163,11 @@ function StackedBarChart({ data }: { data: { label: string; value: number; color
 }
 
 const PLAN_DETAILS = {
-  starter: { name: 'Starter', price: 99, color: '#22C55E', userLimit: 5 },
-  growth: { name: 'Growth', price: 199, color: '#3B82F6', userLimit: 15 },
-  professional: { name: 'Professional', price: 349, color: '#8B5CF6', userLimit: 50 },
-  business: { name: 'Business', price: 599, color: '#F97316', userLimit: 200 },
-  enterprise: { name: 'Enterprise', price: 999, color: '#EF4444', userLimit: 999 }
+  starter: { name: 'Starter', price: 99.88, color: '#22C55E', userLimit: 5 },
+  growth: { name: 'Growth', price: 249.88, color: '#3B82F6', userLimit: 15 },
+  professional: { name: 'Professional', price: 499.88, color: '#8B5CF6', userLimit: 50 },
+  business: { name: 'Business', price: 749.88, color: '#F97316', userLimit: 200 },
+  enterprise: { name: 'Enterprise', price: 999.88, color: '#EF4444', userLimit: 999 }
 };
 
 export function SubscriptionsTab({ subscriptions, liveMetrics, threeMonthAverages }: SubscriptionsTabProps) {

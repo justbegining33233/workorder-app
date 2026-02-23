@@ -305,35 +305,35 @@ function ShopSettingsPageContent() {
   const PLAN_DETAILS: Record<string, { name: string; price: number; features: string[]; maxUsers: number; color: string }> = {
     starter: {
       name: 'Starter',
-      price: 99,
+      price: 99.88,
       maxUsers: 1,
       color: '#6B7280',
       features: ['1 User', '1 Shop', 'Basic Work Orders', 'Email Support']
     },
     growth: {
       name: 'Growth',
-      price: 199,
+      price: 249.88,
       maxUsers: 5,
       color: '#3B82F6',
       features: ['Up to 5 Users', '1 Shop', 'Advanced Work Orders', 'Inventory Management', 'Priority Support']
     },
     professional: {
       name: 'Professional',
-      price: 349,
+      price: 499.88,
       maxUsers: 15,
       color: '#8B5CF6',
       features: ['Up to 15 Users', '1 Shop', 'Full Features', 'Custom Reports', 'API Access', 'Phone Support']
     },
     business: {
       name: 'Business',
-      price: 599,
+      price: 749.88,
       maxUsers: 40,
       color: '#F97316',
       features: ['Up to 40 Users', 'Up to 5 Shops', 'Multi-Location', 'Advanced Analytics', 'Dedicated Support']
     },
     enterprise: {
       name: 'Enterprise',
-      price: 999,
+      price: 999.88,
       maxUsers: -1,
       color: '#EF4444',
       features: ['Unlimited Users', 'Unlimited Shops', 'White Label Options', 'Custom Integrations', '24/7 Support', 'SLA']
