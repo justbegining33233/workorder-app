@@ -5,7 +5,7 @@ import Stripe from 'stripe';
 // client with an empty key throws — that causes build failures when Next.js
 // collects page data. Export a safe proxy instead so imports don't throw.
 const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-12-15.clover' })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-01-28.clover' })
   : new Proxy({}, {
       get() {
         return () => {
@@ -68,15 +68,27 @@ export const STRIPE_PRODUCTS = {
 
 export type StripePlan = keyof typeof STRIPE_PRODUCTS;
 
-export async function createPaymentIntent(amount: number, metadata: Record<string, string>) {
-  return stripe.paymentIntents.create({
+export async function createPaymentIntent(
+  amount: number,
+  metadata: Record<string, string>,
+  connectedAccountId?: string,
+) {
+  const params: Stripe.PaymentIntentCreateParams = {
     amount: Math.round(amount * 100), // Convert to cents
     currency: 'usd',
     metadata,
     automatic_payment_methods: {
       enabled: true,
     },
-  });
+  };
+
+  // Stripe Connect: FixTray keeps $5, rest goes to shop's connected account
+  if (connectedAccountId) {
+    params.application_fee_amount = 500; // $5.00 in cents
+    params.transfer_data = { destination: connectedAccountId };
+  }
+
+  return stripe.paymentIntents.create(params);
 }
 
 export async function createCustomer(email: string, name: string) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/middleware';
 import { createPaymentIntent } from '@/lib/stripe';
 import prisma from '@/lib/prisma';
+import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
   const auth = requireAuth(request);
@@ -34,11 +35,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No estimate available' }, { status: 400 });
     }
     
-    // Create payment intent
-    const paymentIntent = await createPaymentIntent(estimate.amount, {
-      workOrderId: workOrder.id,
-      customerId: workOrder.customerId,
-    });
+    // Total charged to customer = estimate + FixTray $5 service fee
+    const totalAmount = estimate.amount + FIXTRAY_SERVICE_FEE;
+
+    // Fetch shop's Stripe connected account for automatic split
+    const shop = await prisma.shop.findUnique({ where: { id: workOrder.shopId } });
+
+    // Create payment intent — if shop has connected account, $5 goes to FixTray, rest to shop automatically
+    const paymentIntent = await createPaymentIntent(
+      totalAmount,
+      { workOrderId: workOrder.id, customerId: workOrder.customerId },
+      shop?.stripeAccountId ?? undefined,
+    );
     
     // Update work order
     await prisma.workOrder.update({
@@ -51,7 +59,8 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,
-      amount: estimate.amount,
+      amount: totalAmount,
+      serviceFee: FIXTRAY_SERVICE_FEE,
     });
   } catch (error) {
     console.error('Payment intent error:', error);

@@ -113,6 +113,7 @@ export interface Estimate {
   scheduledDate?: Date; // date/time scheduled for the work (set after estimate accepted)
   scheduledBy?: string; // tech or manager who scheduled the work
   lineItems?: EstimateLineItem[]; // itemized breakdown for customer approval (Feature 10)
+  serviceFee?: number; // FixTray platform service fee (hardcoded $5 per work order)
 }
 
 // Payment tracking (Feature 1)

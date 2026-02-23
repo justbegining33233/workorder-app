@@ -104,6 +104,109 @@ export const emailTemplates = {
       </div>
     `,
   }),
+
+  estimateReady: (customerName: string, workOrderId: string, serviceAmount: number, totalDue: number, shopName: string, description: string) => ({
+    subject: `Your Estimate Is Ready — ${shopName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
+        <div style="background: #e5332a; padding: 32px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 900;">FixTray</h1>
+          <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Vehicle Repair & Service</p>
+        </div>
+        <div style="padding: 32px;">
+          <h2 style="color: #111827; margin: 0 0 8px;">📋 Your Estimate Is Ready</h2>
+          <p style="color: #6b7280; margin: 0 0 24px;">Hi ${customerName}, ${shopName} has prepared an estimate for your vehicle service.</p>
+          <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Service:</strong> ${description}</p>
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Service Cost:</strong> $${serviceAmount.toFixed(2)}</p>
+            <p style="margin: 0 0 8px; color: #374151;"><strong>FixTray Fee:</strong> $5.00</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;" />
+            <p style="margin: 0; color: #111827; font-size: 18px; font-weight: 700;"><strong>Total Due: $${totalDue.toFixed(2)}</strong></p>
+          </div>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/workorders/${workOrderId}" style="display: block; background: #22c55e; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; text-align: center;">Review &amp; Pay Estimate</a>
+          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">This estimate was prepared by ${shopName} and requires your approval before work begins.</p>
+        </div>
+      </div>
+    `,
+  }),
+
+  jobCompleted: (customerName: string, workOrderId: string, totalDue: number, shopName: string, description: string) => ({
+    subject: `Your Vehicle Is Ready for Pickup — ${shopName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
+        <div style="background: #e5332a; padding: 32px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 900;">FixTray</h1>
+          <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Vehicle Repair & Service</p>
+        </div>
+        <div style="padding: 32px;">
+          <h2 style="color: #111827; margin: 0 0 8px;">🎉 Job Complete — Your Vehicle Is Ready!</h2>
+          <p style="color: #6b7280; margin: 0 0 24px;">Hi ${customerName}, great news! ${shopName} has finished work on your vehicle.</p>
+          <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Work Completed:</strong> ${description}</p>
+            <p style="margin: 0; color: #111827; font-size: 18px; font-weight: 700;"><strong>Amount Due: $${totalDue.toFixed(2)}</strong></p>
+          </div>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/workorders/${workOrderId}" style="display: block; background: #22c55e; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; text-align: center;">Pay Now &amp; Schedule Pickup</a>
+          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">Secured by Stripe • PCI DSS Compliant</p>
+        </div>
+      </div>
+    `,
+  }),
+
+  paymentReceipt: (customerName: string, workOrderId: string, amountPaid: number, shopName: string, description: string) => ({
+    subject: `Payment Receipt — ${shopName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
+        <div style="background: #e5332a; padding: 32px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 900;">FixTray</h1>
+          <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Payment Receipt</p>
+        </div>
+        <div style="padding: 32px;">
+          <h2 style="color: #22c55e; margin: 0 0 8px;">✅ Payment Successful</h2>
+          <p style="color: #6b7280; margin: 0 0 24px;">Hi ${customerName}, your payment to ${shopName} was received successfully.</p>
+          <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Service:</strong> ${description}</p>
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Shop:</strong> ${shopName}</p>
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Work Order:</strong> #${workOrderId.slice(-8).toUpperCase()}</p>
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Date:</strong> ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;" />
+            <p style="margin: 0; color: #22c55e; font-size: 20px; font-weight: 700;">Amount Paid: $${amountPaid.toFixed(2)}</p>
+          </div>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/workorders/${workOrderId}" style="display: block; background: #3b82f6; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; text-align: center;">View Work Order</a>
+          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">Keep this email as your receipt. Thank you for using FixTray!</p>
+        </div>
+      </div>
+    `,
+  }),
+
+  shopApproved: (shopName: string, ownerEmail: string, username: string, tempPassword?: string | null) => ({
+    subject: `🎉 Your Shop Has Been Approved — Welcome to FixTray!`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
+        <div style="background: #e5332a; padding: 32px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 900;">FixTray</h1>
+          <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Shop Management Platform</p>
+        </div>
+        <div style="padding: 32px;">
+          <h2 style="color: #22c55e; margin: 0 0 8px;">🎉 Congratulations! Your Shop Is Approved</h2>
+          <p style="color: #6b7280; margin: 0 0 24px;"><strong>${shopName}</strong> has been approved on the FixTray platform. You can now log in and start managing work orders.</p>
+          ${tempPassword ? `
+          <div style="background: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
+            <p style="margin: 0 0 8px; color: #374151; font-weight: 700;">Your Login Credentials</p>
+            <p style="margin: 0 0 8px; color: #374151;"><strong>Username:</strong> ${username}</p>
+            <p style="margin: 0; color: #374151;"><strong>Temporary Password:</strong> <code style="background: #fef9c3; padding: 2px 6px; border-radius: 4px; font-family: monospace;">${tempPassword}</code></p>
+            <p style="margin: 8px 0 0; color: #92400e; font-size: 12px;">⚠️ Please change your password after your first login.</p>
+          </div>
+          ` : `
+          <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
+            <p style="margin: 0; color: #374151;"><strong>Username:</strong> ${username}</p>
+          </div>
+          `}
+          <a href="${process.env.NEXT_PUBLIC_APP_URL}/auth/login" style="display: block; background: #e5332a; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; text-align: center;">Log In to Your Shop</a>
+          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">Welcome to FixTray — the easiest way to manage your auto shop.</p>
+        </div>
+      </div>
+    `,
+  }),
 };
 
 // Send email function (configure with your email service)
@@ -190,4 +293,51 @@ export async function sendLowStockAlert(
     to: shopEmail,
     ...template,
   });
+}
+
+export async function sendEstimateReadyEmail(
+  customerEmail: string,
+  customerName: string,
+  workOrderId: string,
+  serviceAmount: number,
+  totalDue: number,
+  shopName: string,
+  description: string
+) {
+  const template = emailTemplates.estimateReady(customerName, workOrderId, serviceAmount, totalDue, shopName, description);
+  return sendEmail({ to: customerEmail, ...template });
+}
+
+export async function sendJobCompletedEmail(
+  customerEmail: string,
+  customerName: string,
+  workOrderId: string,
+  totalDue: number,
+  shopName: string,
+  description: string
+) {
+  const template = emailTemplates.jobCompleted(customerName, workOrderId, totalDue, shopName, description);
+  return sendEmail({ to: customerEmail, ...template });
+}
+
+export async function sendPaymentReceiptEmail(
+  customerEmail: string,
+  customerName: string,
+  workOrderId: string,
+  amountPaid: number,
+  shopName: string,
+  description: string
+) {
+  const template = emailTemplates.paymentReceipt(customerName, workOrderId, amountPaid, shopName, description);
+  return sendEmail({ to: customerEmail, ...template });
+}
+
+export async function sendShopApprovedEmail(
+  shopEmail: string,
+  shopName: string,
+  username: string,
+  tempPassword?: string | null
+) {
+  const template = emailTemplates.shopApproved(shopName, shopEmail, username, tempPassword);
+  return sendEmail({ to: shopEmail, ...template });
 }

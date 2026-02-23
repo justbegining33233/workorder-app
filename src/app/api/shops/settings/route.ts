@@ -59,6 +59,7 @@ export async function GET(request: NextRequest) {
           stripeCustomerId: shop.subscription.stripeCustomerId,
           cancelAtPeriodEnd: shop.subscription.cancelAtPeriodEnd,
         } : null,
+        stripeConnected: !!shop.stripeAccountId,
       },
       settings: {
         notificationsEnabled: shopSettings.notificationsEnabled,

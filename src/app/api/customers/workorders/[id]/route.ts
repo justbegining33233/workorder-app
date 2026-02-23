@@ -68,17 +68,27 @@ export async function GET(
     }
 
     // Format the response
+    const estimate = workOrder.estimate as any;
     const response = {
       id: workOrder.id,
       issueDescription: workOrder.issueDescription,
       status: workOrder.status,
+      paymentStatus: workOrder.paymentStatus,
       serviceType: workOrder.maintenance || workOrder.repairs || 'General Service',
       scheduledDate: workOrder.dueDate?.toISOString() || workOrder.createdAt.toISOString(),
+      dueDate: workOrder.dueDate?.toISOString() || null,
+      serviceLocation: workOrder.serviceLocation || null,
       createdAt: workOrder.createdAt.toISOString(),
       shop: workOrder.shop,
       assignedTo: workOrder.assignedTo,
       vehicle: workOrder.vehicle,
       tracking: workOrder.tracking || null,
+      estimate: estimate ? {
+        amount: estimate.amount || 0,
+        serviceFee: 5,
+        totalDue: (estimate.amount || 0) + 5,
+        status: estimate.status || null,
+      } : null,
     };
 
     return NextResponse.json(response);

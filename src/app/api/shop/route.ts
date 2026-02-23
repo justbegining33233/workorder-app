@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
         zipCode: true,
         shopType: true,
         status: true,
+        stripeAccountId: true,
       },
     });
 
@@ -42,7 +43,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ shop });
+    return NextResponse.json({
+      shop: {
+        ...shop,
+        stripeConnected: !!shop.stripeAccountId,
+        stripeAccountId: undefined, // never expose the raw account ID to clients
+      },
+    });
   } catch (error) {
     console.error('Error fetching shop:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

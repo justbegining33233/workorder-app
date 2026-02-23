@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import { WorkOrder } from '@/types/workorder';
+import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
 
 export function generateInvoicePDF(workOrder: WorkOrder) {
   const doc = new jsPDF();
@@ -71,10 +72,25 @@ export function generateInvoicePDF(workOrder: WorkOrder) {
   doc.line(140, y, 190, y);
   y += 7;
   
-  const total = workOrder.estimate?.amount || 0;
+  const subtotal = workOrder.estimate?.amount || 0;
+  const totalDue = subtotal + FIXTRAY_SERVICE_FEE;
   
-  doc.text('Total:', 140, y);
-  doc.text(`$${total.toFixed(2)}`, 180, y, { align: 'right' });
+  doc.text('Subtotal:', 140, y);
+  doc.text(`$${subtotal.toFixed(2)}`, 180, y, { align: 'right' });
+  y += 7;
+  
+  doc.setTextColor(150, 150, 150);
+  doc.text('FixTray Service Fee:', 140, y);
+  doc.text(`$${FIXTRAY_SERVICE_FEE.toFixed(2)}`, 180, y, { align: 'right' });
+  y += 7;
+  doc.setTextColor(0, 0, 0);
+  
+  doc.line(140, y, 190, y);
+  y += 7;
+  doc.setFontSize(11);
+  doc.text('Total Due:', 140, y);
+  doc.text(`$${totalDue.toFixed(2)}`, 180, y, { align: 'right' });
+  doc.setFontSize(10);
   y += 3;
   doc.line(140, y, 190, y);
   
@@ -82,8 +98,7 @@ export function generateInvoicePDF(workOrder: WorkOrder) {
   y += 10;
   doc.setFontSize(10);
   const totalPaid = workOrder.payments?.reduce((sum, payment) => sum + payment.amount, 0) || 0;
-  const totalAmount = workOrder.estimate?.amount || 0;
-  if (totalPaid >= totalAmount && totalAmount > 0) {
+  if (totalPaid >= totalDue && totalDue > 0) {
     doc.text('PAID', 140, y);
     doc.text(`Amount Paid: $${totalPaid.toFixed(2)}`, 140, y + 7);
   } else {

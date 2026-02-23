@@ -285,6 +285,10 @@ function ShopSettingsPageContent() {
   const [notificationSaveMessage, setNotificationSaveMessage] = useState('');
   const [pushStatus, setPushStatus] = useState('');
 
+  // Stripe Connect payout account state
+  const [stripeConnected, setStripeConnected] = useState<boolean | null>(null);
+  const [stripeConnectMessage, setStripeConnectMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   // Subscription/Billing state
   const [subscription, setSubscription] = useState<{
     plan: string;
@@ -356,11 +360,23 @@ function ShopSettingsPageContent() {
     if (payment === 'success') {
       setActiveTab('billing');
       setPaymentMessage({ type: 'success', text: 'Payment successful! Your subscription has been updated.' });
-      // Clear the URL params
       router.replace('/shop/settings', { scroll: false });
     } else if (payment === 'canceled') {
       setActiveTab('billing');
       setPaymentMessage({ type: 'error', text: 'Payment was canceled. Your subscription has not been changed.' });
+      router.replace('/shop/settings', { scroll: false });
+    }
+
+    // Handle Stripe Connect OAuth return
+    const stripeConnect = searchParams?.get('stripe_connect');
+    if (stripeConnect === 'success') {
+      setActiveTab('billing');
+      setStripeConnected(true);
+      setStripeConnectMessage({ type: 'success', text: 'Payout account connected! You\'ll now receive payments directly to your Stripe account.' });
+      router.replace('/shop/settings', { scroll: false });
+    } else if (stripeConnect === 'error') {
+      setActiveTab('billing');
+      setStripeConnectMessage({ type: 'error', text: 'Failed to connect payout account. Please try again.' });
       router.replace('/shop/settings', { scroll: false });
     }
      
@@ -435,6 +451,9 @@ function ShopSettingsPageContent() {
             cancelAtPeriodEnd: data.shop.subscription.cancelAtPeriodEnd || false,
           });
         }
+
+        // Load Stripe Connect status
+        setStripeConnected(!!data.shop.stripeConnected);
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -1436,6 +1455,70 @@ function ShopSettingsPageContent() {
                           </button>
                         </div>
                       ))}
+                  </div>
+                </div>
+
+                {/* Stripe Connect Payout Account */}
+                <div style={{marginBottom:24}}>
+                  <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>Payout Account</h3>
+                  <p style={{color:'#9aa3b2', fontSize:13, marginBottom:16}}>Connect your Stripe account to receive work order payments directly. FixTray automatically keeps the $5 service fee and sends the rest to you instantly.</p>
+
+                  {stripeConnectMessage && (
+                    <div style={{
+                      padding:'12px 16px',
+                      borderRadius:8,
+                      marginBottom:16,
+                      background: stripeConnectMessage.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(229,51,42,0.15)',
+                      border: `1px solid ${stripeConnectMessage.type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(229,51,42,0.3)'}`,
+                      color: stripeConnectMessage.type === 'success' ? '#22c55e' : '#e5332a',
+                      fontSize:14,
+                    }}>
+                      {stripeConnectMessage.text}
+                    </div>
+                  )}
+
+                  <div style={{
+                    background:'rgba(255,255,255,0.05)',
+                    borderRadius:12,
+                    padding:20,
+                    display:'flex',
+                    justifyContent:'space-between',
+                    alignItems:'center'
+                  }}>
+                    <div>
+                      <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
+                        <div style={{
+                          width:10, height:10, borderRadius:'50%',
+                          background: stripeConnected ? '#22c55e' : '#6b7280'
+                        }} />
+                        <div style={{color:'#e5e7eb', fontWeight:600}}>
+                          {stripeConnected === null ? 'Checking...' : stripeConnected ? 'Payout Account Connected' : 'No Payout Account'}
+                        </div>
+                      </div>
+                      <div style={{color:'#9aa3b2', fontSize:13}}>
+                        {stripeConnected ? 'Payments from work orders go directly to your Stripe account.' : 'Connect now so customers can pay and you receive funds automatically.'}
+                      </div>
+                    </div>
+                    {!stripeConnected && (
+                      <a
+                        href="/api/stripe/connect"
+                        style={{
+                          padding:'10px 20px',
+                          background:'#635bff',
+                          color:'white',
+                          borderRadius:8,
+                          fontSize:14,
+                          fontWeight:600,
+                          textDecoration:'none',
+                          whiteSpace:'nowrap',
+                        }}
+                      >
+                        Connect Stripe →
+                      </a>
+                    )}
+                    {stripeConnected && (
+                      <span style={{color:'#22c55e', fontWeight:600, fontSize:14}}>✓ Connected</span>
+                    )}
                   </div>
                 </div>
 

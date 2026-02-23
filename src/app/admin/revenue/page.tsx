@@ -51,6 +51,22 @@ interface StripeLinks {
   balances: string;
 }
 
+interface WorkOrderFees {
+  totalFees: number;
+  feesThisMonth: number;
+  totalPaidWorkOrders: number;
+  feesByShop: Array<{ shopName: string; count: number; fees: number }>;
+  recentTransactions: Array<{
+    id: string;
+    shopName: string;
+    customerName: string;
+    description: string;
+    amountPaid: number;
+    fee: number;
+    date: string;
+  }>;
+}
+
 // Mini chart component
 function MiniLineChart({ data, color, height = 40 }: { data: number[]; color: string; height?: number }) {
   if (!data || data.length === 0) return null;
@@ -85,6 +101,7 @@ export default function AdminRevenuePage() {
   const [revenue, setRevenue] = useState<RevenueData | null>(null);
   const [liveMetrics, setLiveMetrics] = useState<LiveMetrics | null>(null);
   const [stripeLinks, setStripeLinks] = useState<StripeLinks | null>(null);
+  const [workOrderFees, setWorkOrderFees] = useState<WorkOrderFees | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -118,6 +135,7 @@ export default function AdminRevenuePage() {
         setRevenue(data.revenue);
         setLiveMetrics(data.liveMetrics);
         setStripeLinks(data.stripeLinks);
+        if (data.workOrderFees) setWorkOrderFees(data.workOrderFees);
       } else {
         setError(data.error || 'Failed to load revenue data');
       }
@@ -473,6 +491,77 @@ export default function AdminRevenuePage() {
             )}
           </div>
         </div>
+
+        {/* FixTray Work Order Fees */}
+        {workOrderFees && (
+          <div className="bg-gradient-to-br from-slate-900/70 to-slate-900 border border-[#1f2937] rounded-2xl p-6 mt-8 shadow-lg shadow-black/30">
+            <h2 className="text-lg font-semibold mb-2">🔧 FixTray Work Order Fees</h2>
+            <p className="text-slate-400 text-sm mb-6">$5.00 collected per completed work order payment</p>
+
+            {/* Fee Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-[#0f172a] border border-[#1f2937] rounded-xl p-4">
+                <div className="text-slate-400 text-sm mb-1">Total Fees Collected</div>
+                <div className="text-2xl font-bold text-green-400">{formatCurrency(workOrderFees.totalFees)}</div>
+                <div className="text-slate-500 text-xs mt-1">{workOrderFees.totalPaidWorkOrders} paid work orders</div>
+              </div>
+              <div className="bg-[#0f172a] border border-[#1f2937] rounded-xl p-4">
+                <div className="text-slate-400 text-sm mb-1">This Month</div>
+                <div className="text-2xl font-bold text-blue-400">{formatCurrency(workOrderFees.feesThisMonth)}</div>
+                <div className="text-slate-500 text-xs mt-1">{workOrderFees.feesThisMonth / 5} work orders</div>
+              </div>
+              <div className="bg-[#0f172a] border border-[#1f2937] rounded-xl p-4">
+                <div className="text-slate-400 text-sm mb-1">Fee Per Transaction</div>
+                <div className="text-2xl font-bold text-orange-400">$5.00</div>
+                <div className="text-slate-500 text-xs mt-1">Fixed platform fee</div>
+              </div>
+            </div>
+
+            {/* Fees by Shop */}
+            {workOrderFees.feesByShop.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-slate-300 mb-3">Fees by Shop</h3>
+                <div className="space-y-2">
+                  {workOrderFees.feesByShop.map((shop, i) => (
+                    <div key={i} className="flex items-center justify-between bg-[#0f172a] border border-[#1f2937] rounded-lg px-4 py-3">
+                      <div>
+                        <div className="font-medium text-slate-200 text-sm">{shop.shopName}</div>
+                        <div className="text-slate-500 text-xs">{shop.count} work orders</div>
+                      </div>
+                      <div className="text-green-400 font-semibold">{formatCurrency(shop.fees)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Recent Fee Transactions */}
+            {workOrderFees.recentTransactions.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-slate-300 mb-3">Recent Transactions</h3>
+                <div className="space-y-2">
+                  {workOrderFees.recentTransactions.map((txn) => (
+                    <div key={txn.id} className="flex items-center justify-between bg-[#0f172a] border border-[#1f2937] rounded-lg px-4 py-3">
+                      <div>
+                        <div className="font-medium text-slate-200 text-sm">{txn.shopName}</div>
+                        <div className="text-slate-400 text-xs">{txn.customerName} · {txn.description.slice(0, 40)}</div>
+                        <div className="text-slate-500 text-xs">{formatDate(txn.date)}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-green-400 font-semibold">+${txn.fee.toFixed(2)}</div>
+                        <div className="text-slate-500 text-xs">Job: ${txn.amountPaid.toFixed(2)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {workOrderFees.totalPaidWorkOrders === 0 && (
+              <div className="text-slate-500 text-center py-8">No completed work order payments yet</div>
+            )}
+          </div>
+        )}
 
         {/* How It Works */}
         <div className="bg-gradient-to-br from-slate-900/70 via-[#0f172a] to-[#0b1220] border border-[#1f2937] rounded-2xl p-6 mt-8 shadow-lg shadow-black/30">

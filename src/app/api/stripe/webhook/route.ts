@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import stripe from '@/lib/stripe';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
+import { sendPaymentReceiptEmail } from '@/lib/emailService';
+import { pushPaymentConfirmed } from '@/lib/serverPush';
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -147,6 +149,46 @@ export async function POST(request: NextRequest) {
         const subscription = event.data.object as Stripe.Subscription;
         console.log(`⚠️ [WEBHOOK] Trial ending soon for: ${subscription.id}`);
         // TODO: Send email notification to customer
+        break;
+      }
+
+      // Work order payment completed via Stripe Checkout
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const { workOrderId } = session.metadata ?? {};
+        if (!workOrderId) break;
+
+        console.log(`✅ [WEBHOOK] Checkout complete for work order: ${workOrderId}`);
+
+        const updatedWO = await prisma.workOrder.update({
+          where: { id: workOrderId },
+          data: {
+            paymentStatus: 'paid',
+            status: 'closed',
+            amountPaid: (session.amount_total ?? 0) / 100,
+          },
+          include: {
+            customer: { select: { email: true, firstName: true, lastName: true } },
+            shop: { select: { shopName: true } },
+          },
+        });
+
+        // Send payment receipt email
+        if (updatedWO.customer?.email) {
+          sendPaymentReceiptEmail(
+            updatedWO.customer.email,
+            `${updatedWO.customer.firstName} ${updatedWO.customer.lastName}`,
+            workOrderId,
+            (session.amount_total ?? 0) / 100,
+            updatedWO.shop?.shopName || 'Your Shop',
+            updatedWO.issueDescription || 'Vehicle Service'
+          ).catch(console.error);
+        }
+
+        // Send push notification
+        if (updatedWO.customerId) {
+          pushPaymentConfirmed(updatedWO.customerId, (session.amount_total ?? 0) / 100, workOrderId).catch(console.error);
+        }
         break;
       }
 

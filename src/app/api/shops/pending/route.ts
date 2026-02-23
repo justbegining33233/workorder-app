@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/middleware';
 import { validateCsrf, validatePublicCsrf } from '@/lib/csrf';
 import { hashPassword } from '@/lib/auth';
 import { z } from 'zod';
+import { sendShopApprovedEmail } from '@/lib/emailService';
 
 export async function GET(request: NextRequest) {
   // Require admin authentication to view pending shops
@@ -191,6 +192,14 @@ export async function PATCH(request: NextRequest) {
           password: hashedPassword || shop.password,
         }
       });
+
+      // Send approval email to shop owner
+      sendShopApprovedEmail(
+        approvedShop.email,
+        approvedShop.shopName,
+        approvedShop.username || newUsername,
+        plainPassword
+      ).catch(console.error);
 
       return NextResponse.json({ 
         message: 'Shop approved successfully', 
