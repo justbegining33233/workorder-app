@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { sendEstimateEmail, sendStatusUpdateEmail } from '@/lib/email';
+import { sendEstimateReadyEmail, sendJobCompletedEmail } from '@/lib/emailService';
+import { pushEstimateReady, pushJobCompleted } from '@/lib/serverPush';
 import { Estimate } from '@/types/workorder';
 import { validateRequest, workOrderUpdateSchema } from '@/lib/validationSchemas';
 
@@ -104,7 +106,7 @@ export async function PUT(
     // Get current work order
     const current = await prisma.workOrder.findUnique({
       where: { id },
-      include: { customer: true },
+      include: { customer: true, shop: { select: { shopName: true, email: true } } },
     });
     
     if (!current) {
@@ -134,8 +136,22 @@ export async function PUT(
         },
       });
       
-      // Send status update email
+      // Send status update email (basic)
       sendStatusUpdateEmail(current.customer.email, id, data.status).catch(console.error);
+
+      // Send branded job-completed email when shop submits estimate and work is done
+      if ((data.status as string) === 'waiting-for-payment') {
+        const totalDue = (current.estimatedCost || data.estimatedCost || 0) + 5;
+        sendJobCompletedEmail(
+          current.customer.email,
+          `${current.customer.firstName} ${current.customer.lastName}`,
+          id,
+          totalDue,
+          current.shop?.shopName || 'Your Shop',
+          current.issueDescription || 'Vehicle Service'
+        ).catch(console.error);
+        pushJobCompleted(current.customerId, totalDue, id).catch(console.error);
+      }
       
       // Create notification
       await prisma.notification.create({
@@ -153,6 +169,19 @@ export async function PUT(
     // Send estimate email if estimated cost added
     if (data.estimatedCost && !current.estimatedCost) {
       sendEstimateEmail(current.customer.email, id, data.estimatedCost).catch(console.error);
+      
+      // Send branded estimate-ready email via Resend
+      const totalDue = data.estimatedCost + 5;
+      sendEstimateReadyEmail(
+        current.customer.email,
+        `${current.customer.firstName} ${current.customer.lastName}`,
+        id,
+        data.estimatedCost,
+        totalDue,
+        current.shop?.shopName || 'Your Shop',
+        current.issueDescription || 'Vehicle Service'
+      ).catch(console.error);
+      pushEstimateReady(current.customerId, totalDue, id).catch(console.error);
       
       await prisma.notification.create({
         data: {

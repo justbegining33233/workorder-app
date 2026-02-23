@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getWorkOrderById, updateWorkOrder } from '@/lib/workorders';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
+import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
   const auth = requireAuth(request);
@@ -36,9 +37,9 @@ export async function POST(request: NextRequest) {
     const payments = [...(workOrder.payments || []), payment];
     const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
 
-    // Auto-close if fully paid
+    // Auto-close if fully paid (estimate + FixTray $5 service fee)
     let status = workOrder.status;
-    if (totalPaid >= (workOrder.estimate?.amount || 0) && status === 'waiting-for-payment') {
+    if (totalPaid >= ((workOrder.estimate?.amount || 0) + FIXTRAY_SERVICE_FEE) && status === 'waiting-for-payment') {
       status = 'closed';
     }
 

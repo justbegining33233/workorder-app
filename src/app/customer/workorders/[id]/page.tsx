@@ -9,6 +9,7 @@ interface WorkOrderDetails {
   id: string;
   issueDescription: string;
   status: string;
+  paymentStatus?: string;
   serviceType: string;
   serviceLocation?: string | null;
   scheduledDate?: string | null;
@@ -35,6 +36,12 @@ interface WorkOrderDetails {
     longitude: number;
     estimatedArrival: string;
   };
+  estimate?: {
+    amount: number;
+    serviceFee: number;
+    totalDue: number;
+    status?: string | null;
+  } | null;
 }
 
 export default function WorkOrderDetailsPage() {
@@ -45,6 +52,7 @@ export default function WorkOrderDetailsPage() {
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [paying, setPaying] = useState(false);
 
   const workOrderId = params?.id as string;
 
@@ -85,6 +93,32 @@ export default function WorkOrderDetailsPage() {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
     window.location.href = '/auth/login';
+  };
+
+  const handlePay = async () => {
+    if (!workOrder) return;
+    setPaying(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/payment/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ workOrderId: workOrder.id }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url; // redirect to Stripe Checkout
+      } else {
+        alert(data.error || 'Failed to start payment');
+        setPaying(false);
+      }
+    } catch {
+      alert('Something went wrong. Please try again.');
+      setPaying(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -249,6 +283,69 @@ export default function WorkOrderDetailsPage() {
               )}
 
             </div>
+
+            {/* Payment Due */}
+            {workOrder.status === 'waiting-for-payment' && workOrder.estimate && (
+              <div style={{
+                marginTop:32,
+                padding:24,
+                background:'rgba(34,197,94,0.06)',
+                border:'1px solid rgba(34,197,94,0.25)',
+                borderRadius:12,
+              }}>
+                <h3 style={{fontSize:18, fontWeight:700, color:'#22c55e', marginBottom:16}}>Payment Due</h3>
+                <div style={{display:'flex', flexDirection:'column', gap:8, marginBottom:20}}>
+                  <div style={{display:'flex', justifyContent:'space-between', fontSize:14, color:'#e5e7eb'}}>
+                    <span>Services &amp; Parts</span>
+                    <span>${workOrder.estimate.amount.toFixed(2)}</span>
+                  </div>
+                  <div style={{display:'flex', justifyContent:'space-between', fontSize:14, color:'#9aa3b2'}}>
+                    <span>FixTray Service Fee</span>
+                    <span>${workOrder.estimate.serviceFee.toFixed(2)}</span>
+                  </div>
+                  <div style={{display:'flex', justifyContent:'space-between', fontSize:18, fontWeight:700, color:'#22c55e', paddingTop:8, borderTop:'1px solid rgba(255,255,255,0.15)'}}>
+                    <span>Total Due</span>
+                    <span>${workOrder.estimate.totalDue.toFixed(2)}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={handlePay}
+                  disabled={paying}
+                  style={{
+                    width:'100%',
+                    padding:'16px',
+                    background: paying ? 'rgba(34,197,94,0.4)' : '#22c55e',
+                    color:'white',
+                    border:'none',
+                    borderRadius:10,
+                    fontSize:18,
+                    fontWeight:700,
+                    cursor: paying ? 'not-allowed' : 'pointer',
+                    letterSpacing:'0.3px',
+                  }}
+                >
+                  {paying ? 'Redirecting to Stripe...' : `Pay $${workOrder.estimate.totalDue.toFixed(2)} Securely`}
+                </button>
+                <div style={{textAlign:'center', marginTop:10, fontSize:12, color:'#6b7280'}}>
+                  🔒 Powered by Stripe · Apple Pay &amp; Google Pay accepted
+                </div>
+              </div>
+            )}
+
+            {workOrder.status === 'closed' && (
+              <div style={{
+                marginTop:32,
+                padding:20,
+                background:'rgba(34,197,94,0.06)',
+                border:'1px solid rgba(34,197,94,0.2)',
+                borderRadius:12,
+                textAlign:'center',
+              }}>
+                <div style={{fontSize:24, marginBottom:8}}>✅</div>
+                <div style={{color:'#22c55e', fontWeight:700, fontSize:16}}>Payment Complete — Thank You!</div>
+                <div style={{color:'#9aa3b2', fontSize:13, marginTop:4}}>Your work order is closed. A receipt was sent to your email.</div>
+              </div>
+            )}
 
             <div style={{marginTop:32, display:'flex', gap:12}}>
               <Link href="/customer/tracking" style={{

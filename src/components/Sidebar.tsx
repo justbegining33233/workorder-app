@@ -52,6 +52,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
     { icon: '⚙️', label: 'Settings', href: '/shop/admin/settings' },
     { icon: '💬', label: 'Messages', href: '/shop/admin#messages' },
     { icon: '📈', label: 'Tech Reports', href: '/shop/reports' },
+    { icon: '🔁', label: 'Recurring Orders', href: '/shop/recurring-workorders' },
   ];
 
   const managerMenuItems: MenuItem[] = [

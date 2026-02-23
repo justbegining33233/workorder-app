@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { WorkOrder, Message } from '@/types/workorder';
 import { getWorkOrderByIdClient, updateWorkOrderClient, deleteWorkOrderClient } from '@/lib/workordersClient';
+import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
 
 type Part = { name: string; quantity: number; unitPrice: number };
 type Labor = { description: string; hours: number; ratePerHour: number };
@@ -376,6 +377,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
   const laborTotal = (workOrder.partLaborBreakdown?.laborLines || []).reduce((sum, l) => sum + l.hours * (l.ratePerHour || 0), 0);
   const additionalTotal = (workOrder.partLaborBreakdown?.additionalCharges || []).reduce((sum, c) => sum + c.amount, 0);
   const grandTotal = partsTotal + laborTotal + additionalTotal;
+  const totalDue = grandTotal + FIXTRAY_SERVICE_FEE;
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
@@ -870,8 +872,18 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                 </div>
 
                 <div style={{display:'flex', justifyContent:'space-between', paddingTop:16, borderTop:'2px solid rgba(229,51,42,0.3)', fontSize:18, fontWeight:700, color:'#e5e7eb'}}>
-                  <span>Grand Total</span>
+                  <span>Subtotal</span>
                   <span style={{color:'#e5332a'}}>${grandTotal.toFixed(2)}</span>
+                </div>
+
+                <div style={{display:'flex', justifyContent:'space-between', paddingTop:8, fontSize:14, color:'#9aa3b2'}}>
+                  <span>FixTray Service Fee</span>
+                  <span>${FIXTRAY_SERVICE_FEE.toFixed(2)}</span>
+                </div>
+
+                <div style={{display:'flex', justifyContent:'space-between', paddingTop:8, borderTop:'2px solid rgba(255,255,255,0.15)', fontSize:20, fontWeight:700, color:'#e5e7eb'}}>
+                  <span>Total Due</span>
+                  <span style={{color:'#22c55e'}}>${totalDue.toFixed(2)}</span>
                 </div>
               </>
             )}
@@ -894,7 +906,9 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                     <div style={{fontSize:13, color:'#e5e7eb', marginBottom:12}}>
                       <div style={{marginBottom:4}}><strong>Customer:</strong> {workOrder.createdBy}</div>
                       <div style={{marginBottom:4}}><strong>Date:</strong> {new Date().toLocaleDateString()}</div>
-                      <div style={{marginBottom:4}}><strong>Total Due:</strong> ${grandTotal.toFixed(2)}</div>
+                      <div style={{marginBottom:4, display:'flex', justifyContent:'space-between'}}><span>Services &amp; Parts:</span><span>${grandTotal.toFixed(2)}</span></div>
+                      <div style={{marginBottom:4, display:'flex', justifyContent:'space-between', color:'#9aa3b2'}}><span>FixTray Service Fee:</span><span>${FIXTRAY_SERVICE_FEE.toFixed(2)}</span></div>
+                      <div style={{marginBottom:4, display:'flex', justifyContent:'space-between', fontWeight:700, borderTop:'1px solid rgba(255,255,255,0.2)', paddingTop:4}}><span>Total Due:</span><span style={{color:'#22c55e'}}>${totalDue.toFixed(2)}</span></div>
                     </div>
                   </div>
                 )}

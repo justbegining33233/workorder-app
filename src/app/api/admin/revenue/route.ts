@@ -206,6 +206,47 @@ export async function GET(request: NextRequest) {
       where: { paymentStatus: 'paid', createdAt: { gte: threeMonthsAgo } }
     });
 
+    // ===== FIXTRAY WORK ORDER FEES ($5 per completed payment) =====
+    const paidWorkOrders = await prisma.workOrder.findMany({
+      where: { paymentStatus: 'paid' },
+      select: {
+        id: true,
+        amountPaid: true,
+        createdAt: true,
+        shop: { select: { id: true, shopName: true } },
+        customer: { select: { firstName: true, lastName: true } },
+        issueDescription: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const FIXTRAY_FEE = 5;
+    const totalWorkOrderFees = paidWorkOrders.length * FIXTRAY_FEE;
+    const workOrderFeesThisMonth = paidWorkOrders.filter(
+      wo => wo.createdAt >= startOfThisMonth
+    ).length * FIXTRAY_FEE;
+
+    // Group fees by shop
+    const feesByShopMap: Record<string, { shopName: string; count: number; fees: number }> = {};
+    for (const wo of paidWorkOrders) {
+      const shopId = wo.shop?.id || 'unknown';
+      const shopName = wo.shop?.shopName || 'Unknown Shop';
+      if (!feesByShopMap[shopId]) feesByShopMap[shopId] = { shopName, count: 0, fees: 0 };
+      feesByShopMap[shopId].count++;
+      feesByShopMap[shopId].fees += FIXTRAY_FEE;
+    }
+    const feesByShop = Object.values(feesByShopMap).sort((a, b) => b.fees - a.fees);
+
+    const recentWorkOrderFees = paidWorkOrders.slice(0, 10).map(wo => ({
+      id: wo.id,
+      shopName: wo.shop?.shopName || 'Unknown',
+      customerName: wo.customer ? `${wo.customer.firstName} ${wo.customer.lastName}` : 'Unknown',
+      description: wo.issueDescription || 'Service',
+      amountPaid: wo.amountPaid || 0,
+      fee: FIXTRAY_FEE,
+      date: wo.createdAt,
+    }));
+
     return NextResponse.json({
       success: true,
       revenue: {
@@ -244,6 +285,14 @@ export async function GET(request: NextRequest) {
         revenueThisMonth: revenueThisMonth._sum.amountPaid || 0,
         revenueLastMonth: revenueLastMonth._sum.amountPaid || 0,
         revenueLast3Months: revenueLast3Months._sum.amountPaid || 0
+      },
+      // FixTray work order fees ($5 per paid work order)
+      workOrderFees: {
+        totalFees: totalWorkOrderFees,
+        feesThisMonth: workOrderFeesThisMonth,
+        totalPaidWorkOrders: paidWorkOrders.length,
+        feesByShop,
+        recentTransactions: recentWorkOrderFees,
       },
       stripeLinks: {
         dashboard: 'https://dashboard.stripe.com',
