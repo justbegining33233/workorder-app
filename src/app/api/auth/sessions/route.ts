@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-// @ts-ignore
 import { verifyToken } from '@/lib/auth';
 import { validateCsrf } from '@/lib/csrf';
 

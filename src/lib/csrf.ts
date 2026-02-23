@@ -25,7 +25,8 @@ export async function validateCsrf(request: NextRequest) {
   if (!record) return false;
   const matches = await bcrypt.compare(raw, record.tokenHash).catch(() => false);
   if (!matches) return false;
-  const meta = record.metadata || {};
+  let meta: Record<string, any> = {};
+  try { meta = JSON.parse(record.metadata || '{}'); } catch (e) { console.error('CSRF metadata parse error:', e); meta = {}; }
   return Boolean(meta.csrfToken && meta.csrfToken === header);
 }
 

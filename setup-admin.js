@@ -1,46 +1,46 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
 async function setupAdmin() {
   try {
-    console.log('\n=== Setting up admin account ===\n');
-    
+    console.log('\n=== Setting up super admin account ===\n');
+
     const username = 'admin1006';
-    const password = '10062001';
+    const password = 'SupAdm1006';
     const email = 'joseruizvilla391@gmail.com';
 
-    // Check if admin already exists
-    const existing = await prisma.admin.findUnique({
-      where: { username }
-    });
-
-    if (existing) {
-      console.log('✅ Admin account already exists');
-      console.log(`   Username: ${existing.username}`);
-      console.log(`   Email: ${existing.email}`);
-      await prisma.$disconnect();
-      return;
-    }
-
-    // Hash password
+    // Hash password before storing
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create admin user
-    const admin = await prisma.admin.create({
-      data: {
-        username,
-        password: hashedPassword,
-        email,
-        isSuperAdmin: true,
-      }
-    });
+    // Upsert: create if not exists, update password if already exists
+    const existing = await prisma.admin.findUnique({ where: { username } });
 
-    console.log('✅ Admin account created successfully!');
-    console.log(`   Username: ${admin.username}`);
-    console.log(`   Email: ${admin.email}`);
-    console.log('\nYou can now log in with these credentials.');
+    if (existing) {
+      await prisma.admin.update({
+        where: { username },
+        data: { password: hashedPassword, isSuperAdmin: true },
+      });
+      console.log('✅ Super admin password updated');
+      console.log(`   Username: ${username}`);
+      console.log(`   Email: ${existing.email}`);
+    } else {
+      const admin = await prisma.admin.create({
+        data: {
+          username,
+          password: hashedPassword,
+          email,
+          isSuperAdmin: true,
+        }
+      });
+      console.log('✅ Super admin account created successfully!');
+      console.log(`   Username: ${admin.username}`);
+      console.log(`   Email: ${admin.email}`);
+    }
+
+    console.log('\nLogin at /auth/login or /admin/login');
+    console.log(`  Username: ${username}`);
 
     await prisma.$disconnect();
   } catch (error) {

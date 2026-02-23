@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { hashPassword, verifyToken } from '@/lib/auth';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
 import { validateRequest } from '@/lib/validation';
 import { z } from 'zod';
@@ -41,7 +42,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify password
-    const bcrypt = require('bcrypt');
     const valid = await bcrypt.compare(password, admin.password);
 
     if (!valid) {
@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate JWT token
-    const jwt = require('jsonwebtoken');
     const token = jwt.sign(
       {
         id: admin.id,
@@ -65,13 +64,12 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({
-      token,
-      admin: {
-        id: admin.id,
-        username: admin.username,
-        email: admin.email,
-        isSuperAdmin: admin.isSuperAdmin,
-      },
+      accessToken: token,
+      id: admin.id,
+      username: admin.username,
+      email: admin.email,
+      isSuperAdmin: admin.isSuperAdmin,
+      role: 'admin',
     });
   } catch (error) {
     console.error('Admin login error:', error);

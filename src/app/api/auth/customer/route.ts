@@ -1,21 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 import { customerLoginSchema } from '@/lib/validation';
-import { sanitizeObject } from '@/lib/sanitize';
+import { sanitizeHtml } from '@/lib/sanitize';
 
-// @ts-ignore
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 
 // POST /api/auth/customer
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const sanitizedBody = sanitizeObject(body);
 
-    // Validate input
-    const validationResult = customerLoginSchema.safeParse(sanitizedBody);
+    // Validate input (do NOT sanitize the password — sanitizing before bcrypt
+    // comparison would corrupt passwords that contain HTML-like patterns)
+    const validationResult = customerLoginSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { error: 'Validation failed', details: validationResult.error.issues },
@@ -23,7 +20,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password } = validationResult.data;
+    const { email: rawEmail, password } = validationResult.data;
+    const email = sanitizeHtml(rawEmail);
 
     // Rate limiting - prevent brute force attacks
     const clientIP = getClientIP(request);
@@ -80,7 +78,6 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const cookieValue = `${refresh.id}:${refreshRaw}`;
     const response = NextResponse.json({
       id: customer.id,
       username: customer.email,

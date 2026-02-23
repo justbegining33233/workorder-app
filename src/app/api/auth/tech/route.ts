@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 // evaluation issues (native binaries / environment differences).
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
-// @ts-ignore
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -82,8 +81,6 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const cookieValue = `${refresh.id}:${refreshRaw}`;
-
     const response = NextResponse.json({
       id: tech.id,
       email: tech.email,
@@ -93,7 +90,7 @@ export async function POST(request: NextRequest) {
       phone: tech.phone,
       role: tech.role,
       shopId: tech.shopId,
-      shopName: tech.shop.shopName,
+      shopName: tech.shop?.shopName ?? '',
       accessToken,
     }, { status: 200 });
 

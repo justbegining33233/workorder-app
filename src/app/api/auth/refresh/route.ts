@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-// Lazy-load prisma & bcrypt inside handler
-// @ts-ignore
-import { generateAccessToken } from '@/lib/auth';
+// Lazy-load all modules inside handler to avoid build-time evaluation issues
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,15 +36,25 @@ export async function POST(request: NextRequest) {
         if (record.adminId) {
           await (prisma as any).refreshToken.deleteMany({ where: { adminId: record.adminId } }).catch(() => {});
         } else if (record.metadata) {
-          // metadata may have customerId, shopId, techId
-          const meta = record.metadata as any;
-          const whereAny: any = { OR: [] };
-          if (meta.customerId) whereAny.OR.push({ metadata: { path: ['customerId'], equals: meta.customerId } });
-          if (meta.shopId) whereAny.OR.push({ metadata: { path: ['shopId'], equals: meta.shopId } });
-          if (meta.techId) whereAny.OR.push({ metadata: { path: ['techId'], equals: meta.techId } });
-          if (whereAny.OR.length) await (prisma as any).refreshToken.deleteMany({ where: whereAny }).catch(() => {});
+          // metadata is stored as a JSON string — parse before use
+          let meta: Record<string, any> = {};
+          try { meta = JSON.parse(record.metadata); } catch { /* ignore */ }
+          // Best-effort: delete all refresh tokens for the affected user
+          // (PostgreSQL JSON path queries are not available for String fields, so we
+          //  pull all tokens and filter in-memory — acceptable because this is a rare
+          //  security event path.)
+          const allTokens = await (prisma as any).refreshToken.findMany({ where: { adminId: null } }).catch(() => []) as any[];
+          const toDelete = allTokens.filter((t: any) => {
+            try {
+              const m = JSON.parse(t.metadata || '{}');
+              return (meta.customerId && m.customerId === meta.customerId) ||
+                     (meta.shopId && m.shopId === meta.shopId) ||
+                     (meta.techId && m.techId === meta.techId);
+            } catch { return false; }
+          }).map((t: any) => t.id);
+          if (toDelete.length) await (prisma as any).refreshToken.deleteMany({ where: { id: { in: toDelete } } }).catch(() => {});
         }
-      } catch (e) {
+      } catch {
         // ignore errors during cleanup
       }
       return NextResponse.json({ error: 'Invalid refresh token' }, { status: 401 });
@@ -61,11 +69,14 @@ export async function POST(request: NextRequest) {
     const newExpires = (await import('@/lib/auth')).refreshExpiryDate();
     const csrf = (await import('@/lib/csrf')).generateCsrfToken();
 
+    let existingMeta: Record<string, any> = {};
+    try { existingMeta = JSON.parse(record.metadata || '{}'); } catch { /* ignore */ }
+
     const newRecord = await (prisma as any).refreshToken.create({
       data: {
         tokenHash: newHash,
         adminId: record.adminId || null,
-        metadata: { ...(record.metadata || {}), lastIp: origin, lastAgent: userAgent, csrfToken: csrf },
+        metadata: JSON.stringify({ ...existingMeta, lastIp: origin, lastAgent: userAgent, csrfToken: csrf }),
         expiresAt: newExpires,
       }
     });
@@ -80,7 +91,9 @@ export async function POST(request: NextRequest) {
       if (!admin) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
       payload = { id: admin.id, username: admin.username, role: 'admin' };
     } else if (record.metadata) {
-      const meta = record.metadata as any;
+      // metadata is stored as a JSON string — parse before use
+      let meta: Record<string, any> = {};
+      try { meta = JSON.parse(record.metadata); } catch { /* ignore */ }
       if (meta.customerId) {
         const c = await prisma.customer.findUnique({ where: { id: meta.customerId } });
         if (!c) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
@@ -99,8 +112,7 @@ export async function POST(request: NextRequest) {
     const accessToken = (await import('@/lib/auth')).generateAccessToken(payload);
 
     const response = NextResponse.json({ accessToken });
-    // set new refresh cookie
-    const cookieValue = `${newRecord.id}:${newRaw}`;
+    // set new refresh cookies
     response.cookies.set('refresh_id', newRecord.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

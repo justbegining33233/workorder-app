@@ -27,27 +27,16 @@ function buildClient(): PrismaClient {
       async function maybeHash(obj: any) {
         if (!obj || typeof obj !== 'object') return;
 
-        const sensitiveKeys = new Set([
-          'password',
-          'token',
-          'tokenHash',
-          'refreshToken',
-          'refreshTokenHash',
-          'apiKey',
-          'secret',
-          'clientSecret',
-          'accessToken'
-        ]);
-
         const bcrypt = await import('bcrypt');
 
         for (const key of Object.keys(obj)) {
           const val = obj[key];
           if (typeof val !== 'string' || !val) continue;
 
-          const lower = key.toLowerCase();
-          const isSensitive = sensitiveKeys.has(key) || sensitiveKeys.has(lower) || lower.includes('token') || lower.includes('secret') || lower.includes('apikey') || lower.includes('key');
-          if (!isSensitive) continue;
+          // Only auto-hash fields literally named `password`.
+          // Fields such as `tokenHash`, `refreshTokenHash`, `accessToken` etc.
+          // already hold pre-computed hashes and must not be re-hashed.
+          if (key !== 'password') continue;
 
           if (val.startsWith('$2')) continue; // already bcrypt-hashed
           obj[key] = await bcrypt.hash(val, rounds);
