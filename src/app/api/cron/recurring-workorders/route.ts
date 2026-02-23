@@ -96,11 +96,59 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Allow GET for health checks
-export async function GET() {
+// Vercel Cron calls GET — run same processing logic
+export async function GET(request: NextRequest) {
+  const secret = process.env.CRON_SECRET;
+  const authHeader = request.headers.get('authorization');
+  const cronHeader = request.headers.get('x-cron-secret');
+
+  if (secret && authHeader !== `Bearer ${secret}` && cronHeader !== secret) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const now = new Date();
-  const dueCount = await prisma.recurringWorkOrder.count({
-    where: { active: true, nextRunAt: { lte: now } },
-  });
-  return NextResponse.json({ status: 'ok', dueNow: dueCount, checkedAt: now });
+
+  try {
+    const due = await prisma.recurringWorkOrder.findMany({
+      where: { active: true, nextRunAt: { lte: now } },
+    });
+
+    if (due.length === 0) {
+      return NextResponse.json({ success: true, created: 0, message: 'No schedules due' });
+    }
+
+    const created: string[] = [];
+
+    for (const schedule of due) {
+      try {
+        const workOrder = await prisma.workOrder.create({
+          data: {
+            customerId: schedule.customerId,
+            shopId: schedule.shopId,
+            vehicleId: schedule.vehicleId || null,
+            vehicleType: schedule.vehicleType,
+            serviceLocation: schedule.serviceLocation,
+            issueDescription: `[Recurring] ${schedule.title} — ${schedule.issueDescription}`,
+            estimatedCost: schedule.estimatedCost || null,
+            status: 'pending',
+            paymentStatus: 'unpaid',
+          },
+        });
+
+        created.push(workOrder.id);
+
+        await prisma.recurringWorkOrder.update({
+          where: { id: schedule.id },
+          data: { lastRunAt: now, nextRunAt: nextRunDate(schedule.frequency, now) },
+        });
+      } catch (err) {
+        console.error(`[Cron] Failed to create WO for schedule ${schedule.id}:`, err);
+      }
+    }
+
+    return NextResponse.json({ success: true, created: created.length, workOrderIds: created });
+  } catch (err) {
+    console.error('[Cron] Recurring work orders error:', err);
+    return NextResponse.json({ error: 'Cron job failed' }, { status: 500 });
+  }
 }
