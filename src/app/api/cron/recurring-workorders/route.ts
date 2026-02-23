@@ -91,8 +91,9 @@ export async function POST(request: NextRequest) {
       workOrderIds: created,
     });
   } catch (err) {
-    console.error('[Cron] Recurring work orders error:', err);
-    return NextResponse.json({ error: 'Cron job failed' }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[Cron] POST error:', msg);
+    return NextResponse.json({ error: 'Cron job failed', detail: msg }, { status: 500 });
   }
 }
 
@@ -148,7 +149,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, created: created.length, workOrderIds: created });
   } catch (err) {
-    console.error('[Cron] Recurring work orders error:', err);
-    return NextResponse.json({ error: 'Cron job failed' }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[Cron] GET error:', msg);
+    return NextResponse.json({ error: 'Cron job failed', detail: msg }, { status: 500 });
   }
 }
