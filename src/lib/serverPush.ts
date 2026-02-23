@@ -96,3 +96,13 @@ export async function pushTechEnRoute(customerId: string, techName: string, work
     data: { workOrderId, url: `/customer/workorders/${workOrderId}` },
   });
 }
+
+export async function pushRecurringServiceDue(customerId: string, serviceName: string) {
+  return sendPushToCustomer(customerId, {
+    title: `📋 ${serviceName} Is Due`,
+    body: 'Tap to confirm or skip — no bay reserved until you say yes.',
+    tag: 'recurring-approval',
+    requireInteraction: true,
+    data: { url: '/customer/recurring-approvals' },
+  });
+}

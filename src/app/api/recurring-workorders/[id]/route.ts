@@ -66,6 +66,7 @@ export async function PUT(
         estimatedCost: body.estimatedCost != null ? parseFloat(body.estimatedCost) : existing.estimatedCost,
         notes: body.notes ?? existing.notes,
         active: body.active != null ? body.active : existing.active,
+        requiresApproval: body.requiresApproval != null ? body.requiresApproval : existing.requiresApproval,
         nextRunAt: body.nextRunAt ? new Date(body.nextRunAt) : existing.nextRunAt,
       },
     });

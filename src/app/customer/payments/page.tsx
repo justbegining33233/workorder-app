@@ -101,6 +101,7 @@ export default function Payments() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link href="/customer/dashboard" style={{ fontSize: 13, color: '#9aa3b2', textDecoration: 'none' }}>Dashboard</Link>
+          <Link href="/customer/recurring-approvals" style={{ fontSize: 13, color: '#9aa3b2', textDecoration: 'none' }}>Pending Services</Link>
           <button onClick={handleSignOut} style={{ padding: '8px 16px', background: '#e5332a', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
             Sign Out
           </button>
