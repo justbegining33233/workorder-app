@@ -12,6 +12,7 @@ interface RecurringSchedule {
   nextRunAt: string;
   lastRunAt: string | null;
   active: boolean;
+  requiresApproval: boolean;
   estimatedCost: number | null;
   notes: string | null;
   customer: { firstName: string; lastName: string; email: string };
@@ -46,6 +47,7 @@ export default function RecurringWorkOrders() {
     estimatedCost: '',
     notes: '',
     startDate: '',
+    requiresApproval: true,
   });
 
   const fetchSchedules = async () => {
@@ -99,7 +101,7 @@ export default function RecurringWorkOrders() {
         setForm({
           customerId: '', vehicleId: '', title: '', issueDescription: '',
           frequency: 'monthly', serviceLocation: 'in-shop', vehicleType: 'car',
-          estimatedCost: '', notes: '', startDate: '',
+          estimatedCost: '', notes: '', startDate: '', requiresApproval: true,
         });
       } else {
         alert(data.error || 'Failed to create schedule');
@@ -163,8 +165,7 @@ export default function RecurringWorkOrders() {
 
       <main className="max-w-5xl mx-auto px-5 py-8">
         <p className="text-slate-400 text-sm mb-6">
-          Set up automated work order creation for repeat customers (oil changes, tire rotations, inspections, etc.).
-          Work orders are created automatically on the schedule you define.
+          Set up recurring service reminders for repeat customers. When a schedule is due, the customer receives a notification and <strong className="text-slate-300">must confirm before a bay is reserved</strong> (unless you disable approval for that schedule).
         </p>
 
         {/* Create Form */}
@@ -258,6 +259,32 @@ export default function RecurringWorkOrders() {
                   className="w-full bg-[#111827] border border-[#1f2937] rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500"
                 />
               </div>
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-3 cursor-pointer select-none">
+                  <div
+                    onClick={() => setForm((f) => ({ ...f, requiresApproval: !f.requiresApproval }))}
+                    style={{
+                      width: 44, height: 24, borderRadius: 12, position: 'relative', cursor: 'pointer',
+                      background: form.requiresApproval ? 'rgba(59,130,246,0.7)' : 'rgba(255,255,255,0.15)',
+                      transition: 'background 0.2s',
+                    }}
+                  >
+                    <div style={{
+                      position: 'absolute', top: 3, left: form.requiresApproval ? 22 : 3,
+                      width: 18, height: 18, borderRadius: '50%', background: 'white',
+                      transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                    }} />
+                  </div>
+                  <div>
+                    <div className="text-sm text-slate-200 font-medium">Require customer approval</div>
+                    <div className="text-xs text-slate-500">
+                      {form.requiresApproval
+                        ? 'Customer will be notified and must confirm — no bay reserved until they say yes.'
+                        : 'Work order goes straight to your queue without asking the customer.'}
+                    </div>
+                  </div>
+                </label>
+              </div>
               <div className="md:col-span-2 flex gap-3">
                 <button
                   type="submit"
@@ -315,6 +342,11 @@ export default function RecurringWorkOrders() {
                       </span>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
                         {FREQUENCY_LABELS[s.frequency] || s.frequency}
+                      </span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        s.requiresApproval ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
+                      }`}>
+                        {s.requiresApproval ? '🔔 Needs approval' : '⚡ Auto-create'}
                       </span>
                     </div>
                     <div className="text-sm text-slate-400 mb-2">{s.issueDescription}</div>

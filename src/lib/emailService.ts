@@ -341,3 +341,49 @@ export async function sendShopApprovedEmail(
   const template = emailTemplates.shopApproved(shopName, shopEmail, username, tempPassword);
   return sendEmail({ to: shopEmail, ...template });
 }
+
+export async function sendRecurringApprovalEmail(
+  customerEmail: string,
+  customerName: string,
+  serviceName: string,
+  shopName: string,
+  estimatedCost?: number | null
+) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+  const reviewUrl = `${appUrl}/customer/recurring-approvals`;
+  const subject = `Your ${serviceName} Is Due — Confirm or Skip`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #1a1a2e; color: #e5e7eb; border-radius: 12px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #e5332a, #c0392b); padding: 32px; text-align: center;">
+        <div style="font-size: 36px; font-weight: 900; color: white; letter-spacing: -1px;">FixTray</div>
+        <div style="color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 6px;">Service Reminder</div>
+      </div>
+      <div style="padding: 32px;">
+        <h2 style="color: #e5e7eb; margin: 0 0 12px;">Hi ${customerName},</h2>
+        <p style="color: #9aa3b2; line-height: 1.6; margin-bottom: 24px;">
+          <strong style="color: #e5e7eb;">${shopName}</strong> has your scheduled
+          <strong style="color: #e5e7eb;">${serviceName}</strong> coming up.
+          Let them know if you want to come in — <strong>no bay will be reserved until you confirm.</strong>
+        </p>
+        <div style="background: rgba(229,51,42,0.1); border: 1px solid rgba(229,51,42,0.3); border-radius: 12px; padding: 20px; margin-bottom: 28px;">
+          <div style="font-size: 18px; font-weight: 700; color: #e5e7eb; margin-bottom: 8px;">📋 ${serviceName}</div>
+          <div style="color: #9aa3b2; font-size: 14px;">Shop: ${shopName}</div>
+          ${estimatedCost ? `<div style="color: #9aa3b2; font-size: 14px; margin-top: 4px;">Estimated cost: <strong style="color: #22c55e;">$${estimatedCost.toFixed(2)}</strong></div>` : ''}
+        </div>
+        <table width="100%" style="margin-bottom: 28px;"><tr>
+          <td style="padding-right: 8px;">
+            <a href="${reviewUrl}" style="display: block; background: #22c55e; color: white; padding: 14px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">✅ Yes, Schedule Me In</a>
+          </td>
+          <td style="padding-left: 8px;">
+            <a href="${reviewUrl}" style="display: block; background: rgba(255,255,255,0.08); color: #9aa3b2; padding: 14px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; border: 1px solid rgba(255,255,255,0.15);">⏭ Skip This Time</a>
+          </td>
+        </tr></table>
+        <p style="color: #6b7280; font-size: 12px; text-align: center; line-height: 1.6;">
+          Manage all your pending service requests at<br/>
+          <a href="${reviewUrl}" style="color: #e5332a;">${reviewUrl}</a>
+        </p>
+      </div>
+    </div>
+  `;
+  return sendEmail({ to: customerEmail, subject, html });
+}

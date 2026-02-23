@@ -1,15 +1,18 @@
 /**
  * POST /api/cron/recurring-workorders
+ * GET  /api/cron/recurring-workorders  (Vercel Cron calls GET)
  *
- * Creates work orders for all active recurring schedules whose nextRunAt <= now.
- * Secured via CRON_SECRET header (set in Vercel env as CRON_SECRET=your-secret).
- * Trigger from Vercel Cron or any scheduler hitting this endpoint daily.
+ * Processes active recurring schedules whose nextRunAt <= now.
  *
- * Vercel cron config (vercel.json):
- *   { "crons": [{ "path": "/api/cron/recurring-workorders", "schedule": "0 8 * * *" }] }
+ * requiresApproval = true  (default): creates WO with status 'awaiting-confirmation'
+ *                                     and notifies the customer. Bay is NOT reserved
+ *                                     until customer confirms at /customer/recurring-approvals.
+ * requiresApproval = false:           creates WO directly with status 'pending'.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { sendRecurringApprovalEmail } from '@/lib/emailService';
+import { pushRecurringServiceDue } from '@/lib/serverPush';
 
 function nextRunDate(frequency: string, from: Date = new Date()): Date {
   const d = new Date(from);
@@ -43,6 +46,10 @@ export async function POST(request: NextRequest) {
         active: true,
         nextRunAt: { lte: now },
       },
+      include: {
+        customer: { select: { firstName: true, lastName: true, email: true } },
+        shop: { select: { shopName: true } },
+      },
     });
 
     if (due.length === 0) {
@@ -53,7 +60,10 @@ export async function POST(request: NextRequest) {
 
     for (const schedule of due) {
       try {
-        // Create a new work order from the template
+        // requiresApproval=true → status 'awaiting-confirmation', notify customer, bay NOT reserved
+        // requiresApproval=false → status 'pending', goes straight to shop queue
+        const woStatus = schedule.requiresApproval ? 'awaiting-confirmation' : 'pending';
+
         const workOrder = await prisma.workOrder.create({
           data: {
             customerId: schedule.customerId,
@@ -63,14 +73,29 @@ export async function POST(request: NextRequest) {
             serviceLocation: schedule.serviceLocation,
             issueDescription: `[Recurring] ${schedule.title} — ${schedule.issueDescription}`,
             estimatedCost: schedule.estimatedCost || null,
-            status: 'pending',
+            status: woStatus,
             paymentStatus: 'unpaid',
           },
         });
 
         created.push(workOrder.id);
 
-        // Advance nextRunAt and update lastRunAt
+        if (schedule.requiresApproval) {
+          const customerName = `${schedule.customer.firstName} ${schedule.customer.lastName}`;
+          await sendRecurringApprovalEmail(
+            schedule.customer.email,
+            customerName,
+            schedule.title,
+            schedule.shop.shopName,
+            schedule.estimatedCost
+          ).catch(console.error);
+          await pushRecurringServiceDue(schedule.customerId, schedule.title).catch(console.error);
+          console.log(`[Cron] Approval request sent to ${schedule.customer.email} for schedule ${schedule.id}`);
+        } else {
+          console.log(`[Cron] Auto-created WO ${workOrder.id} from schedule ${schedule.id}`);
+        }
+
+        // Advance the schedule regardless
         await prisma.recurringWorkOrder.update({
           where: { id: schedule.id },
           data: {
@@ -78,8 +103,6 @@ export async function POST(request: NextRequest) {
             nextRunAt: nextRunDate(schedule.frequency, now),
           },
         });
-
-        console.log(`[Cron] Created recurring work order ${workOrder.id} from schedule ${schedule.id}`);
       } catch (err) {
         console.error(`[Cron] Failed to create WO for schedule ${schedule.id}:`, err);
       }
@@ -112,6 +135,10 @@ export async function GET(request: NextRequest) {
   try {
     const due = await prisma.recurringWorkOrder.findMany({
       where: { active: true, nextRunAt: { lte: now } },
+      include: {
+        customer: { select: { firstName: true, lastName: true, email: true } },
+        shop: { select: { shopName: true } },
+      },
     });
 
     if (due.length === 0) {
@@ -122,6 +149,8 @@ export async function GET(request: NextRequest) {
 
     for (const schedule of due) {
       try {
+        const woStatus = schedule.requiresApproval ? 'awaiting-confirmation' : 'pending';
+
         const workOrder = await prisma.workOrder.create({
           data: {
             customerId: schedule.customerId,
@@ -131,12 +160,26 @@ export async function GET(request: NextRequest) {
             serviceLocation: schedule.serviceLocation,
             issueDescription: `[Recurring] ${schedule.title} — ${schedule.issueDescription}`,
             estimatedCost: schedule.estimatedCost || null,
-            status: 'pending',
+            status: woStatus,
             paymentStatus: 'unpaid',
           },
         });
 
         created.push(workOrder.id);
+
+        if (schedule.requiresApproval) {
+          const customerName = `${schedule.customer.firstName} ${schedule.customer.lastName}`;
+          await sendRecurringApprovalEmail(
+            schedule.customer.email,
+            customerName,
+            schedule.title,
+            schedule.shop.shopName,
+            schedule.estimatedCost
+          ).catch(console.error);
+          await pushRecurringServiceDue(schedule.customerId, schedule.title).catch(console.error);
+        } else {
+          console.log(`[Cron] Auto-created WO ${workOrder.id}`);
+        }
 
         await prisma.recurringWorkOrder.update({
           where: { id: schedule.id },

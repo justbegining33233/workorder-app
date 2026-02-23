@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
         notes: notes || null,
         nextRunAt: firstRun,
         active: true,
+        requiresApproval: body.requiresApproval !== false, // default true
       },
       include: {
         customer: { select: { firstName: true, lastName: true } },
