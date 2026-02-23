@@ -144,11 +144,11 @@ function MiniBarChart({ data, color, height = 50 }: { data: number[]; color: str
 }
 
 const PLAN_CONFIG: Record<string, { name: string; color: string; price: number }> = {
-  starter: { name: 'Starter', color: '#22C55E', price: 99 },
-  growth: { name: 'Growth', color: '#3B82F6', price: 199 },
-  professional: { name: 'Professional', color: '#8B5CF6', price: 349 },
-  business: { name: 'Business', color: '#F97316', price: 599 },
-  enterprise: { name: 'Enterprise', color: '#EF4444', price: 999 }
+  starter: { name: 'Starter', color: '#22C55E', price: 99.88 },
+  growth: { name: 'Growth', color: '#3B82F6', price: 249.88 },
+  professional: { name: 'Professional', color: '#8B5CF6', price: 499.88 },
+  business: { name: 'Business', color: '#F97316', price: 749.88 },
+  enterprise: { name: 'Enterprise', color: '#EF4444', price: 999.88 }
 };
 
 export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) {
