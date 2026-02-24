@@ -120,7 +120,12 @@ function NewRoadsideJobContent() {
       partLaborBreakdown: { partsUsed: [], laborLines: [], laborHours: 0, additionalCharges: [] },
       estimate: null,
       createdBy: form.customerName,
-      customerName: form.customerName,
+      customer: {
+        firstName: form.customerName,
+        lastName: '',
+        email: '',
+        phone: form.customerPhone,
+      },
     });
 
     router.push('/workorders/list?from=admin');
