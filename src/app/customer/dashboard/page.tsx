@@ -296,6 +296,28 @@ export default function CustomerDashboard() {
       link: '/customer/payments',
       getData: () => recentData.payments
     },
+    { 
+      id: 'recurring-approvals', 
+      icon: '🔁', 
+      name: 'Recurring Approvals', 
+      desc: 'Confirm or skip scheduled recurring services', 
+      detail: 'Review pending recurring service requests', 
+      badge: '', 
+      badgeColor: '', 
+      link: '/customer/recurring-approvals',
+      getData: () => []
+    },
+    { 
+      id: 'overview', 
+      icon: '🏠', 
+      name: 'Account Overview', 
+      desc: 'Summary of your account activity', 
+      detail: 'Quick stats and recent activity', 
+      badge: '', 
+      badgeColor: '', 
+      link: '/customer/overview',
+      getData: () => []
+    },
   ];
 
   const recordsFeatures = [

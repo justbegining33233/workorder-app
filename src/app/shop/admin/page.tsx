@@ -1336,6 +1336,48 @@ export default function ShopAdminPage() {
                               </button>
                             </Link>
                           )}
+
+                          <Link href="/shop/analytics" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(236,72,153,0.2)', border: '1px solid rgba(236,72,153,0.3)', borderRadius: 8, color: '#ec4899', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>📈</span>
+                              <div><div>Shop Analytics</div><div style={{ fontSize: 11, opacity: 0.8 }}>Performance & revenue trends</div></div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/customer-messages" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, color: '#3b82f6', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>💬</span>
+                              <div><div>Customer Messages</div><div style={{ fontSize: 11, opacity: 0.8 }}>All customer conversations</div></div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/recurring-workorders" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, color: '#22c55e', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>🔁</span>
+                              <div><div>Recurring Jobs</div><div style={{ fontSize: 11, opacity: 0.8 }}>Manage scheduled services</div></div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/services" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(245,158,11,0.2)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, color: '#f59e0b', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>🛠️</span>
+                              <div><div>Services</div><div style={{ fontSize: 11, opacity: 0.8 }}>Configure offered services</div></div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/reports" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(168,85,247,0.2)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 8, color: '#a855f7', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>📊</span>
+                              <div><div>Reports</div><div style={{ fontSize: 11, opacity: 0.8 }}>Download detailed reports</div></div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/new-inshop-job" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(229,51,42,0.2)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 8, color: '#e5332a', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>🏪</span>
+                              <div><div>New In-Shop Job</div><div style={{ fontSize: 11, opacity: 0.8 }}>Create a walk-in work order</div></div>
+                            </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
