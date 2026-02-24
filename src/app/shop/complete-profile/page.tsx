@@ -203,6 +203,7 @@ export default function CompleteProfile() {
   const [formData, setFormData] = useState({
     businessLicense: '',
     insurancePolicy: '',
+    numberOfBays: 1,
     shopType: 'diesel' as 'diesel' | 'gas' | 'small-engine' | 'heavy-equipment' | 'resurfacing' | 'welding' | 'tire' | 'mixed',
     dieselServices: [] as string[],
     gasServices: [] as string[],
@@ -302,7 +303,7 @@ export default function CompleteProfile() {
         // Mark profile as complete in localStorage
         localStorage.setItem('shopProfileComplete', 'true');
         alert('✅ Profile completed successfully! You can now access your shop dashboard.');
-        router.push('/shop/home');
+        router.push('/shop/subscribe');
       } else {
         let errorMessage = 'Failed to complete profile';
         try {
@@ -381,6 +382,35 @@ export default function CompleteProfile() {
                   borderRadius:8,
                   color:'#e5e7eb',
                   fontSize:14
+                }}
+                required
+              />
+            </div>
+
+            {/* Number of Bays */}
+            <div style={{marginBottom:24}}>
+              <label style={{display:'block', color:'#e5e7eb', fontWeight:600, marginBottom:8}}>
+                Number of Service Bays <span style={{color:'#e5332a'}}>*</span>
+              </label>
+              <p style={{color:'#9aa3b2', fontSize:13, marginBottom:8}}>
+                How many vehicles can you work on at the same time? This determines bay availability in your shop overview.
+              </p>
+              <input
+                type="number"
+                min={1}
+                max={99}
+                value={formData.numberOfBays}
+                onChange={(e) => setFormData({...formData, numberOfBays: parseInt(e.target.value) || 1})}
+                style={{
+                  width:120,
+                  padding:'12px 16px',
+                  background:'rgba(0,0,0,0.3)',
+                  border:'1px solid rgba(229,51,42,0.3)',
+                  borderRadius:8,
+                  color:'#e5e7eb',
+                  fontSize:22,
+                  fontWeight:700,
+                  textAlign:'center'
                 }}
                 required
               />

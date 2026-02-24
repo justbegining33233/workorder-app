@@ -36,7 +36,13 @@ export default function RecurringWorkOrders() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [customers, setCustomers] = useState<{ id: string; firstName: string; lastName: string }[]>([]);
+  const [shopId] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('shopId') || '' : '');
+
+  // Customer search
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerResults, setCustomerResults] = useState<{ id: string; firstName: string; lastName: string; email: string; phone?: string | null }[]>([]);
+  const [selectedCustomerName, setSelectedCustomerName] = useState('');
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
 
   const [form, setForm] = useState({
     customerId: '',
@@ -67,19 +73,27 @@ export default function RecurringWorkOrders() {
     }
   };
 
-  const fetchCustomers = async () => {
+  const searchCustomers = async (q: string) => {
+    if (q.length < 2) { setCustomerResults([]); return; }
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/workorders?limit=all', {
+      const res = await fetch(`/api/customers/search?q=${encodeURIComponent(q)}&shopId=${shopId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // If the endpoint returns customers, great. Otherwise we won't pre-populate.
+      const data = await res.json();
+      setCustomerResults(data.customers || []);
+      setShowCustomerDropdown(true);
     } catch {}
   };
 
   useEffect(() => {
     fetchSchedules();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => searchCustomers(customerSearch), 300);
+    return () => clearTimeout(timer);
+  }, [customerSearch]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +119,9 @@ export default function RecurringWorkOrders() {
           frequency: 'monthly', serviceLocation: 'in-shop', vehicleType: 'car',
           estimatedCost: '', notes: '', startDate: '', requiresApproval: true,
         });
+        setCustomerSearch('');
+        setSelectedCustomerName('');
+        setShowCustomerDropdown(false);
       } else {
         alert(data.error || 'Failed to create schedule');
       }
@@ -178,15 +195,34 @@ export default function RecurringWorkOrders() {
           <div className="bg-[#0f172a] border border-[#1f2937] rounded-2xl p-6 mb-8">
             <h2 className="text-lg font-semibold mb-4">New Recurring Schedule</h2>
             <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-slate-400 mb-1">Customer Name or Phone *</label>
+              <div style={{ position: 'relative' }}>
+                <label className="block text-sm text-slate-400 mb-1">Customer *</label>
                 <input
                   required
-                  value={form.customerId}
-                  onChange={(e) => setForm((f) => ({ ...f, customerId: e.target.value }))}
-                  placeholder="e.g. John Smith or 555-1234"
+                  value={selectedCustomerName || customerSearch}
+                  onChange={(e) => {
+                    setCustomerSearch(e.target.value);
+                    setSelectedCustomerName('');
+                    setForm((f) => ({ ...f, customerId: '' }));
+                  }}
+                  placeholder="Search by name, phone, or email..."
                   className="w-full bg-[#111827] border border-[#1f2937] rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500"
                 />
+                {showCustomerDropdown && customerResults.length > 0 && (
+                  <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50, background: '#111827', border: '1px solid #1f2937', borderRadius: 8, maxHeight: 200, overflowY: 'auto' }}>
+                    {customerResults.map((c) => (
+                      <button key={c.id} type="button" onClick={() => {
+                        setForm((f) => ({ ...f, customerId: c.id }));
+                        setSelectedCustomerName(`${c.firstName} ${c.lastName}`);
+                        setCustomerSearch('');
+                        setShowCustomerDropdown(false);
+                      }} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 12px', color: '#e5e7eb', fontSize: 14, background: 'transparent', border: 'none', cursor: 'pointer', borderBottom: '1px solid #1f2937' }}>
+                        <div>{c.firstName} {c.lastName}</div>
+                        <div style={{ color: '#6b7280', fontSize: 12 }}>{c.email}{c.phone ? ` · ${c.phone}` : ''}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Service Title *</label>

@@ -387,3 +387,50 @@ export async function sendRecurringApprovalEmail(
   `;
   return sendEmail({ to: customerEmail, subject, html });
 }
+// ── Recurring service reminders (14-day and 7-day advance notice) ──────────────────────
+export async function sendRecurringReminderEmail(
+  customerEmail: string,
+  customerName: string,
+  serviceName: string,
+  shopName: string,
+  shopId: string,
+  daysUntilDue: 14 | 7,
+  estimatedCost?: number | null
+) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+  const scheduleUrl = `${appUrl}/book/${shopId}`;
+  const urgency = daysUntilDue === 7 ? 'coming up in ONE WEEK' : 'coming up in 2 weeks';
+  const emoji = daysUntilDue === 7 ? '⚡' : '📅';
+  const subject = `${emoji} Your ${serviceName} is due in ${daysUntilDue} days — ${shopName}`;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #1a1a2e; color: #e5e7eb; border-radius: 12px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #e5332a, #c0392b); padding: 32px; text-align: center;">
+        <div style="font-size: 36px; font-weight: 900; color: white; letter-spacing: -1px;">FixTray</div>
+        <div style="color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 6px;">Service Reminder — ${daysUntilDue} Days Notice</div>
+      </div>
+      <div style="padding: 32px;">
+        <h2 style="color: #e5e7eb; margin: 0 0 12px;">Hey ${customerName}! 👋</h2>
+        <p style="color: #9aa3b2; line-height: 1.6; margin-bottom: 24px;">
+          Your <strong style="color: #e5e7eb;">${serviceName}</strong> at 
+          <strong style="color: #e5e7eb;">${shopName}</strong> is <strong style="color: ${daysUntilDue === 7 ? '#f59e0b' : '#e5e7eb'};">${urgency}.</strong>
+          Would you like to schedule it?
+        </p>
+        <div style="background: rgba(229,51,42,0.1); border: 1px solid rgba(229,51,42,0.3); border-radius: 12px; padding: 20px; margin-bottom: 28px;">
+          <div style="font-size: 20px; font-weight: 700; color: #e5e7eb; margin-bottom: 6px;">${emoji} ${serviceName}</div>
+          <div style="color: #9aa3b2; font-size: 14px; margin-bottom: 4px;">Shop: <strong style="color: #e5e7eb;">${shopName}</strong></div>
+          ${estimatedCost ? `<div style="color: #9aa3b2; font-size: 14px;">Estimated cost: <strong style="color: #22c55e;">$${estimatedCost.toFixed(2)}</strong></div>` : ''}
+        </div>
+        <a href="${scheduleUrl}" style="display: block; background: #22c55e; color: white; padding: 16px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; margin-bottom: 16px;">
+          ✅ Yes, Schedule Me In at ${shopName}
+        </a>
+        <p style="color: #6b7280; font-size: 12px; text-align: center; line-height: 1.6; margin: 0;">
+          If you don't want to schedule, simply ignore this email.<br/>
+          Sent by ${shopName} via <a href="${appUrl}" style="color: #e5332a;">FixTray</a>
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({ to: customerEmail, subject, html });
+}

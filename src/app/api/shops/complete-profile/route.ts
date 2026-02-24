@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
       businessLicense,
       insurancePolicy,
       shopType,
+      numberOfBays,
       dieselServices = [],
       gasServices = [],
       smallEngineServices = [],
@@ -85,6 +86,7 @@ export async function POST(request: NextRequest) {
         insurancePolicy,
         shopType,
         profileComplete: true,
+        ...(numberOfBays && numberOfBays > 0 ? { capacity: parseInt(String(numberOfBays)) } : {}),
       },
     });
 

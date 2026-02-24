@@ -96,6 +96,7 @@ model Shop {
   blockedDates   ShopBlockedDate[]
   purchaseOrders PurchaseOrder[]
   recurringWorkOrders RecurringWorkOrder[]
+  monthlyReports ShopMonthlyReport[]
 
   @@map("shops")
 }
@@ -637,6 +638,7 @@ model PurchaseOrder {
   shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
   vendor      String?
   status      String   @default("ordered") // ordered, shipped, received, cancelled
+  customerApprovalStatus String @default("pending") // pending, approved, rejected
   expectedDate DateTime?
   notes       String?
   createdById String?
@@ -976,6 +978,11 @@ model RecurringWorkOrder {
 
   active            Boolean  @default(true)
   requiresApproval  Boolean  @default(true)  // If true, customer must confirm before WO is created
+
+  // Reminder tracking — prevents double-sending
+  reminder14SentAt  DateTime? // When the 14-day reminder was last sent
+  reminder7SentAt   DateTime? // When the 7-day reminder was last sent
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -983,5 +990,30 @@ model RecurringWorkOrder {
   @@index([customerId])
   @@index([nextRunAt])
   @@map("recurring_work_orders")
+}
+
+// Monthly report snapshots per shop (for /shop/reports)
+model ShopMonthlyReport {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  year  Int // e.g. 2026
+  month Int // 1-12
+
+  totalRevenue    Float @default(0)
+  totalJobs       Int   @default(0)
+  completedJobs   Int   @default(0)
+  pendingJobs     Int   @default(0)
+  avgJobValue     Float @default(0)
+  topServicesJson String @default("[]") // JSON array of {service, count, revenue}
+
+  frozenAt  DateTime? // Set when month is over and snapshot is locked
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+
+  @@unique([shopId, year, month])
+  @@index([shopId])
+  @@map("shop_monthly_reports")
 }
 

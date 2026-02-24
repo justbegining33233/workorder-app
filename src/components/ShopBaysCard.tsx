@@ -32,6 +32,7 @@ interface ShopBaysCardProps {
 
 export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
   const [bays, setBays] = useState<Bay[]>([]);
+  const [capacity, setCapacity] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,6 +51,17 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
         return;
       }
 
+      // Fetch shop stats to get capacity
+      const statsRes = await fetch(`/api/shop/stats?shopId=${shopId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      let shopCapacity = 1;
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        shopCapacity = statsData.capacity || statsData.shop?.capacity || 1;
+      }
+      setCapacity(shopCapacity);
+
       // Fetch active work orders with bay assignments
       const workOrdersRes = await fetch(`/api/workorders?shopId=${shopId}&status=in_progress&status=pending&limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -62,19 +74,16 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
       const workOrdersData = await workOrdersRes.json();
       const activeWorkOrders: WorkOrder[] = workOrdersData.workOrders || [];
 
-      // Create bays array (1-999)
+      // Create bays array up to shopCapacity
       const baysArray: Bay[] = [];
-      for (let i = 1; i <= 999; i++) {
-        baysArray.push({
-          id: i,
-          isOccupied: false,
-        });
+      for (let i = 1; i <= shopCapacity; i++) {
+        baysArray.push({ id: i, isOccupied: false });
       }
 
       // Assign work orders to bays
       activeWorkOrders.forEach((workOrder) => {
         const bayId = workOrder.bay;
-        if (bayId && bayId >= 1 && bayId <= 999 && baysArray[bayId - 1]) {
+        if (bayId && bayId >= 1 && bayId <= shopCapacity && baysArray[bayId - 1]) {
           baysArray[bayId - 1].workOrder = workOrder;
           baysArray[bayId - 1].isOccupied = true;
         }

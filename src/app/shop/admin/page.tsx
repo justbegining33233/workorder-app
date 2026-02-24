@@ -40,6 +40,7 @@ export default function ShopAdminPage() {
   const [inventoryRequests, setInventoryRequests] = useState<any[]>([]);
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
   const [poForm, setPoForm] = useState({ vendor: '', itemName: '', quantity: 1, unitCost: 0, workOrderId: '' });
+  const [showPoModal, setShowPoModal] = useState(false);
   const [workOrderSearch, setWorkOrderSearch] = useState('');
   const [workOrderOptions, setWorkOrderOptions] = useState<any[]>([]);
   const [loadingWorkOrders, setLoadingWorkOrders] = useState(false);
@@ -525,6 +526,7 @@ export default function ShopAdminPage() {
         shopId,
         vendor: poForm.vendor || undefined,
         createdById: userId,
+        customerApprovalStatus: 'pending',
         items: [
           {
             itemName: poForm.itemName,
@@ -546,7 +548,9 @@ export default function ShopAdminPage() {
 
       if (response.ok) {
         setPoForm({ vendor: '', itemName: '', quantity: 1, unitCost: 0, workOrderId: '' });
+        setShowPoModal(false);
         fetchPurchaseOrders(shopId);
+        alert('Purchase order created. Awaiting customer approval.');
       } else {
         const data = await response.json().catch(() => ({}));
         alert(data.error || 'Failed to create purchase order');
@@ -1848,95 +1852,100 @@ export default function ShopAdminPage() {
                 <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 20, marginBottom: 24 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                     <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Purchase Orders</h3>
-                    <div style={{ color: '#9aa3b2', fontSize: 12 }}>{purchaseOrders.length} total</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ color: '#9aa3b2', fontSize: 12 }}>{purchaseOrders.length} total</div>
+                      <button onClick={() => setShowPoModal(true)} style={{ padding: '8px 16px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                        + New PO
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Creation card with banner */}
-                  <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, background: 'rgba(0,0,0,0.35)', marginBottom: 16, overflow: 'hidden' }}>
-                    <div style={{ background: 'linear-gradient(90deg,#22c55e,#16a34a)', color: 'white', padding: '10px 14px', fontWeight: 700, letterSpacing: 0.25 }}>
-                      Create Purchase Order
-                    </div>
-                    <div style={{ padding: 12 }}>
-                      <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', marginBottom: 12 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Vendor (optional)</span>
-                          <input
-                            type="text"
-                            value={poForm.vendor}
-                            onChange={(e) => setPoForm({ ...poForm, vendor: e.target.value })}
-                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
-                          />
+                  {/* PO Creation Modal */}
+                  {showPoModal && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowPoModal(false)}>
+                      <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, width: '100%', maxWidth: 560, padding: 28, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }} onClick={(e) => e.stopPropagation()}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                          <h3 style={{ color: '#e5e7eb', fontSize: 20, margin: 0, fontWeight: 700 }}>Create Purchase Order</h3>
+                          <button onClick={() => setShowPoModal(false)} style={{ background: 'none', border: 'none', color: '#9aa3b2', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Item Name</span>
-                          <input
-                            type="text"
-                            value={poForm.itemName}
-                            onChange={(e) => setPoForm({ ...poForm, itemName: e.target.value })}
-                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
-                          />
+                        <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: 13, color: '#fbbf24' }}>
+                          ⚠️ Customer approval is required before ordering. The PO will be flagged <strong>Awaiting Approval</strong> until the customer confirms.
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Quantity</span>
-                          <input
-                            type="number"
-                            min={1}
-                            placeholder="Quantity"
-                            value={poForm.quantity}
-                            onChange={(e) => setPoForm({ ...poForm, quantity: Number(e.target.value) })}
-                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
-                          />
+                        <div style={{ display: 'grid', gap: 14, gridTemplateColumns: '1fr 1fr', marginBottom: 16 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <span style={{ color: '#9aa3b2', fontSize: 12, fontWeight: 600 }}>Vendor (optional)</span>
+                            <input
+                              type="text"
+                              value={poForm.vendor}
+                              onChange={(e) => setPoForm({ ...poForm, vendor: e.target.value })}
+                              placeholder="e.g. AutoZone"
+                              style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb', fontSize: 14 }}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <span style={{ color: '#9aa3b2', fontSize: 12, fontWeight: 600 }}>Item Name *</span>
+                            <input
+                              type="text"
+                              value={poForm.itemName}
+                              onChange={(e) => setPoForm({ ...poForm, itemName: e.target.value })}
+                              placeholder="e.g. Brake Pads"
+                              style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb', fontSize: 14 }}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <span style={{ color: '#9aa3b2', fontSize: 12, fontWeight: 600 }}>Quantity</span>
+                            <input
+                              type="number"
+                              min={1}
+                              value={poForm.quantity}
+                              onChange={(e) => setPoForm({ ...poForm, quantity: Number(e.target.value) })}
+                              style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb', fontSize: 14 }}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <span style={{ color: '#9aa3b2', fontSize: 12, fontWeight: 600 }}>Unit Cost ($)</span>
+                            <input
+                              type="number"
+                              min={0}
+                              step="0.01"
+                              value={poForm.unitCost}
+                              onChange={(e) => setPoForm({ ...poForm, unitCost: Number(e.target.value) })}
+                              style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb', fontSize: 14 }}
+                            />
+                          </div>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Unit Cost</span>
-                          <input
-                            type="number"
-                            min={0}
-                            step="0.01"
-                            placeholder="Unit cost"
-                            value={poForm.unitCost}
-                            onChange={(e) => setPoForm({ ...poForm, unitCost: Number(e.target.value) })}
-                            style={{ padding: 10, borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.3)', color: '#e5e7eb' }}
-                          />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          <span style={{ color: '#9aa3b2', fontSize: 12 }}>Choose Work Order</span>
-                          <div style={{ maxHeight: 160, overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, background: 'rgba(0,0,0,0.35)', padding: 8 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 20 }}>
+                          <span style={{ color: '#9aa3b2', fontSize: 12, fontWeight: 600 }}>Link to Work Order (optional)</span>
+                          <div style={{ maxHeight: 140, overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, background: 'rgba(0,0,0,0.3)' }}>
                             {loadingWorkOrders ? (
-                              <div style={{ color: '#9aa3b2', fontSize: 12 }}>Loading...</div>
+                              <div style={{ color: '#9aa3b2', fontSize: 12, padding: 10 }}>Loading work orders...</div>
                             ) : workOrderOptions.length === 0 ? (
-                              <div style={{ color: '#9aa3b2', fontSize: 12 }}>No work orders found</div>
+                              <div style={{ color: '#9aa3b2', fontSize: 12, padding: 10 }}>No open work orders</div>
                             ) : (
-                              workOrderOptions.map((wo: any) => {
-                                const label = `${wo.id} • ${wo.status} • ${wo.issueDescription?.symptoms || ''}`;
-                                return (
-                                  <div
-                                    key={wo.id}
-                                    onClick={() => {
-                                      setPoForm({ ...poForm, workOrderId: wo.id });
-                                      setWorkOrderSearch(wo.id);
-                                    }}
-                                    style={{ padding: '6px 8px', cursor: 'pointer', color: '#e5e7eb', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-                                  >
-                                    {label}
-                                  </div>
-                                );
-                              })
+                              workOrderOptions.map((wo: any) => (
+                                <div
+                                  key={wo.id}
+                                  onClick={() => { setPoForm({ ...poForm, workOrderId: wo.id }); setWorkOrderSearch(wo.id); }}
+                                  style={{ padding: '8px 12px', cursor: 'pointer', color: poForm.workOrderId === wo.id ? '#22c55e' : '#e5e7eb', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: 13, background: poForm.workOrderId === wo.id ? 'rgba(34,197,94,0.1)' : 'transparent' }}
+                                >
+                                  {wo.id.slice(-6)} • {wo.status} • {wo.issueDescription?.symptoms || ''}
+                                  {poForm.workOrderId === wo.id && ' ✓'}
+                                </div>
+                              ))
                             )}
                           </div>
                         </div>
-                      </div>
-
-                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <button
-                          onClick={handleCreatePurchaseOrder}
-                          style={{ padding: '10px 18px', background: '#22c55e', border: 'none', borderRadius: 8, color: 'white', fontWeight: 700, cursor: 'pointer' }}
-                        >
-                          + Create PO
-                        </button>
+                        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                          <button onClick={() => setShowPoModal(false)} style={{ padding: '10px 20px', background: 'rgba(255,255,255,0.08)', color: '#e5e7eb', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+                            Cancel
+                          </button>
+                          <button onClick={handleCreatePurchaseOrder} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
+                            Create PO — Awaiting Approval
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* List card with banner */}
                   <div style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, background: 'rgba(0,0,0,0.35)', overflow: 'hidden' }}>
@@ -1957,6 +1966,21 @@ export default function ShopAdminPage() {
                                   <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(255,255,255,0.2)', color: 'white' }}>
                                     {po.status.toUpperCase()}
                                   </span>
+                                  {po.customerApprovalStatus === 'pending' && (
+                                    <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(245,158,11,0.25)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.4)' }}>
+                                      ⏳ AWAITING APPROVAL
+                                    </span>
+                                  )}
+                                  {po.customerApprovalStatus === 'approved' && (
+                                    <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' }}>
+                                      ✓ CUSTOMER APPROVED
+                                    </span>
+                                  )}
+                                  {po.customerApprovalStatus === 'rejected' && (
+                                    <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}>
+                                      ✕ CUSTOMER REJECTED
+                                    </span>
+                                  )}
                                   {po.status !== 'received' && (
                                     <button
                                       onClick={() => handleReceivePurchaseOrder(po.id)}
