@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface RecurringSchedule {
@@ -29,6 +30,7 @@ const FREQUENCY_LABELS: Record<string, string> = {
 
 export default function RecurringWorkOrders() {
   useRequireAuth(['shop', 'tech', 'manager', 'admin']);
+  const router = useRouter();
 
   const [schedules, setSchedules] = useState<RecurringSchedule[]>([]);
   const [loading, setLoading] = useState(true);
@@ -149,9 +151,12 @@ export default function RecurringWorkOrders() {
       <header className="bg-[#0f172a] border-b border-[#1f2937] px-5 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/shop/workorders" className="text-slate-400 hover:text-slate-100 text-sm transition-colors">
-              ← Work Orders
-            </Link>
+            <button
+              onClick={() => router.back()}
+              className="text-slate-400 hover:text-slate-100 text-sm transition-colors"
+            >
+              ← Back
+            </button>
             <h1 className="text-2xl font-semibold">🔄 Recurring Work Orders</h1>
           </div>
           <button
@@ -165,7 +170,7 @@ export default function RecurringWorkOrders() {
 
       <main className="max-w-5xl mx-auto px-5 py-8">
         <p className="text-slate-400 text-sm mb-6">
-          Set up recurring service reminders for repeat customers. When a schedule is due, the customer receives a notification and <strong className="text-slate-300">must confirm before a bay is reserved</strong> (unless you disable approval for that schedule).
+          Set up automatic service reminders for repeat customers. The customer will receive a notification and can confirm before a bay is reserved.
         </p>
 
         {/* Create Form */}
@@ -174,12 +179,12 @@ export default function RecurringWorkOrders() {
             <h2 className="text-lg font-semibold mb-4">New Recurring Schedule</h2>
             <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-slate-400 mb-1">Customer ID *</label>
+                <label className="block text-sm text-slate-400 mb-1">Customer Name or Phone *</label>
                 <input
                   required
                   value={form.customerId}
                   onChange={(e) => setForm((f) => ({ ...f, customerId: e.target.value }))}
-                  placeholder="Customer ID from work orders"
+                  placeholder="e.g. John Smith or 555-1234"
                   className="w-full bg-[#111827] border border-[#1f2937] rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500"
                 />
               </div>
@@ -259,7 +264,7 @@ export default function RecurringWorkOrders() {
                   className="w-full bg-[#111827] border border-[#1f2937] rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-blue-500"
                 />
               </div>
-              <div className="md:col-span-2">
+              <div>
                 <label className="flex items-center gap-3 cursor-pointer select-none">
                   <div
                     onClick={() => setForm((f) => ({ ...f, requiresApproval: !f.requiresApproval }))}
@@ -279,8 +284,8 @@ export default function RecurringWorkOrders() {
                     <div className="text-sm text-slate-200 font-medium">Require customer approval</div>
                     <div className="text-xs text-slate-500">
                       {form.requiresApproval
-                        ? 'Customer will be notified and must confirm — no bay reserved until they say yes.'
-                        : 'Work order goes straight to your queue without asking the customer.'}
+                        ? 'Customer will be notified and must confirm before the job is scheduled.'
+                        : 'Job is added to the queue automatically without asking the customer.'}
                     </div>
                   </div>
                 </label>
@@ -384,27 +389,6 @@ export default function RecurringWorkOrders() {
           </div>
         )}
 
-        {/* Cron Info */}
-        <div className="mt-10 bg-[#0f172a] border border-[#1f2937] rounded-xl p-5">
-          <h3 className="font-semibold text-slate-200 mb-2">⚙️ Automation Setup</h3>
-          <p className="text-slate-400 text-sm mb-3">
-            Work orders are created automatically when you add a <code className="bg-[#111827] px-1.5 py-0.5 rounded text-slate-300">vercel.json</code> cron trigger:
-          </p>
-          <pre className="bg-[#111827] text-slate-300 text-xs rounded-lg p-4 overflow-x-auto">
-{`// vercel.json
-{
-  "crons": [
-    {
-      "path": "/api/cron/recurring-workorders",
-      "schedule": "0 8 * * *"
-    }
-  ]
-}`}
-          </pre>
-          <p className="text-slate-500 text-xs mt-3">
-            Set <code className="bg-[#111827] px-1 rounded">CRON_SECRET</code> in your Vercel environment variables for security.
-          </p>
-        </div>
       </main>
     </div>
   );

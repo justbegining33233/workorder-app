@@ -397,11 +397,12 @@ export default function CompleteProfile() {
                 style={{
                   width:'100%',
                   padding:'12px 16px',
-                  background:'rgba(0,0,0,0.3)',
+                  background:'#1a1a2e',
                   border:'1px solid rgba(229,51,42,0.3)',
                   borderRadius:8,
                   color:'#e5e7eb',
-                  fontSize:14
+                  fontSize:14,
+                  colorScheme:'dark'
                 }}
               >
                 <option value="diesel">Diesel / Heavy-Duty Services</option>

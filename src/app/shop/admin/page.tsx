@@ -601,83 +601,7 @@ export default function ShopAdminPage() {
         {/* Main Content */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', padding: 32 }}>
-            {/* Tabs */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
-              <button
-                onClick={() => setTab('overview')}
-                style={{
-                  padding: '12px 24px',
-                  background: activeTab === 'overview' ? 'rgba(229,51,42,0.2)' : 'transparent',
-                  color: activeTab === 'overview' ? '#e5332a' : '#9aa3b2',
-                  border: 'none',
-                  borderBottom: activeTab === 'overview' ? '2px solid #e5332a' : 'none',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
-              >
-                📊 Overview
-              </button>
-              <button
-                onClick={() => setTab('settings')}
-                style={{
-                  padding: '12px 24px',
-                  background: activeTab === 'settings' ? 'rgba(229,51,42,0.2)' : 'transparent',
-                  color: activeTab === 'settings' ? '#e5332a' : '#9aa3b2',
-                  border: 'none',
-                  borderBottom: activeTab === 'settings' ? '2px solid #e5332a' : 'none',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
-              >
-                ⚙️ Settings
-              </button>
-              <button
-                onClick={() => setTab('payroll')}
-                style={{
-                  padding: '12px 24px',
-                  background: activeTab === 'payroll' ? 'rgba(229,51,42,0.2)' : 'transparent',
-                  color: activeTab === 'payroll' ? '#e5332a' : '#9aa3b2',
-                  border: 'none',
-                  borderBottom: activeTab === 'payroll' ? '2px solid #e5332a' : 'none',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
-              >
-                💰 Payroll
-              </button>
-              <button
-                onClick={() => setTab('team')}
-                style={{
-                  padding: '12px 24px',
-                  background: activeTab === 'team' ? 'rgba(229,51,42,0.2)' : 'transparent',
-                  color: activeTab === 'team' ? '#e5332a' : '#9aa3b2',
-                  border: 'none',
-                  borderBottom: activeTab === 'team' ? '2px solid #e5332a' : 'none',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
-              >
-                👥 Team
-              </button>
-              <button
-                onClick={() => {
-                  setTab('inventory');
-                  fetchInventoryStock(shopId);
-                  fetchInventoryRequests(shopId);
-                }}
-                style={{
-                  padding: '12px 24px',
-                  background: activeTab === 'inventory' ? 'rgba(229,51,42,0.2)' : 'transparent',
-                  color: activeTab === 'inventory' ? '#e5332a' : '#9aa3b2',
-                  border: 'none',
-                  borderBottom: activeTab === 'inventory' ? '2px solid #e5332a' : 'none',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
-              >
-                📦 Inventory
-              </button>
-            </div>
+
 
             {/* Tab Content */}
             {activeTab === 'overview' && (
@@ -692,10 +616,13 @@ export default function ShopAdminPage() {
                   <>
                     {/* Key Stats */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
-                      <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: 20 }}>
-                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Open Work Orders</div>
-                        <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6' }}>{shopStats.workOrders.open}</div>
-                      </div>
+                      <Link href="/workorders/list?from=admin" style={{ textDecoration: 'none' }}>
+                        <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: 20, cursor: 'pointer' }}>
+                          <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Open Work Orders</div>
+                          <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6' }}>{shopStats.workOrders.open}</div>
+                          <div style={{ fontSize: 11, color: '#3b82f6', marginTop: 4 }}>View All →</div>
+                        </div>
+                      </Link>
                       <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
                         <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Completed Today</div>
                         <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e' }}>{shopStats.workOrders.completedToday}</div>
@@ -1225,80 +1152,83 @@ export default function ShopAdminPage() {
                         </div>
 
                         <div style={{ display: 'grid', gap: 12 }}>
-                          <button
-                            onClick={() => setTab('team')}
-                            style={{
-                              width: '100%',
-                              padding: 16,
-                              background: 'rgba(59,130,246,0.2)',
-                              border: '1px solid rgba(59,130,246,0.3)',
-                              borderRadius: 8,
-                              color: '#3b82f6',
-                              fontSize: 14,
-                              fontWeight: 600,
-                              cursor: 'pointer',
-                              textAlign: 'left',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 12,
-                            }}
-                          >
-                            <span style={{ fontSize: 20 }}>👥</span>
-                            <div>
-                              <div>Manage Team</div>
-                              <div style={{ fontSize: 11, opacity: 0.8 }}>Add or edit team members</div>
-                            </div>
-                          </button>
+                          <Link href="/shop/manage-team" style={{ textDecoration: 'none' }}>
+                            <button
+                              style={{
+                                width: '100%',
+                                padding: 16,
+                                background: 'rgba(59,130,246,0.2)',
+                                border: '1px solid rgba(59,130,246,0.3)',
+                                borderRadius: 8,
+                                color: '#3b82f6',
+                                fontSize: 14,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 12,
+                              }}
+                            >
+                              <span style={{ fontSize: 20 }}>👥</span>
+                              <div>
+                                <div>Manage Team</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Add or edit team members</div>
+                              </div>
+                            </button>
+                          </Link>
 
-                          <button
-                            onClick={() => setTab('payroll')}
-                            style={{
-                              width: '100%',
-                              padding: 16,
-                              background: 'rgba(34,197,94,0.2)',
-                              border: '1px solid rgba(34,197,94,0.3)',
-                              borderRadius: 8,
-                              color: '#22c55e',
-                              fontSize: 14,
-                              fontWeight: 600,
-                              cursor: 'pointer',
-                              textAlign: 'left',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 12,
-                            }}
-                          >
-                            <span style={{ fontSize: 20 }}>💰</span>
-                            <div>
-                              <div>Generate Payroll</div>
-                              <div style={{ fontSize: 11, opacity: 0.8 }}>Download employee hours report</div>
-                            </div>
-                          </button>
+                          <Link href="/shop/reports" style={{ textDecoration: 'none' }}>
+                            <button
+                              style={{
+                                width: '100%',
+                                padding: 16,
+                                background: 'rgba(34,197,94,0.2)',
+                                border: '1px solid rgba(34,197,94,0.3)',
+                                borderRadius: 8,
+                                color: '#22c55e',
+                                fontSize: 14,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 12,
+                              }}
+                            >
+                              <span style={{ fontSize: 20 }}>💰</span>
+                              <div>
+                                <div>Payroll & Reports</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Download employee hours report</div>
+                              </div>
+                            </button>
+                          </Link>
 
-                          <button
-                            onClick={() => setTab('settings')}
-                            style={{
-                              width: '100%',
-                              padding: 16,
-                              background: 'rgba(168,85,247,0.2)',
-                              border: '1px solid rgba(168,85,247,0.3)',
-                              borderRadius: 8,
-                              color: '#a855f7',
-                              fontSize: 14,
-                              fontWeight: 600,
-                              cursor: 'pointer',
-                              textAlign: 'left',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 12,
-                            }}
-                          >
-                            <span style={{ fontSize: 20 }}>⚙️</span>
-                            <div>
-                              <div>Shop Settings</div>
-                              <div style={{ fontSize: 11, opacity: 0.8 }}>Configure rates and margins</div>
-                            </div>
-                          </button>
+                          <Link href="/shop/settings" style={{ textDecoration: 'none' }}>
+                            <button
+                              style={{
+                                width: '100%',
+                                padding: 16,
+                                background: 'rgba(168,85,247,0.2)',
+                                border: '1px solid rgba(168,85,247,0.3)',
+                                borderRadius: 8,
+                                color: '#a855f7',
+                                fontSize: 14,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 12,
+                              }}
+                            >
+                              <span style={{ fontSize: 20 }}>⚙️</span>
+                              <div>
+                                <div>Shop Settings</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Configure rates and margins</div>
+                              </div>
+                            </button>
+                          </Link>
 
                           {shopStats.inventory.pendingRequests > 0 && (
                             <Link href="/shop/home" style={{ textDecoration: 'none' }}>

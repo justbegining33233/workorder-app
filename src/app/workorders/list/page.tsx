@@ -63,12 +63,16 @@ function WorkOrderListPageContent() {
     return status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
+  const fromParam = searchParams?.get('from') || '';
+  const backHref = fromParam === 'admin' ? '/shop/admin' : '/shop/home';
+  const backLabel = fromParam === 'admin' ? '← Back to Shop Admin' : '← Back to Shop Dashboard';
+
   return (
     <div className="sos-wrap">
       <div className="sos-card" style={{ maxWidth: 1400 }}>
         <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px', borderRadius:'16px 16px 0 0'}}>
-          <Link href="/shop/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Shop Dashboard
+          <Link href={backHref} style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
+            {backLabel}
           </Link>
         </div>
         <div className="sos-header">
