@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: 'desc'
       },
-      take: 3
     });
 
     // Format the response to match the expected frontend structure
@@ -84,6 +83,11 @@ export async function POST(request: NextRequest) {
       hashed = await hashPassword(data.password);
     }
 
+    // Generate a unique temp username to avoid unique constraint violations
+    const tempUsername = data.username && data.username.trim()
+      ? data.username.trim()
+      : `pending_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
     // Create new shop in database with pending status
     const newShop = await prisma.shop.create({
       data: {
@@ -93,7 +97,7 @@ export async function POST(request: NextRequest) {
         state: data.state || '',
         phone: data.phone || '',
         email: data.email,
-        username: data.username || '',
+        username: tempUsername,
         password: hashed || '',
         zipCode: data.zipCode || '',
         status: 'pending',
