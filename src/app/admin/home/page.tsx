@@ -20,7 +20,6 @@ function AdminHomeContent() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
   const {
     platformStats,
@@ -250,43 +249,6 @@ function AdminHomeContent() {
             </div>
 
             <div className="flex flex-wrap gap-2 lg:justify-end">
-              <div className="relative">
-                <button
-                  onClick={() => setShortcutsOpen((prev) => !prev)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-100 text-sm transition-colors"
-                >
-                  <span>Shortcuts</span>
-                  <svg className={`w-4 h-4 transition-transform ${shortcutsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {shortcutsOpen && (
-                  <div className="absolute right-0 mt-2 w-64 rounded-xl border border-[#1f2937] bg-[#0f172a] shadow-2xl shadow-black/50 z-20">
-                    <div className="px-3 py-2 text-[11px] uppercase tracking-wide text-slate-400 border-b border-[#1f2937]">
-                      Shortcuts
-                    </div>
-                    <div className="py-2">
-                      {quickLinks.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          onClick={() => setShortcutsOpen(false)}
-                          className="flex items-center justify-between px-3 py-2 text-sm text-slate-100 hover:bg-white/5 transition-colors no-underline"
-                        >
-                          <span>{link.label}</span>
-                          {link.badge !== undefined && link.badge > 0 && (
-                            <span className={`text-[11px] px-2 py-0.5 rounded-full ${link.highlight ? 'bg-white/20 text-white' : 'bg-white/10 text-white'}`}>
-                              {link.badge}
-                            </span>
-                          )}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
               <button
                 onClick={() => setSearchOpen(true)}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-100 text-sm transition-colors"
@@ -406,6 +368,30 @@ function AdminHomeContent() {
               <div className="rounded-2xl border border-[#1f2937] bg-[#0b1220] p-4 md:p-6 shadow-inner shadow-black/30">
                 {renderContent()}
               </div>
+
+              {activeSection === 'dashboard' && (
+                <div className="mt-5">
+                  <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">Quick Navigation</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                    {quickLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm no-underline transition-all hover:bg-white/10 ${
+                          link.highlight
+                            ? 'bg-gradient-to-r from-[#f97316]/20 to-[#fb923c]/10 border-[#f97316]/30 text-orange-300'
+                            : 'bg-white/5 border-white/10 text-slate-200'
+                        }`}
+                      >
+                        <span className="truncate">{link.label}</span>
+                        {link.badge !== undefined && link.badge > 0 && (
+                          <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-white/10 text-white shrink-0">{link.badge}</span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
           </section>
