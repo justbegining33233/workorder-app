@@ -21,8 +21,9 @@ export async function GET(request: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
   const redirectUri = `${appUrl}/api/stripe/connect/callback`;
 
-  // state = shop's user ID so we can identify them on callback
-  const state = auth.id;
+  // Encode origin so callback knows where to redirect after
+  const from = new URL(request.url).searchParams.get('from') || 'settings';
+  const state = `${auth.id}:${from}`;
 
   const oauthUrl = new URL('https://connect.stripe.com/oauth/authorize');
   oauthUrl.searchParams.set('response_type', 'code');

@@ -200,6 +200,7 @@ const CATEGORY_CONFIG: Array<{ id: CategoryId; label: string; note?: string }> =
 export default function CompleteProfile() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
   const [formData, setFormData] = useState({
     businessLicense: '',
     insurancePolicy: '',
@@ -302,8 +303,7 @@ export default function CompleteProfile() {
       if (response.ok) {
         // Mark profile as complete in localStorage
         localStorage.setItem('shopProfileComplete', 'true');
-        alert('✅ Profile completed successfully! You can now access your shop dashboard.');
-        router.push('/shop/subscribe');
+        setStep(2);
       } else {
         let errorMessage = 'Failed to complete profile';
         try {
@@ -323,12 +323,55 @@ export default function CompleteProfile() {
     }
   };
 
+  if (step === 2) {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    return (
+      <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+        <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+          <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>FixTray</Link>
+          <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>Step 2 of 2 — Connect Payout Account</div>
+        </div>
+        <div style={{maxWidth:600, margin:'0 auto', padding:48}}>
+          <div style={{background:'rgba(0,0,0,0.2)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:16, padding:40, textAlign:'center'}}>
+            <div style={{fontSize:56, marginBottom:16}}>💳</div>
+            <h2 style={{fontSize:26, fontWeight:800, color:'#e5e7eb', marginBottom:12}}>Connect Your Stripe Account</h2>
+            <p style={{color:'#9aa3b2', fontSize:15, marginBottom:8, lineHeight:1.6}}>
+              This is <strong style={{color:'#e5e7eb'}}>required</strong> to receive customer payments directly into your bank account.
+            </p>
+            <p style={{color:'#9aa3b2', fontSize:14, marginBottom:32, lineHeight:1.6}}>
+              When a customer pays a work order, Stripe sends the full repair amount straight to you. FixTray only collects a separate $5 service fee added on top — your money never passes through us.
+            </p>
+            <a
+              href={`/api/stripe/connect?from=onboarding`}
+              style={{
+                display:'block',
+                padding:'16px 32px',
+                background:'#635bff',
+                color:'white',
+                borderRadius:10,
+                fontSize:16,
+                fontWeight:700,
+                textDecoration:'none',
+                marginBottom:16,
+              }}
+            >
+              🔗 Connect with Stripe
+            </a>
+            <p style={{color:'#6b7280', fontSize:12}}>
+              You'll be taken to Stripe's secure onboarding. Once complete you'll be redirected back to choose your subscription plan.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
       {/* Header */}
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>SOS</Link>
-        <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>Complete Your Shop Profile</div>
+        <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>FixTray</Link>
+        <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>Step 1 of 2 — Complete Your Shop Profile</div>
       </div>
 
       <div style={{maxWidth:900, margin:'0 auto', padding:32}}>

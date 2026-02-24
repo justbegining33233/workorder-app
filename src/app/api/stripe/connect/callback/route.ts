@@ -9,13 +9,21 @@ import prisma from '@/lib/prisma';
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const state = searchParams.get('state'); // shop user ID
+  const rawState = searchParams.get('state') ?? ''; // "shopId:origin"
+  const [state, origin] = rawState.includes(':') ? rawState.split(':') : [rawState, 'settings'];
   const error = searchParams.get('error');
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
 
+  const successRedirect = origin === 'onboarding'
+    ? `${appUrl}/shop/subscribe`
+    : `${appUrl}/shop/settings?stripe_connect=success&tab=billing`;
+  const errorRedirect = origin === 'onboarding'
+    ? `${appUrl}/shop/complete-profile?stripe_connect=error`
+    : `${appUrl}/shop/settings?stripe_connect=error&tab=billing`;
+
   if (error || !code || !state) {
     console.error('Stripe Connect OAuth error:', error);
-    return NextResponse.redirect(`${appUrl}/shop/settings?stripe_connect=error&tab=billing`);
+    return NextResponse.redirect(errorRedirect);
   }
 
   try {
@@ -34,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     if (tokenData.error || !tokenData.stripe_user_id) {
       console.error('Stripe token exchange failed:', tokenData);
-      return NextResponse.redirect(`${appUrl}/shop/settings?stripe_connect=error&tab=billing`);
+      return NextResponse.redirect(errorRedirect);
     }
 
     // Save the connected account ID to the shop
@@ -43,9 +51,9 @@ export async function GET(request: NextRequest) {
       data: { stripeAccountId: tokenData.stripe_user_id },
     });
 
-    return NextResponse.redirect(`${appUrl}/shop/settings?stripe_connect=success&tab=billing`);
+    return NextResponse.redirect(successRedirect);
   } catch (err) {
     console.error('Stripe Connect callback error:', err);
-    return NextResponse.redirect(`${appUrl}/shop/settings?stripe_connect=error&tab=billing`);
+    return NextResponse.redirect(errorRedirect);
   }
 }
