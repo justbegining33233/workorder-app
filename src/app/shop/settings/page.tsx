@@ -838,7 +838,6 @@ function ShopSettingsPageContent() {
   const tabs = [
     { id: 'general', icon: '🏢', name: 'General Info' },
     { id: 'hours', icon: '🕐', name: 'Operating Hours' },
-    { id: 'services', icon: '🔧', name: 'Services' },
     { id: 'billing', icon: '💳', name: 'Billing & Plan' },
     { id: 'notifications', icon: '🔔', name: 'Notifications' },
   ];
@@ -1054,7 +1053,7 @@ function ShopSettingsPageContent() {
               </div>
             )}
 
-            {activeTab === 'services' && (
+            {activeTab === 'services_removed' && (
               <div>
                 <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
                   <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>Offered Services</h2>
