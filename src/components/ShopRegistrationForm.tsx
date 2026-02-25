@@ -371,7 +371,14 @@ export default function ShopRegistrationForm() {
       });
 
       if (res.ok) {
-        router.push('/auth/thank-you');
+        const data = await res.json();
+        if (data.checkoutUrl) {
+          // Redirect to Stripe hosted checkout to collect payment for the subscription
+          window.location.href = data.checkoutUrl;
+        } else {
+          // Fallback: Stripe wasn't configured — go to thank-you page
+          router.push('/auth/thank-you');
+        }
       } else {
         const errorData = await res.json();
         setError(errorData.error || 'Registration failed');

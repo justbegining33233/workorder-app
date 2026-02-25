@@ -152,10 +152,62 @@ export async function POST(request: NextRequest) {
         break;
       }
 
-      // Work order payment completed via Stripe Checkout
+      // Checkout completed — handles both work-order payments and new shop registrations
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        const { workOrderId } = session.metadata ?? {};
+        const { workOrderId, shopId, plan, registrationFlow } = session.metadata ?? {};
+
+        // ── Registration flow: shop owner completed Stripe Checkout ──────────
+        if (registrationFlow === 'true' && shopId && plan) {
+          console.log(`✅ [WEBHOOK] Registration checkout complete for shopId: ${shopId}, plan: ${plan}`);
+
+          // Retrieve the subscription Stripe just created so we have real IDs
+          const stripeSubscriptionId = typeof session.subscription === 'string'
+            ? session.subscription
+            : session.subscription?.id ?? null;
+
+          const { SUBSCRIPTION_PLANS } = await import('@/lib/subscription');
+          const planDetails = (SUBSCRIPTION_PLANS as any)[plan];
+          const trialEndDate = new Date();
+          trialEndDate.setDate(trialEndDate.getDate() + 7);
+
+          // Upsert the subscription record (avoid duplicates on retried webhooks)
+          const existing = await prisma.subscription.findFirst({ where: { shopId } });
+          if (existing) {
+            await prisma.subscription.update({
+              where: { id: existing.id },
+              data: {
+                plan,
+                status: 'trialing',
+                stripeSubscriptionId: stripeSubscriptionId ?? existing.stripeSubscriptionId,
+                stripeCustomerId: typeof session.customer === 'string' ? session.customer : existing.stripeCustomerId,
+                currentPeriodStart: new Date(),
+                currentPeriodEnd: trialEndDate,
+                maxUsers: planDetails?.maxUsers ?? 1,
+                maxShops: planDetails?.maxShops ?? 1,
+              },
+            });
+          } else {
+            await prisma.subscription.create({
+              data: {
+                shopId,
+                plan,
+                status: 'trialing',
+                stripeSubscriptionId: stripeSubscriptionId ?? '',
+                stripeCustomerId: typeof session.customer === 'string' ? session.customer : '',
+                currentPeriodStart: new Date(),
+                currentPeriodEnd: trialEndDate,
+                maxUsers: planDetails?.maxUsers ?? 1,
+                maxShops: planDetails?.maxShops ?? 1,
+              },
+            });
+          }
+
+          console.log(`✅ [WEBHOOK] Subscription record saved for shopId: ${shopId}`);
+          break;
+        }
+
+        // ── Work-order payment flow ───────────────────────────────────────────
         if (!workOrderId) break;
 
         console.log(`✅ [WEBHOOK] Checkout complete for work order: ${workOrderId}`);

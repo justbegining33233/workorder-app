@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
-import { createSubscription } from '@/lib/stripe';
-import { SUBSCRIPTION_PLANS } from '@/lib/subscription';
 
 export async function POST(request: Request) {
   try {
@@ -71,59 +69,62 @@ export async function POST(request: Request) {
     
     console.log('✅ [REGISTER] Shop created successfully! ID:', newShop.id);
 
-    // Create Stripe customer and subscription with trial
+    // Create Stripe Checkout Session so the shop owner completes payment on Stripe's hosted page
+    let checkoutUrl: string | null = null;
     try {
-      console.log('🔵 [REGISTER] Creating Stripe customer and subscription...');
-      
-      const planDetails = SUBSCRIPTION_PLANS[data.subscriptionPlan];
-      const stripeProduct = await import('@/lib/stripe').then(m => m.STRIPE_PRODUCTS[data.subscriptionPlan]);
-      
-      // Create Stripe customer
-      const stripeCustomer = await import('@/lib/stripe').then(m => m.createOrRetrieveCustomer(data.email, data.ownerName || data.shopName));
-      
-      // Calculate trial end date (7 days from now)
-      const trialEndDate = new Date();
-      trialEndDate.setDate(trialEndDate.getDate() + 7);
-      
-      // Create subscription with trial period
-      const subscription = await import('@/lib/stripe').then(m => m.default.subscriptions.create({
+      console.log('🔵 [REGISTER] Creating Stripe Checkout Session...');
+
+      const { default: stripeClient, STRIPE_PRODUCTS, createOrRetrieveCustomer } = await import('@/lib/stripe');
+      const selectedProduct = STRIPE_PRODUCTS[data.subscriptionPlan];
+
+      // Pre-create (or retrieve) the Stripe customer so the email is pre-filled
+      const stripeCustomer = await createOrRetrieveCustomer(data.email, data.ownerName || data.shopName);
+
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+      const session = await stripeClient.checkout.sessions.create({
+        mode: 'subscription',
         customer: stripeCustomer.id,
-        items: [{ price: stripeProduct.priceId }],
-        trial_end: Math.floor(trialEndDate.getTime() / 1000), // Unix timestamp
-        discounts: data.couponCode ? [{ coupon: data.couponCode }] : undefined, // Apply coupon if provided
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: selectedProduct.priceId,
+            quantity: 1,
+          },
+        ],
+        subscription_data: {
+          trial_period_days: 7, // 7-day free trial — card collected now, charged after trial
+          metadata: {
+            shopId: newShop.id,
+            plan: data.subscriptionPlan,
+          },
+        },
+        allow_promotion_codes: true,
+        billing_address_collection: 'required',
         metadata: {
           shopId: newShop.id,
           plan: data.subscriptionPlan,
           couponCode: data.couponCode || '',
+          registrationFlow: 'true',
         },
-      }));
-      
-      // Create subscription record in database
-      await prisma.subscription.create({
-        data: {
-          shopId: newShop.id,
-          plan: data.subscriptionPlan,
-          status: 'trialing',
-          stripeSubscriptionId: subscription.id,
-          stripeCustomerId: stripeCustomer.id,
-          currentPeriodStart: new Date(),
-          currentPeriodEnd: trialEndDate,
-          maxUsers: planDetails.maxUsers,
-          maxShops: planDetails.maxShops,
-        }
+        success_url: `${appUrl}/register/success?session_id={CHECKOUT_SESSION_ID}&shopId=${newShop.id}`,
+        cancel_url: `${appUrl}/register/canceled?shopId=${newShop.id}`,
       });
-      
-      console.log('✅ [REGISTER] Subscription created with 7-day trial');
+
+      checkoutUrl = session.url;
+      console.log('✅ [REGISTER] Checkout Session created:', session.id);
     } catch (stripeError) {
-      console.error('🔴 [REGISTER] Stripe subscription creation failed:', stripeError);
-      // Don't fail registration if Stripe fails, but log it
-      // In production, you might want to handle this differently
+      console.error('🔴 [REGISTER] Stripe Checkout Session creation failed:', stripeError);
+      // Registration record was saved — admin can still manually activate the shop.
     }
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    return NextResponse.json({
+      success: true,
       shopId: newShop.id,
-      message: 'Shop registration submitted. Awaiting admin approval. Your 7-day free trial has started!'
+      checkoutUrl,
+      message: checkoutUrl
+        ? 'Shop registration submitted. Complete checkout to activate your 7-day free trial.'
+        : 'Shop registration submitted. Awaiting admin approval.',
     });
   } catch (error) {
     console.error('🔴 [REGISTER] ERROR:', error);
