@@ -323,6 +323,28 @@ export default function CompleteProfile() {
     }
   };
 
+  const [stripeLoading, setStripeLoading] = useState(false);
+
+  const handleConnectStripe = async () => {
+    setStripeLoading(true);
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const res = await fetch('/api/stripe/connect?from=onboarding', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Failed to start Stripe Connect. Please try again.');
+        setStripeLoading(false);
+      }
+    } catch {
+      alert('Failed to connect to Stripe. Please try again.');
+      setStripeLoading(false);
+    }
+  };
+
   if (step === 2) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     return (
@@ -341,22 +363,25 @@ export default function CompleteProfile() {
             <p style={{color:'#9aa3b2', fontSize:14, marginBottom:32, lineHeight:1.6}}>
               When a customer pays a work order, Stripe sends the full repair amount straight to you. FixTray only collects a separate $5 service fee added on top — your money never passes through us.
             </p>
-            <a
-              href={`/api/stripe/connect?from=onboarding`}
+            <button
+              onClick={handleConnectStripe}
+              disabled={stripeLoading}
               style={{
                 display:'block',
+                width:'100%',
                 padding:'16px 32px',
-                background:'#635bff',
+                background: stripeLoading ? '#4b4b8f' : '#635bff',
                 color:'white',
                 borderRadius:10,
                 fontSize:16,
                 fontWeight:700,
-                textDecoration:'none',
+                border:'none',
+                cursor: stripeLoading ? 'not-allowed' : 'pointer',
                 marginBottom:16,
               }}
             >
-              🔗 Connect with Stripe
-            </a>
+              {stripeLoading ? 'Connecting...' : '🔗 Connect with Stripe'}
+            </button>
             <p style={{color:'#6b7280', fontSize:12}}>
               You'll be taken to Stripe's secure onboarding. Once complete you'll be redirected back to choose your subscription plan.
             </p>

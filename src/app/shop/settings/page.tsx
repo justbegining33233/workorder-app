@@ -1499,8 +1499,19 @@ function ShopSettingsPageContent() {
                       </div>
                     </div>
                     {!stripeConnected && (
-                      <a
-                        href="/api/stripe/connect"
+                      <button
+                        onClick={async () => {
+                          const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+                          const res = await fetch('/api/stripe/connect', {
+                            headers: { Authorization: `Bearer ${token}` },
+                          });
+                          const data = await res.json();
+                          if (data.url) {
+                            window.location.href = data.url;
+                          } else {
+                            alert(data.error || 'Failed to start Stripe Connect.');
+                          }
+                        }}
                         style={{
                           padding:'10px 20px',
                           background:'#635bff',
@@ -1508,12 +1519,13 @@ function ShopSettingsPageContent() {
                           borderRadius:8,
                           fontSize:14,
                           fontWeight:600,
-                          textDecoration:'none',
+                          border:'none',
+                          cursor:'pointer',
                           whiteSpace:'nowrap',
                         }}
                       >
                         Connect Stripe →
-                      </a>
+                      </button>
                     )}
                     {stripeConnected && (
                       <span style={{color:'#22c55e', fontWeight:600, fontSize:14}}>✓ Connected</span>

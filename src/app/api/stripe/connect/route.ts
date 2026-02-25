@@ -34,5 +34,5 @@ export async function GET(request: NextRequest) {
   // Pre-fill shop type so they land on the right Stripe onboarding
   oauthUrl.searchParams.set('stripe_user[business_type]', 'company');
 
-  return NextResponse.redirect(oauthUrl.toString());
+  return NextResponse.json({ url: oauthUrl.toString() });
 }
