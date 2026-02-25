@@ -1457,79 +1457,31 @@ function ShopSettingsPageContent() {
                   </div>
                 </div>
 
-                {/* Stripe Connect Payout Account */}
+                {/* Stripe Connect Payout Account - Coming Soon */}
                 <div style={{marginBottom:24}}>
                   <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>Payout Account</h3>
-                  <p style={{color:'#9aa3b2', fontSize:13, marginBottom:16}}>Connect your Stripe account to receive work order payments directly. FixTray automatically keeps the $5 service fee and sends the rest to you instantly.</p>
-
-                  {stripeConnectMessage && (
-                    <div style={{
-                      padding:'12px 16px',
-                      borderRadius:8,
-                      marginBottom:16,
-                      background: stripeConnectMessage.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(229,51,42,0.15)',
-                      border: `1px solid ${stripeConnectMessage.type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(229,51,42,0.3)'}`,
-                      color: stripeConnectMessage.type === 'success' ? '#22c55e' : '#e5332a',
-                      fontSize:14,
-                    }}>
-                      {stripeConnectMessage.text}
-                    </div>
-                  )}
-
+                  <p style={{color:'#9aa3b2', fontSize:13, marginBottom:16}}>Connect your Stripe account to receive work order payments directly.</p>
                   <div style={{
                     background:'rgba(255,255,255,0.05)',
                     borderRadius:12,
                     padding:20,
                     display:'flex',
                     justifyContent:'space-between',
-                    alignItems:'center'
+                    alignItems:'center',
+                    opacity:0.6,
                   }}>
                     <div>
-                      <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:4}}>
-                        <div style={{
-                          width:10, height:10, borderRadius:'50%',
-                          background: stripeConnected ? '#22c55e' : '#6b7280'
-                        }} />
-                        <div style={{color:'#e5e7eb', fontWeight:600}}>
-                          {stripeConnected === null ? 'Checking...' : stripeConnected ? 'Payout Account Connected' : 'No Payout Account'}
-                        </div>
-                      </div>
-                      <div style={{color:'#9aa3b2', fontSize:13}}>
-                        {stripeConnected ? 'Payments from work orders go directly to your Stripe account.' : 'Connect now so customers can pay and you receive funds automatically.'}
-                      </div>
+                      <div style={{color:'#e5e7eb', fontWeight:600, marginBottom:4}}>Payout Account</div>
+                      <div style={{color:'#9aa3b2', fontSize:13}}>This feature is coming soon.</div>
                     </div>
-                    {!stripeConnected && (
-                      <button
-                        onClick={async () => {
-                          const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-                          const res = await fetch('/api/stripe/connect', {
-                            headers: { Authorization: `Bearer ${token}` },
-                          });
-                          const data = await res.json();
-                          if (data.url) {
-                            window.location.href = data.url;
-                          } else {
-                            alert(data.error || 'Failed to start Stripe Connect.');
-                          }
-                        }}
-                        style={{
-                          padding:'10px 20px',
-                          background:'#635bff',
-                          color:'white',
-                          borderRadius:8,
-                          fontSize:14,
-                          fontWeight:600,
-                          border:'none',
-                          cursor:'pointer',
-                          whiteSpace:'nowrap',
-                        }}
-                      >
-                        Connect Stripe →
-                      </button>
-                    )}
-                    {stripeConnected && (
-                      <span style={{color:'#22c55e', fontWeight:600, fontSize:14}}>✓ Connected</span>
-                    )}
+                    <span style={{
+                      padding:'8px 16px',
+                      background:'rgba(255,255,255,0.08)',
+                      color:'#9aa3b2',
+                      borderRadius:8,
+                      fontSize:13,
+                      fontWeight:600,
+                    }}>Coming Soon</span>
                   </div>
                 </div>
 
