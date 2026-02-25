@@ -76,7 +76,7 @@ export default function PendingShops() {
           const data = await response.json();
           
           // Check for new shops and send notification
-          if (data.length > previousPendingCount && previousPendingCount > 0) {
+          if (data.length > previousPendingCount) {
             const newCount = data.length - previousPendingCount;
             if (notificationPermission === 'granted') {
               const notification = new Notification('New Shop Registration', {
@@ -149,6 +149,8 @@ export default function PendingShops() {
       if (response.ok) {
         const data = await response.json();
         setPendingShops(data);
+        // Seed the baseline count so the auto-refresh diff works correctly
+        setPreviousPendingCount(data.length);
       }
     } catch (error) {
       console.error('Error fetching pending shops:', error);
