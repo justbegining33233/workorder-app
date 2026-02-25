@@ -351,14 +351,14 @@ export default function CompleteProfile() {
       <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
         <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
           <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>FixTray</Link>
-          <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>Step 2 of 2 — Connect Payout Account</div>
+          <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>Step 2 of 2 — Connect Payout Account (Optional)</div>
         </div>
         <div style={{maxWidth:600, margin:'0 auto', padding:48}}>
           <div style={{background:'rgba(0,0,0,0.2)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:16, padding:40, textAlign:'center'}}>
             <div style={{fontSize:56, marginBottom:16}}>💳</div>
             <h2 style={{fontSize:26, fontWeight:800, color:'#e5e7eb', marginBottom:12}}>Connect Your Stripe Account</h2>
             <p style={{color:'#9aa3b2', fontSize:15, marginBottom:8, lineHeight:1.6}}>
-              This is <strong style={{color:'#e5e7eb'}}>required</strong> to receive customer payments directly into your bank account.
+              Connect your Stripe account to receive customer payments directly into your bank account. You can do this later from your settings.
             </p>
             <p style={{color:'#9aa3b2', fontSize:14, marginBottom:32, lineHeight:1.6}}>
               When a customer pays a work order, Stripe sends the full repair amount straight to you. FixTray only collects a separate $5 service fee added on top — your money never passes through us.
@@ -377,13 +377,31 @@ export default function CompleteProfile() {
                 fontWeight:700,
                 border:'none',
                 cursor: stripeLoading ? 'not-allowed' : 'pointer',
-                marginBottom:16,
+                marginBottom:12,
               }}
             >
               {stripeLoading ? 'Connecting...' : '🔗 Connect with Stripe'}
             </button>
+            <button
+              onClick={() => { window.location.href = '/shop/dashboard'; }}
+              style={{
+                display:'block',
+                width:'100%',
+                padding:'12px 32px',
+                background:'transparent',
+                color:'#9aa3b2',
+                borderRadius:10,
+                fontSize:14,
+                fontWeight:600,
+                border:'1px solid rgba(255,255,255,0.1)',
+                cursor:'pointer',
+                marginBottom:16,
+              }}
+            >
+              Skip for now →
+            </button>
             <p style={{color:'#6b7280', fontSize:12}}>
-              You'll be taken to Stripe's secure onboarding. Once complete you'll be redirected back to choose your subscription plan.
+              You'll be taken to Stripe's secure onboarding. Once complete you'll be redirected back to your dashboard.
             </p>
           </div>
         </div>
