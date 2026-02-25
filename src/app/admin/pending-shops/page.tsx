@@ -64,11 +64,13 @@ export default function PendingShops() {
     
     const refreshPendingShops = async () => {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch('/api/shops/pending', {
           cache: 'no-store',
           credentials: 'include',
           headers: {
             'Cache-Control': 'no-cache',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
           },
         });
         
@@ -139,11 +141,13 @@ export default function PendingShops() {
 
   const fetchPendingShops = async () => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch('/api/shops/pending', {
         cache: 'no-store',
         credentials: 'include',
         headers: {
           'Cache-Control': 'no-cache',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         },
       });
       if (response.ok) {
