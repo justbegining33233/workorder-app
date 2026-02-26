@@ -40,7 +40,7 @@ export default function AppGuidePage() {
         { name: 'CSRF Protection', description: 'Cross-site request forgery prevention', status: 'ready', apiEndpoint: '/api/auth/csrf' },
         { name: 'Rate Limiting', description: 'Brute force protection on login', status: 'ready', notes: 'Built into auth endpoints' },
         { name: 'Session Management', description: 'View and revoke active sessions', status: 'ready', apiEndpoint: '/api/auth/sessions' },
-        { name: 'Two-Factor Auth (2FA)', description: 'Additional login security', status: 'not-implemented', notes: 'Planned for future release' },
+        { name: 'Two-Factor Auth (2FA)', description: 'Additional login security', status: 'ready', route: '/shop/settings/two-factor', apiEndpoint: '/api/auth/2fa/status', notes: 'OTP-based 2FA; generate code via /api/auth/2fa/setup → verify with /api/auth/2fa/verify → disable with /api/auth/2fa/disable' },
       ]
     },
     {
@@ -74,7 +74,7 @@ export default function AppGuidePage() {
         { name: 'Work Assignments', description: 'Assign jobs to technicians', status: 'ready', apiEndpoint: '/api/manager/assignments' },
         { name: 'Shop Settings', description: 'Configure shop preferences', status: 'ready', apiEndpoint: '/api/shop/settings' },
         { name: 'Business Hours', description: 'Set operating hours', status: 'ready', notes: 'Part of shop profile' },
-        { name: 'Multiple Locations', description: 'Manage multiple shop locations', status: 'not-implemented', notes: 'Single location per shop currently' },
+        { name: 'Multiple Locations', description: 'Manage multiple shop locations', status: 'ready', route: '/shop/locations', apiEndpoint: '/api/shop/locations', notes: 'Full location CRUD — add branches, set main location, activate/deactivate' },
       ]
     },
     {
@@ -91,7 +91,7 @@ export default function AppGuidePage() {
         { name: 'Invoice Generation', description: 'Create invoice from work order', status: 'ready', apiEndpoint: '/api/workorders/[id]/invoice' },
         { name: 'Payment Processing', description: 'Record payments on orders', status: 'ready', apiEndpoint: '/api/workorders/payment' },
         { name: 'Print Work Order', description: 'Print-friendly work order view', status: 'ready', notes: 'Print-optimized layout with CSS @media print' },
-        { name: 'Work Order Templates', description: 'Save common job templates', status: 'not-implemented', notes: 'Planned feature' },
+        { name: 'Work Order Templates', description: 'Save common job templates', status: 'ready', route: '/shop/templates', apiEndpoint: '/api/shop/templates', notes: 'Create reusable templates with service type, repairs, maintenance, cost, and labor hours' },
       ]
     },
     {
@@ -149,8 +149,8 @@ export default function AppGuidePage() {
         { name: 'Inventory Requests', description: 'Request parts from admin', status: 'ready', apiEndpoint: '/api/shop/inventory-requests' },
         { name: 'Stock Adjustments', description: 'Adjust quantities manually', status: 'ready', apiEndpoint: '/api/shop/inventory-stock' },
         { name: 'Reorder Points', description: 'Set auto-reorder levels', status: 'ready', notes: 'reorderPoint field on InventoryPart; getItemsBelowReorderPoint() helper available' },
-        { name: 'Barcode Scanning', description: 'Scan parts with barcode', status: 'not-implemented', notes: 'Planned feature' },
-        { name: 'Vendor Management', description: 'Manage parts suppliers', status: 'not-implemented', notes: 'Planned feature' },
+        { name: 'Barcode Scanning', description: 'Scan parts with barcode', status: 'ready', notes: 'BarcodeScanner component (src/components/BarcodeScanner.tsx) uses native BarcodeDetector API (Chrome/Edge); falls back to manual entry' },
+        { name: 'Vendor Management', description: 'Manage parts suppliers', status: 'ready', route: '/shop/vendors', apiEndpoint: '/api/shop/vendors', notes: 'Full CRUD for suppliers/distributors — contact info, account numbers, payment terms, ratings' },
       ]
     },
     {
@@ -176,7 +176,7 @@ export default function AppGuidePage() {
         { name: 'Available Slots', description: 'Define available time slots', status: 'ready', notes: 'Based on business hours' },
         { name: 'Appointment Reminders', description: 'Auto-remind customers', status: 'ready', apiEndpoint: '/api/cron/appointment-reminders', notes: 'Cron endpoint sends in-app notifications for appointments in next 24h' },
         { name: 'Calendar View', description: 'View appointments on calendar', status: 'ready', route: '/shop/calendar' },
-        { name: 'Recurring Appointments', description: 'Set up repeat bookings', status: 'not-implemented', notes: 'Planned feature' },
+        { name: 'Recurring Appointments', description: 'Set up repeat bookings', status: 'ready', route: '/shop/appointments/recurring', apiEndpoint: '/api/appointments/recurring', notes: 'weekly/biweekly/monthly/quarterly/annually — pause, resume, mark ran (auto-advances date)' },
       ]
     },
     {
