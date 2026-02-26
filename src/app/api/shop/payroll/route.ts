@@ -202,6 +202,59 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    if (format === 'xlsx') {
+      // Generate Excel-compatible HTML table with proper MIME type
+      const fname = `payroll_${start.toISOString().split('T')[0]}_to_${end.toISOString().split('T')[0]}`;
+      const rows = Object.values(employeeHours as Record<string, any>).flatMap((emp: any) =>
+        emp.entries.map((entry: any, idx: number) => `
+          <tr>
+            <td>${idx === 0 ? emp.name : ''}</td>
+            <td>${idx === 0 ? emp.email : ''}</td>
+            <td>${idx === 0 ? emp.role : ''}</td>
+            <td>${entry.date}</td>
+            <td>${entry.clockIn}</td>
+            <td>${entry.clockOut || ''}</td>
+            <td>${entry.hours?.toFixed(2) || ''}</td>
+            <td>${idx === 0 ? emp.hourlyRate : ''}</td>
+            <td>${idx === 0 ? emp.regularHours.toFixed(2) : ''}</td>
+            <td>${idx === 0 ? emp.overtimeHours.toFixed(2) : ''}</td>
+            <td>${idx === 0 ? '$' + emp.regularPay.toFixed(2) : ''}</td>
+            <td>${idx === 0 ? '$' + emp.overtimePay.toFixed(2) : ''}</td>
+            <td>${idx === 0 ? '$' + emp.totalPay.toFixed(2) : ''}</td>
+          </tr>`).join('')
+      );
+      const totals = report.summary;
+      const xlsx = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+        <x:Name>Payroll ${fname}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+        </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>
+        <body>
+          <h2>Payroll Report: ${start.toISOString().split('T')[0]} to ${end.toISOString().split('T')[0]}</h2>
+          <table border="1" cellspacing="0" cellpadding="4">
+            <thead><tr style="background:#d0d0d0;font-weight:bold;">
+              <th>Employee</th><th>Email</th><th>Role</th><th>Date</th>
+              <th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Rate</th>
+              <th>Reg Hours</th><th>OT Hours</th><th>Reg Pay</th><th>OT Pay</th><th>Total Pay</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+            <tfoot><tr style="font-weight:bold;background:#e8f0fe;">
+              <td colspan="8">TOTALS</td>
+              <td>${totals.regularHours.toFixed(2)}</td>
+              <td>${totals.overtimeHours.toFixed(2)}</td>
+              <td></td><td></td>
+              <td>$${totals.totalPayroll.toFixed(2)}</td>
+            </tr></tfoot>
+          </table>
+        </body></html>`;
+      return new NextResponse(xlsx, {
+        headers: {
+          'Content-Type': 'application/vnd.ms-excel',
+          'Content-Disposition': `attachment; filename=${fname}.xls`,
+        },
+      });
+    }
+
     return NextResponse.json(report);
   } catch (error) {
     console.error('Error generating payroll report:', error);

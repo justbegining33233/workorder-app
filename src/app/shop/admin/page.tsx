@@ -1429,7 +1429,28 @@ export default function ShopAdminPage() {
                     </div>
 
                     {settings.gpsVerificationEnabled && (
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                      <div>
+                        <div style={{marginBottom:12}}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!navigator.geolocation) { alert('Geolocation not supported by this browser.'); return; }
+                              navigator.geolocation.getCurrentPosition(
+                                (pos) => {
+                                  setSettings({ ...settings, shopLatitude: pos.coords.latitude, shopLongitude: pos.coords.longitude });
+                                  alert(`Location set: ${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`);
+                                },
+                                () => alert('Could not get location. Please allow location access and try again.'),
+                                { enableHighAccuracy: true, timeout: 10000 }
+                              );
+                            }}
+                            style={{ padding:'10px 20px', background:'rgba(59,130,246,0.2)', border:'1px solid rgba(59,130,246,0.4)', borderRadius:8, color:'#3b82f6', fontSize:13, fontWeight:600, cursor:'pointer' }}
+                          >
+                            📍 Use My Current Location
+                          </button>
+                          <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>Click while you're at the shop to auto-fill coordinates</div>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
                         <div>
                           <label style={{ color: '#9aa3b2', fontSize: 14, display: 'block', marginBottom: 8 }}>
                             Shop Latitude
@@ -1491,6 +1512,7 @@ export default function ShopAdminPage() {
                             }}
                           />
                         </div>
+                      </div>
                       </div>
                     )}
                     <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 8 }}>

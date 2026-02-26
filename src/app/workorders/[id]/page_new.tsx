@@ -5,6 +5,20 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { WorkOrder } from '@/types/workorder';
 
+const printStyles = `
+@media print {
+  body { background: white !important; color: black !important; }
+  .no-print { display: none !important; }
+  .print-page { background: white !important; color: black !important; min-height: auto !important; }
+  .print-header { background: white !important; border-bottom: 2px solid #ccc !important; color: black !important; padding: 16px !important; }
+  .print-content { padding: 16px !important; }
+  a { color: black !important; text-decoration: none !important; }
+  button { display: none !important; }
+  select { display: none !important; }
+  * { box-shadow: none !important; }
+}
+`;
+
 export default function WorkOrderDetail({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [id, setId] = useState<string | null>(null);
@@ -109,11 +123,12 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
   const grandTotal = partsTotal + laborTotal + additionalTotal;
 
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+    <div className="print-page" style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+      <style dangerouslySetInnerHTML={{__html: printStyles}} />
       {/* Header */}
-      <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'20px 32px'}}>
+      <div className="print-header" style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
-          <Link href="/workorders/list" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>← Back to Work Orders</Link>
+          <Link href="/workorders/list" className="no-print" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>← Back to Work Orders</Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:16}}>
             <div>
               <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>Work Order: {workOrder.id}</h1>
@@ -133,8 +148,15 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
               <span style={{padding:'8px 16px', background:statusColors[workOrder.status], color:statusTextColors[workOrder.status], borderRadius:8, fontSize:13, fontWeight:600}}>
                 {workOrder.status.replace('-', ' ').toUpperCase()}
               </span>
+              <button
+                onClick={() => window.print()}
+                className="no-print"
+                style={{padding:'8px 16px', background:'#3b82f6', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}
+              >
+                🖨️ Print
+              </button>
               {['tech', 'manager'].includes(role) && (
-                <button onClick={handleDelete} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
+                <button onClick={handleDelete} className="no-print" style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
                   Delete
                 </button>
               )}

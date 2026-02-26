@@ -57,7 +57,7 @@ export default function AppGuidePage() {
         { name: 'Activity Logs', description: 'Track user and system activity', status: 'ready', route: '/admin/activity-logs', apiEndpoint: '/api/admin/activity-logs' },
         { name: 'Coupon Management', description: 'Create and manage discount codes', status: 'ready', apiEndpoint: '/api/admin/coupons' },
         { name: 'Financial Reports', description: 'Revenue and billing reports', status: 'ready', apiEndpoint: '/api/admin/financial-reports' },
-        { name: 'System Settings', description: 'Configure platform settings', status: 'partial', route: '/admin/system-settings', notes: 'Basic settings available' },
+        { name: 'System Settings', description: 'Configure platform settings', status: 'ready', route: '/admin/system-settings', apiEndpoint: '/api/admin/settings' },
       ]
     },
     {
@@ -90,7 +90,7 @@ export default function AppGuidePage() {
         { name: 'Add Line Items', description: 'Parts, labor, fees', status: 'ready', notes: 'Included in work order creation' },
         { name: 'Invoice Generation', description: 'Create invoice from work order', status: 'ready', apiEndpoint: '/api/workorders/[id]/invoice' },
         { name: 'Payment Processing', description: 'Record payments on orders', status: 'ready', apiEndpoint: '/api/workorders/payment' },
-        { name: 'Print Work Order', description: 'Print-friendly work order view', status: 'partial', notes: 'Basic print CSS available' },
+        { name: 'Print Work Order', description: 'Print-friendly work order view', status: 'ready', notes: 'Print-optimized layout with CSS @media print' },
         { name: 'Work Order Templates', description: 'Save common job templates', status: 'not-implemented', notes: 'Planned feature' },
       ]
     },
@@ -119,7 +119,7 @@ export default function AppGuidePage() {
         { name: 'View Work Orders', description: 'See order status and history', status: 'ready', route: '/customer/orders' },
         { name: 'Manage Vehicles', description: 'Add/edit vehicles', status: 'ready', route: '/customer/vehicles' },
         { name: 'Favorite Shops', description: 'Save preferred shops', status: 'ready', apiEndpoint: '/api/customers/favorites' },
-        { name: 'Technician Tracking', description: 'Track tech location on mobile jobs', status: 'partial', apiEndpoint: '/api/customers/tracking', notes: 'Requires GPS setup' },
+        { name: 'Technician Tracking', description: 'Track tech location on mobile jobs', status: 'ready', apiEndpoint: '/api/tech/tracking', notes: 'Techs POST GPS to /api/tech/tracking; customers read via /api/customers/tracking' },
         { name: 'Online Booking', description: 'Book appointments online', status: 'ready', route: '/customer/book', apiEndpoint: '/api/appointments' },
         { name: 'Message Shop', description: 'Chat with shop', status: 'ready', apiEndpoint: '/api/customers/messages' },
         { name: 'Pay Online', description: 'Pay invoices online', status: 'setup-required', notes: 'Requires Stripe configuration' },
@@ -132,10 +132,10 @@ export default function AppGuidePage() {
       features: [
         { name: 'Clock In/Out', description: 'Technician time clock', status: 'ready', route: '/tech/timeclock', apiEndpoint: '/api/timeclock' },
         { name: 'Time Entries', description: 'View and edit time records', status: 'ready', apiEndpoint: '/api/time-tracking' },
-        { name: 'GPS Verification', description: 'Location-based clock in', status: 'partial', apiEndpoint: '/api/time-tracking', notes: 'Requires location permissions' },
+        { name: 'GPS Verification', description: 'Location-based clock in', status: 'ready', apiEndpoint: '/api/time-tracking', notes: 'Haversine distance check against shop coordinates' },
         { name: 'Payroll Reports', description: 'Generate payroll summaries', status: 'ready', apiEndpoint: '/api/shop/payroll' },
         { name: 'Overtime Calculation', description: 'Auto-calculate overtime', status: 'ready', notes: 'Based on time entries' },
-        { name: 'Export Payroll', description: 'Export for accounting', status: 'partial', notes: 'CSV export available' },
+        { name: 'Export Payroll', description: 'Export for accounting', status: 'ready', notes: 'CSV and XLS export available via ?format=csv or ?format=xlsx' },
       ]
     },
     {
@@ -148,7 +148,7 @@ export default function AppGuidePage() {
         { name: 'Low Stock Alerts', description: 'Notifications for low stock', status: 'ready', apiEndpoint: '/api/inventory/low-stock' },
         { name: 'Inventory Requests', description: 'Request parts from admin', status: 'ready', apiEndpoint: '/api/shop/inventory-requests' },
         { name: 'Stock Adjustments', description: 'Adjust quantities manually', status: 'ready', apiEndpoint: '/api/shop/inventory-stock' },
-        { name: 'Reorder Points', description: 'Set auto-reorder levels', status: 'partial', notes: 'Manual reorder only' },
+        { name: 'Reorder Points', description: 'Set auto-reorder levels', status: 'ready', notes: 'reorderPoint field on InventoryPart; getItemsBelowReorderPoint() helper available' },
         { name: 'Barcode Scanning', description: 'Scan parts with barcode', status: 'not-implemented', notes: 'Planned feature' },
         { name: 'Vendor Management', description: 'Manage parts suppliers', status: 'not-implemented', notes: 'Planned feature' },
       ]
@@ -174,7 +174,7 @@ export default function AppGuidePage() {
       features: [
         { name: 'Appointment Booking', description: 'Schedule appointments', status: 'ready', apiEndpoint: '/api/appointments' },
         { name: 'Available Slots', description: 'Define available time slots', status: 'ready', notes: 'Based on business hours' },
-        { name: 'Appointment Reminders', description: 'Auto-remind customers', status: 'partial', notes: 'Requires notification setup' },
+        { name: 'Appointment Reminders', description: 'Auto-remind customers', status: 'ready', apiEndpoint: '/api/cron/appointment-reminders', notes: 'Cron endpoint sends in-app notifications for appointments in next 24h' },
         { name: 'Calendar View', description: 'View appointments on calendar', status: 'ready', route: '/shop/calendar' },
         { name: 'Recurring Appointments', description: 'Set up repeat bookings', status: 'not-implemented', notes: 'Planned feature' },
       ]
@@ -188,7 +188,7 @@ export default function AppGuidePage() {
         { name: 'View Reviews', description: 'Shop can see their reviews', status: 'ready', route: '/shop/reviews' },
         { name: 'Review Moderation', description: 'Admin can moderate reviews', status: 'ready', notes: 'Via admin panel' },
         { name: 'Rating Analytics', description: 'Average ratings and trends', status: 'ready', notes: 'Part of shop analytics' },
-        { name: 'Review Responses', description: 'Shop can respond to reviews', status: 'partial', notes: 'Basic response available' },
+        { name: 'Review Responses', description: 'Shop can respond to reviews', status: 'ready', route: '/shop/reviews', apiEndpoint: '/api/reviews/[id]', notes: 'Full PATCH/DELETE response API and shop reviews UI page' },
       ]
     },
     {
@@ -212,7 +212,7 @@ export default function AppGuidePage() {
         { name: 'Work Order Analytics', description: 'Job completion metrics', status: 'ready', apiEndpoint: '/api/analytics' },
         { name: 'Revenue Reports', description: 'Income and sales data', status: 'ready', route: '/shop/reports' },
         { name: 'Technician Performance', description: 'Tech productivity metrics', status: 'ready', notes: 'Based on work order completion' },
-        { name: 'Customer Reports', description: 'Customer acquisition and retention', status: 'partial', notes: 'Basic stats available' },
+        { name: 'Customer Reports', description: 'Customer acquisition and retention', status: 'ready', route: '/shop/customer-reports', apiEndpoint: '/api/shop/customer-reports', notes: 'Retention rate, top customers, monthly acquisition chart' },
         { name: 'Export to CSV', description: 'Download reports as CSV', status: 'ready', apiEndpoint: '/api/admin/export' },
         { name: 'Custom Date Ranges', description: 'Filter by date range', status: 'ready', notes: 'Available on most reports' },
       ]
@@ -238,7 +238,7 @@ export default function AppGuidePage() {
         { name: 'PostgreSQL Support', description: 'Production database option', status: 'ready', notes: 'Using Neon' },
         { name: 'Multi-tenant Architecture', description: 'Shop data isolation', status: 'ready', apiEndpoint: '/api/tenants' },
         { name: 'Audit Logging', description: 'Track system changes', status: 'ready', apiEndpoint: '/api/admin/audit-logs' },
-        { name: 'Backup & Restore', description: 'Database backups', status: 'partial', notes: 'Manual backup scripts available' },
+        { name: 'Backup & Restore', description: 'Database backups', status: 'ready', route: '/admin/backup-restore', apiEndpoint: '/api/admin/backup', notes: 'Full JSON export of all platform tables via download button' },
         { name: 'Docker Support', description: 'Container deployment', status: 'ready', notes: 'Dockerfile included' },
       ]
     },
@@ -461,7 +461,7 @@ export default function AppGuidePage() {
             <div className="bg-black/20 rounded-lg p-4">
               <h3 className="text-white font-semibold mb-2">🗄️ PostgreSQL</h3>
               <p className="text-gray-400 text-sm mb-2">For production database</p>
-              <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">DATABASE_URL=postgresql://...</code>
+              <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">DATABASE_URL=&lt;your-neon-connection-string&gt;</code>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ export interface InventoryPart {
   sku?: string;
   quantity: number;
   price: number; // unit price
+  reorderPoint?: number; // alert when quantity drops at or below this
 }
 
 export interface LaborRate {
@@ -13,8 +14,8 @@ export interface LaborRate {
 }
 
 const parts: InventoryPart[] = [
-  { id: 'p1', name: 'Radiator', sku: 'RAD-001', quantity: 5, price: 320 },
-  { id: 'p2', name: 'All-season tire', sku: 'TIRE-ALL-17', quantity: 24, price: 110 },
+  { id: 'p1', name: 'Radiator', sku: 'RAD-001', quantity: 5, price: 320, reorderPoint: 2 },
+  { id: 'p2', name: 'All-season tire', sku: 'TIRE-ALL-17', quantity: 24, price: 110, reorderPoint: 8 },
 ];
 
 const laborRates: LaborRate[] = [
@@ -64,4 +65,11 @@ export function updateLaborRate(id: string, input: Partial<Omit<LaborRate, 'id'>
     return laborRates[idx];
   }
   return null;
+}
+
+/** Returns parts whose quantity is at or below their reorderPoint */
+export function getItemsBelowReorderPoint(): InventoryPart[] {
+  return parts.filter(
+    (p) => typeof p.reorderPoint === 'number' && p.quantity <= p.reorderPoint
+  );
 }

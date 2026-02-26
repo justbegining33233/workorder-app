@@ -780,6 +780,9 @@ model Review {
   rating  Int // 1-5 stars
   comment String?
 
+  shopResponse   String?
+  shopResponseAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
