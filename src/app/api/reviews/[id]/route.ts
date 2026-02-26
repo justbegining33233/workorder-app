@@ -5,9 +5,10 @@ import { verifyToken } from '@/lib/auth';
 // PATCH /api/reviews/[id] - Shop responds to a review
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
     if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -25,7 +26,7 @@ export async function PATCH(
     }
 
     // Verify the review belongs to this shop
-    const review = await prisma.review.findUnique({ where: { id: params.id } });
+    const review = await prisma.review.findUnique({ where: { id } });
     if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 });
 
     const shopId = decoded.role === 'shop' ? decoded.id : decoded.shopId;
@@ -34,7 +35,7 @@ export async function PATCH(
     }
 
     const updated = await prisma.review.update({
-      where: { id: params.id },
+      where: { id },
       // shopResponse/shopResponseAt exist in schema — cast avoids stale TS cache mismatch
       data: {
         shopResponse: response.trim(),
@@ -52,9 +53,10 @@ export async function PATCH(
 // DELETE /api/reviews/[id] - Delete shop response
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
     if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -63,7 +65,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const review = await prisma.review.findUnique({ where: { id: params.id } });
+    const review = await prisma.review.findUnique({ where: { id } });
     if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 });
 
     if (decoded.role !== 'admin') {
@@ -74,7 +76,7 @@ export async function DELETE(
     }
 
     const updated = await prisma.review.update({
-      where: { id: params.id },
+      where: { id },
       data: { shopResponse: null, shopResponseAt: null } as Parameters<typeof prisma.review.update>[0]['data'],
     });
 
