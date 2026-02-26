@@ -20,17 +20,15 @@ export async function GET(request: NextRequest) {
       appointments,
       reviews,
       subscriptions,
-      invoices,
       notifications,
     ] = await Promise.all([
       prisma.shop.findMany({ select: { id: true, shopName: true, email: true, status: true, createdAt: true, city: true, state: true } }),
       prisma.customer.findMany({ select: { id: true, firstName: true, lastName: true, email: true, createdAt: true } }),
       prisma.tech.findMany({ select: { id: true, firstName: true, lastName: true, email: true, role: true, shopId: true } }),
-      prisma.workOrder.findMany({ select: { id: true, status: true, shopId: true, customerId: true, createdAt: true, totalAmount: true } }),
+      prisma.workOrder.findMany({ select: { id: true, status: true, shopId: true, customerId: true, createdAt: true, estimatedCost: true, amountPaid: true, paymentStatus: true } }),
       prisma.appointment.findMany({ select: { id: true, status: true, scheduledDate: true, shopId: true, customerId: true } }),
       prisma.review.findMany({ select: { id: true, rating: true, comment: true, shopId: true, customerId: true, createdAt: true } }),
       prisma.subscription.findMany({ select: { id: true, plan: true, status: true, shopId: true, currentPeriodEnd: true } }),
-      prisma.invoice.findMany({ select: { id: true, amount: true, status: true, shopId: true, createdAt: true } }),
       prisma.notification.findMany({ select: { id: true, type: true, title: true, customerId: true, read: true, createdAt: true } }),
     ]);
 
@@ -46,7 +44,6 @@ export async function GET(request: NextRequest) {
         appointments: appointments.length,
         reviews: reviews.length,
         subscriptions: subscriptions.length,
-        invoices: invoices.length,
         notifications: notifications.length,
       },
       data: {
@@ -57,7 +54,6 @@ export async function GET(request: NextRequest) {
         appointments,
         reviews,
         subscriptions,
-        invoices,
         notifications,
       },
     };

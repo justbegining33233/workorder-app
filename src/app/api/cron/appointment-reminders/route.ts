@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
             title: 'Appointment Reminder',
             message: `Your appointment at ${appointment.shop.shopName} is tomorrow at ${apptTime} for ${vehicleInfo}. ${appointment.shop.address ? `Address: ${appointment.shop.address}, ${appointment.shop.city}, ${appointment.shop.state}` : ''} ${appointment.shop.phone ? `Phone: ${appointment.shop.phone}` : ''}`,
             appointmentId: appointment.id,
+            deliveryMethod: 'in-app',
           },
         });
 
