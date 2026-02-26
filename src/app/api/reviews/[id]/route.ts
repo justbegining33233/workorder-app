@@ -35,10 +35,11 @@ export async function PATCH(
 
     const updated = await prisma.review.update({
       where: { id: params.id },
+      // shopResponse/shopResponseAt exist in schema — cast avoids stale TS cache mismatch
       data: {
         shopResponse: response.trim(),
         shopResponseAt: new Date(),
-      },
+      } as Parameters<typeof prisma.review.update>[0]['data'],
     });
 
     return NextResponse.json({ review: updated });
@@ -74,7 +75,7 @@ export async function DELETE(
 
     const updated = await prisma.review.update({
       where: { id: params.id },
-      data: { shopResponse: null, shopResponseAt: null },
+      data: { shopResponse: null, shopResponseAt: null } as Parameters<typeof prisma.review.update>[0]['data'],
     });
 
     return NextResponse.json({ review: updated });

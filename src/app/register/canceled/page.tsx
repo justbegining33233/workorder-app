@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 
 function CanceledContent() {
   const params = useSearchParams();
-  const shopId = params.get('shopId');
+  const shopId = params?.get('shopId') ?? null;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', padding: 24 }}>
