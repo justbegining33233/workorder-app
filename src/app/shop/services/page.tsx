@@ -145,13 +145,10 @@ export default function ShopServicesPage() {
         const p = await profileRes.json();
         const st: string = p.shopType || 'mixed';
         setShopType(st);
-        const cats =
-          st === 'mixed' ? ALL_CATEGORIES :
-          st === 'heavy-equipment' ? ['heavy-equipment', 'diesel'] :
-          st === 'tire' ? ['tire', 'gas'] :
-          [st];
-        setRelevantCategories(cats);
-        setCatalogFilterCat(cats[0] || 'diesel');
+        // Always expose all categories in the catalog; shopType only sets the default filter
+        setRelevantCategories(ALL_CATEGORIES);
+        const defaultCat = (st === 'mixed' || !CATALOG[st]) ? 'diesel' : st;
+        setCatalogFilterCat(defaultCat);
       }
     }).finally(() => setLoading(false));
   }, []);
@@ -227,7 +224,7 @@ export default function ShopServicesPage() {
   const activeCats = ALL_CATEGORIES.filter(c => services.some(s => s.category === c));
   const filteredServices = filterCat === 'all' ? services : services.filter(s => s.category === filterCat);
   const addedSet = new Set(services.map(s => `${s.category}::${s.serviceName}`));
-  const catalogCategories = catalogFilterCat === 'all' ? relevantCategories : [catalogFilterCat];
+  const catalogCategories = catalogFilterCat === 'all' ? ALL_CATEGORIES : [catalogFilterCat];
 
   const inputStyle: React.CSSProperties = { width: '100%', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 14px', color: '#f1f5f9', fontSize: 14, boxSizing: 'border-box' };
   const labelStyle: React.CSSProperties = { color: '#94a3b8', fontSize: 13, display: 'block', marginBottom: 6, fontWeight: 500 };
