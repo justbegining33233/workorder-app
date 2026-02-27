@@ -9,6 +9,9 @@ export async function GET(request: NextRequest) {
   // Protect with a simple cron secret
   const cronSecret = request.headers.get('x-cron-secret') || request.nextUrl.searchParams.get('secret');
   const expectedSecret = process.env.CRON_SECRET || 'fixtray-cron-2024';
+  if (!process.env.CRON_SECRET && process.env.NODE_ENV === 'production') {
+    console.error('[Cron] FATAL: CRON_SECRET is not set — appointment-reminders is using insecure fallback in production!');
+  }
   if (cronSecret !== expectedSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

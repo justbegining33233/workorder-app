@@ -23,7 +23,8 @@ interface AuthenticatedSocket extends Socket {
 const fallbackJwt = 'fixtray-default-secret';
 const JWT_SECRET = process.env.JWT_SECRET || fallbackJwt;
 
-if (!process.env.JWT_SECRET) {
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+  console.error('FATAL: JWT_SECRET env var is not set. Using insecure fallback in production — set JWT_SECRET immediately.');
 }
 
 // Global variable to store the io instance

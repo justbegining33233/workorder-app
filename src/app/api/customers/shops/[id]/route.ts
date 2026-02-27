@@ -1,31 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
+import { requireRole, AuthUser } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = requireRole(request, ['customer']);
+  if (auth instanceof NextResponse) return auth;
+
+  const customerId = (auth as AuthUser).id;
+
   try {
-    // Verify authentication
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.substring(7);
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string; role: string };
-    } catch (error) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
-    if (decoded.role !== 'customer') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const customerId = decoded.id;
     const resolvedParams = await params;
     const shopId = resolvedParams.id;
 
