@@ -18,15 +18,17 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const shopId = searchParams.get('shopId');
-    const category = searchParams.get('category'); // diesel, gas
+    const category = searchParams.get('category');
 
     if (!shopId) {
       return NextResponse.json({ error: 'Shop ID required' }, { status: 400 });
     }
 
+    const VALID_CATEGORIES = ['diesel', 'gas', 'small-engine', 'heavy-equipment', 'resurfacing', 'welding', 'tire'];
+
     // Build where clause
     const where: any = { shopId };
-    if (category && (category === 'diesel' || category === 'gas')) {
+    if (category && VALID_CATEGORIES.includes(category)) {
       where.category = category;
     }
 
