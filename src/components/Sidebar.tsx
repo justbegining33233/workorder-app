@@ -59,7 +59,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
     { icon: '', label: 'WO Templates', href: '/shop/templates' },
     { icon: '🏭', label: 'Vendors', href: '/shop/vendors' },
     { icon: '📍', label: 'Locations', href: '/shop/locations' },
-    { icon: '🔄', label: 'Recurring Appts', href: '/shop/appointments/recurring' },
+    { icon: '�', label: 'Recurring Orders', href: '/shop/recurring-workorders' },
     { icon: '🔐', label: 'Two-Factor Auth', href: '/shop/settings/two-factor' },
   ];
 

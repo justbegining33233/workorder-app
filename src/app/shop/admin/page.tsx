@@ -1257,16 +1257,6 @@ export default function ShopAdminPage() {
                             </button>
                           </Link>
 
-                          <Link href="/shop/appointments/recurring" style={{ textDecoration: 'none' }}>
-                            <button style={{ width: '100%', padding: 16, background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, color: '#34d399', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>🔄</span>
-                              <div>
-                                <div>Recurring Appointments</div>
-                                <div style={{ fontSize: 11, opacity: 0.8 }}>Schedule repeat bookings</div>
-                              </div>
-                            </button>
-                          </Link>
-
                           <Link href="/shop/settings/two-factor" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, color: '#60a5fa', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
                               <span style={{ fontSize: 20 }}>🔐</span>
