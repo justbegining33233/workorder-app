@@ -1,14 +1,12 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateCsrf, validatePublicCsrf } from '@/lib/csrf';
+import { requireAuth } from '@/lib/middleware';
 
 export async function POST(request: NextRequest) {
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    if (!request.headers.get('authorization')) {
-      // Allow public double-submit CSRF when not using auth header
-      const ok = validatePublicCsrf(request) || await validateCsrf(request);
-      if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
     const body = await request.json();
     const {
       shopId,
@@ -28,6 +26,12 @@ export async function POST(request: NextRequest) {
 
     if (!shopId) {
       return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
+    }
+
+    // Verify the authenticated user owns this shop (or is an admin)
+    const isAdmin = auth.role === 'admin' || auth.role === 'superadmin';
+    if (!isAdmin && auth.id !== shopId) {
+      return NextResponse.json({ error: 'Unauthorized: cannot modify another shop\'s profile' }, { status: 403 });
     }
 
     if (!businessLicense || !insurancePolicy) {
