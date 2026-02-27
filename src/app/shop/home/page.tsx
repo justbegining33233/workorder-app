@@ -123,7 +123,7 @@ export default function ShopHome() {
       requiresManagerOrAdmin: user?.role === 'manager',
       hideForAdmin: user?.role === 'tech',
     },
-    { label: '🏢 Order from Distributors', href: '/shop/distributors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
+    { label: '📦 Parts Orders', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
     { label: '🛠️ Services', href: '/shop/services', tint: 'rgba(245,158,11,0.18)', color: '#f59e0b', border: 'rgba(245,158,11,0.28)' },
     { label: '🏪 New In-Shop Job', href: '/shop/new-inshop-job', tint: 'rgba(229,51,42,0.18)', color: '#e5332a', border: 'rgba(229,51,42,0.28)' },
     { label: '📋 WO Templates', href: '/shop/templates', tint: 'rgba(251,191,36,0.18)', color: '#fbbf24', border: 'rgba(251,191,36,0.28)' },
