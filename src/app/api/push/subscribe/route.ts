@@ -1,26 +1,30 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireRole } from '@/lib/auth';
+import type { AuthUser } from '@/lib/auth';
 
 // POST /api/push/subscribe - Save push subscription
-export async function POST(request: Request) {
-  try {
-    const subscription = await request.json();
-    const customerId = request.headers.get('x-customer-id') || request.headers.get('x-user-id') || request.headers.get('x-shop-id');
+export async function POST(request: NextRequest) {
+  const auth = requireRole(request, ['customer', 'shop', 'tech', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
 
-    if (!customerId) {
-      return NextResponse.json({ error: 'Customer or user ID required' }, { status: 400 });
+  try {
+    const body = await request.json().catch(() => null);
+    if (!body) {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    // Save subscription to database
+    // Save subscription to database keyed to the authenticated user's ID
     await prisma.pushSubscription.upsert({
-      where: { customerId },
+      where: { customerId: user.id },
       update: {
-        subscription: JSON.stringify(subscription),
+        subscription: JSON.stringify(body),
         updatedAt: new Date(),
       },
       create: {
-        customerId,
-        subscription: JSON.stringify(subscription),
+        customerId: user.id,
+        subscription: JSON.stringify(body),
       },
     });
 

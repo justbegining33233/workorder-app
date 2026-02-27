@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateCsrf } from '@/lib/csrf';
+import { requireRole } from '@/lib/auth';
+import type { AuthUser } from '@/lib/auth';
 import { z } from 'zod';
 
+// GET - Public: returns labor rates for a shop (used by customers during booking)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -25,12 +27,14 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
+
   try {
-    if (!request.headers.get('authorization')) {
-      const ok = await validateCsrf(request);
-      if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body) return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+
     const schema = z.object({
       shopId: z.string().min(1),
       name: z.string().min(1),
@@ -44,18 +48,19 @@ export async function POST(request: NextRequest) {
     }
 
     const { shopId, name, rate, category } = parsed.data;
-    const numericRate = typeof rate === 'number' ? rate : parseFloat(rate);
+
+    // Shop-role users may only create rates for their own shop
+    if (user.role === 'shop' && user.shopId !== shopId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const numericRate = typeof rate === 'number' ? rate : parseFloat(rate as string);
     if (!Number.isFinite(numericRate)) {
       return NextResponse.json({ error: 'Invalid rate value' }, { status: 400 });
     }
 
     const laborRate = await prisma.shopLaborRate.create({
-      data: {
-        shopId,
-        name,
-        rate: numericRate,
-        category,
-      },
+      data: { shopId, name, rate: numericRate, category },
     });
 
     return NextResponse.json(laborRate, { status: 201 });
@@ -66,12 +71,14 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
+
   try {
-    if (!request.headers.get('authorization')) {
-      const ok = await validateCsrf(request);
-      if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body) return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+
     const schema = z.object({
       id: z.string().min(1),
       name: z.string().min(1),
@@ -85,18 +92,22 @@ export async function PUT(request: NextRequest) {
     }
 
     const { id, name, rate, category } = parsed.data;
-    const numericRate = typeof rate === 'number' ? rate : parseFloat(rate);
+
+    // Verify ownership before mutating
+    const existing = await prisma.shopLaborRate.findUnique({ where: { id }, select: { shopId: true } });
+    if (!existing) return NextResponse.json({ error: 'Labor rate not found' }, { status: 404 });
+    if (user.role === 'shop' && user.shopId !== existing.shopId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const numericRate = typeof rate === 'number' ? rate : parseFloat(rate as string);
     if (!Number.isFinite(numericRate)) {
       return NextResponse.json({ error: 'Invalid rate value' }, { status: 400 });
     }
 
     const laborRate = await prisma.shopLaborRate.update({
       where: { id },
-      data: {
-        name,
-        rate: numericRate,
-        category,
-      },
+      data: { name, rate: numericRate, category },
     });
 
     return NextResponse.json(laborRate);
@@ -107,15 +118,22 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
+
   try {
-    if (!request.headers.get('authorization')) {
-      const ok = await validateCsrf(request);
-      if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     if (!id) {
       return NextResponse.json({ error: 'Labor rate ID is required' }, { status: 400 });
+    }
+
+    // Verify ownership before deleting
+    const existing = await prisma.shopLaborRate.findUnique({ where: { id }, select: { shopId: true } });
+    if (!existing) return NextResponse.json({ error: 'Labor rate not found' }, { status: 404 });
+    if (user.role === 'shop' && user.shopId !== existing.shopId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     await prisma.shopLaborRate.delete({ where: { id } });
