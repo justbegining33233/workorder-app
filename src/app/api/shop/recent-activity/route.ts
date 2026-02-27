@@ -34,10 +34,10 @@ export async function GET(request: NextRequest) {
       include: {
         workOrder: {
           include: {
-            customer: true,
+            customer: { select: { firstName: true, lastName: true } },
           },
         },
-        changedBy: true,
+        changedBy: { select: { id: true, firstName: true, lastName: true, role: true } },
       },
       orderBy: {
         createdAt: 'desc',
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         },
       },
       include: {
-        tech: true,
+        tech: { select: { firstName: true, lastName: true } },
       },
       orderBy: {
         clockIn: 'desc',

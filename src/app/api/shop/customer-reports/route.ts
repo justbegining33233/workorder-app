@@ -16,6 +16,14 @@ export async function GET(request: NextRequest) {
     const days = parseInt(searchParams.get('days') || '90');
     if (!shopId) return NextResponse.json({ error: 'shopId required' }, { status: 400 });
 
+    // Verify caller owns or belongs to this shop (prevent IDOR)
+    if (decoded.role !== 'admin') {
+      const callerShopId = decoded.role === 'shop' ? decoded.id : decoded.shopId;
+      if (!callerShopId || shopId !== callerShopId) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+    }
+
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
     // All work orders for this shop

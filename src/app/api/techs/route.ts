@@ -14,6 +14,13 @@ export async function GET(request: NextRequest) {
     
     let shopId: string | undefined;
     if (queryShopId) {
+      // Prevent IDOR: non-admin callers can only query their own shop
+      if (auth.role !== 'admin') {
+        const callerShopId = auth.role === 'shop' ? auth.id : auth.shopId;
+        if (!callerShopId || callerShopId !== queryShopId) {
+          return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+        }
+      }
       shopId = queryShopId;
     } else {
       shopId = auth.role === 'shop' ? auth.id : auth.shopId;

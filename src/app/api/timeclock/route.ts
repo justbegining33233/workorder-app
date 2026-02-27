@@ -31,6 +31,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Tech not found' }, { status: 404 });
     }
 
+    // Enforce ownership: caller must be this tech, belong to the same shop, or be admin
+    if (auth.id !== userId && auth.role !== 'admin') {
+      const callerShopId = auth.role === 'shop' ? auth.id : auth.shopId;
+      if (!callerShopId || callerShopId !== tech.shopId) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+    }
+
     // Check for active time entry (not clocked out)
     const activeEntry = await prisma.timeEntry.findFirst({
       where: {
@@ -94,6 +102,14 @@ export async function POST(request: NextRequest) {
 
     if (!tech) {
       return NextResponse.json({ error: 'Tech not found' }, { status: 404 });
+    }
+
+    // Enforce ownership: caller must be this tech, belong to the same shop, or be admin
+    if (auth.id !== userId && auth.role !== 'admin') {
+      const callerShopId = auth.role === 'shop' ? auth.id : auth.shopId;
+      if (!callerShopId || callerShopId !== tech.shopId) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
     }
 
     // Check current status

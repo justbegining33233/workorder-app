@@ -5,8 +5,21 @@ import { verifyToken } from '@/lib/auth';
 // GET - Get shop settings
 export async function GET(request: NextRequest) {
   try {
+    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded || !['shop', 'manager', 'admin'].includes(decoded.role)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
-    const shopId = searchParams.get('shopId');
+    // Scope shopId: admins can pass any; shop owners use their own id; managers use their shopId
+    const shopId = decoded.role === 'admin'
+      ? searchParams.get('shopId')
+      : (decoded.role === 'shop' ? decoded.id : decoded.shopId);
 
     if (!shopId) {
       return NextResponse.json({ error: 'Shop ID required' }, { status: 400 });

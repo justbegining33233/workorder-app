@@ -38,6 +38,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    // Shop owners and managers can see hourlyRate; techs cannot
+    const canSeePayroll = decoded.role === 'shop' || decoded.role === 'manager';
+
     // Get all team members for this shop
     const teamMembers = await prisma.tech.findMany({
       where: { shopId },
@@ -120,7 +123,7 @@ export async function GET(request: NextRequest) {
         phone: member.phone,
         role: member.role,
         available: member.available,
-        hourlyRate: member.hourlyRate,
+        ...(canSeePayroll ? { hourlyRate: member.hourlyRate } : {}),
         joinedAt: member.createdAt,
         
         // Clock status

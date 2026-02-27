@@ -12,12 +12,25 @@ export async function GET(request: NextRequest) {
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
 
+  // Only shop owners, managers, and admins may view financial reports
+  if (!['shop', 'manager', 'admin'].includes(auth.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   const shopId = request.nextUrl.searchParams.get('shopId') || '';
   const yearParam  = request.nextUrl.searchParams.get('year');
   const monthParam = request.nextUrl.searchParams.get('month');
 
   if (!shopId) {
     return NextResponse.json({ error: 'shopId is required' }, { status: 400 });
+  }
+
+  // Prevent IDOR: non-admins can only query their own shop
+  if (auth.role !== 'admin') {
+    const callerShopId = auth.role === 'shop' ? auth.id : auth.shopId;
+    if (!callerShopId || shopId !== callerShopId) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
   }
 
   // Determine month/year to report on
