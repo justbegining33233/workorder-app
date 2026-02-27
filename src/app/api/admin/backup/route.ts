@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { requireRole } from '@/lib/auth';
 
 // GET /api/admin/backup — export a full platform data snapshot as JSON
 export async function GET(request: NextRequest) {
-  const token = request.headers.get('authorization')?.replace('Bearer ', '');
-  if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const decoded = verifyToken(token);
-  if (!decoded || decoded.role !== 'admin') {
-    return NextResponse.json({ error: 'Admin only' }, { status: 403 });
-  }
+  const auth = requireRole(request, ['admin']);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const [
