@@ -17,12 +17,18 @@ export async function POST(request: NextRequest) {
     if (!sig) {
       return NextResponse.json({ error: 'No signature' }, { status: 400 });
     }
+
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error('STRIPE_WEBHOOK_SECRET is not set');
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
     
     const body = await request.text();
     const event = stripe.webhooks.constructEvent(
       body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET || ''
+      webhookSecret
     );
     
     if (event.type === 'payment_intent.succeeded') {
