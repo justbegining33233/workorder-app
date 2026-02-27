@@ -1234,6 +1234,56 @@ export default function ShopAdminPage() {
                             </button>
                           </Link>
 
+                          <Link href="/shop/templates" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(251,191,36,0.2)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 8, color: '#fbbf24', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>📋</span>
+                              <div>
+                                <div>Work Order Templates</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Save common job configurations</div>
+                              </div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/vendors" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(139,92,246,0.2)', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 8, color: '#a78bfa', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>🏭</span>
+                              <div>
+                                <div>Vendor Management</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Manage parts suppliers</div>
+                              </div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/locations" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(20,184,166,0.2)', border: '1px solid rgba(20,184,166,0.3)', borderRadius: 8, color: '#2dd4bf', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>📍</span>
+                              <div>
+                                <div>Shop Locations</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Manage multiple branches</div>
+                              </div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/appointments/recurring" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, color: '#34d399', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>🔄</span>
+                              <div>
+                                <div>Recurring Appointments</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Schedule repeat bookings</div>
+                              </div>
+                            </button>
+                          </Link>
+
+                          <Link href="/shop/settings/two-factor" style={{ textDecoration: 'none' }}>
+                            <button style={{ width: '100%', padding: 16, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, color: '#60a5fa', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+                              <span style={{ fontSize: 20 }}>🔐</span>
+                              <div>
+                                <div>Two-Factor Auth (2FA)</div>
+                                <div style={{ fontSize: 11, opacity: 0.8 }}>Secure your account</div>
+                              </div>
+                            </button>
+                          </Link>
+
                           {shopStats.inventory.pendingRequests > 0 && (
                             <Link href="/shop/home" style={{ textDecoration: 'none' }}>
                               <button style={{

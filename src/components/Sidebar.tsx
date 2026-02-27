@@ -48,11 +48,20 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
     { icon: '🗂', label: 'Assign Work Orders', href: '/workorders/list' },
     { icon: '👥', label: 'Team Management', href: '/shop/manage-team' },
     { icon: '💰', label: 'Payroll', href: '/shop/admin#payroll' },
-    { icon: '📦', label: 'Inventory', href: '/shop/admin#inventory' },
+    { icon: '📦', label: 'Inventory', href: '/shop/inventory' },
+    { icon: '🛠️', label: 'Services', href: '/shop/services' },
     { icon: '⚙️', label: 'Settings', href: '/shop/admin/settings' },
+    { icon: '🗓️', label: 'Schedule', href: '/shop/settings/schedule' },
     { icon: '💬', label: 'Messages', href: '/shop/admin#messages' },
     { icon: '📈', label: 'Tech Reports', href: '/shop/reports' },
+    { icon: '📋', label: 'Customer Reports', href: '/shop/customer-reports' },
+    { icon: '⭐', label: 'Reviews', href: '/shop/reviews' },
     { icon: '🔁', label: 'Recurring Orders', href: '/shop/recurring-workorders' },
+    { icon: '📋', label: 'WO Templates', href: '/shop/templates' },
+    { icon: '🏭', label: 'Vendors', href: '/shop/vendors' },
+    { icon: '📍', label: 'Locations', href: '/shop/locations' },
+    { icon: '🔄', label: 'Recurring Appts', href: '/shop/appointments/recurring' },
+    { icon: '🔐', label: 'Two-Factor Auth', href: '/shop/settings/two-factor' },
   ];
 
   const managerMenuItems: MenuItem[] = [
