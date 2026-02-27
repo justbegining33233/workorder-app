@@ -33,10 +33,10 @@ export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   const cronHeader = request.headers.get('x-cron-secret');
 
-  if (!secret && process.env.NODE_ENV === 'production') {
-    console.error('[Cron] FATAL: CRON_SECRET is not set — recurring-workorders POST is unprotected in production!');
+  if (!secret) {
+    return NextResponse.json({ error: 'CRON_SECRET is not configured' }, { status: 500 });
   }
-  if (secret && authHeader !== `Bearer ${secret}` && cronHeader !== secret) {
+  if (authHeader !== `Bearer ${secret}` && cronHeader !== secret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -121,16 +121,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Vercel Cron calls GET â€” run same processing logic
+// Vercel Cron calls GET — run same processing logic
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const authHeader = request.headers.get('authorization');
   const cronHeader = request.headers.get('x-cron-secret');
 
-  if (!secret && process.env.NODE_ENV === 'production') {
-    console.error('[Cron] FATAL: CRON_SECRET is not set — recurring-workorders GET is unprotected in production!');
+  if (!secret) {
+    return NextResponse.json({ error: 'CRON_SECRET is not configured' }, { status: 500 });
   }
-  if (secret && authHeader !== `Bearer ${secret}` && cronHeader !== secret) {
+  if (authHeader !== `Bearer ${secret}` && cronHeader !== secret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

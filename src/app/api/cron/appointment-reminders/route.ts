@@ -6,11 +6,11 @@ import prisma from '@/lib/prisma';
 // Sends reminders for appointments happening in the next 24 hours that haven't been reminded yet
 
 export async function GET(request: NextRequest) {
-  // Protect with a simple cron secret
+  // Protect with cron secret — refuse to run if secret is not configured
   const cronSecret = request.headers.get('x-cron-secret') || request.nextUrl.searchParams.get('secret');
-  const expectedSecret = process.env.CRON_SECRET || 'fixtray-cron-2024';
-  if (!process.env.CRON_SECRET && process.env.NODE_ENV === 'production') {
-    console.error('[Cron] FATAL: CRON_SECRET is not set — appointment-reminders is using insecure fallback in production!');
+  const expectedSecret = process.env.CRON_SECRET;
+  if (!expectedSecret) {
+    return NextResponse.json({ error: 'CRON_SECRET is not configured' }, { status: 500 });
   }
   if (cronSecret !== expectedSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

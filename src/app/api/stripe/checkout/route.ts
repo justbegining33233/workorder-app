@@ -19,6 +19,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { plan, shopId, email, shopName } = body;
 
+    // Ensure authenticated user can only create checkout for their own shop (prevent IDOR)
+    const isAdmin = (decoded as any).role === 'admin' || (decoded as any).role === 'superadmin';
+    const tokenShopId = (decoded as any).id || (decoded as any).shopId;
+    if (!isAdmin && tokenShopId && tokenShopId !== shopId) {
+      return NextResponse.json({ error: 'Unauthorized: shopId mismatch' }, { status: 403 });
+    }
+
     // Validate plan
     if (!plan || !STRIPE_PRODUCTS[plan as StripePlan]) {
       return NextResponse.json({ error: 'Invalid plan selected' }, { status: 400 });
