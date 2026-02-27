@@ -11,6 +11,9 @@ export async function POST(request: NextRequest) {
     const type = body.type || 'password_reset';
 
     if (!identifier || !rawToken || !newPassword) return NextResponse.json({ error: 'Invalid' }, { status: 400 });
+    if (typeof newPassword !== 'string' || newPassword.length < 8) {
+      return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
+    }
 
     const tokenHash = hashTokenSha256(rawToken);
 

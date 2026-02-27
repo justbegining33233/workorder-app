@@ -22,34 +22,21 @@ function buildClient(): PrismaClient {
     const sensitiveActions = new Set(['create', 'update', 'upsert', 'createMany', 'updateMany']);
     if (!sensitiveActions.has(action)) return next(params);
 
-      const rounds = parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
-
       async function maybeHash(obj: any) {
         if (!obj || typeof obj !== 'object') return;
 
-        const sensitiveKeys = new Set([
-          'password',
-          'token',
-          'tokenHash',
-          'refreshToken',
-          'refreshTokenHash',
-          'apiKey',
-          'secret',
-          'clientSecret',
-          'accessToken'
-        ]);
-
+        // Only auto-hash the `password` field.
+        // Fields like tokenHash, refreshTokenHash, ipHash etc. are
+        // already hashed by the calling code (SHA256 or bcrypt) before
+        // being passed to Prisma — double-hashing them would break lookups.
         const bcrypt = await import('bcrypt');
+        const rounds = parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
 
         for (const key of Object.keys(obj)) {
           const val = obj[key];
           if (typeof val !== 'string' || !val) continue;
-
-          const lower = key.toLowerCase();
-          const isSensitive = sensitiveKeys.has(key) || sensitiveKeys.has(lower) || lower.includes('token') || lower.includes('secret') || lower.includes('apikey') || lower.includes('key');
-          if (!isSensitive) continue;
-
-          if (val.startsWith('$2')) continue; // already bcrypt-hashed
+          if (key.toLowerCase() !== 'password') continue;
+          if (val.startsWith('$2')) continue; // already bcrypt-hashed, skip
           obj[key] = await bcrypt.hash(val, rounds);
         }
       }
