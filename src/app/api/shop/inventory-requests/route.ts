@@ -24,6 +24,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Shop ID required' }, { status: 400 });
     }
 
+    // Verify caller owns or belongs to this shop (IDOR prevention)
+    if (decoded.role !== 'admin') {
+      const callerShopId = decoded.role === 'shop' ? decoded.id : decoded.shopId;
+      if (!callerShopId || shopId !== callerShopId) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+    }
+
     const where: any = { shopId };
     if (status) {
       where.status = status;

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  return NextResponse.json({ message: 'Test API working' }, { status: 200 });
+export async function GET() {
+  return NextResponse.json({ error: 'Not found' }, { status: 404 });
 }

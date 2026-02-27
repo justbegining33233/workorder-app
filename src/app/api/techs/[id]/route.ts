@@ -22,23 +22,46 @@ export async function GET(
 
     const tech = await prisma.tech.findUnique({
       where: { id: params.id },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        role: true,
+        available: true,
+        shopId: true,
+        hourlyRate: true,
+        createdAt: true,
+        updatedAt: true,
         assignedWorkOrders: {
-          select: { id: true, status: true }
+          select: { id: true, status: true },
         },
         _count: {
-          select: {
-            assignedWorkOrders: true
-          }
-        }
-      }
+          select: { assignedWorkOrders: true },
+        },
+      },
     });
 
     if (!tech) {
       return NextResponse.json({ error: 'Tech not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ tech });
+    // Scope: must belong to caller's shop (admins exempt)
+    if (decoded.role !== 'admin') {
+      const callerShopId = decoded.role === 'shop' ? decoded.id : decoded.shopId;
+      if (!callerShopId || tech.shopId !== callerShopId) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+    }
+
+    // Never return hourlyRate to techs (salary data)
+    const { hourlyRate, ...safeTech } = tech as typeof tech & { hourlyRate: number };
+    const payload = (decoded.role === 'shop' || decoded.role === 'manager' || decoded.role === 'admin')
+      ? tech
+      : safeTech;
+
+    return NextResponse.json({ tech: payload });
   } catch (error) {
     console.error('Error fetching tech:', error);
     return NextResponse.json({ error: 'Failed to fetch tech' }, { status: 500 });
@@ -66,9 +89,17 @@ export async function PUT(
     }
 
     // Only shop admins can update techs
-    if (decoded.role !== 'shop') {
+    if (decoded.role !== 'shop' && decoded.role !== 'admin') {
       console.error('PUT /api/techs/[id] - Forbidden, role:', decoded.role);
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Verify the tech belongs to this shop (IDOR prevention)
+    if (decoded.role !== 'admin') {
+      const existingTech = await prisma.tech.findUnique({ where: { id: params.id }, select: { shopId: true } });
+      if (!existingTech || existingTech.shopId !== decoded.id) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
     }
 
     const body = await req.json();
@@ -129,8 +160,16 @@ export async function DELETE(
     }
 
     // Only shop admins can delete techs
-    if (decoded.role !== 'shop') {
+    if (decoded.role !== 'shop' && decoded.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Verify the tech belongs to this shop (IDOR prevention)
+    if (decoded.role !== 'admin') {
+      const existingTech = await prisma.tech.findUnique({ where: { id: params.id }, select: { shopId: true } });
+      if (!existingTech || existingTech.shopId !== decoded.id) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
     }
 
     // Check if tech has active work orders

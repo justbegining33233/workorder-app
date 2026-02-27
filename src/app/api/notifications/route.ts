@@ -7,8 +7,8 @@ export async function GET(request: NextRequest) {
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
 
-  const { searchParams } = new URL(request.url);
-  const customerId = searchParams.get('customerId') || auth.id;
+  // Always scope to the authenticated user — never trust a caller-supplied customerId
+  const customerId = auth.id;
   
   const notifications = getNotifications(customerId);
   return NextResponse.json(notifications);
@@ -25,7 +25,8 @@ export async function PATCH(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const customerId = searchParams.get('customerId') || auth.id;
+  // Always scope to the authenticated user — never trust a caller-supplied customerId
+  const customerId = auth.id;
   const notificationId = searchParams.get('id');
   const action = searchParams.get('action');
 
@@ -53,7 +54,8 @@ export async function DELETE(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const customerId = searchParams.get('customerId') || auth.id;
+  // Always scope to the authenticated user — never trust a caller-supplied customerId
+  const customerId = auth.id;
   const notificationId = searchParams.get('id');
 
   if (!notificationId) {

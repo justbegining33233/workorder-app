@@ -5,9 +5,15 @@ import { validateCsrf } from '@/lib/csrf';
 
 // GET shop settings
 export async function GET(request: NextRequest) {
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
-    const shopId = searchParams.get('shopId');
+    // Scope shopId: admins choose; shop owners use their id; managers/techs use their shopId
+    const shopId = auth.role === 'admin'
+      ? searchParams.get('shopId')
+      : (auth.role === 'shop' ? auth.id : auth.shopId);
 
     if (!shopId) {
       return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
@@ -56,7 +62,6 @@ export async function GET(request: NextRequest) {
           status: shop.subscription.status,
           currentPeriodEnd: shop.subscription.currentPeriodEnd,
           trialEnd: shop.subscription.trialEnd,
-          stripeCustomerId: shop.subscription.stripeCustomerId,
           cancelAtPeriodEnd: shop.subscription.cancelAtPeriodEnd,
         } : null,
         stripeConnected: !!shop.stripeAccountId,

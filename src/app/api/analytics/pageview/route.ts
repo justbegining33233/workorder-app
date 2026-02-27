@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import crypto from 'crypto';
+import { requireAuth } from '@/lib/middleware';
+import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 // POST - Track a page view
 export async function POST(request: NextRequest) {
+  // Rate-limit unauthenticated tracking calls (30 req/min per IP) to prevent DB spam
+  const ip = getClientIP(request);
+  const rl = checkRateLimit(`pageview:${ip}`, { maxRequests: 30, windowMs: 60 * 1000 });
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
   try {
     const body = await request.json();
     const { path, sessionId, referrer } = body;
@@ -41,6 +49,12 @@ export async function POST(request: NextRequest) {
 
 // GET - Get page view statistics (admin only)
 export async function GET(request: NextRequest) {
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+  if (auth.role !== 'admin') {
+    return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+  }
+
   try {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

@@ -12,8 +12,16 @@ export async function GET(request: NextRequest) {
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
 
+  // Only shop staff and admins may search customer PII
+  if (!['shop', 'manager', 'admin'].includes(auth.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   const q      = request.nextUrl.searchParams.get('q') || '';
-  const shopId = request.nextUrl.searchParams.get('shopId') || '';
+  // Non-admin callers are always scoped to their own shop
+  const shopId = auth.role === 'admin'
+    ? (request.nextUrl.searchParams.get('shopId') || '')
+    : (auth.role === 'shop' ? auth.id : (auth.shopId || ''));
 
   if (!q || q.length < 2) {
     return NextResponse.json({ customers: [] });
