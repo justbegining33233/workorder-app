@@ -57,7 +57,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
     { icon: '�', label: 'Customer Reports', href: '/shop/customer-reports' },
     { icon: '⭐', label: 'Reviews', href: '/shop/reviews' },
     { icon: '', label: 'WO Templates', href: '/shop/templates' },
-    { icon: '🏭', label: 'Vendors', href: '/shop/vendors' },
+    { icon: '🏭', label: 'Vendors & Parts', href: '/shop/vendors' },
     { icon: '📍', label: 'Locations', href: '/shop/locations' },
     { icon: '�', label: 'Recurring Orders', href: '/shop/recurring-workorders' },
     { icon: '🔐', label: 'Two-Factor Auth', href: '/shop/settings/two-factor' },
