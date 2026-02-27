@@ -1,6 +1,8 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { addPhoto, loadPhotos, PhotoMeta } from '@/lib/photos';
+import { requireRole } from '@/lib/auth';
+import type { AuthUser } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
@@ -15,6 +17,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin', 'tech']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
+
   try {
     const formData = await request.formData();
     const file = formData.get('photo') as File | null;
@@ -32,7 +38,7 @@ export async function POST(request: NextRequest) {
       filename: (file as any).name || undefined,
       caption: caption || undefined,
       workOrderId: workOrderId || undefined,
-      uploadedBy: request.headers.get('x-user-id') || null,
+      uploadedBy: user.id,
       createdAt: new Date().toISOString(),
     };
 

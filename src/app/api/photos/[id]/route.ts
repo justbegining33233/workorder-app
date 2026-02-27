@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadPhotos, savePhotos } from '@/lib/photos';
+import { requireRole } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin', 'tech']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -21,6 +25,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin', 'tech']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { id } = await params;
     const photos = loadPhotos();
