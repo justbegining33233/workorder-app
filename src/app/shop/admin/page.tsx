@@ -123,8 +123,6 @@ export default function ShopAdminPage() {
     fetchInventoryRequests(id || '');
     fetchPurchaseOrders(id || '');
     fetchWorkOrderOptions(id || '', '');
-    fetchWorkOrderOptions(id || '', workOrderSearch);
-    fetchPurchaseOrders(id || '');
     fetchShopMessages(id || '');
     fetchTeamData(id || '');
     
@@ -1208,7 +1206,7 @@ export default function ShopAdminPage() {
                             </button>
                           </Link>
 
-                          <Link href="/shop/settings" style={{ textDecoration: 'none' }}>
+                          <Link href="/shop/admin/settings" style={{ textDecoration: 'none' }}>
                             <button
                               style={{
                                 width: '100%',
@@ -1346,13 +1344,6 @@ export default function ShopAdminPage() {
                             <button style={{ width: '100%', padding: 16, background: 'rgba(245,158,11,0.2)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, color: '#f59e0b', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
                               <span style={{ fontSize: 20 }}>🛠️</span>
                               <div><div>Services</div><div style={{ fontSize: 11, opacity: 0.8 }}>Configure offered services</div></div>
-                            </button>
-                          </Link>
-
-                          <Link href="/shop/reports" style={{ textDecoration: 'none' }}>
-                            <button style={{ width: '100%', padding: 16, background: 'rgba(168,85,247,0.2)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 8, color: '#a855f7', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>📊</span>
-                              <div><div>Reports</div><div style={{ fontSize: 11, opacity: 0.8 }}>Download detailed reports</div></div>
                             </button>
                           </Link>
 

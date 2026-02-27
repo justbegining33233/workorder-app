@@ -38,7 +38,7 @@ export default function MobileNav({ role }: MobileNavProps) {
           { icon: '🏠', label: 'Dashboard', path: '/shop/home' },
           { icon: '🔧', label: 'Work Orders', path: '/workorders/list' },
           { icon: '👥', label: 'Team', path: '/shop/manage-team' },
-          { icon: '⚙️', label: 'Settings', path: '/shop/settings' },
+          { icon: '⚙️', label: 'Settings', path: '/shop/admin/settings' },
         ];
       case 'tech':
         return [
