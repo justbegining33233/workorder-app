@@ -105,7 +105,6 @@ export default function ShopServicesPage() {
   const [loading, setLoading] = useState(true);
   const [shopId, setShopId] = useState('');
   const [shopType, setShopType] = useState<string>('mixed');
-  const [relevantCategories, setRelevantCategories] = useState<string[]>(ALL_CATEGORIES);
 
   const [activeTab, setActiveTab] = useState<TabId>('my');
   const [filterCat, setFilterCat] = useState('all');
@@ -145,8 +144,7 @@ export default function ShopServicesPage() {
         const p = await profileRes.json();
         const st: string = p.shopType || 'mixed';
         setShopType(st);
-        // Always expose all categories in the catalog; shopType only sets the default filter
-        setRelevantCategories(ALL_CATEGORIES);
+        // shopType only sets which category is pre-selected in the catalog filter
         const defaultCat = (st === 'mixed' || !CATALOG[st]) ? 'diesel' : st;
         setCatalogFilterCat(defaultCat);
       }
@@ -341,7 +339,7 @@ export default function ShopServicesPage() {
             </div>
 
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
-              {(['all', ...relevantCategories]).map(cat => {
+              {(['all', ...ALL_CATEGORIES]).map(cat => {
                 const col = CATEGORY_COLORS[cat] || { bg: 'transparent', border: 'rgba(255,255,255,0.15)', text: '#94a3b8' };
                 const active = catalogFilterCat === cat;
                 return (
