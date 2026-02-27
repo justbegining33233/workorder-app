@@ -59,8 +59,8 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({ url: accountLink.url });
-  } catch (err: any) {
-    console.error('[stripe/connect] Error creating account link:', err);
-    return NextResponse.json({ error: err?.message || 'Failed to start Stripe Connect' }, { status: 500 });
+    } catch (err: unknown) {
+      console.error('[stripe/connect] Error creating account link:', err);
+      return NextResponse.json({ error: (err as Error)?.message || 'Failed to start Stripe Connect' }, { status: 500 });
   }
 }

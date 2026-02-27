@@ -61,8 +61,8 @@ export async function GET(request: NextRequest) {
         });
 
         sent++;
-      } catch (err: any) {
-        errors.push(`Appointment ${appointment.id}: ${err.message}`);
+      } catch (err: unknown) {
+          errors.push(`Appointment ${appointment.id}: ${(err as Error)?.message ?? String(err)}`);
       }
     }
 

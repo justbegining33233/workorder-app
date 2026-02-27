@@ -126,8 +126,8 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 15,
     });
     return response;
-  } catch (error: any) {
-    console.error('Tech login error:', error, error?.stack);
-    return NextResponse.json({ error: 'Login failed', details: error?.message || 'unknown' }, { status: 500 });
+    } catch (error: unknown) {
+      console.error('Tech login error:', error, (error as Error)?.stack);
+      return NextResponse.json({ error: 'Login failed', details: (error as Error)?.message || 'unknown' }, { status: 500 });
   }
 }

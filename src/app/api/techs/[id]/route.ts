@@ -100,12 +100,12 @@ export async function PUT(
       message: 'Tech updated successfully',
       tech 
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('PUT /api/techs/[id] - Error updating tech:', error);
-    console.error('PUT /api/techs/[id] - Error details:', error.message, error.stack);
+    console.error('PUT /api/techs/[id] - Error details:', (error as Error)?.message, (error as Error)?.stack);
     return NextResponse.json({ 
       error: 'Failed to update tech',
-      details: error.message 
+      details: (error as Error)?.message 
     }, { status: 500 });
   }
 }

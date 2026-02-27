@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
     }, { status: 200 });
 
     return response;
-  } catch (error: any) {
-    console.error('Shop login error:', error);
-    return NextResponse.json({ error: 'Login failed', details: error?.message }, { status: 500 });
+    } catch (error: unknown) {
+      console.error('Shop login error:', error);
+      return NextResponse.json({ error: 'Login failed', details: (error as Error)?.message }, { status: 500 });
   }
 }
