@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { requireRole } from '@/lib/auth';
+import { requireRole, AuthUser } from '@/lib/auth';
+
+const VALID_STATUSES = ['ordered', 'shipped', 'received', 'cancelled'];
 
 // PUT /api/shop/purchase-orders/[id] — update status or fields
 export async function PUT(
@@ -10,32 +12,50 @@ export async function PUT(
   const auth = requireRole(request, ['shop', 'manager']);
   if (auth instanceof NextResponse) return auth;
 
-  const shopId = (auth as any).shopId ?? (auth as any).id;
+  const shopId = (auth as AuthUser).shopId ?? (auth as AuthUser).id;
   const { id } = await params;
 
-  const existing = await prisma.purchaseOrder.findUnique({ where: { id } });
-  if (!existing || existing.shopId !== shopId) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  let body: any;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const body = await request.json();
   const { status, notes, expectedDate } = body;
 
-  const order = await prisma.purchaseOrder.update({
-    where: { id },
-    data: {
-      ...(status !== undefined && { status }),
-      ...(notes !== undefined && { notes }),
-      ...(expectedDate !== undefined && { expectedDate: expectedDate ? new Date(expectedDate) : null }),
-      // When marking received, update all items too
-      ...(status === 'received' && {
-        items: { updateMany: { where: { purchaseOrderId: id }, data: { status: 'received' } } },
-      }),
-    },
-    include: { items: true },
-  });
+  if (status !== undefined && !VALID_STATUSES.includes(status)) {
+    return NextResponse.json(
+      { error: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}` },
+      { status: 400 }
+    );
+  }
 
-  return NextResponse.json({ order });
+  try {
+    const existing = await prisma.purchaseOrder.findUnique({ where: { id } });
+    if (!existing || existing.shopId !== shopId) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    const order = await prisma.purchaseOrder.update({
+      where: { id },
+      data: {
+        ...(status !== undefined && { status }),
+        ...(notes !== undefined && { notes: notes?.trim() ?? null }),
+        ...(expectedDate !== undefined && { expectedDate: expectedDate ? new Date(expectedDate) : null }),
+        // When marking received, update all items too
+        ...(status === 'received' && {
+          items: { updateMany: { where: { purchaseOrderId: id }, data: { status: 'received' } } },
+        }),
+      },
+      include: { items: true },
+    });
+
+    return NextResponse.json({ order });
+  } catch (error) {
+    console.error('Failed to update purchase order:', error);
+    return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
+  }
 }
 
 // DELETE /api/shop/purchase-orders/[id]
@@ -46,14 +66,19 @@ export async function DELETE(
   const auth = requireRole(request, ['shop', 'manager']);
   if (auth instanceof NextResponse) return auth;
 
-  const shopId = (auth as any).shopId ?? (auth as any).id;
+  const shopId = (auth as AuthUser).shopId ?? (auth as AuthUser).id;
   const { id } = await params;
 
-  const existing = await prisma.purchaseOrder.findUnique({ where: { id } });
-  if (!existing || existing.shopId !== shopId) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  }
+  try {
+    const existing = await prisma.purchaseOrder.findUnique({ where: { id } });
+    if (!existing || existing.shopId !== shopId) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
 
-  await prisma.purchaseOrder.delete({ where: { id } });
-  return NextResponse.json({ success: true });
+    await prisma.purchaseOrder.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Failed to delete purchase order:', error);
+    return NextResponse.json({ error: 'Failed to delete order' }, { status: 500 });
+  }
 }

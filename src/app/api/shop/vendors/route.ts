@@ -19,7 +19,13 @@ export async function POST(request: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   const shopId = auth.shopId ?? auth.id;
-  const body = await request.json();
+
+  let body: any;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
 
   const { name, contactName, phone, email, website, category, accountNumber, paymentTerms, rating, notes, isActive } = body;
 

@@ -5,6 +5,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const fallbackJwt = 'fixtray-default-secret';
 const JWT_SECRET = process.env.JWT_SECRET || fallbackJwt;
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+  console.error('FATAL: JWT_SECRET env var is not set. Using insecure fallback — set JWT_SECRET immediately.');
+}
 const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '24h';
 const DEFAULT_REFRESH_EXPIRES_DAYS = Number(process.env.REFRESH_EXPIRES_DAYS || '30');
 
@@ -30,8 +33,6 @@ export function generateRandomToken(bytes = 48): string {
 
 export function verifyToken(token: string): any {
   try {
-    if (!process.env.JWT_SECRET) {
-    }
     const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
