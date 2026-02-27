@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -87,14 +87,14 @@ export default function ShopHome() {
   const userId = (user as any)?.id ?? 'shop-user';
   const shopId = (user as any)?.shopId ?? 'shop-001';
   const quickActions: QuickAction[] = [
-    { label: '🧰 Parts', href: '/shop/parts-labor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' },
+    { label: 'ðŸ§° Parts', href: '/shop/parts-labor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' },
     {
       label:
         user?.role === 'manager'
-          ? '📊 Manager Panel'
+          ? 'ðŸ“Š Manager Panel'
           : user?.role === 'tech'
-          ? '🔧 Tech Panel'
-          : '⚙️ Shop Admin Panel',
+          ? 'ðŸ”§ Tech Panel'
+          : 'âš™ï¸ Shop Admin Panel',
       href:
         user?.role === 'manager'
           ? '/shop/manager'
@@ -123,14 +123,14 @@ export default function ShopHome() {
       requiresManagerOrAdmin: user?.role === 'manager',
       hideForAdmin: user?.role === 'tech',
     },
-    { label: '📦 Parts Orders', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
-    { label: '🛠️ Services', href: '/shop/services', tint: 'rgba(245,158,11,0.18)', color: '#f59e0b', border: 'rgba(245,158,11,0.28)' },
-    { label: '🏪 New In-Shop Job', href: '/shop/new-inshop-job', tint: 'rgba(229,51,42,0.18)', color: '#e5332a', border: 'rgba(229,51,42,0.28)' },
-    { label: '📋 WO Templates', href: '/shop/templates', tint: 'rgba(251,191,36,0.18)', color: '#fbbf24', border: 'rgba(251,191,36,0.28)' },
-    { label: '🏭 Vendors', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
-    { label: '📍 Locations', href: '/shop/locations', tint: 'rgba(20,184,166,0.18)', color: '#14b8a6', border: 'rgba(20,184,166,0.28)' },
-    { label: '� Recurring Orders', href: '/shop/recurring-workorders', tint: 'rgba(34,197,94,0.18)', color: '#22c55e', border: 'rgba(34,197,94,0.28)' },
-    { label: '🔐 Two-Factor Auth', href: '/shop/settings/two-factor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' }
+    { label: 'ðŸ“¦ Parts Orders', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
+    { label: 'ðŸ› ï¸ Services', href: '/shop/services', tint: 'rgba(245,158,11,0.18)', color: '#f59e0b', border: 'rgba(245,158,11,0.28)' },
+    { label: 'ðŸª New In-Shop Job', href: '/shop/new-inshop-job', tint: 'rgba(229,51,42,0.18)', color: '#e5332a', border: 'rgba(229,51,42,0.28)' },
+    { label: 'ðŸ“‹ WO Templates', href: '/shop/templates', tint: 'rgba(251,191,36,0.18)', color: '#fbbf24', border: 'rgba(251,191,36,0.28)' },
+    { label: 'ðŸ­ Vendors', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
+    { label: 'ðŸ“ Locations', href: '/shop/locations', tint: 'rgba(20,184,166,0.18)', color: '#14b8a6', border: 'rgba(20,184,166,0.28)' },
+    { label: 'ï¿½ Recurring Orders', href: '/shop/recurring-workorders', tint: 'rgba(34,197,94,0.18)', color: '#22c55e', border: 'rgba(34,197,94,0.28)' },
+    { label: 'ðŸ” Two-Factor Auth', href: '/shop/settings/two-factor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' }
   ];
   const priorityStyles: Record<string, { bg: string; color: string }> = {
     High: { bg: 'rgba(229,51,42,0.2)', color: '#e5332a' },
@@ -181,7 +181,6 @@ export default function ShopHome() {
     employees.push(newEmployee);
     localStorage.setItem('shopEmployees', JSON.stringify(employees));
     
-    console.log('Added team member:', newEmployee);
     alert(`Team member added!\n\nLogin credentials:\nEmail/Phone: ${newMember.email} or ${newMember.phone}\nPassword: ${newMember.password}`);
     
     // Reset form and close modal
@@ -194,7 +193,7 @@ export default function ShopHome() {
     const confirmed = confirm(`Order ${orderQuantity} units of ${partName}?\n\nCurrent Stock: ${currentStock}\nOrder Quantity: ${orderQuantity}\nEstimated Delivery: 2-3 business days`);
     
     if (confirmed) {
-      alert(`✅ Order placed successfully!\n\n${orderQuantity} units of ${partName} ordered.\nNew stock level will be ${currentStock + orderQuantity} units upon delivery.`);
+      alert(`âœ… Order placed successfully!\n\n${orderQuantity} units of ${partName} ordered.\nNew stock level will be ${currentStock + orderQuantity} units upon delivery.`);
     }
   };
 
@@ -359,12 +358,12 @@ export default function ShopHome() {
                   <div style={{display:'flex', flexDirection:'column', gap:10}}>
                     {pendingWorkOrders.length === 0 && (
                       <div style={{color:'#9aa3b2', fontSize:13, padding:12, border:'1px dashed rgba(255,255,255,0.15)', borderRadius:10}}>
-                        No customers waiting — nice work.
+                        No customers waiting â€” nice work.
                       </div>
                     )}
                     {pendingWorkOrders.map(order => {
                       const style = priorityStyles[order.priority] || priorityStyles.Medium;
-                      const destinationOptions = [...bays.map(b => ({ id: b.id, label: b.name })), { id: 'roadcall', label: '🚚 Roadcall' }];
+                      const destinationOptions = [...bays.map(b => ({ id: b.id, label: b.name })), { id: 'roadcall', label: 'ðŸšš Roadcall' }];
                       const selected = selectedDestinations[order.id] || destinationOptions[0]?.id || 'roadcall';
                       return (
                         <div key={order.id} style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:8}}>
@@ -373,7 +372,7 @@ export default function ShopHome() {
                             <span style={{padding:'4px 8px', background:style.bg, color:style.color, borderRadius:8, fontSize:11, fontWeight:700}}>{order.priority}</span>
                           </div>
                           <div style={{fontSize:12, color:'#9aa3b2'}}>
-                            {order.customer} • {order.vehicle} • {order.id}
+                            {order.customer} â€¢ {order.vehicle} â€¢ {order.id}
                           </div>
                           <div style={{display:'flex', gap:8, alignItems:'stretch'}}>
                             <div style={{flex:1, display:'flex', flexDirection:'column', gap:6}}>
@@ -429,10 +428,10 @@ export default function ShopHome() {
                         <div style={{fontSize:15, fontWeight:700, color:'#e5e7eb'}}>{member.name}</div>
                         <div style={{display:'flex', alignItems:'center', gap:6, marginTop:4}}>
                           <span style={{padding:'2px 8px', background:member.status === 'Active' ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)', color:member.status === 'Active' ? '#22c55e' : '#f59e0b', borderRadius:8, fontSize:11, fontWeight:600}}>
-                            ● {member.status}
+                            â— {member.status}
                           </span>
                           <span style={{padding:'2px 8px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', borderRadius:8, fontSize:10, fontWeight:600}}>
-                            {member.role === 'tech' ? '🔧 Tech' : '👔 Manager'}
+                            {member.role === 'tech' ? 'ðŸ”§ Tech' : 'ðŸ‘” Manager'}
                           </span>
                         </div>
                       </div>
@@ -468,18 +467,18 @@ export default function ShopHome() {
           <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:16, padding:32, maxWidth:500, width:'90%'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
               <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>Add Team Member</h2>
-              <button onClick={() => setShowAddMember(false)} style={{background:'transparent', border:'none', color:'#9aa3b2', fontSize:24, cursor:'pointer', padding:0}}>×</button>
+              <button onClick={() => setShowAddMember(false)} style={{background:'transparent', border:'none', color:'#9aa3b2', fontSize:24, cursor:'pointer', padding:0}}>Ã—</button>
             </div>
 
             <div style={{marginBottom:20}}>
               <label style={{display:'block', fontSize:13, color:'#9aa3b2', marginBottom:8}}>Role *</label>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                 <button type="button" onClick={() => setNewMember({...newMember, role: 'tech'})} style={{padding:16, background:newMember.role === 'tech' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${newMember.role === 'tech' ? '#22c55e' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>🔧</div>
+                  <div style={{fontSize:24, marginBottom:8}}>ðŸ”§</div>
                   Technician
                 </button>
                 <button type="button" onClick={() => setNewMember({...newMember, role: 'manager'})} style={{padding:16, background:newMember.role === 'manager' ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${newMember.role === 'manager' ? '#3b82f6' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>👔</div>
+                  <div style={{fontSize:24, marginBottom:8}}>ðŸ‘”</div>
                   Manager
                 </button>
               </div>

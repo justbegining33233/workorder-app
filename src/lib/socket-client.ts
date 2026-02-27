@@ -1,4 +1,4 @@
-import { io, Socket } from 'socket.io-client';
+﻿import { io, Socket } from 'socket.io-client';
 
 class SocketClient {
   private socket: Socket | null = null;
@@ -26,7 +26,6 @@ class SocketClient {
 
     // If connection fails to primary, attempt fallback
     this.socket.on('connect_error', (err) => {
-      console.warn('Primary socket connect_error, attempting fallback:', err && err.message);
       try {
         this.socket?.disconnect();
       } catch (e) {}
@@ -43,33 +42,27 @@ class SocketClient {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log('Connected to socket server');
       this.reconnectAttempts = 0;
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('Disconnected from socket:', reason);
       this.handleReconnect();
     });
 
     this.socket.on('connect_error', (error) => {
-      console.warn('Socket connection error (will retry):', error?.message || 'Unknown error');
       this.handleReconnect();
     });
 
     this.socket.on('connect_timeout', () => {
-      console.warn('Socket connection timeout (will retry)');
       this.handleReconnect();
     });
 
     // Server events (use canonical event names)
     this.socket.on('work-order-updated', (data) => {
-      console.log('Work order updated:', data);
       window.dispatchEvent(new CustomEvent('work-order:updated', { detail: data }));
     });
 
     this.socket.on('new-message', (data) => {
-      console.log('New chat message:', data);
       window.dispatchEvent(new CustomEvent('chat:new-message', { detail: data }));
     });
 
@@ -106,7 +99,6 @@ class SocketClient {
     const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
 
     setTimeout(() => {
-      console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
       this.socket?.connect();
     }, delay);
   }

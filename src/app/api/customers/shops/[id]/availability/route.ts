@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
 
@@ -7,11 +7,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('Availability request received');
     // Verify authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('No auth header or not Bearer');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -21,12 +19,10 @@ export async function GET(
     try {
       decoded = jwt.verify(token, secret) as { id: string; role: string };
     } catch (error) {
-      console.log('Token verification failed');
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
     if (decoded.role !== 'customer') {
-      console.log('Role is not customer:', decoded.role);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -36,7 +32,6 @@ export async function GET(
     const date = searchParams.get('date');
     const duration = parseInt(searchParams.get('duration') || '60');
 
-    console.log('Shop ID:', shopId, 'Date:', date, 'Duration:', duration);
 
     if (!date) {
       return NextResponse.json({ error: 'Date parameter is required' }, { status: 400 });
@@ -45,7 +40,6 @@ export async function GET(
     // Parse date and get day of week (0 = Sunday, 6 = Saturday)
     const appointmentDate = new Date(date);
     const dayOfWeek = appointmentDate.getDay();
-    console.log('Date:', date, 'Parsed date:', appointmentDate, 'Day of week:', dayOfWeek);
 
     // Get shop with schedule
     const shop = await prisma.shop.findUnique({
@@ -55,18 +49,15 @@ export async function GET(
       }
     });
 
-    console.log('Shop found:', !!shop, 'Schedules length:', shop?.schedules?.length);
 
     if (!shop) {
       return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
     }
 
     const schedule = shop.schedules.find(s => s.dayOfWeek === dayOfWeek);
-    console.log('Schedule for day', dayOfWeek, ':', schedule);
 
     // Check if shop is open on this day
     if (!schedule || !schedule.isOpen) {
-      console.log('Shop is closed or no schedule found');
       return NextResponse.json({
         available: false,
         reason: 'Shop is closed on this day',
@@ -99,7 +90,6 @@ export async function GET(
       }
     });
 
-    console.log('Existing appointments:', existingAppointments.length);
 
     // Generate time slots
     const slots = [];
@@ -110,7 +100,6 @@ export async function GET(
     const closeTime = closeHour * 60 + closeMinute;
     const slotDuration = shop.slotDuration || 30;
 
-    console.log('Open time:', openTime, 'Close time:', closeTime, 'Slot duration:', slotDuration);
 
     for (let time = openTime; time + duration <= closeTime; time += slotDuration) {
       const slotStart = new Date(appointmentDate);
@@ -145,7 +134,6 @@ export async function GET(
       });
     }
 
-    console.log(`Generated ${slots.length} slots, ${slots.filter(s => s.available).length} available`);
 
     return NextResponse.json({
       available: slots.some(slot => slot.available),

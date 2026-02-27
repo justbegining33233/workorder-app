@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -45,7 +45,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Only run on client side
     if (typeof window === 'undefined') return;
 
-    console.log('🔄 [AUTH] Starting authentication check...');
     // Check authentication on app load only
     checkAuth();
 
@@ -62,10 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []); // Remove pathname dependency to prevent re-checking on every route change
 
   const checkAuth = () => {
-    console.log('🔍 [AUTH CHECK] Starting checkAuth...');
     // Ensure we're on the client side before accessing localStorage
     if (typeof window === 'undefined') {
-      console.log('🔍 [AUTH CHECK] Server side, setting isLoading to false');
       setIsLoading(false);
       return;
     }
@@ -80,18 +77,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const shopProfileComplete = localStorage.getItem('shopProfileComplete') === 'true';
       const isSuperAdmin = localStorage.getItem('isSuperAdmin') === 'true';
 
-      console.log('🔍 [AUTH CHECK] Token exists:', !!token);
-      console.log('🔍 [AUTH CHECK] Role:', role);
-      console.log('🔍 [AUTH CHECK] Name:', name);
-      console.log('🔍 [AUTH CHECK] ID:', id);
 
       // Validate token if it exists
       if (token) {
         const decodedToken = verifyToken(token);
-        console.log('🔍 [AUTH CHECK] Token decoded:', decodedToken);
         if (!decodedToken) {
           // Token is invalid, clear auth data
-          console.log('❌ [AUTH CHECK] Invalid token, clearing auth data');
           localStorage.removeItem('token');
           localStorage.removeItem('userRole');
           localStorage.removeItem('userName');
@@ -112,12 +103,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             sc.connect(token as string);
           }).catch(e => console.warn('Failed to connect socket on auth check:', e));
         } catch (e) {
-          console.warn('Error initializing socket on auth check:', e);
         }
       }
 
       if (role && name && id) {
-        console.log('✅ [AUTH CHECK] Setting user:', { id, name, role, shopId, isShopAdmin, shopProfileComplete, isSuperAdmin });
         setUser({
           id,
           name,
@@ -128,15 +117,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           isSuperAdmin,
         });
       } else {
-        console.log('⚠️ [AUTH CHECK] Missing required auth data, clearing user');
         setUser(null);
         // Removed automatic redirect - let individual pages handle auth requirements
       }
     } catch (error) {
-      console.error('❌ [AUTH CHECK] Auth check error:', error);
+      console.error('âŒ [AUTH CHECK] Auth check error:', error);
       setUser(null);
     } finally {
-      console.log('🔍 [AUTH CHECK] Setting isLoading to false, user:', user ? 'set' : 'null');
       setIsLoading(false);
     }
   };
@@ -153,12 +140,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           mod.default.connect(userData.token!);
         } catch (e) {
-          console.warn('Failed to init socket client on login:', e);
         }
       }).catch(e => console.warn('Failed to import socket client on login:', e));
     } else if (user && localStorage.getItem('token')) {
       // Keep existing token if logging in without new token
-      console.log('Keeping existing token');
     }
 
     localStorage.setItem('userRole', userData.role);
@@ -196,7 +181,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { default: socketClient } = await import('@/lib/socket-client');
       socketClient.disconnect();
     } catch (e) {
-      console.warn('Failed to disconnect socket client on logout:', e);
     }
 
     setUser(null);
@@ -244,18 +228,14 @@ export function useRequireAuth(requiredRoles?: string[]) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
-  console.log('🔐 [REQUIRE AUTH] isLoading:', isLoading, 'user:', user ? user.role : 'null', 'requiredRoles:', requiredRoles);
 
   useEffect(() => {
-    console.log('🔐 [REQUIRE AUTH] useEffect triggered - isLoading:', isLoading, 'user exists:', !!user);
     if (!isLoading && !user) {
-      console.log('🔐 [REQUIRE AUTH] No user, redirecting to login');
       router.push('/auth/login');
       return;
     }
 
     if (!isLoading && user && requiredRoles && !requiredRoles.includes(user.role)) {
-      console.log('🔐 [REQUIRE AUTH] User role not allowed, redirecting to login');
       router.push('/auth/login');
     }
   }, [user, isLoading, requiredRoles]); // Remove router from dependencies

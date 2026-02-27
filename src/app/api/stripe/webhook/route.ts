@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import stripe from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
@@ -22,18 +22,16 @@ export async function POST(request: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET || ''
     );
   } catch (err) {
-    console.error('🔴 [WEBHOOK] Signature verification failed:', err);
+    console.error('ðŸ”´ [WEBHOOK] Signature verification failed:', err);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  console.log(`🔵 [WEBHOOK] Received event: ${event.type}`);
 
   try {
     switch (event.type) {
       // Subscription created
       case 'customer.subscription.created': {
         const subscription = event.data.object as Stripe.Subscription;
-        console.log(`✅ [WEBHOOK] Subscription created: ${subscription.id}`);
         
         await prisma.subscription.updateMany({
           where: { stripeSubscriptionId: subscription.id },
@@ -49,7 +47,6 @@ export async function POST(request: NextRequest) {
       // Subscription updated (upgrade, downgrade, renewal)
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
-        console.log(`🔄 [WEBHOOK] Subscription updated: ${subscription.id}, status: ${subscription.status}`);
         
         let status: 'active' | 'past_due' | 'canceled' | 'trialing' | 'paused' = 'active';
         if (subscription.status === 'trialing') status = 'trialing';
@@ -72,7 +69,6 @@ export async function POST(request: NextRequest) {
       // Subscription canceled
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
-        console.log(`❌ [WEBHOOK] Subscription canceled: ${subscription.id}`);
         
         const updated = await prisma.subscription.updateMany({
           where: { stripeSubscriptionId: subscription.id },
@@ -91,7 +87,6 @@ export async function POST(request: NextRequest) {
           });
 
           // Placeholder: notify super admin about cancellation completion
-          console.log('[WEBHOOK] Notify super admin: subscription ended and shop suspended', { stripeSubscriptionId: subscription.id });
         }
         break;
       }
@@ -99,7 +94,6 @@ export async function POST(request: NextRequest) {
       // Payment successful
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice;
-        console.log(`💰 [WEBHOOK] Payment succeeded for invoice: ${invoice.id}`);
         
         // if (invoice.subscription) {
           await prisma.subscription.updateMany({
@@ -122,7 +116,6 @@ export async function POST(request: NextRequest) {
               paidAt: new Date(),
             },
           }).catch((err) => {
-            console.log('PaymentHistory creation failed:', err);
           });
         // }
         break;
@@ -131,7 +124,6 @@ export async function POST(request: NextRequest) {
       // Payment failed
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice;
-        console.log(`🔴 [WEBHOOK] Payment failed for invoice: ${invoice.id}`);
         
         // if (invoice.subscription) {
           await prisma.subscription.updateMany({
@@ -147,19 +139,17 @@ export async function POST(request: NextRequest) {
       // Trial ending soon (3 days before)
       case 'customer.subscription.trial_will_end': {
         const subscription = event.data.object as Stripe.Subscription;
-        console.log(`⚠️ [WEBHOOK] Trial ending soon for: ${subscription.id}`);
         // TODO: Send email notification to customer
         break;
       }
 
-      // Checkout completed — handles both work-order payments and new shop registrations
+      // Checkout completed â€” handles both work-order payments and new shop registrations
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const { workOrderId, shopId, plan, registrationFlow } = session.metadata ?? {};
 
-        // ── Registration flow: shop owner completed Stripe Checkout ──────────
+        // â”€â”€ Registration flow: shop owner completed Stripe Checkout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (registrationFlow === 'true' && shopId && plan) {
-          console.log(`✅ [WEBHOOK] Registration checkout complete for shopId: ${shopId}, plan: ${plan}`);
 
           // Retrieve the subscription Stripe just created so we have real IDs
           const stripeSubscriptionId = typeof session.subscription === 'string'
@@ -203,14 +193,12 @@ export async function POST(request: NextRequest) {
             });
           }
 
-          console.log(`✅ [WEBHOOK] Subscription record saved for shopId: ${shopId}`);
           break;
         }
 
-        // ── Work-order payment flow ───────────────────────────────────────────
+        // â”€â”€ Work-order payment flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (!workOrderId) break;
 
-        console.log(`✅ [WEBHOOK] Checkout complete for work order: ${workOrderId}`);
 
         const updatedWO = await prisma.workOrder.update({
           where: { id: workOrderId },
@@ -245,12 +233,11 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        console.log(`ℹ️ [WEBHOOK] Unhandled event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('🔴 [WEBHOOK] Error processing event:', error);
+    console.error('ðŸ”´ [WEBHOOK] Error processing event:', error);
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -26,7 +26,6 @@ export default function TechPhotos() {
           setPhotos(json.photos || []);
         }
       } catch (err) {
-        console.debug('/api/photos not available');
       }
     })();
   }, [user]);
@@ -76,8 +75,8 @@ export default function TechPhotos() {
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
-          <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>← Back to Tools</Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>📸 Tech Photos</h1>
+          <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>â† Back to Tools</Link>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>ðŸ“¸ Tech Photos</h1>
           <div style={{fontSize:14, color:'#9aa3b2'}}>Upload and manage photos taken on jobs.</div>
         </div>
       </div>
@@ -101,7 +100,7 @@ export default function TechPhotos() {
                       <div style={{fontSize:16, fontWeight:700, color:'#e5e7eb'}}>Upload Photo</div>
                       <div style={{fontSize:13, color:'#9aa3b2'}}>Select an image, add a caption and optionally assign to a Work Order.</div>
                     </div>
-                    <button onClick={() => { setShowUploadModal(false); setModalFile(null); setModalPreview(''); }} style={{background:'transparent', border:'none', color:'#9aa3b2', cursor:'pointer'}}>✕</button>
+                    <button onClick={() => { setShowUploadModal(false); setModalFile(null); setModalPreview(''); }} style={{background:'transparent', border:'none', color:'#9aa3b2', cursor:'pointer'}}>âœ•</button>
                   </div>
 
                   <div style={{display:'flex', gap:12}}>
@@ -147,7 +146,7 @@ export default function TechPhotos() {
 
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(180px, 1fr))', gap:12}}>
           {photos.length === 0 && (
-            <div style={{padding:36, borderRadius:8, background:'#0b1220', color:'#9aa3b2'}}>No photos yet — click "Upload Photo" to add images from your device.</div>
+            <div style={{padding:36, borderRadius:8, background:'#0b1220', color:'#9aa3b2'}}>No photos yet â€” click "Upload Photo" to add images from your device.</div>
           )}
 
           {photos.map(p => (

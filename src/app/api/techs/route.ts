@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireRole } from '@/lib/middleware';
 import { hashPassword } from '@/lib/auth';
@@ -64,17 +64,7 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     const shopId = auth.role === 'shop' ? auth.id : auth.shopId;
-    
-    console.log('🔵 [CREATE TECH] Request data:', { 
-      email: data.email, 
-      firstName: data.firstName,
-      lastName: data.lastName,
-      phone: data.phone,
-      role: data.role,
-      shopId,
-      authRole: auth.role 
-    });
-    
+
     // Check if email exists
     const existing = await prisma.tech.findUnique({
       where: { email: data.email },
@@ -86,7 +76,6 @@ export async function POST(request: NextRequest) {
     
     const hashedPassword = await hashPassword(data.password);
     
-    console.log('🔵 [CREATE TECH] Creating tech with hashed password, length:', hashedPassword.length);
     
     const tech = await prisma.tech.create({
       data: {
@@ -107,7 +96,6 @@ export async function POST(request: NextRequest) {
       },
     });
     
-    console.log('✅ [CREATE TECH] Tech created successfully:', tech);
     
     return NextResponse.json(tech, { status: 201 });
   } catch (error) {

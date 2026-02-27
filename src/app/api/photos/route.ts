@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { addPhoto, loadPhotos, PhotoMeta } from '@/lib/photos';
 
@@ -47,7 +47,6 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify({ url: meta.url, caption: meta.caption || '', type: 'photo' }),
         });
       } catch (err) {
-        console.debug('Failed to attach photo to work order (server side)', err);
       }
     }
 

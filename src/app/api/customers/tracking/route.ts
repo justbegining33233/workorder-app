@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 import { getSocketServer } from '@/lib/socket-server';
@@ -8,22 +8,16 @@ export async function GET(request: Request) {
   try {
     // Verify authentication
     const authHeader = request.headers.get('authorization');
-    console.log('Tracking API - Auth header:', authHeader);
     
     if (!authHeader?.startsWith('Bearer ')) {
-      console.log('Tracking API - No Bearer token');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const token = authHeader.substring(7);
-    console.log('Tracking API - Token:', token.substring(0, 20) + '...');
     
     const payload = verifyToken(token);
-    console.log('Tracking API - Token payload:', payload);
-    console.log('Tracking API - Payload role:', payload?.role);
 
     if (!payload || payload.role !== 'customer') {
-      console.log('Tracking API - Invalid payload or not customer role');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -156,7 +150,6 @@ export async function POST(request: Request) {
         }
       }
     } catch (err) {
-      console.warn('Failed to emit tech location update via socket server:', err);
     }
 
     return NextResponse.json(tracking);

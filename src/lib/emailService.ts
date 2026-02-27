@@ -1,4 +1,4 @@
-// Email service for notifications
+﻿// Email service for notifications
 // Configure with Resend or SendGrid API key in environment variables
 
 interface EmailOptions {
@@ -31,7 +31,7 @@ export const emailTemplates = {
     subject: `Inventory Request Approved - ${itemName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #22c55e;">✅ Request Approved</h2>
+        <h2 style="color: #22c55e;">âœ… Request Approved</h2>
         <p>Your inventory request has been approved:</p>
         <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #22c55e;">
           <p><strong>Item:</strong> ${itemName}</p>
@@ -47,7 +47,7 @@ export const emailTemplates = {
     subject: `Inventory Request Denied - ${itemName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #ef4444;">❌ Request Denied</h2>
+        <h2 style="color: #ef4444;">âŒ Request Denied</h2>
         <p>Your inventory request has been denied:</p>
         <div style="background: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
           <p><strong>Item:</strong> ${itemName}</p>
@@ -60,10 +60,10 @@ export const emailTemplates = {
     `,
   }),
   lowStockAlert: (itemName: string, quantity: number, reorderPoint: number) => ({
-    subject: `⚠️ Low Stock Alert - ${itemName}`,
+    subject: `âš ï¸ Low Stock Alert - ${itemName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #f59e0b;">⚠️ Low Stock Alert</h2>
+        <h2 style="color: #f59e0b;">âš ï¸ Low Stock Alert</h2>
         <p>Inventory levels are running low:</p>
         <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
           <p><strong>Item:</strong> ${itemName}</p>
@@ -79,7 +79,7 @@ export const emailTemplates = {
     subject: 'Clock-In Reminder',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #3b82f6;">⏰ Time to Clock In</h2>
+        <h2 style="color: #3b82f6;">â° Time to Clock In</h2>
         <p>Hi ${techName},</p>
         <p>This is a friendly reminder to clock in for your shift.</p>
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/tech/home" style="display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">Clock In Now</a>
@@ -89,24 +89,24 @@ export const emailTemplates = {
   }),
 
   payrollBudgetAlert: (shopName: string, currentSpend: number, budget: number, percentage: number) => ({
-    subject: `💰 Payroll Budget Alert - ${percentage}% Used`,
+    subject: `ðŸ’° Payroll Budget Alert - ${percentage}% Used`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: ${percentage >= 90 ? '#ef4444' : '#f59e0b'};">💰 Payroll Budget Alert</h2>
+        <h2 style="color: ${percentage >= 90 ? '#ef4444' : '#f59e0b'};">ðŸ’° Payroll Budget Alert</h2>
         <p><strong>${shopName}</strong> payroll spending update:</p>
         <div style="background: ${percentage >= 90 ? '#fef2f2' : '#fffbeb'}; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid ${percentage >= 90 ? '#ef4444' : '#f59e0b'};">
           <p><strong>Current Spend:</strong> $${currentSpend.toFixed(2)}</p>
           <p><strong>Budget:</strong> $${budget.toFixed(2)}</p>
           <p><strong>Percentage Used:</strong> <span style="color: ${percentage >= 90 ? '#ef4444' : '#f59e0b'};">${percentage}%</span></p>
         </div>
-        ${percentage >= 90 ? '<p style="color: #ef4444; font-weight: bold;">⚠️ Warning: You have used over 90% of your payroll budget!</p>' : '<p>You are approaching your payroll budget limit.</p>'}
+        ${percentage >= 90 ? '<p style="color: #ef4444; font-weight: bold;">âš ï¸ Warning: You have used over 90% of your payroll budget!</p>' : '<p>You are approaching your payroll budget limit.</p>'}
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/shop/admin" style="display: inline-block; background: #e5332a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 20px;">View Payroll</a>
       </div>
     `,
   }),
 
   estimateReady: (customerName: string, workOrderId: string, serviceAmount: number, totalDue: number, shopName: string, description: string) => ({
-    subject: `Your Estimate Is Ready — ${shopName}`,
+    subject: `Your Estimate Is Ready â€” ${shopName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
         <div style="background: #e5332a; padding: 32px; text-align: center;">
@@ -114,7 +114,7 @@ export const emailTemplates = {
           <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Vehicle Repair & Service</p>
         </div>
         <div style="padding: 32px;">
-          <h2 style="color: #111827; margin: 0 0 8px;">📋 Your Estimate Is Ready</h2>
+          <h2 style="color: #111827; margin: 0 0 8px;">ðŸ“‹ Your Estimate Is Ready</h2>
           <p style="color: #6b7280; margin: 0 0 24px;">Hi ${customerName}, ${shopName} has prepared an estimate for your vehicle service.</p>
           <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
             <p style="margin: 0 0 8px; color: #374151;"><strong>Service:</strong> ${description}</p>
@@ -131,7 +131,7 @@ export const emailTemplates = {
   }),
 
   jobCompleted: (customerName: string, workOrderId: string, totalDue: number, shopName: string, description: string) => ({
-    subject: `Your Vehicle Is Ready for Pickup — ${shopName}`,
+    subject: `Your Vehicle Is Ready for Pickup â€” ${shopName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
         <div style="background: #e5332a; padding: 32px; text-align: center;">
@@ -139,21 +139,21 @@ export const emailTemplates = {
           <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Vehicle Repair & Service</p>
         </div>
         <div style="padding: 32px;">
-          <h2 style="color: #111827; margin: 0 0 8px;">🎉 Job Complete — Your Vehicle Is Ready!</h2>
+          <h2 style="color: #111827; margin: 0 0 8px;">ðŸŽ‰ Job Complete â€” Your Vehicle Is Ready!</h2>
           <p style="color: #6b7280; margin: 0 0 24px;">Hi ${customerName}, great news! ${shopName} has finished work on your vehicle.</p>
           <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
             <p style="margin: 0 0 8px; color: #374151;"><strong>Work Completed:</strong> ${description}</p>
             <p style="margin: 0; color: #111827; font-size: 18px; font-weight: 700;"><strong>Amount Due: $${totalDue.toFixed(2)}</strong></p>
           </div>
           <a href="${process.env.NEXT_PUBLIC_APP_URL}/customer/workorders/${workOrderId}" style="display: block; background: #22c55e; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; text-align: center;">Pay Now &amp; Schedule Pickup</a>
-          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">Secured by Stripe • PCI DSS Compliant</p>
+          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">Secured by Stripe â€¢ PCI DSS Compliant</p>
         </div>
       </div>
     `,
   }),
 
   paymentReceipt: (customerName: string, workOrderId: string, amountPaid: number, shopName: string, description: string) => ({
-    subject: `Payment Receipt — ${shopName}`,
+    subject: `Payment Receipt â€” ${shopName}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
         <div style="background: #e5332a; padding: 32px; text-align: center;">
@@ -161,7 +161,7 @@ export const emailTemplates = {
           <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Payment Receipt</p>
         </div>
         <div style="padding: 32px;">
-          <h2 style="color: #22c55e; margin: 0 0 8px;">✅ Payment Successful</h2>
+          <h2 style="color: #22c55e; margin: 0 0 8px;">âœ… Payment Successful</h2>
           <p style="color: #6b7280; margin: 0 0 24px;">Hi ${customerName}, your payment to ${shopName} was received successfully.</p>
           <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
             <p style="margin: 0 0 8px; color: #374151;"><strong>Service:</strong> ${description}</p>
@@ -179,7 +179,7 @@ export const emailTemplates = {
   }),
 
   shopApproved: (shopName: string, ownerEmail: string, username: string, tempPassword?: string | null) => ({
-    subject: `🎉 Your Shop Has Been Approved — Welcome to FixTray!`,
+    subject: `ðŸŽ‰ Your Shop Has Been Approved â€” Welcome to FixTray!`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9fafb; padding: 0; border-radius: 10px; overflow: hidden;">
         <div style="background: #e5332a; padding: 32px; text-align: center;">
@@ -187,14 +187,14 @@ export const emailTemplates = {
           <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Shop Management Platform</p>
         </div>
         <div style="padding: 32px;">
-          <h2 style="color: #22c55e; margin: 0 0 8px;">🎉 Congratulations! Your Shop Is Approved</h2>
+          <h2 style="color: #22c55e; margin: 0 0 8px;">ðŸŽ‰ Congratulations! Your Shop Is Approved</h2>
           <p style="color: #6b7280; margin: 0 0 24px;"><strong>${shopName}</strong> has been approved on the FixTray platform. You can now log in and start managing work orders.</p>
           ${tempPassword ? `
           <div style="background: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
             <p style="margin: 0 0 8px; color: #374151; font-weight: 700;">Your Login Credentials</p>
             <p style="margin: 0 0 8px; color: #374151;"><strong>Username:</strong> ${username}</p>
             <p style="margin: 0; color: #374151;"><strong>Temporary Password:</strong> <code style="background: #fef9c3; padding: 2px 6px; border-radius: 4px; font-family: monospace;">${tempPassword}</code></p>
-            <p style="margin: 8px 0 0; color: #92400e; font-size: 12px;">⚠️ Please change your password after your first login.</p>
+            <p style="margin: 8px 0 0; color: #92400e; font-size: 12px;">âš ï¸ Please change your password after your first login.</p>
           </div>
           ` : `
           <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 20px; margin: 0 0 24px;">
@@ -202,7 +202,7 @@ export const emailTemplates = {
           </div>
           `}
           <a href="${process.env.NEXT_PUBLIC_APP_URL}/auth/login" style="display: block; background: #e5332a; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; text-align: center;">Log In to Your Shop</a>
-          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">Welcome to FixTray — the easiest way to manage your auto shop.</p>
+          <p style="margin: 16px 0 0; color: #9ca3af; font-size: 12px; text-align: center;">Welcome to FixTray â€” the easiest way to manage your auto shop.</p>
         </div>
       </div>
     `,
@@ -237,10 +237,6 @@ export async function sendEmail({ to, subject, html, from }: EmailOptions): Prom
     }
 
     // No email service configured - log to console in development
-    console.log('📧 Email would be sent:');
-    console.log(`To: ${to}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`HTML: ${html.substring(0, 200)}...`);
     
     return true;
   } catch (error) {
@@ -351,7 +347,7 @@ export async function sendRecurringApprovalEmail(
 ) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
   const reviewUrl = `${appUrl}/customer/recurring-approvals`;
-  const subject = `Your ${serviceName} Is Due — Confirm or Skip`;
+  const subject = `Your ${serviceName} Is Due â€” Confirm or Skip`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #1a1a2e; color: #e5e7eb; border-radius: 12px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #e5332a, #c0392b); padding: 32px; text-align: center;">
@@ -363,19 +359,19 @@ export async function sendRecurringApprovalEmail(
         <p style="color: #9aa3b2; line-height: 1.6; margin-bottom: 24px;">
           <strong style="color: #e5e7eb;">${shopName}</strong> has your scheduled
           <strong style="color: #e5e7eb;">${serviceName}</strong> coming up.
-          Let them know if you want to come in — <strong>no bay will be reserved until you confirm.</strong>
+          Let them know if you want to come in â€” <strong>no bay will be reserved until you confirm.</strong>
         </p>
         <div style="background: rgba(229,51,42,0.1); border: 1px solid rgba(229,51,42,0.3); border-radius: 12px; padding: 20px; margin-bottom: 28px;">
-          <div style="font-size: 18px; font-weight: 700; color: #e5e7eb; margin-bottom: 8px;">📋 ${serviceName}</div>
+          <div style="font-size: 18px; font-weight: 700; color: #e5e7eb; margin-bottom: 8px;">ðŸ“‹ ${serviceName}</div>
           <div style="color: #9aa3b2; font-size: 14px;">Shop: ${shopName}</div>
           ${estimatedCost ? `<div style="color: #9aa3b2; font-size: 14px; margin-top: 4px;">Estimated cost: <strong style="color: #22c55e;">$${estimatedCost.toFixed(2)}</strong></div>` : ''}
         </div>
         <table width="100%" style="margin-bottom: 28px;"><tr>
           <td style="padding-right: 8px;">
-            <a href="${reviewUrl}" style="display: block; background: #22c55e; color: white; padding: 14px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">✅ Yes, Schedule Me In</a>
+            <a href="${reviewUrl}" style="display: block; background: #22c55e; color: white; padding: 14px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">âœ… Yes, Schedule Me In</a>
           </td>
           <td style="padding-left: 8px;">
-            <a href="${reviewUrl}" style="display: block; background: rgba(255,255,255,0.08); color: #9aa3b2; padding: 14px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; border: 1px solid rgba(255,255,255,0.15);">⏭ Skip This Time</a>
+            <a href="${reviewUrl}" style="display: block; background: rgba(255,255,255,0.08); color: #9aa3b2; padding: 14px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; border: 1px solid rgba(255,255,255,0.15);">â­ Skip This Time</a>
           </td>
         </tr></table>
         <p style="color: #6b7280; font-size: 12px; text-align: center; line-height: 1.6;">
@@ -387,7 +383,7 @@ export async function sendRecurringApprovalEmail(
   `;
   return sendEmail({ to: customerEmail, subject, html });
 }
-// ── Recurring service reminders (14-day and 7-day advance notice) ──────────────────────
+// â”€â”€ Recurring service reminders (14-day and 7-day advance notice) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function sendRecurringReminderEmail(
   customerEmail: string,
   customerName: string,
@@ -400,17 +396,17 @@ export async function sendRecurringReminderEmail(
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
   const scheduleUrl = `${appUrl}/book/${shopId}`;
   const urgency = daysUntilDue === 7 ? 'coming up in ONE WEEK' : 'coming up in 2 weeks';
-  const emoji = daysUntilDue === 7 ? '⚡' : '📅';
-  const subject = `${emoji} Your ${serviceName} is due in ${daysUntilDue} days — ${shopName}`;
+  const emoji = daysUntilDue === 7 ? 'âš¡' : 'ðŸ“…';
+  const subject = `${emoji} Your ${serviceName} is due in ${daysUntilDue} days â€” ${shopName}`;
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #1a1a2e; color: #e5e7eb; border-radius: 12px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #e5332a, #c0392b); padding: 32px; text-align: center;">
         <div style="font-size: 36px; font-weight: 900; color: white; letter-spacing: -1px;">FixTray</div>
-        <div style="color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 6px;">Service Reminder — ${daysUntilDue} Days Notice</div>
+        <div style="color: rgba(255,255,255,0.85); font-size: 14px; margin-top: 6px;">Service Reminder â€” ${daysUntilDue} Days Notice</div>
       </div>
       <div style="padding: 32px;">
-        <h2 style="color: #e5e7eb; margin: 0 0 12px;">Hey ${customerName}! 👋</h2>
+        <h2 style="color: #e5e7eb; margin: 0 0 12px;">Hey ${customerName}! ðŸ‘‹</h2>
         <p style="color: #9aa3b2; line-height: 1.6; margin-bottom: 24px;">
           Your <strong style="color: #e5e7eb;">${serviceName}</strong> at 
           <strong style="color: #e5e7eb;">${shopName}</strong> is <strong style="color: ${daysUntilDue === 7 ? '#f59e0b' : '#e5e7eb'};">${urgency}.</strong>
@@ -422,7 +418,7 @@ export async function sendRecurringReminderEmail(
           ${estimatedCost ? `<div style="color: #9aa3b2; font-size: 14px;">Estimated cost: <strong style="color: #22c55e;">$${estimatedCost.toFixed(2)}</strong></div>` : ''}
         </div>
         <a href="${scheduleUrl}" style="display: block; background: #22c55e; color: white; padding: 16px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; margin-bottom: 16px;">
-          ✅ Yes, Schedule Me In at ${shopName}
+          âœ… Yes, Schedule Me In at ${shopName}
         </a>
         <p style="color: #6b7280; font-size: 12px; text-align: center; line-height: 1.6; margin: 0;">
           If you don't want to schedule, simply ignore this email.<br/>

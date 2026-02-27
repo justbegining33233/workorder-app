@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';
@@ -136,7 +136,7 @@ function getPlanDescription(plan: SubscriptionPlan): string {
     case 'starter':
       return 'Solo operators & very small shops';
     case 'growth':
-      return 'Small shops with 2–5 technicians';
+      return 'Small shops with 2â€“5 technicians';
     case 'professional':
       return 'Established shops running payroll & inventory';
     case 'business':
@@ -153,7 +153,6 @@ export default function PricingPage() {
 
   const handlePlanSelect = (plan: SubscriptionPlan) => {
     // Handle plan selection - redirect to signup or checkout
-    console.log('Selected plan:', plan);
     // You would typically redirect to a checkout page or signup flow
   };
 
@@ -261,7 +260,7 @@ export default function PricingPage() {
             Start Free Trial
           </button>
           <p className="text-sm text-gray-500 mt-2">
-            No credit card required • 14-day free trial • Cancel anytime
+            No credit card required â€¢ 14-day free trial â€¢ Cancel anytime
           </p>
         </div>
       </div>

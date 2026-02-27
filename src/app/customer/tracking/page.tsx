@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -56,11 +56,9 @@ export default function LiveTracking() {
   }, []);
 
   useEffect(() => {
-    console.log('userId changed:', userId);
     if (userId) {
       fetchTrackingData();
     } else {
-      console.log('No userId, not fetching tracking data');
       setLoading(false);
     }
   }, [userId]);
@@ -70,11 +68,8 @@ export default function LiveTracking() {
       setLoading(true);
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
-      console.log('Tracking page - Token present:', !!token);
-      console.log('Tracking page - UserId:', userId);
       
       if (!token) {
-        console.log('Tracking page - No token found, user not authenticated');
         setError('Authentication required');
         return;
       }
@@ -85,24 +80,18 @@ export default function LiveTracking() {
         },
       });
       
-      console.log('Tracking page - Response status:', response.status);
-      console.log('Tracking page - Response ok:', response.ok);
       
       if (response.ok) {
         const data = await response.json();
-        console.log('Tracking page - Data received:', data);
         setTrackingOrders(data);
       } else if (response.status === 404) {
-        console.log('Tracking page - No active work orders');
         setError('No active work orders to track');
         setTrackingOrders([]);
       } else {
         const errorText = await response.text();
-        console.log('Tracking page - Error response:', errorText);
         setError('Failed to load tracking data');
       }
     } catch (err) {
-      console.log('Tracking page - Fetch error:', err);
       setError('Failed to load tracking data');
     } finally {
       setLoading(false);
@@ -207,34 +196,34 @@ export default function LiveTracking() {
               <div key={order.workOrderId} style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
                 <div style={{marginBottom:20}}>
                   <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>{order.issueDescription}</h3>
-                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Work Order • {order.workOrderId}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Work Order â€¢ {order.workOrderId}</div>
                   <div style={{fontSize:16, color:'#3b82f6', fontWeight:600, marginBottom:12}}>{order.status}</div>
 
                   {order.tech && (
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                      👨‍🔧 {order.tech.name}
+                      ðŸ‘¨â€ðŸ”§ {order.tech.name}
                     </div>
                   )}
 
                   <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                    🏪 {order.shop.shopName}
+                    ðŸª {order.shop.shopName}
                   </div>
 
                   {order.isInShop || order.location?.shopAddress ? (
                     <div style={{display:'flex', flexDirection:'column', gap:6}}>
                       <div style={{fontSize:14, color:'#9aa3b2'}}>
-                        📍 {order.shop.address || order.location?.shopAddress}
+                        ðŸ“ {order.shop.address || order.location?.shopAddress}
                       </div>
                       <div style={{fontSize:14, color:'#f59e0b', fontWeight:600}}>
-                        🕒 Service Time: {order.serviceTime ? new Date(order.serviceTime).toLocaleString() : (order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleString() : '')}
+                        ðŸ•’ Service Time: {order.serviceTime ? new Date(order.serviceTime).toLocaleString() : (order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleString() : '')}
                       </div>
                     </div>
                   ) : (
                     <div style={{display:'flex', flexDirection:'column', gap:6}}>
                       {order.location && order.location.latitude !== undefined && order.location.longitude !== undefined ? (
                         <div style={{display:'flex', gap:12, alignItems:'center'}}>
-                          <div style={{fontSize:14, color:'#e5e7eb'}}>📍 Current Location: {order.location.latitude!.toFixed(4)}, {order.location.longitude!.toFixed(4)}</div>
-                          {order.location.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>⏰ ETA: {new Date(order.location.estimatedArrival).toLocaleTimeString()}</div>}
+                          <div style={{fontSize:14, color:'#e5e7eb'}}>ðŸ“ Current Location: {order.location.latitude!.toFixed(4)}, {order.location.longitude!.toFixed(4)}</div>
+                          {order.location.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>â° ETA: {new Date(order.location.estimatedArrival).toLocaleTimeString()}</div>}
                         </div>
                       ) : (
                         <div style={{fontSize:14, color:'#9aa3b2'}}>Live tracking not available for this job yet.</div>
@@ -272,7 +261,7 @@ export default function LiveTracking() {
                         textDecoration:'none',
                         textAlign:'center'
                       }}>
-                        📞 Call
+                        ðŸ“ž Call
                       </a>
                     )}
                     <button onClick={() => openMessageModal(order)} style={{
@@ -286,7 +275,7 @@ export default function LiveTracking() {
                       fontWeight:600,
                       cursor:'pointer'
                     }}>
-                      💬 Message
+                      ðŸ’¬ Message
                     </button>
                   </div>
                 </div>

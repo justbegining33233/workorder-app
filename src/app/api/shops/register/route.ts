@@ -1,22 +1,20 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
-    console.log('🔵 [REGISTER] Registration request received');
     const req = request as any;
     // Validate public CSRF token (double-submit)
     // const { validatePublicCsrf } = await import('@/lib/csrf');
     // const ok = validatePublicCsrf(req);
     // if (!ok) {
-    //   console.log('🔴 [REGISTER] CSRF validation FAILED');
+    //   console.log('ðŸ”´ [REGISTER] CSRF validation FAILED');
     //   return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
     // }
-    // console.log('✅ [REGISTER] CSRF validation passed');
+    // console.log('âœ… [REGISTER] CSRF validation passed');
     
     const body = await request.json();
-    console.log('🔵 [REGISTER] Request body:', JSON.stringify(body, null, 2));
     
     const schema = z.object({
       shopName: z.string().min(2),
@@ -43,11 +41,9 @@ export async function POST(request: Request) {
       couponCode: z.string().optional(),
     });
     const data = schema.parse(body);
-    console.log('✅ [REGISTER] Validation passed');
 
     // Generate a temporary unique username for pending shops
     const tempUsername = `pending_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    console.log('🔵 [REGISTER] Creating shop with username:', tempUsername);
     
     // Create shop in database with pending status
     const newShop = await prisma.shop.create({
@@ -67,12 +63,10 @@ export async function POST(request: Request) {
       }
     });
     
-    console.log('✅ [REGISTER] Shop created successfully! ID:', newShop.id);
 
     // Create Stripe Checkout Session so the shop owner completes payment on Stripe's hosted page
     let checkoutUrl: string | null = null;
     try {
-      console.log('🔵 [REGISTER] Creating Stripe Checkout Session...');
 
       const { default: stripeClient, STRIPE_PRODUCTS, createOrRetrieveCustomer } = await import('@/lib/stripe');
       const selectedProduct = STRIPE_PRODUCTS[data.subscriptionPlan];
@@ -93,7 +87,7 @@ export async function POST(request: Request) {
           },
         ],
         subscription_data: {
-          trial_period_days: 7, // 7-day free trial — card collected now, charged after trial
+          trial_period_days: 7, // 7-day free trial â€” card collected now, charged after trial
           metadata: {
             shopId: newShop.id,
             plan: data.subscriptionPlan,
@@ -112,10 +106,9 @@ export async function POST(request: Request) {
       });
 
       checkoutUrl = session.url;
-      console.log('✅ [REGISTER] Checkout Session created:', session.id);
     } catch (stripeError) {
-      console.error('🔴 [REGISTER] Stripe Checkout Session creation failed:', stripeError);
-      // Registration record was saved — admin can still manually activate the shop.
+      console.error('ðŸ”´ [REGISTER] Stripe Checkout Session creation failed:', stripeError);
+      // Registration record was saved â€” admin can still manually activate the shop.
     }
 
     return NextResponse.json({
@@ -127,7 +120,7 @@ export async function POST(request: Request) {
         : 'Shop registration submitted. Awaiting admin approval.',
     });
   } catch (error) {
-    console.error('🔴 [REGISTER] ERROR:', error);
+    console.error('ðŸ”´ [REGISTER] ERROR:', error);
     return NextResponse.json({ error: 'Registration failed', details: error }, { status: 500 });
   }
 }

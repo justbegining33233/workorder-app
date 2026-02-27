@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf, validatePublicCsrf } from '@/lib/csrf';
@@ -135,18 +135,13 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  console.log('🔵 [PATCH] Approval request received');
-  console.log('🔵 [PATCH] Authorization header:', request.headers.get('authorization'));
   
   const auth = requireAuth(request);
-  console.log('🔵 [PATCH] Auth result:', auth);
   
   if (auth instanceof NextResponse) {
-    console.log('🔴 [PATCH] Auth FAILED - returning error response');
     return auth;
   }
   
-  console.log('✅ [PATCH] Auth SUCCESS - role:', auth.role);
   
   try {
     if (!request.headers.get('authorization')) {

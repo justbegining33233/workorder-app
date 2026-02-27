@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import stripe from '@/lib/stripe';
 import { authenticateRequest } from '@/lib/middleware';
@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
     // If Stripe is not configured in the environment (e.g. during build),
     // return an empty list instead of calling the Stripe SDK.
     if (!process.env.STRIPE_SECRET_KEY) {
-      console.warn('STRIPE_SECRET_KEY not set — returning empty payment methods');
       return NextResponse.json({ paymentMethods: [] });
     }
 

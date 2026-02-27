@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -64,7 +64,6 @@ export default function TechHome() {
 
       // If auth failed, try without Authorization header (public fallback)
       if (response.status === 401 || response.status === 403) {
-        console.warn('Shop fetch returned', response.status, '— retrying without Authorization header');
         response = await fetch(`/api/shops/${shopId}`);
       }
 
@@ -72,7 +71,6 @@ export default function TechHome() {
         const data = await response.json();
         // Some routes return { shop } and others might return shop directly
         const shop = data?.shop ?? data;
-        console.log('✅ [SHOP FETCH] Success:', shop);
         setShopProfile(shop);
         // Use lat/lng if present, otherwise geocode address
         if (shop?.latitude && shop?.longitude) {
@@ -85,7 +83,6 @@ export default function TechHome() {
         let bodyText = '';
         try { bodyText = await response.text(); } catch (e) { bodyText = '<no body>'; }
         const msg = `status:${response.status} body:${bodyText}`;
-        console.warn('❌ [SHOP FETCH] Failed', msg);
         setShopProfile(undefined);
       }
     } catch (error) {
@@ -190,30 +187,30 @@ export default function TechHome() {
   };
 
   const jobCreationTools = [
-    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: '🚗', link: '/workorders/new' },
-    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: '🔧', link: '/workorders/inshop' },
+    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: 'ðŸš—', link: '/workorders/new' },
+    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: 'ðŸ”§', link: '/workorders/inshop' },
   ];
 
   const jobManagementTools = [
-    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: '📋', link: '/workorders/list?status=in-progress' },
-    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: '📊', link: '/workorders/list?status=closed' },
+    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: 'ðŸ“‹', link: '/workorders/list?status=in-progress' },
+    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: 'ðŸ“Š', link: '/workorders/list?status=closed' },
   ];
 
   const fieldTools = [
-    { title: 'Share Location', description: 'Share your real-time GPS location', icon: '📍', link: '/tech/share-location' },
-    { title: 'Messages', description: 'View and respond to messages', icon: '💬', link: '/tech/messages', badge: messageUnreadCount },
+    { title: 'Share Location', description: 'Share your real-time GPS location', icon: 'ðŸ“', link: '/tech/share-location' },
+    { title: 'Messages', description: 'View and respond to messages', icon: 'ðŸ’¬', link: '/tech/messages', badge: messageUnreadCount },
   ];
 
   const resourceTools = [
-    { title: 'Parts Inventory', description: 'Check parts availability and track inventory', icon: '🔩', link: '/tech/inventory' },
-    { title: 'Service Manuals', description: 'Access technical documentation and guides', icon: '📖', link: '/tech/manuals' },
+    { title: 'Parts Inventory', description: 'Check parts availability and track inventory', icon: 'ðŸ”©', link: '/tech/inventory' },
+    { title: 'Service Manuals', description: 'Access technical documentation and guides', icon: 'ðŸ“–', link: '/tech/manuals' },
   ];
 
   const technicalTools = [
-    { title: 'Diagnostic Tools', description: 'Run vehicle diagnostics and read error codes', icon: '🔍', link: '/tech/diagnostics' },
-    { title: 'Photo Upload', description: 'Upload photos and documentation', icon: '📷', link: '/tech/photos' },
-    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: '⏱️', link: '/tech/timesheet' },
-    { title: 'Customer Portal', description: 'Access customer vehicle history', icon: '👤', link: '/tech/customers' },
+    { title: 'Diagnostic Tools', description: 'Run vehicle diagnostics and read error codes', icon: 'ðŸ”', link: '/tech/diagnostics' },
+    { title: 'Photo Upload', description: 'Upload photos and documentation', icon: 'ðŸ“·', link: '/tech/photos' },
+    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: 'â±ï¸', link: '/tech/timesheet' },
+    { title: 'Customer Portal', description: 'Access customer vehicle history', icon: 'ðŸ‘¤', link: '/tech/customers' },
   ];
 
   return (
@@ -253,13 +250,13 @@ export default function TechHome() {
           <div>
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
-                <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>🔧 My Tasks Today</h2>
-                <Link href="/workorders/list" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All →</Link>
+                <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>ðŸ”§ My Tasks Today</h2>
+                <Link href="/workorders/list" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All â†’</Link>
               </div>
               
               {todayJobs.length === 0 ? (
                 <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
-                  <div style={{fontSize:48, marginBottom:16}}>✅</div>
+                  <div style={{fontSize:48, marginBottom:16}}>âœ…</div>
                   <div style={{fontSize:18, fontWeight:600, marginBottom:8}}>All caught up!</div>
                   <div style={{fontSize:14}}>No work orders assigned yet</div>
                 </div>
@@ -286,7 +283,7 @@ export default function TechHome() {
                             {job.issueDescription?.substring(0, 80)}...
                           </div>
                           <div style={{fontSize:12, color:'#6b7280'}}>
-                            WO-{job.id.substring(0, 8)} • {new Date(job.createdAt).toLocaleDateString()}
+                            WO-{job.id.substring(0, 8)} â€¢ {new Date(job.createdAt).toLocaleDateString()}
                           </div>
                         </div>
                         <Link
@@ -312,7 +309,7 @@ export default function TechHome() {
 
             {/* Live Shop Location Map */}
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, marginTop:32, marginBottom:32, overflow:'hidden', minHeight:520, display:'flex', flexDirection:'column'}}>
-              <h3 style={{color:'#e5e7eb', margin:'16px 0 0 16px', fontSize:16, fontWeight:700}}>📍 Shop Location</h3>
+              <h3 style={{color:'#e5e7eb', margin:'16px 0 0 16px', fontSize:16, fontWeight:700}}>ðŸ“ Shop Location</h3>
               <div style={{flex:1, minHeight:260, display:'flex', flexDirection:'column'}}>
                 {shopCoords ? (
                   <div style={{display:'flex', flex:1}}>
@@ -329,7 +326,7 @@ export default function TechHome() {
                     <div style={{flex:1, borderLeft:'1px solid rgba(255,255,255,0.05)', display:'flex', flexDirection:'column', padding:'12px 12px', gap:12}}>
                       {/* Section 1: Road Call */}
                       <div style={{borderRadius:8, padding:12, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.03)'}}>
-                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}>🚨 Road Call</div>
+                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}>ðŸš¨ Road Call</div>
                         <div style={{height:2, background:'rgba(255,255,255,0.06)', margin:'8px 0'}} />
 
                         {/* compact WO list */}
@@ -378,13 +375,13 @@ export default function TechHome() {
 
                       {/* Section 2: Parts */}
                       <div style={{borderRadius:8, padding:12, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.03)'}}>
-                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}>🔩 Parts</div>
+                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}>ðŸ”© Parts</div>
                         <div style={{height:2, background:'rgba(255,255,255,0.06)', margin:'8px 0 12px'}} />
 
                         {/* Show vendor addresses from recent POs when available */}
                         <div style={{minHeight:48, marginBottom:8}}>
                           {partsVendors.length === 0 ? (
-                            <div style={{fontSize:12, color:'#9aa3b2'}}>No recent POs — shop pickup shown on map</div>
+                            <div style={{fontSize:12, color:'#9aa3b2'}}>No recent POs â€” shop pickup shown on map</div>
                           ) : (
                             <div style={{display:'flex', flexDirection:'column', gap:6}}>
                               {partsVendors.map(p => (
@@ -491,7 +488,7 @@ export default function TechHome() {
 
                       {/* Section 3: User Location (share if permitted) */}
                       <div style={{borderRadius:8, padding:8, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.03)'}}>
-                        <div style={{fontSize:13, fontWeight:700, color:'#e5e7eb', marginBottom:6}}>📍 Your Location</div>
+                        <div style={{fontSize:13, fontWeight:700, color:'#e5e7eb', marginBottom:6}}>ðŸ“ Your Location</div>
                         <div style={{fontSize:12, color:'#9aa3b2', marginBottom:8}}>Share your live location on the map (optional)</div>
                         <div style={{display:'flex', gap:8}}>
                           <button id="share-location-btn" onClick={async () => {
@@ -528,7 +525,7 @@ export default function TechHome() {
                       </div>
 
                       <div style={{flex:1}} />
-                      <div style={{fontSize:10, color:'#9aa3b2', textAlign:'center'}}>Leaflet | © OpenStreetMap contributors</div>
+                      <div style={{fontSize:10, color:'#9aa3b2', textAlign:'center'}}>Leaflet | Â© OpenStreetMap contributors</div>
                     </div>
                   </div>
                 ) : (
@@ -555,7 +552,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  🚗 Job Creation
+                  ðŸš— Job Creation
                 </button>
                 <button
                   onClick={() => setActiveTab('job-management')}
@@ -573,7 +570,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  📋 Job Management
+                  ðŸ“‹ Job Management
                 </button>
                 <button
                   onClick={() => setActiveTab('field-tools')}
@@ -594,7 +591,7 @@ export default function TechHome() {
                     gap:8
                   }}
                 >
-                  📍 Field Tools
+                  ðŸ“ Field Tools
                   {messageUnreadCount > 0 && (
                     <span style={{
                       background:'#ef4444',
@@ -625,7 +622,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  📦 Resources
+                  ðŸ“¦ Resources
                 </button>
                 <button
                   onClick={() => setActiveTab('technical')}
@@ -643,7 +640,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  🔧 Technical Tools
+                  ðŸ”§ Technical Tools
                 </button>
               </div>
 
@@ -827,7 +824,7 @@ export default function TechHome() {
             {techProfile && (
               <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20, marginBottom:24}}>
                 <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:16}}>
-                  <div style={{fontSize:32}}>👤</div>
+                  <div style={{fontSize:32}}>ðŸ‘¤</div>
                   <div>
                     <div style={{fontSize:16, fontWeight:700, color:'#e5e7eb'}}>{techProfile.firstName} {techProfile.lastName}</div>
                     <div style={{fontSize:12, color:'#9aa3b2'}}>{techProfile.role === 'tech' ? 'Technician' : 'Manager'}</div>
@@ -850,13 +847,13 @@ export default function TechHome() {
                     <div style={{display:'flex', justifyContent:'space-between'}}>
                       <span style={{fontSize:13, color:'#9aa3b2'}}>Status:</span>
                       <span style={{fontSize:13, fontWeight:600, color: techProfile.available ? '#22c55e' : '#ef4444'}}>
-                        {techProfile.available ? '● Active' : '○ Inactive'}
+                        {techProfile.available ? 'â— Active' : 'â—‹ Inactive'}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div style={{marginTop:12, fontSize:11, color:'#6b7280', textAlign:'center'}}>
-                  ⟳ Auto-refreshes every 30 seconds
+                  âŸ³ Auto-refreshes every 30 seconds
                 </div>
               </div>
             )}
@@ -866,29 +863,29 @@ export default function TechHome() {
 
             {/* Quick Tools */}
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginTop:24}}>
-              <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:16}}>🛠️ Quick Tools</h3>
+              <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:16}}>ðŸ› ï¸ Quick Tools</h3>
               <div style={{display:'grid', gap:8}}>
                 <Link href="/tech/diagnostics" style={{padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8, textDecoration:'none', color:'#3b82f6', fontSize:14, fontWeight:600}}>
-                  🔍 Diagnostics
+                  ðŸ” Diagnostics
                 </Link>
                 <Link href="/tech/inventory" style={{padding:12, background:'rgba(34,197,94,0.1)', borderRadius:8, textDecoration:'none', color:'#22c55e', fontSize:14, fontWeight:600}}>
-                  📦 Inventory
+                  ðŸ“¦ Inventory
                 </Link>
                 <Link href="/tech/manuals" style={{padding:12, background:'rgba(168,85,247,0.1)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:600}}>
-                  📖 Manuals
+                  ðŸ“– Manuals
                 </Link>
                 <Link href="/tech/photos" style={{padding:12, background:'rgba(245,158,11,0.1)', borderRadius:8, textDecoration:'none', color:'#f59e0b', fontSize:14, fontWeight:600}}>
-                  📸 Photos
+                  ðŸ“¸ Photos
                 </Link>
                 <Link href="/tech/all-tools" style={{padding:12, background:'rgba(229,51,42,0.1)', borderRadius:8, textDecoration:'none', color:'#e5332a', fontSize:14, fontWeight:600}}>
-                  🛠️ All Tools
+                  ðŸ› ï¸ All Tools
                 </Link>
               </div>
             </div>
 
             {/* View Center Control */}
             <div style={{background:'rgba(229,51,42,0.1)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:12, padding:20, marginTop:24, textAlign:'center'}}>
-              <div style={{fontSize:14, color:'#e5332a', fontWeight:600, marginBottom:8}}>📊 Shop Overview</div>
+              <div style={{fontSize:14, color:'#e5332a', fontWeight:600, marginBottom:8}}>ðŸ“Š Shop Overview</div>
               <Link
                 href="/shop/home"
                 style={{

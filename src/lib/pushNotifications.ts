@@ -1,15 +1,13 @@
-// Web Push Notification Service for Browser Notifications
+﻿// Web Push Notification Service for Browser Notifications
 
 let pushSubscription: PushSubscription | null = null;
 
 export async function requestNotificationPermission(): Promise<boolean> {
   if (!('Notification' in window)) {
-    console.warn('This browser does not support notifications');
     return false;
   }
 
   if (!('serviceWorker' in navigator)) {
-    console.warn('This browser does not support service workers');
     return false;
   }
 
@@ -76,7 +74,6 @@ export async function unsubscribeFromPushNotifications(): Promise<boolean> {
 
 export async function showNotification(title: string, options?: any) {
   if (!('Notification' in window)) {
-    console.warn('This browser does not support notifications');
     return;
   }
 

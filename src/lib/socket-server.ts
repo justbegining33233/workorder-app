@@ -1,4 +1,4 @@
-// Socket.io server configuration
+﻿// Socket.io server configuration
 import { Server as NetServer } from 'http';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Server as ServerIO, Socket } from 'socket.io';
@@ -24,7 +24,6 @@ const fallbackJwt = 'fixtray-default-secret';
 const JWT_SECRET = process.env.JWT_SECRET || fallbackJwt;
 
 if (!process.env.JWT_SECRET) {
-  console.warn('Socket - WARNING: JWT_SECRET not set in environment, using fallback secret. Set JWT_SECRET to a secure value in production.');
 }
 
 // Global variable to store the io instance
@@ -62,7 +61,6 @@ export const initSocketServer = (httpServer: any) => {
   });
 
   io.on('connection', (socket: AuthenticatedSocket) => {
-    console.log(`User ${socket.userId} connected`);
 
     // Join user-specific room
     socket.join(`user_${socket.userId}`);
@@ -168,7 +166,6 @@ export const initSocketServer = (httpServer: any) => {
             }
           }
         } catch (err) {
-          console.warn('Failed to lookup work order for location update:', err);
         }
       }
     });
@@ -187,7 +184,6 @@ export const initSocketServer = (httpServer: any) => {
 
     // Handle disconnection
     socket.on('disconnect', () => {
-      console.log(`User ${socket.username || socket.userId} disconnected`);
     });
   });
 

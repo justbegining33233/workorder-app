@@ -1,8 +1,8 @@
-import Stripe from 'stripe';
+﻿import Stripe from 'stripe';
 
 // Only instantiate Stripe when the secret key is provided. During build-time
 // (or in environments where Stripe isn't configured) constructing the Stripe
-// client with an empty key throws — that causes build failures when Next.js
+// client with an empty key throws â€” that causes build failures when Next.js
 // collects page data. Export a safe proxy instead so imports don't throw.
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-01-28.clover' })
@@ -265,7 +265,6 @@ export async function handleWebhook(rawBody: string, signature: string) {
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
     }
 
     return { received: true };
@@ -348,7 +347,6 @@ async function handleSubscriptionCancellation(subscription: Stripe.Subscription)
  */
 async function handlePaymentSuccess(invoice: Stripe.Invoice) {
   // Handle successful payment (e.g., update subscription status, send confirmation)
-  console.log('Payment succeeded for invoice:', invoice.id);
 }
 
 /**
@@ -356,7 +354,6 @@ async function handlePaymentSuccess(invoice: Stripe.Invoice) {
  */
 async function handlePaymentFailure(invoice: Stripe.Invoice) {
   // Handle failed payment (e.g., suspend subscription, send notification)
-  console.log('Payment failed for invoice:', invoice.id);
 }
 
 /**

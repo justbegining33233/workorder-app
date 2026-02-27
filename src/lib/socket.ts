@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 export interface ServerToClientEvents {
@@ -38,7 +38,6 @@ export const useSocket = () => {
       let attemptedFallback = false;
 
       const createSocket = (url: string, path?: string) => {
-        console.log('[socket] createSocket', url, path || '(default path)');
         const opts: any = {
           auth: { token },
           transports: ['websocket', 'polling'],
@@ -52,12 +51,10 @@ export const useSocket = () => {
         socket = s as any;
 
         s.on('connect', () => {
-          console.log('[socket] connected to', url, 'id', s.id);
           setIsConnected(true);
         });
 
         s.on('disconnect', (reason) => {
-          console.log('[socket] disconnected from', url, reason);
           setIsConnected(false);
         });
 
@@ -68,7 +65,6 @@ export const useSocket = () => {
           // Try fallback once when primary fails
           if (!attemptedFallback && url === primaryUrl) {
             attemptedFallback = true;
-            console.log('[socket] attempting fallback to', fallbackUrl, '/api/socket');
             try { s.disconnect(); } catch (e) {}
             createSocket(fallbackUrl, '/api/socket'); // ensure fallback uses /api/socket path
           }
@@ -110,7 +106,6 @@ export const useSocket = () => {
     if (socketRef.current && socketRef.current.connected) {
       socketRef.current.emit(event, data);
     } else {
-      console.warn('Socket not connected, cannot emit:', event);
     }
   };
 

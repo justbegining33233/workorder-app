@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -59,19 +59,14 @@ export default function ShopDetailsPage({ params }: Props) {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      console.log('Fetching shop details for id:', id);
-      console.log('Token present:', !!token);
       const res = await fetch(`/api/customers/shops/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      console.log('Response status:', res.status);
-      console.log('Response ok:', res.ok);
 
       if (res.ok) {
         const data = await res.json();
-        console.log('Shop data:', data);
         setShop(data.shop);
       } else {
         const errorText = await res.text();

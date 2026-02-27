@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/middleware';
 import prisma from '@/lib/prisma';
 import { cancelSubscription } from '@/lib/stripe';
@@ -58,7 +58,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     // 4. Notify super admin (placeholder destination)
     try {
-      console.log('[SUBSCRIPTION] Notify super admin: cancellation requested', { shopId, reason, immediate });
     } catch (notifyError) {
       console.error('Failed to notify super admin about cancellation', notifyError);
     }

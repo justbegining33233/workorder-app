@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load `prisma` and `bcrypt` inside the handler to avoid import-time issues
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
@@ -31,18 +31,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Find admin by username
-    console.log('[admin/login] find admin:', username);
     const admin = await prisma.admin.findUnique({ where: { username } });
-    console.log('[admin/login] admin found:', Boolean(admin));
 
     if (!admin) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     // Verify password
-    console.log('[admin/login] verifying password for admin id:', admin.id);
     const isValid = await bcrypt.compare(password, admin.password);
-    console.log('[admin/login] password valid:', isValid);
 
     if (!isValid) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
@@ -61,7 +57,6 @@ export async function POST(request: NextRequest) {
     const expiresAt = refreshExpiryDate();
     const userIp = request.headers.get('x-forwarded-for') || request.headers.get('host') || '';
     const userAgent = request.headers.get('user-agent') || '';
-    console.log('[admin/login] creating refresh token for admin:', admin.id);
     const refresh = await (prisma as any).refreshToken.create({
       data: {
         tokenHash: refreshHash,
@@ -70,7 +65,6 @@ export async function POST(request: NextRequest) {
         expiresAt,
       }
     });
-    console.log('[admin/login] refresh token created:', refresh.id);
 
     const response = NextResponse.json({
       id: admin.id,

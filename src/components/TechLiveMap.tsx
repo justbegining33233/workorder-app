@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useRef } from 'react';
 
@@ -120,7 +120,6 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         }
       }
     }).catch(err => {
-      console.warn('Failed to load Leaflet:', err);
     });
 
     // Handler for location updates; only update if workOrderId matches
@@ -188,7 +187,7 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           } else {
             try { userMarkerRef.current.setLatLng([lat, lng]); } catch (e) {}
           }
-          // do not recenter the map — keep shop marker visible
+          // do not recenter the map â€” keep shop marker visible
           return;
         }
 
@@ -205,7 +204,6 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           mapRef.current.setView([lat, lng], mapRef.current.getZoom());
         } catch (e) {}
       } catch (err) {
-        console.warn('Error handling tech location event:', err);
       }
     };
 
@@ -222,7 +220,6 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           routeLayerRef.current = null;
         }
       } catch (err) {
-        console.warn('Error clearing route:', err);
       }
     };
 
@@ -251,10 +248,9 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         const mid = [(from[0]+to[0])/2, (from[1]+to[1])/2];
         const popup = L.popup({ closeButton: true, autoClose: true })
           .setLatLng(mid)
-          .setContent(`<div style="font-weight:700;color:#111;padding:6px;">Route • ${distMi.toFixed(1)} mi • ETA ≈ ${etaMinutes} min</div>`)
+          .setContent(`<div style="font-weight:700;color:#111;padding:6px;">Route â€¢ ${distMi.toFixed(1)} mi â€¢ ETA â‰ˆ ${etaMinutes} min</div>`)
           .openOn(mapRef.current);
       } catch (err) {
-        console.warn('Error drawing route:', err);
       }
     };
 
@@ -292,7 +288,6 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         });
         markerLayersRef.set(type, added);
       } catch (err) {
-        console.warn('Error adding markers:', err);
       }
     };
 
@@ -308,7 +303,6 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           markerLayersRef.clear();
         }
       } catch (err) {
-        console.warn('Error clearing markers:', err);
       }
     };
 

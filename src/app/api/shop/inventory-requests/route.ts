@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 import { sendInventoryRequestNotification, sendInventoryApprovalNotification, sendLowStockAlert } from '@/lib/emailService';
@@ -182,7 +182,6 @@ export async function PATCH(request: NextRequest) {
         
         // Check if below reorder point
         if (newQuantity <= inventoryItem.reorderPoint) {
-          console.log(`⚠️ Low stock alert: ${inventoryItem.itemName} (${newQuantity} remaining, reorder at ${inventoryItem.reorderPoint})`);
           // Send email notification for low stock
           const shop = await prisma.shop.findUnique({ where: { id: inventoryRequest.shopId }, select: { email: true } });
           if (shop?.email) {

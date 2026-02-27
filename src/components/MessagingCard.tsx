@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 
@@ -40,7 +40,6 @@ interface MessagingCardProps {
 }
 
 export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
-  console.log('💬 MessagingCard props - userId:', userId, 'shopId:', shopId);
   const [activeTab, setActiveTab] = useState<'customers'>('customers');
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [unreadCounts, setUnreadCounts] = useState<UnreadCounts>({
@@ -62,7 +61,6 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
 
   useEffect(() => {
     if (shopId && userId) {
-      console.log('🔄 Component mounted with shopId:', shopId, 'userId:', userId);
       fetchMessages();
       fetchAvailableContacts();
     }
@@ -77,7 +75,6 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.warn('⚠️ No token found - skipping message fetch. User may need to log in again.');
         setAuthError(true);
         return;
       }
@@ -87,7 +84,6 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       });
       
       if (response.status === 401) {
-        console.warn('⚠️ Token invalid or expired (401) - authentication required');
         setAuthError(true);
         return;
       }
@@ -108,33 +104,28 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       const token = localStorage.getItem('token');
       
       if (!token) {
-        console.log('❌ No token available for fetching contacts');
         setAuthError(true);
         return;
       }
       
       if (!shopId) {
-        console.log('⚠️ No shopId available for fetching contacts');
         return;
       }
       
       let contacts: any[] = [];
       
       // Fetch techs from the same shop
-      console.log('📞 Fetching techs from shop:', shopId);
       const techsRes = await fetch(`/api/techs?shopId=${shopId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
       if (techsRes.status === 401) {
-        console.log('❌ Token invalid or expired (401) when fetching techs');
         setAuthError(true);
         return;
       }
       
       if (techsRes.ok) {
         const { techs } = await techsRes.json();
-        console.log('✅ Techs fetched:', techs.length);
         // Filter out the current user from the list
         const otherUsers = techs.filter((t: any) => t.id !== userId);
         contacts = otherUsers.map((t: any) => ({
@@ -143,37 +134,31 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
           role: t.role,
         }));
       } else {
-        console.log('❌ Failed to fetch techs:', techsRes.status);
       }
       
       // Fetch shop owner/admin (managers can only message shop admin, not system admin)
-      console.log('📞 Fetching shop details:', shopId);
       const shopRes = await fetch(`/api/shop?shopId=${shopId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
       if (shopRes.status === 401) {
-        console.log('❌ Token invalid or expired (401) when fetching shop');
         setAuthError(true);
         return;
       }
       
       if (shopRes.ok) {
         const { shop } = await shopRes.json();
-        console.log('✅ Shop fetched:', shop.shopName);
         contacts.push({
           id: shop.id,
           name: `${shop.shopName} (Shop Owner)`,
           role: 'shop',
         });
       } else {
-        console.log('❌ Failed to fetch shop:', shopRes.status);
       }
       
-      console.log('📋 Available contacts:', contacts);
       setAvailableContacts(contacts);
     } catch (error) {
-      console.error('❌ Error fetching contacts:', error);
+      console.error('âŒ Error fetching contacts:', error);
     }
   };
 
@@ -276,7 +261,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
           alignItems: 'center',
           gap: 12,
         }}>
-          <span style={{ fontSize: 24 }}>⚠️</span>
+          <span style={{ fontSize: 24 }}>âš ï¸</span>
           <div style={{ flex: 1 }}>
             <p style={{ color: '#fca5a5', fontWeight: 600, margin: 0, fontSize: 14 }}>
               Session Expired or Missing
@@ -310,10 +295,9 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       {/* Header */}
       <div style={{ padding: 20, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>💬 Customer Messages</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>ðŸ’¬ Customer Messages</h2>
           <button
             onClick={() => {
-              console.log('🆕 New button clicked, fetching contacts...');
               setShowCompose(true);
               setSelectedConversation(null);
               fetchAvailableContacts();
@@ -362,7 +346,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
                 position: 'relative',
               }}
             >
-              {tab === 'customers' ? '👤 Customers' : '👤 Customers'}
+              {tab === 'customers' ? 'ðŸ‘¤ Customers' : 'ðŸ‘¤ Customers'}
               {unreadCount > 0 && (
                 <span style={{
                   position: 'absolute',

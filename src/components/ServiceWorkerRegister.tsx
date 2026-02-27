@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect } from 'react';
 
@@ -9,17 +9,14 @@ export default function ServiceWorkerRegister() {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          console.log('Service Worker registered:', registration);
         })
         .catch((error) => {
-          console.log('Service Worker registration failed:', error);
         });
 
       // Request notification permission for mobile
       if ('Notification' in window && 'serviceWorker' in navigator) {
         Notification.requestPermission().then((permission) => {
           if (permission === 'granted') {
-            console.log('Notification permission granted');
           }
         });
       }
@@ -33,12 +30,10 @@ export default function ServiceWorkerRegister() {
       deferredPrompt = e;
 
       // Show install button or banner
-      console.log('PWA install prompt available');
     });
 
     // Listen for app installed
     window.addEventListener('appinstalled', () => {
-      console.log('PWA was installed');
       deferredPrompt = null;
     });
 

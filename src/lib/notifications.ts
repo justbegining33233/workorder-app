@@ -1,4 +1,4 @@
-// In-memory notification store
+﻿// In-memory notification store
 import { Notification } from '@/types/customer';
 
 const notifications: Map<string, Notification[]> = new Map();
@@ -20,13 +20,10 @@ export function addNotification(customerId: string, notification: Omit<Notificat
   
   // Simulate sending based on delivery method
   if (notification.deliveryMethod.includes('email')) {
-    console.log(`[EMAIL] To ${customerId}: ${notification.title}`);
   }
   if (notification.deliveryMethod.includes('sms')) {
-    console.log(`[SMS] To ${customerId}: ${notification.message}`);
   }
   if (notification.deliveryMethod.includes('push')) {
-    console.log(`[PUSH] To ${customerId}: ${notification.title}`);
   }
   
   return newNotification;

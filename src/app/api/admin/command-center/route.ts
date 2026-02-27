@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 
@@ -242,7 +242,6 @@ export async function GET(request: NextRequest) {
       lowStockItems = allStock.filter(item => item.quantity <= (item.reorderPoint || 0));
     } catch (e) {
       // Inventory might not be set up
-      console.log('Inventory query skipped:', e);
     }
 
     // ==================== TIME & ATTENDANCE ====================

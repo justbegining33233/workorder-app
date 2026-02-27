@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -86,8 +86,6 @@ export default function EmployeeProfile() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      console.log('Updating employee:', employeeId);
-      console.log('Form data:', formData);
       
       const response = await fetch(`/api/techs/${employeeId}`, {
         method: 'PUT',
@@ -98,9 +96,7 @@ export default function EmployeeProfile() {
         body: JSON.stringify(formData),
       });
 
-      console.log('Response status:', response.status);
       const data = await response.json();
-      console.log('Response data:', data);
 
       if (response.ok) {
         alert('Employee updated successfully');

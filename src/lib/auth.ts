@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+﻿import bcrypt from 'bcrypt';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
@@ -31,12 +31,10 @@ export function generateRandomToken(bytes = 48): string {
 export function verifyToken(token: string): any {
   try {
     if (!process.env.JWT_SECRET) {
-      console.warn('Auth - WARNING: JWT_SECRET not set in environment, using fallback secret. Set JWT_SECRET to a secure value in production.');
     }
     const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
-    console.log('Auth - Token verification failed:', error instanceof Error ? error.message : String(error));
     return null;
   }
 }

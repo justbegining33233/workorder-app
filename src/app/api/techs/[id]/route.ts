@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 
@@ -72,8 +72,6 @@ export async function PUT(
     }
 
     const body = await req.json();
-    console.log('PUT /api/techs/[id] - Update request for tech:', params.id);
-    console.log('PUT /api/techs/[id] - Body:', JSON.stringify(body, null, 2));
     
     const { firstName, lastName, email, phone, hourlyRate, role, available } = body;
 
@@ -87,7 +85,6 @@ export async function PUT(
     if (role !== undefined) updateData.role = role;
     if (available !== undefined) updateData.available = available;
 
-    console.log('PUT /api/techs/[id] - Update data:', JSON.stringify(updateData, null, 2));
 
     const tech = await prisma.tech.update({
       where: { id: params.id },
@@ -99,7 +96,6 @@ export async function PUT(
       }
     });
 
-    console.log('PUT /api/techs/[id] - Update successful');
     return NextResponse.json({ 
       message: 'Tech updated successfully',
       tech 

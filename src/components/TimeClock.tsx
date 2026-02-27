@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 
@@ -180,14 +180,14 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
     // Haversine formula to calculate distance in meters
     const R = 6371e3; // Earth radius in meters
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const phi1 = lat1 * Math.PI / 180;
+    const phi2 = lat2 * Math.PI / 180;
+    const dPhi = (lat2 - lat1) * Math.PI / 180;
+    const dLambda = (lon2 - lon1) * Math.PI / 180;
 
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const a = Math.sin(dPhi/2) * Math.sin(dPhi/2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(dLambda/2) * Math.sin(dLambda/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     return R * c; // Distance in meters
@@ -212,7 +212,6 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
             shopLocation.lon
           );
           
-          console.log(`Distance from shop: ${distance.toFixed(2)} meters (${(distance * 3.28084).toFixed(2)} feet)`);
           
           // Check if within allowed radius (default 100 feet = 30.48 meters)
           if (distance > gpsRadius) {
@@ -232,10 +231,6 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       }
 
       const token = localStorage.getItem('token');
-      console.log('🔑 Clock-in token:', token ? 'Token exists' : 'NO TOKEN FOUND');
-      console.log('📍 Location data:', locationData);
-      console.log('👤 Tech ID:', techId);
-      console.log('🏪 Shop ID:', shopId);
       
       if (!token) {
         alert('Authentication token not found. Please log in again.');
@@ -291,7 +286,6 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
             shopLocation.lon
           );
           
-          console.log(`Distance from shop: ${distance.toFixed(2)} meters (${(distance * 3.28084).toFixed(2)} feet)`);
           
           // Check if within allowed radius for clock out
           if (distance > gpsRadius) {
@@ -419,7 +413,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
           <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>
-            {onBreak ? '☕ On Break' : isClockedIn ? '⏰ Clocked In' : '⏱️ Time Clock'}
+            {onBreak ? 'â˜• On Break' : isClockedIn ? 'â° Clocked In' : 'â±ï¸ Time Clock'}
           </div>
           <div style={{ fontSize: '20px', fontWeight: '600' }}>{techName || 'You'}</div>
         </div>
@@ -476,7 +470,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
             transition: 'all 0.2s',
           }}
         >
-          {loading ? 'Processing...' : isClockedIn ? '🚪 Clock Out' : '🔓 Clock In'}
+          {loading ? 'Processing...' : isClockedIn ? 'ðŸšª Clock Out' : 'ðŸ”“ Clock In'}
         </button>
 
         {isClockedIn && (
@@ -497,7 +491,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
               transition: 'all 0.2s',
             }}
           >
-            {loading ? 'Processing...' : onBreak ? '▶️ End Break' : '☕ Start Break'}
+            {loading ? 'Processing...' : onBreak ? 'â–¶ï¸ End Break' : 'â˜• Start Break'}
           </button>
         )}
       </div>
@@ -507,12 +501,12 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
           <div>Clocked in: {new Date(currentEntry.clockIn).toLocaleTimeString()}</div>
           {gpsEnabled && location && (
             <div style={{ fontSize: '11px', marginTop: '4px' }}>
-              📍 Location verified ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
+              ðŸ“ Location verified ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
             </div>
           )}
           {photoEnabled && (
             <div style={{ fontSize: '11px', marginTop: '4px' }}>
-              📸 Photo verification enabled
+              ðŸ“¸ Photo verification enabled
             </div>
           )}
         </div>

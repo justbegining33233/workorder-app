@@ -1,10 +1,10 @@
-/**
+﻿/**
  * GET /api/cron/recurring-reminders
  * POST /api/cron/recurring-reminders
  *
  * Sends advance reminder emails for recurring work orders:
- *   - 14 days before nextRunAt: "Hey, your Oil Change is coming up in 2 weeks — would you like to schedule it?"
- *   -  7 days before nextRunAt: "Your Oil Change is ONE WEEK away — schedule now at [shop link]"
+ *   - 14 days before nextRunAt: "Hey, your Oil Change is coming up in 2 weeks â€” would you like to schedule it?"
+ *   -  7 days before nextRunAt: "Your Oil Change is ONE WEEK away â€” schedule now at [shop link]"
  *
  * Uses reminder14SentAt / reminder7SentAt to prevent duplicate emails.
  * Run this cron daily.
@@ -21,7 +21,7 @@ function addDays(date: Date, days: number): Date {
 
 async function processReminders() {
   const now = new Date();
-  // Windows: target dates ±12 hours
+  // Windows: target dates Â±12 hours
   const window12h = 12 * 60 * 60 * 1000;
 
   const target14 = addDays(now, 14);
@@ -31,7 +31,7 @@ async function processReminders() {
   const sent7:  string[] = [];
   const errors: string[] = [];
 
-  // ── 14-day reminders ──────────────────────────────────────────────────────
+  // â”€â”€ 14-day reminders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const due14 = await prisma.recurringWorkOrder.findMany({
     where: {
       active: true,
@@ -66,7 +66,6 @@ async function processReminders() {
       });
 
       sent14.push(schedule.id);
-      console.log(`[Reminder] 14-day reminder sent to ${schedule.customer.email} for "${schedule.title}"`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       errors.push(`14d:${schedule.id}:${msg}`);
@@ -74,7 +73,7 @@ async function processReminders() {
     }
   }
 
-  // ── 7-day reminders ───────────────────────────────────────────────────────
+  // â”€â”€ 7-day reminders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const due7 = await prisma.recurringWorkOrder.findMany({
     where: {
       active: true,
@@ -109,7 +108,6 @@ async function processReminders() {
       });
 
       sent7.push(schedule.id);
-      console.log(`[Reminder] 7-day reminder sent to ${schedule.customer.email} for "${schedule.title}"`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       errors.push(`7d:${schedule.id}:${msg}`);

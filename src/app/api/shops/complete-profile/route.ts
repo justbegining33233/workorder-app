@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { validateCsrf, validatePublicCsrf } from '@/lib/csrf';
 
@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
       tireServices = [],
     } = body;
 
-    console.log('Complete profile request:', { shopId, businessLicense, insurancePolicy, shopType });
 
     if (!shopId) {
       return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
@@ -69,7 +68,6 @@ export async function POST(request: NextRequest) {
       where: { id: shopId }
     });
 
-    console.log('Shop found in database:', existingShop ? 'YES' : 'NO');
 
     if (!existingShop) {
       return NextResponse.json({ 
@@ -106,7 +104,6 @@ export async function POST(request: NextRequest) {
       await prisma.shopService.deleteMany({
         where: { shopId },
       });
-      console.log('Deleted existing services for shop:', shopId);
     } catch (deleteError) {
       console.error('Error deleting existing services:', deleteError);
     }
@@ -129,23 +126,11 @@ export async function POST(request: NextRequest) {
             create: service,
           });
         }
-        console.log('Created services:', allServices.length);
       } catch (serviceError) {
         console.error('Error creating services:', serviceError);
         throw serviceError;
       }
     }
-
-    console.log('Shop profile completed:', {
-      shopId,
-      dieselCount: dieselServices?.length || 0,
-      gasCount: gasServices?.length || 0,
-      smallEngineCount: smallEngineServices?.length || 0,
-      heavyEquipmentCount: heavyEquipmentServices?.length || 0,
-      resurfacingCount: resurfacingServices?.length || 0,
-      weldingCount: weldingServices?.length || 0,
-      tireCount: tireServices?.length || 0,
-    });
 
     return NextResponse.json({ 
       message: 'Shop profile completed successfully',

@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/middleware';
 import { getSocketServer } from '@/lib/socket-server';
@@ -43,7 +43,6 @@ export async function POST(request: Request) {
         },
       });
     } catch (err) {
-      console.warn('Failed to create notification record:', err);
     }
 
     // Emit socket event to shop room and manager role so managers get notified in real-time
@@ -63,7 +62,6 @@ export async function POST(request: Request) {
         io.to(`shop_${shopId}`).emit('new-estimate-request', payload);
       }
     } catch (err) {
-      console.warn('Failed to emit socket event for new estimate request:', err);
     }
 
     return NextResponse.json({ success: true });
