@@ -1,15 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireRole, AuthUser } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+
+  const user = auth as AuthUser;
+  const { searchParams } = new URL(request.url);
+  const shopId = user.role === 'admin'
+    ? searchParams.get('shopId')
+    : (user.shopId ?? user.id);
+
+  if (!shopId) {
+    return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const shopId = searchParams.get('shopId');
-
-    if (!shopId) {
-      return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
-    }
-
     const alerts = [];
 
     // Check for overdue work orders

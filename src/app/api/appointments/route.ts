@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
+import { AuthUser } from '@/lib/auth';
 
 // GET - Get appointments
 export async function GET(request: NextRequest) {
@@ -14,16 +15,17 @@ export async function GET(request: NextRequest) {
     const shopId = searchParams.get('shopId');
     const status = searchParams.get('status');
 
-    const where: any = {};
+    const where: { customerId?: string; shopId?: string; status?: string } = {};
 
     // Filter by user role
-    if ((auth as any).role === 'customer') {
-      where.customerId = (auth as any).id;
-    } else if ((auth as any).role === 'shop' || (auth as any).role === 'manager') {
-      where.shopId = shopId || (auth as any).shopId;
+    const user = auth as AuthUser;
+    if (user.role === 'customer') {
+      where.customerId = user.id;
+    } else if (user.role === 'shop' || user.role === 'manager') {
+      where.shopId = shopId || user.shopId;
     }
 
-    if (customerId && ((auth as any).role === 'shop' || (auth as any).role === 'admin')) {
+    if (customerId && (user.role === 'shop' || user.role === 'admin')) {
       where.customerId = customerId;
     }
 
@@ -92,13 +94,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const user = auth as AuthUser;
+
     // Get vehicle info if provided
     let vehicle = null;
     if (vehicleId) {
       vehicle = await prisma.vehicle.findFirst({
         where: {
           id: vehicleId,
-          customerId: (auth as any).id,
+          customerId: user.id,
         },
       });
 
@@ -110,7 +114,7 @@ export async function POST(request: NextRequest) {
     // Create appointment
     const appointment = await prisma.appointment.create({
       data: {
-        customerId: (auth as any).id,
+        customerId: user.id,
         shopId,
         vehicleId: vehicleId || null,
         scheduledDate: new Date(scheduledDate),
@@ -147,7 +151,7 @@ export async function POST(request: NextRequest) {
     // Create a work order for this appointment
     const workOrder = await prisma.workOrder.create({
       data: {
-        customerId: (auth as any).id,
+        customerId: user.id,
         shopId,
         vehicleId: vehicleId || null,
         vehicleType: vehicle?.vehicleType || appointment.vehicle?.vehicleType || 'gas',
@@ -163,7 +167,7 @@ export async function POST(request: NextRequest) {
     if (notes && notes.trim()) {
       await prisma.customerMessage.create({
         data: {
-          customerId: (auth as any).id,
+          customerId: user.id,
           workOrderId: workOrder.id,
           from: 'customer',
           content: notes.trim(),

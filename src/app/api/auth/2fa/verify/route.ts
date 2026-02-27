@@ -7,15 +7,18 @@ export async function POST(request: NextRequest) {
   const auth = requireRole(request, ['shop', 'tech', 'manager']);
   if (auth instanceof NextResponse) return auth;
 
-  const body = await request.json();
-  const { code } = body;
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body !== 'object') {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+  const { code } = body as Record<string, unknown>;
 
   if (!code) {
     return NextResponse.json({ error: 'Code is required' }, { status: 400 });
   }
 
   const userId = auth.id;
-  const valid = verifyOTP(userId, code.trim());
+  const valid = verifyOTP(userId, String(code).trim());
 
   if (!valid) {
     return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 });

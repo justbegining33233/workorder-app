@@ -3,8 +3,8 @@
  * POST /api/cron/recurring-reminders
  *
  * Sends advance reminder emails for recurring work orders:
- *   - 14 days before nextRunAt: "Hey, your Oil Change is coming up in 2 weeks â€” would you like to schedule it?"
- *   -  7 days before nextRunAt: "Your Oil Change is ONE WEEK away â€” schedule now at [shop link]"
+ *   - 14 days before nextRunAt: "Hey, your Oil Change is coming up in 2 weeks — would you like to schedule it?"
+ *   -  7 days before nextRunAt: "Your Oil Change is ONE WEEK away — schedule now at [shop link]"
  *
  * Uses reminder14SentAt / reminder7SentAt to prevent duplicate emails.
  * Run this cron daily.
@@ -21,7 +21,7 @@ function addDays(date: Date, days: number): Date {
 
 async function processReminders() {
   const now = new Date();
-  // Windows: target dates Â±12 hours
+  // target dates ±12 hours
   const window12h = 12 * 60 * 60 * 1000;
 
   const target14 = addDays(now, 14);
@@ -123,6 +123,9 @@ export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   const cronHeader = request.headers.get('x-cron-secret');
 
+  if (!secret && process.env.NODE_ENV === 'production') {
+    console.error('[Cron] FATAL: CRON_SECRET is not set — recurring-reminders GET is unprotected in production!');
+  }
   if (secret && authHeader !== `Bearer ${secret}` && cronHeader !== secret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -142,6 +145,9 @@ export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   const cronHeader = request.headers.get('x-cron-secret');
 
+  if (!secret && process.env.NODE_ENV === 'production') {
+    console.error('[Cron] FATAL: CRON_SECRET is not set — recurring-reminders POST is unprotected in production!');
+  }
   if (secret && authHeader !== `Bearer ${secret}` && cronHeader !== secret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

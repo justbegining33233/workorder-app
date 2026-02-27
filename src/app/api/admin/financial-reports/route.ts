@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireRole } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
+  const auth = requireRole(req, ['admin']);
+  if (auth instanceof NextResponse) return auth;
+
   // Enforce Neon-only DB: fail fast if DATABASE_URL is missing
   if (!process.env.DATABASE_URL) {
     console.error('DATABASE_URL not configured — set it to your Neon connection string');
@@ -9,12 +13,6 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Verify admin authentication
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     // Get all work orders with payment info
     const workOrders = await prisma.workOrder.findMany({
       where: {

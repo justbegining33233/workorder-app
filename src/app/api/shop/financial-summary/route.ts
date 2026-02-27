@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { requireRole, AuthUser } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+
+  const user = auth as AuthUser;
+  const { searchParams } = new URL(request.url);
+  // For shop/manager use their own shopId; admins may query any shop via ?shopId=
+  const shopId = user.role === 'admin'
+    ? searchParams.get('shopId')
+    : (user.shopId ?? user.id);
+
+  if (!shopId) {
+    return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const shopId = searchParams.get('shopId');
-
-    if (!shopId) {
-      return NextResponse.json({ error: 'Shop ID is required' }, { status: 400 });
-    }
-
     const today = new Date();
     const startOfToday = new Date(today.setHours(0, 0, 0, 0));
     const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));

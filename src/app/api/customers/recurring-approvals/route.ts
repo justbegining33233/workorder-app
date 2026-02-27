@@ -16,31 +16,37 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Customers only' }, { status: 403 });
   }
 
-  const pending = await prisma.workOrder.findMany({
-    where: {
-      customerId: auth.id,
-      status: 'awaiting-confirmation',
-    },
-    include: {
-      shop: { select: { shopName: true, address: true, phone: true } },
-      vehicle: { select: { make: true, model: true, year: true, licensePlate: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+  try {
+    const pending = await prisma.workOrder.findMany({
+      where: {
+        customerId: auth.id,
+        status: 'awaiting-confirmation',
+      },
+      include: {
+        shop: { select: { shopName: true, address: true, phone: true } },
+        vehicle: { select: { make: true, model: true, year: true, licensePlate: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-  const approvals = pending.map((wo) => ({
-    id: wo.id,
-    service: wo.issueDescription,
-    shopName: wo.shop?.shopName ?? 'Your Shop',
-    shopAddress: wo.shop?.address ?? '',
-    shopPhone: wo.shop?.phone ?? '',
-    vehicle: wo.vehicle
-      ? `${wo.vehicle.year} ${wo.vehicle.make} ${wo.vehicle.model}`
-      : wo.vehicleType,
-    estimatedCost: wo.estimatedCost,
-    serviceLocation: wo.serviceLocation,
-    createdAt: wo.createdAt.toISOString(),
-  }));
+    const approvals = pending.map((wo) => ({
+      id: wo.id,
+      service: wo.issueDescription,
+      shopName: wo.shop?.shopName ?? 'Your Shop',
+      shopAddress: wo.shop?.address ?? '',
+      shopPhone: wo.shop?.phone ?? '',
+      vehicle: wo.vehicle
+        ? `${wo.vehicle.year} ${wo.vehicle.make} ${wo.vehicle.model}`
+        : wo.vehicleType,
+      estimatedCost: wo.estimatedCost,
+      serviceLocation: wo.serviceLocation,
+      createdAt: wo.createdAt.toISOString(),
+    }));
 
-  return NextResponse.json({ success: true, approvals });
+    return NextResponse.json({ success: true, approvals });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[Customers/RecurringApprovals] DB error:', msg);
+    return NextResponse.json({ error: 'Failed to fetch recurring approvals' }, { status: 500 });
+  }
 }

@@ -4,16 +4,7 @@ import prisma from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
-    const req = request as any;
-    // Validate public CSRF token (double-submit)
-    // const { validatePublicCsrf } = await import('@/lib/csrf');
-    // const ok = validatePublicCsrf(req);
-    // if (!ok) {
-    //   console.log('ðŸ”´ [REGISTER] CSRF validation FAILED');
-    //   return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    // }
-    // console.log('âœ… [REGISTER] CSRF validation passed');
-    
+
     const body = await request.json();
     
     const schema = z.object({
