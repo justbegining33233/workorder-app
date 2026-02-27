@@ -5,6 +5,13 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 
 export const runtime = 'nodejs';
 
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+function sanitizeFolder(raw: string): string {
+  return raw.replace(/[^a-zA-Z0-9_\-]/g, '').slice(0, 50) || 'work-orders';
+}
+
 export async function POST(request: NextRequest) {
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
@@ -16,10 +23,27 @@ export async function POST(request: NextRequest) {
     }
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-    const folder = (formData.get('folder') as string) || 'work-orders';
+    const rawFolder = (formData.get('folder') as string) || 'work-orders';
+    const folder = sanitizeFolder(rawFolder);
     
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    }
+
+    // Validate file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: `File type '${file.type}' is not allowed. Accepted: JPEG, PNG, WEBP, GIF, PDF` },
+        { status: 415 }
+      );
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: 'File exceeds maximum allowed size of 10 MB' },
+        { status: 413 }
+      );
     }
     
     // Convert file to buffer

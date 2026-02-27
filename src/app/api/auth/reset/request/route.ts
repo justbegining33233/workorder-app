@@ -1,7 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { generateNumericOTP, generateTokenHex, hashTokenSha256 } from '@/lib/verification';
-import { getClientIP } from '@/lib/rateLimit';
+import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 async function sendByEmail(email: string, raw: string, siteUrl: string) {
   if (process.env.RESEND_API_KEY) {
@@ -51,6 +51,14 @@ export async function POST(request: NextRequest) {
 
     if (!identifier) return NextResponse.json({ success: true }); // generic response
 
+    // Rate limiting — 3 requests per hour per IP + identifier to prevent OTP spam
+    const clientIP = getClientIP(request);
+    const rateLimitKey = `pw_reset:${clientIP}:${String(identifier).toLowerCase()}`;
+    const rateLimit = checkRateLimit(rateLimitKey, { maxRequests: 3, windowMs: 60 * 60 * 1000 });
+    if (!rateLimit.success) {
+      // Return generic success to avoid confirming account existence via timing
+      return NextResponse.json({ success: true });
+    }
     // Find user (try admin by username, then shop, then customer by email)
     let user: any = null;
     // attempt email lookup

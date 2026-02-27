@@ -1,6 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load prisma & bcrypt inside handler
 import { verifyPassword, generateToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
+import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -15,7 +16,19 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = loginSchema.parse(body);
-    
+
+    // Rate limiting — 5 attempts per 15 minutes per IP + identifier
+    const clientIP = getClientIP(request);
+    const identifier = String(data.email || data.username || '').toLowerCase();
+    const rateLimitKey = `customer_login:${clientIP}:${identifier}`;
+    const rateLimit = checkRateLimit(rateLimitKey);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: rateLimit.message, retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000) },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)) } }
+      );
+    }
+
     // Lazy-load runtime-sensitive modules
     const prisma = (await import('@/lib/prisma')).default;
     const bcryptMod = await import('bcrypt');
@@ -40,6 +53,9 @@ export async function POST(request: NextRequest) {
     if (!valid) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
+
+    // Reset rate limit counter on successful login
+    resetRateLimit(rateLimitKey);
     
     // Generate access and refresh tokens, store refresh token server-side and set cookies
     const accessToken = generateToken({ id: customer.id, email: customer.email, role: 'customer' });

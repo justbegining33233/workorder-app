@@ -1,4 +1,4 @@
-﻿/**
+/**
  * POST /api/cron/recurring-workorders
  * GET  /api/cron/recurring-workorders  (Vercel Cron calls GET)
  *

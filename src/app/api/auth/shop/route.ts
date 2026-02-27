@@ -1,18 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load `prisma` and `bcrypt` in the handler
 import { generateAccessToken } from '@/lib/auth';
+import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
-
-    const prisma = (await import('@/lib/prisma')).default;
-    const bcryptMod = await import('bcrypt');
-    const bcrypt = (bcryptMod && (bcryptMod.default ?? bcryptMod)) as typeof import('bcrypt');
+    const body = await request.json();
+    const { username, password } = body;
 
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password required' }, { status: 400 });
     }
+
+    // Rate limiting — 5 attempts per 15 minutes per IP+username
+    const clientIP = getClientIP(request);
+    const rateLimitKey = `shop_login:${clientIP}:${String(username).toLowerCase()}`;
+    const rateLimit = checkRateLimit(rateLimitKey);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: rateLimit.message, retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000) },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil((rateLimit.resetTime - Date.now()) / 1000)) } }
+      );
+    }
+
+    const prisma = (await import('@/lib/prisma')).default;
+    const bcryptMod = await import('bcrypt');
+    const bcrypt = (bcryptMod && (bcryptMod.default ?? bcryptMod)) as typeof import('bcrypt');
 
     // Find shop by username, email, or shop name
     const shop = await prisma.shop.findFirst({
@@ -43,6 +56,9 @@ export async function POST(request: NextRequest) {
     if (!isValid) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
+
+    // Reset rate limit counter on successful login
+    resetRateLimit(rateLimitKey);
 
     // Generate access token
     const accessToken = generateAccessToken({ id: shop.id, username: shop.username, role: 'shop' });

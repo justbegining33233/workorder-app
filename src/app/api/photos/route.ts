@@ -6,7 +6,10 @@ import type { AuthUser } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['shop', 'manager', 'admin', 'tech']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const photos = loadPhotos();
     return NextResponse.json({ photos });
