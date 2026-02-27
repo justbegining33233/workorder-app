@@ -102,10 +102,10 @@ export async function PUT(
     });
   } catch (error: unknown) {
     console.error('PUT /api/techs/[id] - Error updating tech:', error);
-    console.error('PUT /api/techs/[id] - Error details:', (error as Error)?.message, (error as Error)?.stack);
-    return NextResponse.json({ 
+    const details = process.env.NODE_ENV === 'development' ? (error as Error)?.message : undefined;
+    return NextResponse.json({
       error: 'Failed to update tech',
-      details: (error as Error)?.message 
+      ...(details && { details }),
     }, { status: 500 });
   }
 }

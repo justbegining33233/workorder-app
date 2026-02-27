@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
     return response;
     } catch (error: unknown) {
       console.error('Shop login error:', error);
-      return NextResponse.json({ error: 'Login failed', details: (error as Error)?.message }, { status: 500 });
+      const details = process.env.NODE_ENV === 'development' ? (error as Error)?.message : undefined;
+      return NextResponse.json({ error: 'Login failed', ...(details && { details }) }, { status: 500 });
   }
 }

@@ -128,6 +128,7 @@ export async function POST(request: NextRequest) {
     return response;
     } catch (error: unknown) {
       console.error('Tech login error:', error, (error as Error)?.stack);
-      return NextResponse.json({ error: 'Login failed', details: (error as Error)?.message || 'unknown' }, { status: 500 });
+      const details = process.env.NODE_ENV === 'development' ? ((error as Error)?.message || 'unknown') : undefined;
+      return NextResponse.json({ error: 'Login failed', ...(details && { details }) }, { status: 500 });
   }
 }

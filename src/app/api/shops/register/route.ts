@@ -111,8 +111,9 @@ export async function POST(request: Request) {
         : 'Shop registration submitted. Awaiting admin approval.',
     });
   } catch (error) {
-    console.error('ðŸ”´ [REGISTER] ERROR:', error);
-    return NextResponse.json({ error: 'Registration failed', details: error }, { status: 500 });
+    console.error('[REGISTER] ERROR:', error);
+    const details = process.env.NODE_ENV === 'development' ? String(error) : undefined;
+    return NextResponse.json({ error: 'Registration failed', ...(details && { details }) }, { status: 500 });
   }
 }
 
