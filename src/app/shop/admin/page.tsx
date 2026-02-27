@@ -135,18 +135,20 @@ export default function ShopAdminPage() {
     // Auto-fetch payroll data
     fetchPayrollData(id || '', startDate.toISOString(), endDate.toISOString());
     
-    // Refresh clock-in data and stats every 5 seconds
+    // Refresh live data every 5 seconds (stats, messages, team)
     const interval = setInterval(() => {
       fetchShopStats(id || '');
-      fetchBudgetData(id || '');
       fetchShopMessages(id || '');
       fetchTeamData(id || '');
-      // Auto-refresh payroll with current date range
+    }, 5000);
+    // Refresh budget and payroll every 30 seconds
+    const budgetInterval = setInterval(() => {
+      fetchBudgetData(id || '');
       const currentEnd = new Date();
       const currentStart = new Date(currentEnd.getTime() - 14 * 24 * 60 * 60 * 1000);
       fetchPayrollData(id || '', currentStart.toISOString(), currentEnd.toISOString());
-    }, 5000);
-    return () => clearInterval(interval);
+    }, 30000);
+    return () => { clearInterval(interval); clearInterval(budgetInterval); };
   }, [router, user, isLoading]);
 
   const fetchShopStats = async (id: string) => {
@@ -204,19 +206,12 @@ export default function ShopAdminPage() {
       startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       
-      // Fetch weekly payroll
-      const weeklyResponse = await fetch(
-        `/api/shop/payroll?shopId=${id}&startDate=${startOfWeek.toISOString()}&endDate=${now.toISOString()}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const weeklyData = await weeklyResponse.json();
-      
-      // Fetch monthly payroll
-      const monthlyResponse = await fetch(
-        `/api/shop/payroll?shopId=${id}&startDate=${startOfMonth.toISOString()}&endDate=${now.toISOString()}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const monthlyData = await monthlyResponse.json();
+      // Fetch weekly and monthly payroll in parallel
+      const [weeklyResponse, monthlyResponse] = await Promise.all([
+        fetch(`/api/shop/payroll?shopId=${id}&startDate=${startOfWeek.toISOString()}&endDate=${now.toISOString()}`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`/api/shop/payroll?shopId=${id}&startDate=${startOfMonth.toISOString()}&endDate=${now.toISOString()}`, { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+      const [weeklyData, monthlyData] = await Promise.all([weeklyResponse.json(), monthlyResponse.json()]);
       
       setBudgetData({
         weeklyBudget: settings?.weeklyPayrollBudget || 0,

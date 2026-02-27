@@ -102,7 +102,7 @@ export default function TwoFactorSettingsPage() {
       <div style={{ maxWidth: 600, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
-          <Link href="/shop/settings" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 14 }}>
+          <Link href="/shop/admin/settings" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 14 }}>
             ← Back to Settings
           </Link>
         </div>

@@ -92,15 +92,14 @@ export default function DistributorManagement() {
     );
   }
 
+  useEffect(() => {
+    if (user?.name) setUserName(user.name);
+  }, [user]);
+
   // If no user, the useRequireAuth hook will handle redirect
   if (!user) {
     return null;
   }
-
-  useEffect(() => {
-    if (user?.name) setUserName(user.name);
-     
-  }, []);
 
   const getDistributor = (id: string) => distributors.find(d => d.id === id);
 

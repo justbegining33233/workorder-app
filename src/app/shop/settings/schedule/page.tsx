@@ -40,7 +40,7 @@ export default function ScheduleSettingsPage() {
 
   const fetchSchedule = async () => {
     try {
-      const token = localStorage.getItem('shopToken');
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/shop/schedule', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -67,7 +67,7 @@ export default function ScheduleSettingsPage() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const token = localStorage.getItem('shopToken');
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/shop/schedule', {
         method: 'PUT',
         headers: {
@@ -95,7 +95,7 @@ export default function ScheduleSettingsPage() {
     if (!newBlockedDate) return;
 
     try {
-      const token = localStorage.getItem('shopToken');
+      const token = localStorage.getItem('token');
       const res = await fetch('/api/shop/schedule/blocked-dates', {
         method: 'POST',
         headers: {
@@ -126,7 +126,7 @@ export default function ScheduleSettingsPage() {
 
   const handleRemoveBlockedDate = async (id: string) => {
     try {
-      const token = localStorage.getItem('shopToken');
+      const token = localStorage.getItem('token');
       const res = await fetch(`/api/shop/schedule/blocked-dates?id=${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }

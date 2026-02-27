@@ -93,7 +93,7 @@ export default function VendorManagementPage() {
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <Link href="/shop/dashboard" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Dashboard</Link>
+            <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
             <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 4px' }}>🏭 Vendor Management</h1>
             <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Manage parts suppliers, distributors, and service vendors</p>
           </div>

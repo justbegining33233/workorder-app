@@ -30,16 +30,16 @@ export default function CustomerMessagesPage() {
     );
   }
 
-  // If no user, the useRequireAuth hook will handle redirect
-  if (!user) {
-    return null;
-  }
-
   useEffect(() => {
     if (user?.id) setUserId(user.id);
     if (user?.name) setUserName(user.name);
     if (user?.shopId) setShopId(user.shopId);
   }, [user]);
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   const handleSignOut = () => {
     localStorage.removeItem('userRole');

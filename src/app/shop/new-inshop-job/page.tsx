@@ -45,14 +45,14 @@ export default function ShopNewInShopJob() {
     );
   }
 
+  useEffect(() => {
+    if (user?.name) setUserName(user.name);
+  }, [user]);
+
   // If no user, the useRequireAuth hook will handle redirect
   if (!user) {
     return null;
   }
-
-  useEffect(() => {
-    if (user?.name) setUserName(user.name);
-  }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
