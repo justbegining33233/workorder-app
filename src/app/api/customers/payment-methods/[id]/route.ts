@@ -1,13 +1,34 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import stripe from '@/lib/stripe';
+import prisma from '@/lib/prisma';
+import { requireRole } from '@/lib/auth';
+import type { AuthUser } from '@/lib/auth';
 
 // DELETE /api/customers/payment-methods/[id] - Detach a payment method
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = requireRole(request, ['customer']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
+
   try {
     const { id } = await params;
+
+    // Verify the payment method belongs to the authenticated customer
+    const customer = await prisma.customer.findUnique({
+      where: { id: user.id },
+      select: { stripeCustomerId: true },
+    });
+    if (!customer?.stripeCustomerId) {
+      return NextResponse.json({ error: 'No Stripe account found' }, { status: 400 });
+    }
+
+    const paymentMethod = await stripe.paymentMethods.retrieve(id);
+    if (paymentMethod.customer !== customer.stripeCustomerId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     await stripe.paymentMethods.detach(id);
 
@@ -20,30 +41,34 @@ export async function DELETE(
 
 // PATCH /api/customers/payment-methods/[id] - Set as default
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = requireRole(request, ['customer']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
+
   try {
     const { id } = await params;
-    const body = await request.json();
-    const { customerId } = body;
 
-    if (!customerId) {
-      return NextResponse.json({ error: 'Customer ID required' }, { status: 400 });
+    // Resolve the authenticated customer's Stripe ID — never trust body.customerId
+    const customer = await prisma.customer.findUnique({
+      where: { id: user.id },
+      select: { stripeCustomerId: true },
+    });
+    if (!customer?.stripeCustomerId) {
+      return NextResponse.json({ error: 'No Stripe account found' }, { status: 400 });
     }
 
-    // Get payment method to find stripe customer
+    // Verify the payment method belongs to this customer
     const paymentMethod = await stripe.paymentMethods.retrieve(id);
-    
-    if (!paymentMethod.customer) {
-      return NextResponse.json({ error: 'Payment method not attached to customer' }, { status: 400 });
+    if (paymentMethod.customer !== customer.stripeCustomerId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Set as default
-    await stripe.customers.update(paymentMethod.customer as string, {
-      invoice_settings: {
-        default_payment_method: id,
-      },
+    await stripe.customers.update(customer.stripeCustomerId, {
+      invoice_settings: { default_payment_method: id },
     });
 
     return NextResponse.json({ message: 'Set as default payment method' });

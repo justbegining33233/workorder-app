@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllTenants, getTenantById, createTenant, updateTenant } from '@/lib/tenants';
-import { validateCsrf } from '@/lib/csrf';
+import { requireRole } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['admin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -23,14 +26,13 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireRole(request, ['admin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    if (!request.headers.get('authorization')) {
-      const ok = await validateCsrf(request);
-      if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
-    const body = await request.json();
-    
-    // Validate required fields
+    const body = await request.json().catch(() => null);
+    if (!body) return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+
     if (!body.companyName || !body.subdomain || !body.contactEmail) {
       return NextResponse.json(
         { error: 'Missing required fields: companyName, subdomain, contactEmail' },
@@ -46,11 +48,10 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = requireRole(request, ['admin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    if (!request.headers.get('authorization')) {
-      const ok = await validateCsrf(request);
-      if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
@@ -58,7 +59,9 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Tenant ID is required' }, { status: 400 });
     }
 
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body) return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+
     const updatedTenant = updateTenant(id, body);
 
     if (!updatedTenant) {

@@ -1,11 +1,15 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getPortalMessages } from '@/lib/portalChat';
 import { PortalRole } from '@/types/portalChat';
+import { requireRole } from '@/lib/auth';
 
 // Use nodejs runtime because portalChat persistence relies on fs
 export const runtime = 'nodejs';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ role: string }> }) {
+  const auth = requireRole(req, ['tech', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+
   const { role } = await params;
   if (!['tech', 'manager'].includes(role)) {
     return new Response('Invalid role', { status: 400 });

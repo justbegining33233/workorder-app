@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { requireRole } from '@/lib/auth';
 
 // In-memory storage for activity logs
 const activityLogs: {
@@ -15,7 +16,10 @@ const activityLogs: {
   reason?: string;
 }[] = [];
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['admin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');

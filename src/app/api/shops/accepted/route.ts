@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { validateCsrf } from '@/lib/csrf';
+import { requireRole } from '@/lib/auth';
+import type { AuthUser } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -35,73 +36,58 @@ export async function GET() {
         },
         subscription: {
           select: {
-            id: true,
             plan: true,
             status: true,
-            currentPeriodStart: true,
             currentPeriodEnd: true,
-            trialEnd: true
+            trialEnd: true,
           }
         }
       }
     });
 
-    // Format response to match expected structure with real stats
-    const formattedShops = await Promise.all(approvedShops.map(async (shop) => {
+    // Format response — only expose public-facing fields (NO password, no credentials)
+    const formattedShops = approvedShops.map((shop) => {
       const completedJobs = shop.workOrders.filter(wo => wo.status === 'closed').length;
       const totalRevenue = shop.workOrders
         .filter(wo => wo.paymentStatus === 'paid')
         .reduce((sum, wo) => sum + (wo.amountPaid || 0), 0);
-      
-      // Calculate average rating (placeholder for now)
+
       const rating = completedJobs > 0 ? 4.5 : 0;
-      
-      // Calculate completion rate
       const totalJobs = shop.workOrders.length;
       const completionRate = totalJobs > 0 ? Math.round((completedJobs / totalJobs) * 100) : 0;
-      
-      // Calculate average response time (placeholder)
       const averageResponseTime = completedJobs > 0 ? '2-4 hours' : 'N/A';
 
-      // Separate services by category
       const dieselServices = shop.services.filter(s => s.category === 'diesel');
       const gasServices = shop.services.filter(s => s.category === 'gas');
 
       return {
         id: shop.id,
         name: shop.shopName,
+        shopName: shop.shopName,
         location: `${shop.city || ''}, ${shop.state || ''}`.trim(),
         address: shop.address,
         phone: shop.phone,
         email: shop.email,
         revenue: `$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         jobs: completedJobs,
-        rating: rating,
+        rating,
         status: 'verified',
-        services: shop.services, // Include all services
-        shopName: shop.shopName,
-        ownerName: shop.ownerName || '',
-        businessLicense: shop.businessLicense || '',
-        insurancePolicy: shop.insurancePolicy || '',
-        completionRate: completionRate,
-        averageResponseTime: averageResponseTime,
-        profileComplete: shop.profileComplete,
-        username: shop.username,
-        password: shop.password,
-        zipCode: shop.zipCode,
+        services: shop.services,
         shopType: shop.shopType,
+        completionRate,
+        averageResponseTime,
+        profileComplete: shop.profileComplete,
+        zipCode: shop.zipCode,
         joinedDate: shop.createdAt,
         createdAt: shop.createdAt,
-        dieselServices: dieselServices,
-        gasServices: gasServices,
-        subscription: shop.subscription ? {
-          plan: shop.subscription.plan,
-          status: shop.subscription.status,
-          currentPeriodEnd: shop.subscription.currentPeriodEnd,
-          trialEnd: shop.subscription.trialEnd
-        } : null,
+        dieselServices,
+        gasServices,
+        subscription: shop.subscription
+          ? { plan: shop.subscription.plan, status: shop.subscription.status, currentPeriodEnd: shop.subscription.currentPeriodEnd, trialEnd: shop.subscription.trialEnd }
+          : null,
+        // NOTE: password, username, businessLicense, insurancePolicy intentionally omitted
       };
-    }));
+    });
 
     return NextResponse.json(formattedShops);
   } catch (error) {
@@ -113,29 +99,28 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    // This endpoint is no longer needed since shops are created in pending
-    // and moved to approved status via PATCH, but keeping for compatibility
-    return NextResponse.json({ 
-      message: 'Use /api/shops/pending to create shops',
-    }, { status: 400 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to add shop' }, { status: 500 });
-  }
+export async function POST() {
+  return NextResponse.json({ message: 'Use /api/shops/pending to create shops' }, { status: 400 });
 }
 
 export async function PATCH(request: NextRequest) {
-  try {
-    const ok = await validateCsrf(request);
-    if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    const body = await request.json();
-      // Return all approved shops from the database, including their services
-    const { shopId, profileComplete, businessLicense, insurancePolicy, shopType, dieselServices, gasServices } = body;
+  const auth = requireRole(request, ['shop', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+  const user = auth as AuthUser;
 
-    // Update shop in database
+  try {
+    const body = await request.json().catch(() => null);
+    if (!body) return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+
+    const { shopId, profileComplete, businessLicense, insurancePolicy, shopType } = body;
+
+    if (!shopId) return NextResponse.json({ error: 'shopId required' }, { status: 400 });
+
+    // Shop-role users may only update their own profile
+    if (user.role === 'shop' && user.shopId !== shopId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const updatedShop = await prisma.shop.update({
       where: { id: shopId },
       data: {
@@ -146,10 +131,7 @@ export async function PATCH(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ 
-      message: 'Shop profile updated',
-      shop: updatedShop
-    }, { status: 200 });
+    return NextResponse.json({ message: 'Shop profile updated', shop: updatedShop }, { status: 200 });
   } catch (error) {
     console.error('Error updating shop:', error);
     return NextResponse.json({ error: 'Failed to update shop' }, { status: 500 });

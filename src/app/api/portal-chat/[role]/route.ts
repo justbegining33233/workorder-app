@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addPortalMessage, getPortalMessages } from '@/lib/portalChat';
 import { PortalRole } from '@/types/portalChat';
+import { requireRole } from '@/lib/auth';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ role: string }> }) {
+  const auth = requireRole(req, ['tech', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { role } = await params;
     if (!['tech', 'manager'].includes(role)) {
@@ -18,6 +22,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ role
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ role: string }> }) {
+  const auth = requireRole(req, ['tech', 'manager', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { role } = await params;
     if (!['tech', 'manager'].includes(role)) {
