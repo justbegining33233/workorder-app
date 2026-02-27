@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 
+function getAuthToken(request: NextRequest) {
+  const token = request.headers.get('authorization')?.replace('Bearer ', '');
+  if (!token) return null;
+  return verifyToken(token);
+}
+
 // GET /api/purchase-orders/:id
-export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    const decoded = getAuthToken(request);
+    if (!decoded || (decoded.role !== 'shop' && decoded.role !== 'manager' && decoded.role !== 'admin')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await context.params;
     const order = await prisma.purchaseOrder.findUnique({
       where: { id },

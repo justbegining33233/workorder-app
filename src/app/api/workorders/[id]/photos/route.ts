@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getWorkOrderById, updateWorkOrder } from '@/lib/workorders';
-import { validateCsrf } from '@/lib/csrf';
+import { requireAuth } from '@/lib/middleware';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    // If no Authorization header then require CSRF
-    if (!request.headers.get('authorization')) {
-      const ok = await validateCsrf(request);
-      if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
-    }
     const { id } = await params;
     const { url, type, caption } = await request.json();
 
@@ -25,7 +23,7 @@ export async function POST(
       url,
       type,
       uploadedAt: new Date(),
-      uploadedBy: request.headers.get('x-user-role') || 'tech',
+      uploadedBy: auth.role,
       caption,
     };
 
