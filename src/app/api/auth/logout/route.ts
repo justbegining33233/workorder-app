@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { validateCsrf } from '@/lib/csrf';
 
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
 
     const id = request.cookies.get('refresh_id')?.value;
-    if (id) await (prisma as any).refreshToken.delete({ where: { id } }).catch(() => {});
+    if (id) await prisma.refreshToken.delete({ where: { id } }).catch(() => {});
 
     const response = NextResponse.json({ ok: true });
     response.cookies.delete('sos_auth');

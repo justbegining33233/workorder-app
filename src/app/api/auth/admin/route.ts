@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = refreshExpiryDate();
     const userIp = request.headers.get('x-forwarded-for') || request.headers.get('host') || '';
     const userAgent = request.headers.get('user-agent') || '';
-    const refresh = await (prisma as any).refreshToken.create({
+    const refresh = await prisma.refreshToken.create({
       data: {
         tokenHash: refreshHash,
         adminId: admin.id,

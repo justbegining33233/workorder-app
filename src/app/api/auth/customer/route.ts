@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     const userIp = request.headers.get('x-forwarded-for') || request.headers.get('host') || '';
     const userAgent = request.headers.get('user-agent') || '';
     const csrf = (await import('@/lib/csrf')).generateCsrfToken();
-    const refresh = await (prisma as any).refreshToken.create({
+    const refresh = await prisma.refreshToken.create({
       data: {
         tokenHash: refreshHash,
         adminId: null,

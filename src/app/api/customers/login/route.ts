@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load prisma & bcrypt inside handler
 import { verifyPassword, generateToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 import { z } from 'zod';
@@ -50,11 +50,11 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get('user-agent') || '';
     const csrf = (await import('@/lib/csrf')).generateCsrfToken();
 
-    const refresh = await (prisma as any).refreshToken.create({
+    const refresh = await prisma.refreshToken.create({
       data: {
         tokenHash: refreshHash,
         adminId: null,
-        metadata: { customerId: customer.id, ip: userIp, agent: userAgent, csrfToken: csrf },
+        metadata: JSON.stringify({ customerId: customer.id, ip: userIp, agent: userAgent, csrfToken: csrf }),
         expiresAt,
       }
     });

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyPassword, generateToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 import bcrypt from 'bcrypt';
@@ -81,11 +81,11 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get('user-agent') || '';
     const csrf = (await import('@/lib/csrf')).generateCsrfToken();
 
-    const refresh = await (prisma as any).refreshToken.create({
+    const refresh = await prisma.refreshToken.create({
       data: {
         tokenHash: refreshHash,
         adminId: null,
-        metadata: { shopId: shop.id, ip: userIp, agent: userAgent, csrfToken: csrf },
+        metadata: JSON.stringify({ shopId: shop.id, ip: userIp, agent: userAgent, csrfToken: csrf }),
         expiresAt,
       }
     });

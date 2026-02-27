@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 // @ts-ignore
 import { verifyToken } from '@/lib/auth';
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const sessions = await (prisma as any).refreshToken.findMany({
+    const sessions = await prisma.refreshToken.findMany({
       orderBy: { createdAt: 'desc' },
     });
 
@@ -47,7 +47,7 @@ export async function DELETE(request: NextRequest) {
     const id = body?.id;
     if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
 
-    await (prisma as any).refreshToken.delete({ where: { id } }).catch(() => {});
+    await prisma.refreshToken.delete({ where: { id } }).catch(() => {});
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error('Sessions delete error:', err);

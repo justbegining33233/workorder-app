@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 import { validateCsrf } from '@/lib/csrf';
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
       const existingBreaks = (activeEntry as any).breaks || [];
       const newBreak = { start: new Date().toISOString(), end: null, durationMinutes: null, type: 'break' };
 
-      const updatedEntry = await (prisma as any).timeEntry.update({
+      const updatedEntry = await prisma.timeEntry.update({
         where: { id: activeEntry.id },
         data: {
           breaks: { push: newBreak },
@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
         const breakEndLegacy = new Date();
         const breakDurationLegacy = (breakEndLegacy.getTime() - new Date(activeEntry.breakStart).getTime()) / (1000 * 60); // minutes
 
-        const updatedEntryLegacy = await (prisma as any).timeEntry.update({
+        const updatedEntryLegacy = await prisma.timeEntry.update({
           where: { id: activeEntry.id },
           data: {
             breakEnd: breakEndLegacy,
@@ -292,7 +292,7 @@ export async function POST(request: NextRequest) {
       // compute total breakDuration (minutes)
       const totalBreakMinutes = breaksArray.reduce((acc, b) => acc + (b.durationMinutes || 0), 0);
 
-      const updatedEntry = await (prisma as any).timeEntry.update({
+      const updatedEntry = await prisma.timeEntry.update({
         where: { id: activeEntry.id },
         data: {
           breaks: breaksArray,
@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
       const ms = clockOut.getTime() - clockIn.getTime();
       const hoursWorked = Math.round((ms / (1000 * 60 * 60)) * 100) / 100;
 
-      const timeEntry = await (prisma as any).timeEntry.create({
+      const timeEntry = await prisma.timeEntry.create({
         data: {
           techId,
           shopId,

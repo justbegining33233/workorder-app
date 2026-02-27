@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+﻿import crypto from 'crypto';
 import prisma from './prisma';
 import bcrypt from 'bcrypt';
 import { NextRequest } from 'next/server';
@@ -21,11 +21,11 @@ export async function validateCsrf(request: NextRequest) {
     }
   }
   if (!header || !id || !raw) return false;
-  const record = await (prisma as any).refreshToken.findUnique({ where: { id } });
+  const record = await prisma.refreshToken.findUnique({ where: { id } });
   if (!record) return false;
   const matches = await bcrypt.compare(raw, record.tokenHash).catch(() => false);
   if (!matches) return false;
-  const meta = record.metadata || {};
+  const meta = record.metadata ? (JSON.parse(record.metadata) as { csrfToken?: string }) : {};
   return Boolean(meta.csrfToken && meta.csrfToken === header);
 }
 
