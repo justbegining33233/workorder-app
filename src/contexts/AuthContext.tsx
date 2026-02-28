@@ -150,9 +150,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('userName', userData.name);
     localStorage.setItem('userId', userData.id);
     if (userData.shopId) localStorage.setItem('shopId', userData.shopId);
+    else localStorage.removeItem('shopId');
     if (userData.isShopAdmin) localStorage.setItem('isShopAdmin', 'true');
+    else localStorage.removeItem('isShopAdmin');
+    // Always explicitly set or clear shopProfileComplete to prevent stale state
     if (userData.shopProfileComplete) localStorage.setItem('shopProfileComplete', 'true');
+    else localStorage.removeItem('shopProfileComplete');
     if (userData.isSuperAdmin) localStorage.setItem('isSuperAdmin', 'true');
+    else localStorage.removeItem('isSuperAdmin');
 
     setUser({
       id: userData.id,

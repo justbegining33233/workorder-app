@@ -1,10 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 import { customerLoginSchema } from '@/lib/validation';
 import { sanitizeObject } from '@/lib/sanitize';
-
 // @ts-ignore
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 

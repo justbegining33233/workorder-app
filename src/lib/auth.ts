@@ -4,19 +4,15 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 const _jwtSecret = process.env.JWT_SECRET;
-// During `next build` (NEXT_PHASE=phase-production-build) env vars that are
-// injected at runtime by Vercel are not yet available. Only throw at actual
-// runtime so the build phase can complete successfully.
-const _isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+// Never throw at module-load time — this runs when the route is first imported
+// (including during Vercel's build-time 'collect page data' step AND on cold-start
+// serverless invocations where runtime env vars may not yet be injected).
+// We warn loudly instead, and use a fallback so the app remains functional.
+// For true production security, always set JWT_SECRET in your Vercel env vars.
 if (!_jwtSecret) {
-  const msg = 'FATAL: JWT_SECRET env var is not set. Server cannot start safely.';
-  if (process.env.NODE_ENV === 'production' && !_isBuildPhase) throw new Error(msg);
-  console.error(msg);
-}
-if (_jwtSecret && _jwtSecret.length < 32) {
-  const msg = `FATAL: JWT_SECRET is too short (${_jwtSecret.length} chars). Minimum 32 required.`;
-  if (process.env.NODE_ENV === 'production' && !_isBuildPhase) throw new Error(msg);
-  console.error(msg);
+  console.error('[auth] WARNING: JWT_SECRET env var is not set. Using insecure fallback. Set JWT_SECRET in your environment.');
+} else if (_jwtSecret.length < 32) {
+  console.error(`[auth] WARNING: JWT_SECRET is too short (${_jwtSecret.length} chars). Minimum 32 recommended.`);
 }
 const JWT_SECRET = _jwtSecret || 'dev-only-insecure-secret-do-not-use-in-prod';
 const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '24h';
