@@ -4,6 +4,16 @@ import { verifyToken } from '@/lib/auth';
 
 // GET - Get reviews
 export async function GET(request: NextRequest) {
+  // Require authentication — reviews contain customer names
+  const token = request.headers.get('authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const decoded = verifyToken(token);
+  if (!decoded) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const shopId = searchParams.get('shopId');

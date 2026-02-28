@@ -7,6 +7,10 @@ import { validateCsrf } from '@/lib/csrf';
 
 // Get approved shops
 export async function GET(request: NextRequest) {
+  // Require authentication — shop data is not public
+  const authRes = requireAuth(request);
+  if (authRes instanceof NextResponse) return authRes;
+
   try {
     const { searchParams } = new URL(request.url);
     const zipCode = searchParams.get('zipCode');
@@ -22,17 +26,15 @@ export async function GET(request: NextRequest) {
       select: {
         id: true,
         shopName: true,
-        email: true,
         phone: true,
         zipCode: true,
         address: true,
         city: true,
         state: true,
         profileComplete: true,
-        businessLicense: true,
-        insurancePolicy: true,
         shopType: true,
         createdAt: true,
+        // businessLicense and insurancePolicy intentionally excluded
         services: {
           select: {
             serviceName: true,

@@ -3,7 +3,11 @@ import prisma from '@/lib/prisma';
 import { requireRole } from '@/lib/auth';
 import type { AuthUser } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Require authentication — shop discovery is only for logged-in users
+  const auth = requireRole(request, ['customer', 'shop', 'manager', 'tech', 'admin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     // Return all approved shops from the database
     const approvedShops = await prisma.shop.findMany({
@@ -67,13 +71,8 @@ export async function GET() {
         location: `${shop.city || ''}, ${shop.state || ''}`.trim(),
         address: shop.address,
         phone: shop.phone,
-        email: shop.email,
-        revenue: `$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-        jobs: completedJobs,
-        rating,
-        status: 'verified',
-        services: shop.services,
         shopType: shop.shopType,
+        services: shop.services,
         completionRate,
         averageResponseTime,
         profileComplete: shop.profileComplete,
@@ -82,10 +81,7 @@ export async function GET() {
         createdAt: shop.createdAt,
         dieselServices,
         gasServices,
-        subscription: shop.subscription
-          ? { plan: shop.subscription.plan, status: shop.subscription.status, currentPeriodEnd: shop.subscription.currentPeriodEnd, trialEnd: shop.subscription.trialEnd }
-          : null,
-        // NOTE: password, username, businessLicense, insurancePolicy intentionally omitted
+        // NOTE: revenue, email, subscription and credentials intentionally omitted
       };
     });
 
