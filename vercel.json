@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/keepalive",
+      "schedule": "*/5 * * * *"
+    },
+    {
       "path": "/api/cron/recurring-workorders",
       "schedule": "0 8 * * *"
     },
@@ -8,5 +12,14 @@
       "path": "/api/cron/recurring-reminders",
       "schedule": "0 9 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "src/app/api/shop/payroll/route.ts": { "maxDuration": 30 },
+    "src/app/api/messages/route.ts": { "maxDuration": 15 },
+    "src/app/api/shop/team/route.ts": { "maxDuration": 15 },
+    "src/app/api/shop/messages/route.ts": { "maxDuration": 15 },
+    "src/app/api/shop/stats/route.ts": { "maxDuration": 15 },
+    "src/app/api/shop/settings/route.ts": { "maxDuration": 15 },
+    "src/app/api/shops/settings/route.ts": { "maxDuration": 15 }
+  }
 }

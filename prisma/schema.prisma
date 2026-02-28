@@ -4,8 +4,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // DATABASE_URL  → Neon POOLED connection string (ep-xxx-pooler.region.neon.tech)
+  //                 Add ?pgbouncer=true&connect_timeout=15 to the connection string in Vercel.
+  // DIRECT_URL    → Neon DIRECT connection string (ep-xxx.region.neon.tech, no -pooler).
+  //                 Used only for migrations (prisma migrate / prisma db push).
+  //                 Set both in Vercel → Settings → Environment Variables.
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // Customer model

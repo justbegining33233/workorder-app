@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 // Lazy Prisma initialization — do NOT throw at module import time.
 // If DATABASE_URL is missing the exported object is a Proxy that throws only
@@ -29,7 +30,6 @@ function buildClient(): PrismaClient {
         // Fields like tokenHash, refreshTokenHash, ipHash etc. are
         // already hashed by the calling code (SHA256 or bcrypt) before
         // being passed to Prisma — double-hashing them would break lookups.
-        const bcrypt = await import('bcrypt');
         const rounds = parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
 
         for (const key of Object.keys(obj)) {

@@ -1,22 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { requireAuth } from '@/lib/middleware';
 
-// GET - Get shop settings
+// GET - Get operational shop settings (GPS, labor rates, budgets, clock rules).
+// For shop profile + notification settings use /api/shops/settings.
 export async function GET(request: NextRequest) {
+  const decoded = requireAuth(request);
+  if (decoded instanceof NextResponse) return decoded;
+
+  if (!['shop', 'manager', 'admin', 'tech'].includes(decoded.role)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const decoded = verifyToken(token);
-    if (!decoded || !['shop', 'manager', 'admin'].includes(decoded.role)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
-    // Scope shopId: admins can pass any; shop owners use their own id; managers use their shopId
+    // Scope shopId: admins can pass any; shop owners use their own id; managers/techs use their shopId
     const shopId = decoded.role === 'admin'
       ? searchParams.get('shopId')
       : (decoded.role === 'shop' ? decoded.id : decoded.shopId);
@@ -50,18 +48,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PUT - Update shop settings
+// PUT - Update operational shop settings
 export async function PUT(request: NextRequest) {
-  try {
-    const token = request.headers.get('authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  const decoded = requireAuth(request);
+  if (decoded instanceof NextResponse) return decoded;
 
-    const decoded = verifyToken(token);
-    if (!decoded || decoded.role !== 'shop') {
-      return NextResponse.json({ error: 'Unauthorized - Shop admin only' }, { status: 403 });
-    }
+  if (decoded.role !== 'shop' && decoded.role !== 'admin') {
+    return NextResponse.json({ error: 'Unauthorized - Shop admin only' }, { status: 403 });
+  }
+
+  try {
 
     const body = await request.json();
     const { shopId, ...settingsData } = body;
