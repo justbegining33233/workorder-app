@@ -8,8 +8,14 @@ import prisma from '@/lib/prisma';
 //
 // Vercel calls this with a cron secret. Reject all other callers.
 export async function GET(request: Request) {
+  const cronSecret = process.env.CRON_SECRET;
+  // If CRON_SECRET is not configured, block all requests rather than
+  // accidentally allowing anyone who sends "Bearer undefined".
+  if (!cronSecret) {
+    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 503 });
+  }
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
