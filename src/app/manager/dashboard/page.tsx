@@ -25,6 +25,11 @@ export default function ManagerDashboard() {
   const [data, setData] = useState<ManagerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    if (!user) return;
+    fetchDashboardData();
+  }, [user]);
+
   // Show loading state while checking authentication
   if (isLoading) {
     return (
@@ -46,10 +51,6 @@ export default function ManagerDashboard() {
   if (!user) {
     return null;
   }
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
 
   const fetchDashboardData = async () => {
     try {

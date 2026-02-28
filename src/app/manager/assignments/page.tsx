@@ -33,6 +33,11 @@ export default function AssignmentsPage() {
   const [selectedTech, setSelectedTech] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    if (!user) return;
+    fetchData();
+  }, [user]);
+
   // Show loading state while checking authentication
   if (isLoading) {
     return (
@@ -54,10 +59,6 @@ export default function AssignmentsPage() {
   if (!user) {
     return null;
   }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const fetchData = async () => {
     try {

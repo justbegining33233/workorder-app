@@ -13,6 +13,12 @@ export default function CustomerMessagesPage() {
   const [userName, setUserName] = useState('');
   const [shopId, setShopId] = useState('');
 
+  useEffect(() => {
+    if (user?.id) setUserId(user.id);
+    if (user?.name) setUserName(user.name);
+    if (user?.shopId) setShopId(user.shopId);
+  }, [user]);
+
   // Show loading state while checking authentication
   if (isLoading) {
     return (
@@ -29,12 +35,6 @@ export default function CustomerMessagesPage() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (user?.id) setUserId(user.id);
-    if (user?.name) setUserName(user.name);
-    if (user?.shopId) setShopId(user.shopId);
-  }, [user]);
 
   // If no user, the useRequireAuth hook will handle redirect
   if (!user) {

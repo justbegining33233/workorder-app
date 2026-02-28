@@ -28,6 +28,10 @@ export default function ShopNewInShopJob() {
     notes: '',
   });
 
+  useEffect(() => {
+    if (user?.name) setUserName(user.name);
+  }, [user]);
+
   // Show loading state while checking authentication
   if (isLoading) {
     return (
@@ -44,10 +48,6 @@ export default function ShopNewInShopJob() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (user?.name) setUserName(user.name);
-  }, [user]);
 
   // If no user, the useRequireAuth hook will handle redirect
   if (!user) {
