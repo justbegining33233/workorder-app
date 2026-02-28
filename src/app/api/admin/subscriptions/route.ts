@@ -88,8 +88,18 @@ export async function GET(request: NextRequest) {
           new Date(wo.createdAt) >= startOfLastMonth && new Date(wo.createdAt) < startOfMonth
         ).length;
 
-        // Calculate average response time (mock for now - would need actual data)
-        const avgResponseTime = '2.4 hours';
+        // Calculate average response time from closed work orders (createdAt → completedAt)
+        const closedWOs = workOrders.filter((wo: any) => wo.completedAt);
+        let avgResponseTime = 'N/A';
+        if (closedWOs.length > 0) {
+          const avgMs = closedWOs.reduce((sum: number, wo: any) => {
+            return sum + (new Date(wo.completedAt).getTime() - new Date(wo.createdAt).getTime());
+          }, 0) / closedWOs.length;
+          const avgHours = avgMs / (1000 * 60 * 60);
+          if (avgHours < 1) avgResponseTime = `${Math.round(avgHours * 60)} min`;
+          else if (avgHours < 24) avgResponseTime = `${Math.round(avgHours * 10) / 10} hrs`;
+          else avgResponseTime = `${Math.round(avgHours / 24 * 10) / 10} days`;
+        }
 
         // Active techs
         const activeTechs = techs.filter((t: any) => t.available).length;
@@ -167,25 +177,7 @@ export async function GET(request: NextRequest) {
       ? Math.round(((newShopsThisMonth - newShopsLastMonth) / newShopsLastMonth) * 100)
       : newShopsThisMonth > 0 ? 100 : 0;
 
-    // 7-day job trend
-    const weeklyJobTrend: number[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-      date.setHours(0, 0, 0, 0);
-      const nextDate = new Date(date);
-      nextDate.setDate(nextDate.getDate() + 1);
-      
-      const dayJobs = 0;
-      subscriptionsWithDetails.forEach((sub: any) => {
-        // Count work orders created on this day from the metrics we gathered
-        // We need to fetch from the original data
-      });
-      // Mock data for now - would need actual work order date tracking
-      weeklyJobTrend.push(Math.floor(Math.random() * 50 + 100));
-    }
-
-    // Get actual weekly job data
+    // Get actual weekly job data (live from DB)
     const weeklyJobs = await Promise.all(
       Array.from({ length: 7 }, async (_, i) => {
         const date = new Date(now);

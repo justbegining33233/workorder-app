@@ -24,7 +24,7 @@ export default function TechHome() {
   const [shopCoords, setShopCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const [roadCalls, setRoadCalls] = useState<any[]>([]);
   const [partsVendors, setPartsVendors] = useState<{ vendor: string; address?: string; poId?: string }[]>([]);
-  const [shopStats] = useState({
+  const [shopStats, setShopStats] = useState({
     openJobs: 0,
     completedToday: 0,
     partsOrdered: 0,
@@ -37,6 +37,23 @@ export default function TechHome() {
     // Fetch shop profile if shopId exists
     if (user.shopId) {
       fetchShopProfile(user.shopId);
+      // Fetch aggregated shop stats from work orders
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+      fetch(`/api/workorders?shopId=${user.shopId}&limit=100`, { headers })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (!data) return;
+          const orders: any[] = data.workOrders || [];
+          const today = new Date(); today.setHours(0, 0, 0, 0);
+          const openJobs = orders.filter((w: any) => ['assigned', 'in-progress'].includes(w.status)).length;
+          const completedToday = orders.filter((w: any) => w.status === 'closed' && new Date(w.updatedAt) >= today).length;
+          const todayRevenue = orders
+            .filter((w: any) => w.status === 'closed' && w.paymentStatus === 'paid' && new Date(w.updatedAt) >= today)
+            .reduce((s: number, w: any) => s + (w.amountPaid || 0), 0);
+          setShopStats({ openJobs, completedToday, partsOrdered: 0, revenue: `$${todayRevenue.toLocaleString('en-US', { minimumFractionDigits: 0 })}` });
+        })
+        .catch(() => {});
     }
     // Fetch tech profile
     fetchTechProfile(user.id);

@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
@@ -62,7 +62,7 @@ export default function ShopHome() {
     password: ''
   });
   const [todayJobs, setTodayJobs] = useState<Job[]>([]);
-  const [shopStats] = useState({
+  const [shopStats, setShopStats] = useState({
     openJobs: 0,
     completedToday: 0,
     todayRevenue: '$0',
@@ -70,22 +70,109 @@ export default function ShopHome() {
     activeTechs: 0,
     pendingApprovals: 0
   });
-  const [teamMembers] = useState<TeamMember[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [inventory] = useState<InventoryItem[]>([]);
   const [selectedDestinations, setSelectedDestinations] = useState<Record<string, string>>({});
-  const [pendingWorkOrders, setPendingWorkOrders] = useState<Job[]>([
-    { id: 'WO-1045', service: 'Brake Pads & Rotors', priority: 'High', customer: 'K. Larkin', vehicle: '2018 F-150', time: '9:15 AM', tech: 'Unassigned', status: 'Pending' },
-    { id: 'WO-1046', service: 'Oil & Filter', priority: 'Low', customer: 'M. Nguyen', vehicle: '2020 Civic', time: '9:30 AM', tech: 'Unassigned', status: 'Pending' },
-    { id: 'WO-1047', service: 'Check Engine Diagnostic', priority: 'Medium', customer: 'S. Patel', vehicle: '2016 Forester', time: '9:45 AM', tech: 'Unassigned', status: 'Pending' }
-  ]);
-  const [bays, setBays] = useState<Array<{ id: string; name: string; tech: string; jobs: Job[] }>>([
-    { id: 'bay-1', name: 'Bay 1', tech: 'Alex R.', jobs: [] },
-    { id: 'bay-2', name: 'Bay 2', tech: 'Jamie L.', jobs: [] },
-    { id: 'bay-3', name: 'Bay 3', tech: 'Chris M.', jobs: [] }
-  ]);
+  const [pendingWorkOrders, setPendingWorkOrders] = useState<Job[]>([]);
+  const [bays, setBays] = useState<Array<{ id: string; name: string; tech: string; jobs: Job[] }>>([]);
   const [roadcallJobs, setRoadcallJobs] = useState<Job[]>([]);
-  const userId = (user as any)?.id ?? 'shop-user';
-  const shopId = (user as any)?.shopId ?? 'shop-001';
+  const userId = (user as any)?.id ?? '';
+  const shopId = (user as any)?.shopId ?? user?.id ?? '';
+
+  // Fetch live dashboard data whenever the authenticated user is ready
+  useEffect(() => {
+    if (!user) return;
+    const id = (user as any).shopId ?? user.id;
+    if (!id) return;
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
+    const fetchDashboard = async () => {
+      try {
+        const [statsRes, finRes, woRes, teamRes, shopRes] = await Promise.all([
+          fetch(`/api/shop/workorder-stats?shopId=${id}`, { headers }),
+          fetch(`/api/shop/financial-summary?shopId=${id}`, { headers }),
+          fetch(`/api/workorders?shopId=${id}&status=pending`, { headers }),
+          fetch(`/api/shop/team?shopId=${id}`, { headers }),
+          fetch(`/api/shop/stats?shopId=${id}`, { headers }),
+        ]);
+
+        // Work order stats (open jobs, completed today, pending approvals)
+        if (statsRes.ok) {
+          const data = await statsRes.json();
+          const s = data.stats || {};
+          setShopStats(prev => ({
+            ...prev,
+            openJobs: (s.activeJobs || 0) + (s.pendingAssignments || 0),
+            completedToday: s.completedToday || 0,
+            pendingApprovals: s.pendingAssignments || 0,
+          }));
+        }
+
+        // Financial summary (today + week revenue)
+        if (finRes.ok) {
+          const data = await finRes.json();
+          const fmt = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+          setShopStats(prev => ({
+            ...prev,
+            todayRevenue: fmt(data.todayRevenue || 0),
+            weekRevenue: fmt(data.weeklyRevenue || 0),
+          }));
+        }
+
+        // Pending work orders queue
+        if (woRes.ok) {
+          const data = await woRes.json();
+          const orders: Job[] = (data.workOrders || []).map((wo: any) => ({
+            id: wo.id,
+            service: wo.issueDescription || wo.repairs || 'Service',
+            priority: wo.priority || 'Medium',
+            customer: wo.customer
+              ? `${wo.customer.firstName} ${wo.customer.lastName?.charAt(0) ?? ''}.`
+              : 'Walk-in',
+            vehicle: wo.vehicleType || '',
+            time: new Date(wo.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            tech: wo.assignedTo
+              ? `${wo.assignedTo.firstName} ${wo.assignedTo.lastName?.charAt(0) ?? ''}.`
+              : 'Unassigned',
+            status: 'Pending',
+          }));
+          setPendingWorkOrders(orders);
+        }
+
+        // Team members + active tech count
+        if (teamRes.ok) {
+          const data = await teamRes.json();
+          const members: any[] = data.teamMembers || [];
+          setShopStats(prev => ({ ...prev, activeTechs: members.filter((m) => m.available).length }));
+          setTeamMembers(members.map((m: any) => ({
+            name: `${m.firstName} ${m.lastName}`,
+            role: m.role,
+            avatar: '👤',
+            status: m.available ? 'Active' : 'Offline',
+            jobs: 0,
+          })));
+        }
+
+        // Bays — derive from shop's capacity
+        if (shopRes.ok) {
+          const data = await shopRes.json();
+          const cap: number = data.capacity || data.shop?.capacity || 3;
+          setBays(Array.from({ length: cap }, (_, i) => ({
+            id: `bay-${i + 1}`,
+            name: `Bay ${i + 1}`,
+            tech: '',
+            jobs: [],
+          })));
+        }
+      } catch (err) {
+        // Dashboard will show zeros/empty – not a crash
+      }
+    };
+
+    fetchDashboard();
+  }, [user]);
   const quickActions: QuickAction[] = [
     { label: 'ðŸ§° Parts', href: '/shop/parts-labor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' },
     {

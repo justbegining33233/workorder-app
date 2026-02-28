@@ -12,6 +12,59 @@ export default function ReportsAnalytics() {
   const [userRole, setUserRole] = useState('');
   const [dateRange, setDateRange] = useState('30days');
   const [selectedMetric, setSelectedMetric] = useState('revenue');
+  const [reportLoading, setReportLoading] = useState(false);
+
+  // Live data states
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalJobs: 0,
+    avgJobValue: 0,
+    completionRate: 0,
+    customerSatisfaction: 0,
+    responseTime: '0 min',
+  });
+  const [revenueByMonth, setRevenueByMonth] = useState<{ month: string; revenue: number; jobs: number }[]>([]);
+  const [topServices, setTopServices] = useState<{ service: string; jobs: number; revenue: number }[]>([]);
+  const [techPerformance, setTechPerformance] = useState<{ name: string; jobs: number; revenue: number; rating?: number; efficiency?: number }[]>([]);
+
+  // Fetch live report data whenever user is available
+  useEffect(() => {
+    if (!user) return;
+    // Reports API only works for shop/manager/admin roles
+    if (!['shop', 'manager', 'admin'].includes(user.role)) return;
+
+    const shopId = (user as any).shopId ?? user.id;
+    if (!shopId) return;
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
+    setReportLoading(true);
+    fetch(`/api/reports?shopId=${shopId}`, { headers })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data?.report) return;
+        const r = data.report;
+        const completionRate = r.totalJobs > 0 ? Math.round((r.completedJobs / r.totalJobs) * 100) : 0;
+        setStats({
+          totalRevenue: r.totalRevenue ?? 0,
+          totalJobs: r.totalJobs ?? 0,
+          avgJobValue: r.avgJobValue ?? 0,
+          completionRate,
+          customerSatisfaction: 0,
+          responseTime: '—',
+        });
+        setRevenueByMonth(r.revenueByMonth ?? []);
+        setTopServices(r.topServices ?? []);
+        setTechPerformance(r.techPerformance ?? []);
+      })
+      .finally(() => setReportLoading(false));
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.name) setUserName(user.name);
+    if (user?.role) setUserRole(user.role);
+  }, [user]);
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -35,11 +88,6 @@ export default function ReportsAnalytics() {
     return null;
   }
 
-  useEffect(() => {
-    if (user?.name) setUserName(user.name);
-    if (user?.role) setUserRole(user.role);
-  }, [user]);
-
   const getDashboardLink = () => {
     switch (userRole) {
       case 'admin': return '/admin/home';
@@ -52,20 +100,12 @@ export default function ReportsAnalytics() {
     }
   };
 
-  // Data will be fetched from database
-  const stats = {
-    totalRevenue: 0,
-    totalJobs: 0,
-    avgJobValue: 0,
-    completionRate: 0,
-    customerSatisfaction: 0,
-    responseTime: '0 min'
-  };
-
-  const revenueByMonth: { month: string; revenue: number; jobs: number }[] = [];
-  const topServices: { service: string; jobs: number; revenue: number }[] = [];
-  const techPerformance: { name: string; jobs: number; revenue: number; rating: number; efficiency: number }[] = [];
-  const customerMetrics: { metric: string; value: string | number; change: string }[] = [];
+  // customerMetrics are derived from live stats
+  const customerMetrics: { metric: string; value: string | number; change: string }[] = [
+    { metric: 'Total Work Orders', value: stats.totalJobs, change: '' },
+    { metric: 'Completion Rate', value: `${stats.completionRate}%`, change: '' },
+    { metric: 'Avg Job Value', value: `$${stats.avgJobValue.toFixed(2)}`, change: '' },
+  ];
 
   return (
     <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>

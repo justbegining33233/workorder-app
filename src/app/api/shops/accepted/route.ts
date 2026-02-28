@@ -25,7 +25,13 @@ export async function GET(request: NextRequest) {
             amountPaid: true,
             paymentStatus: true,
             status: true,
-            createdAt: true
+            createdAt: true,
+            updatedAt: true,
+          }
+        },
+        reviews: {
+          select: {
+            rating: true,
           }
         },
         services: {
@@ -56,10 +62,31 @@ export async function GET(request: NextRequest) {
         .filter(wo => wo.paymentStatus === 'paid')
         .reduce((sum, wo) => sum + (wo.amountPaid || 0), 0);
 
-      const rating = completedJobs > 0 ? 4.5 : 0;
+      // Real rating from reviews (average, rounded to 1 decimal)
+      const reviewRatings = (shop as any).reviews?.map((r: any) => r.rating).filter(Boolean) ?? [];
+      const rating = reviewRatings.length > 0
+        ? Math.round((reviewRatings.reduce((s: number, r: number) => s + r, 0) / reviewRatings.length) * 10) / 10
+        : 0;
+
       const totalJobs = shop.workOrders.length;
       const completionRate = totalJobs > 0 ? Math.round((completedJobs / totalJobs) * 100) : 0;
-      const averageResponseTime = completedJobs > 0 ? '2-4 hours' : 'N/A';
+
+      // Real average response time: mean of (updatedAt - createdAt) for closed work orders
+      const closedOrders = shop.workOrders.filter(wo => wo.status === 'closed');
+      let averageResponseTime = 'N/A';
+      if (closedOrders.length > 0) {
+        const avgMs = closedOrders.reduce((sum, wo) => {
+          return sum + (new Date(wo.updatedAt).getTime() - new Date(wo.createdAt).getTime());
+        }, 0) / closedOrders.length;
+        const avgHours = avgMs / (1000 * 60 * 60);
+        if (avgHours < 1) {
+          averageResponseTime = `${Math.round(avgHours * 60)} min`;
+        } else if (avgHours < 24) {
+          averageResponseTime = `${Math.round(avgHours * 10) / 10} hrs`;
+        } else {
+          averageResponseTime = `${Math.round(avgHours / 24 * 10) / 10} days`;
+        }
+      }
 
       const dieselServices = shop.services.filter(s => s.category === 'diesel');
       const gasServices = shop.services.filter(s => s.category === 'gas');
@@ -73,6 +100,8 @@ export async function GET(request: NextRequest) {
         phone: shop.phone,
         shopType: shop.shopType,
         services: shop.services,
+        rating,
+        reviewCount: reviewRatings.length,
         completionRate,
         averageResponseTime,
         profileComplete: shop.profileComplete,

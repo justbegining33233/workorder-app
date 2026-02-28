@@ -15,8 +15,8 @@ export default function CustomerDashboard() {
   const [userId, setUserId] = useState('');
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('discover');
-  const [loyaltyPoints, setLoyaltyPoints] = useState(250);
-  const [tier, setTier] = useState('Silver');
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [tier, setTier] = useState('Bronze');
   
   // Real data states
   const [stats, setStats] = useState({
@@ -52,7 +52,7 @@ export default function CustomerDashboard() {
     payments: [],
   });
   
-  const [customerStats] = useState({
+  const [customerStats, setCustomerStats] = useState({
     openOrders: 0,
     completedToday: 0,
     messages: 0,
@@ -155,6 +155,19 @@ export default function CustomerDashboard() {
         documentCount: Array.isArray(documents) ? documents.length : 0,
         unreadMessages: unread,
         paymentMethods: Array.isArray(paymentMethods) ? paymentMethods.length : 0,
+      });
+
+      // Derive loyalty points from completed work orders (50 pts each)
+      const allOrders = Array.isArray(workorders) ? workorders : [];
+      const openOrders = allOrders.filter((w: any) => !['closed', 'completed', 'Completed'].includes(w.status)).length;
+      const pts = completed.length * 50;
+      setLoyaltyPoints(pts);
+      setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
+      setCustomerStats({
+        openOrders,
+        completedToday: 0,
+        messages: unread,
+        appointments: upcoming,
       });
       
       // Store recent data (last 3 items)
