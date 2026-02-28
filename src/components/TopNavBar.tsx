@@ -188,14 +188,14 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
 
   const getRoleBadge = () => {
     const roles: Record<string, { icon: string; label: string; color: string }> = {
-      shop: { icon: 'ðŸª', label: 'Shop Owner', color: '#3b82f6' },
-      manager: { icon: 'ðŸ‘”', label: 'Manager', color: '#f59e0b' },
-      tech: { icon: 'ðŸ”§', label: 'Tech', color: '#10b981' },
-      admin: { icon: 'âš™ï¸', label: 'Admin', color: '#8b5cf6' },
-      customer: { icon: 'ðŸ‘¤', label: 'Customer', color: '#6b7280' },
+      shop: { icon: '🏪', label: 'Shop Owner', color: '#3b82f6' },
+      manager: { icon: '👔', label: 'Manager', color: '#f59e0b' },
+      tech: { icon: '🔧', label: 'Tech', color: '#10b981' },
+      admin: { icon: '⚙️', label: 'Admin', color: '#8b5cf6' },
+      customer: { icon: '👤', label: 'Customer', color: '#6b7280' },
     };
 
-    const role = roles[userRole] || { icon: 'ðŸ‘¤', label: 'User', color: '#6b7280' };
+    const role = roles[userRole] || { icon: '👤', label: 'User', color: '#6b7280' };
 
     return (
       <span style={{
@@ -334,7 +334,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
           gap: 8,
         }}
       >
-        <span role="img" aria-label="Notifications">ðŸ””</span>
+        <span role="img" aria-label="Notifications">🔔</span>
         {unreadCount > 0 && (
           <span style={{
             background: '#ef4444',
@@ -427,7 +427,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                 alignItems: 'center',
               }}
             >
-              â˜°
+              ☰
             </button>
           )}
 
@@ -484,7 +484,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                 whiteSpace: 'nowrap',
               }}
             >
-              <span>{isClockedIn ? 'â¸ï¸' : 'â–¶ï¸'}</span>
+              <span>{isClockedIn ? '⏸️' : '▶️'}</span>
               {isClockedIn ? 'Clock Out' : 'Clock In'}
             </button>
           ) : null}

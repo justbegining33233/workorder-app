@@ -78,7 +78,7 @@ export async function POST(request: Request) {
           },
         ],
         subscription_data: {
-          trial_period_days: 7, // 7-day free trial â€” card collected now, charged after trial
+          trial_period_days: 7, // 7-day free trial — card collected now, charged after trial
           metadata: {
             shopId: newShop.id,
             plan: data.subscriptionPlan,
@@ -98,8 +98,8 @@ export async function POST(request: Request) {
 
       checkoutUrl = session.url;
     } catch (stripeError) {
-      console.error('ðŸ”´ [REGISTER] Stripe Checkout Session creation failed:', stripeError);
-      // Registration record was saved â€” admin can still manually activate the shop.
+      console.error('🔴 [REGISTER] Stripe Checkout Session creation failed:', stripeError);
+      // Registration record was saved — admin can still manually activate the shop.
     }
 
     return NextResponse.json({

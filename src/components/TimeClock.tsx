@@ -413,7 +413,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
           <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>
-            {onBreak ? 'â˜• On Break' : isClockedIn ? 'â° Clocked In' : 'â±ï¸ Time Clock'}
+            {onBreak ? '☕ On Break' : isClockedIn ? '⏰ Clocked In' : '⏱️ Time Clock'}
           </div>
           <div style={{ fontSize: '20px', fontWeight: '600' }}>{techName || 'You'}</div>
         </div>
@@ -470,7 +470,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
             transition: 'all 0.2s',
           }}
         >
-          {loading ? 'Processing...' : isClockedIn ? 'ðŸšª Clock Out' : 'ðŸ”“ Clock In'}
+          {loading ? 'Processing...' : isClockedIn ? '🚪 Clock Out' : '🔓 Clock In'}
         </button>
 
         {isClockedIn && (
@@ -491,7 +491,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
               transition: 'all 0.2s',
             }}
           >
-            {loading ? 'Processing...' : onBreak ? 'â–¶ï¸ End Break' : 'â˜• Start Break'}
+            {loading ? 'Processing...' : onBreak ? '▶️ End Break' : '☕ Start Break'}
           </button>
         )}
       </div>
@@ -501,12 +501,12 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
           <div>Clocked in: {new Date(currentEntry.clockIn).toLocaleTimeString()}</div>
           {gpsEnabled && location && (
             <div style={{ fontSize: '11px', marginTop: '4px' }}>
-              ðŸ“ Location verified ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
+              📍 Location verified ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
             </div>
           )}
           {photoEnabled && (
             <div style={{ fontSize: '11px', marginTop: '4px' }}>
-              ðŸ“¸ Photo verification enabled
+              📸 Photo verification enabled
             </div>
           )}
         </div>

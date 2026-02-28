@@ -148,12 +148,12 @@ export async function POST(request: NextRequest) {
         break;
       }
 
-      // Checkout completed â€” handles both work-order payments and new shop registrations
+      // Checkout completed — handles both work-order payments and new shop registrations
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const { workOrderId, shopId, plan, registrationFlow } = session.metadata ?? {};
 
-        // â”€â”€ Registration flow: shop owner completed Stripe Checkout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Registration flow: shop owner completed Stripe Checkout ──────────
         if (registrationFlow === 'true' && shopId && plan) {
 
           // Retrieve the subscription Stripe just created so we have real IDs
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
           break;
         }
 
-        // â”€â”€ Work-order payment flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Work-order payment flow ───────────────────────────────────────────
         if (!workOrderId) break;
 
 
@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('ðŸ”´ [WEBHOOK] Error processing event:', error);
+    console.error('🔴 [WEBHOOK] Error processing event:', error);
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }

@@ -196,34 +196,34 @@ export default function LiveTracking() {
               <div key={order.workOrderId} style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
                 <div style={{marginBottom:20}}>
                   <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>{order.issueDescription}</h3>
-                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Work Order â€¢ {order.workOrderId}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Work Order • {order.workOrderId}</div>
                   <div style={{fontSize:16, color:'#3b82f6', fontWeight:600, marginBottom:12}}>{order.status}</div>
 
                   {order.tech && (
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                      ðŸ‘¨â€ðŸ”§ {order.tech.name}
+                      👨‍🔧 {order.tech.name}
                     </div>
                   )}
 
                   <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                    ðŸª {order.shop.shopName}
+                    🏪 {order.shop.shopName}
                   </div>
 
                   {order.isInShop || order.location?.shopAddress ? (
                     <div style={{display:'flex', flexDirection:'column', gap:6}}>
                       <div style={{fontSize:14, color:'#9aa3b2'}}>
-                        ðŸ“ {order.shop.address || order.location?.shopAddress}
+                        📍 {order.shop.address || order.location?.shopAddress}
                       </div>
                       <div style={{fontSize:14, color:'#f59e0b', fontWeight:600}}>
-                        ðŸ•’ Service Time: {order.serviceTime ? new Date(order.serviceTime).toLocaleString() : (order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleString() : '')}
+                        🕒 Service Time: {order.serviceTime ? new Date(order.serviceTime).toLocaleString() : (order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleString() : '')}
                       </div>
                     </div>
                   ) : (
                     <div style={{display:'flex', flexDirection:'column', gap:6}}>
                       {order.location && order.location.latitude !== undefined && order.location.longitude !== undefined ? (
                         <div style={{display:'flex', gap:12, alignItems:'center'}}>
-                          <div style={{fontSize:14, color:'#e5e7eb'}}>ðŸ“ Current Location: {order.location.latitude!.toFixed(4)}, {order.location.longitude!.toFixed(4)}</div>
-                          {order.location.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>â° ETA: {new Date(order.location.estimatedArrival).toLocaleTimeString()}</div>}
+                          <div style={{fontSize:14, color:'#e5e7eb'}}>📍 Current Location: {order.location.latitude!.toFixed(4)}, {order.location.longitude!.toFixed(4)}</div>
+                          {order.location.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>⏰ ETA: {new Date(order.location.estimatedArrival).toLocaleTimeString()}</div>}
                         </div>
                       ) : (
                         <div style={{fontSize:14, color:'#9aa3b2'}}>Live tracking not available for this job yet.</div>
@@ -261,7 +261,7 @@ export default function LiveTracking() {
                         textDecoration:'none',
                         textAlign:'center'
                       }}>
-                        ðŸ“ž Call
+                        📞 Call
                       </a>
                     )}
                     <button onClick={() => openMessageModal(order)} style={{
@@ -275,7 +275,7 @@ export default function LiveTracking() {
                       fontWeight:600,
                       cursor:'pointer'
                     }}>
-                      ðŸ’¬ Message
+                      💬 Message
                     </button>
                   </div>
                 </div>

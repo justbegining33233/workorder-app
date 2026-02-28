@@ -158,7 +158,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       
       setAvailableContacts(contacts);
     } catch (error) {
-      console.error('âŒ Error fetching contacts:', error);
+      console.error('❌ Error fetching contacts:', error);
     }
   };
 
@@ -261,7 +261,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
           alignItems: 'center',
           gap: 12,
         }}>
-          <span style={{ fontSize: 24 }}>âš ï¸</span>
+          <span style={{ fontSize: 24 }}>⚠️</span>
           <div style={{ flex: 1 }}>
             <p style={{ color: '#fca5a5', fontWeight: 600, margin: 0, fontSize: 14 }}>
               Session Expired or Missing
@@ -295,7 +295,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       {/* Header */}
       <div style={{ padding: 20, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>ðŸ’¬ Customer Messages</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>💬 Customer Messages</h2>
           <button
             onClick={() => {
               setShowCompose(true);
@@ -346,7 +346,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
                 position: 'relative',
               }}
             >
-              {tab === 'customers' ? 'ðŸ‘¤ Customers' : 'ðŸ‘¤ Customers'}
+              {tab === 'customers' ? '👤 Customers' : '👤 Customers'}
               {unreadCount > 0 && (
                 <span style={{
                   position: 'absolute',

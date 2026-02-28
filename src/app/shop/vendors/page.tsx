@@ -23,7 +23,7 @@ const TERMS = ['Net 30', 'Net 15', 'Net 60', 'COD', 'Prepaid', 'Credit Card'];
 const BLANK_V = { name: '', contactName: '', phone: '', email: '', website: '', category: 'parts', accountNumber: '', paymentTerms: 'Net 30', rating: '5', notes: '', isActive: true };
 const BLANK_ITEM: OrderItem = { itemName: '', sku: '', quantity: '1', unitCost: '' };
 
-const ratingStars = (r: number) => 'â˜…'.repeat(Math.round(r)) + 'â˜†'.repeat(5 - Math.round(r));
+const ratingStars = (r: number) => '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r));
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   ordered:   { bg: 'rgba(59,130,246,0.2)',  text: '#60a5fa' },
   shipped:   { bg: 'rgba(245,158,11,0.2)',  text: '#fbbf24' },
@@ -37,7 +37,7 @@ export default function VendorManagementPage() {
   const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [activeTab, setActiveTab] = useState<TabId>('vendors');
 
-  // â”€â”€ Vendors state â”€â”€
+  // ── Vendors state ──
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [vendorsLoading, setVendorsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -48,7 +48,7 @@ export default function VendorManagementPage() {
   const [vendorSuccess, setVendorSuccess] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState('all');
 
-  // â”€â”€ Orders state â”€â”€
+  // ── Orders state ──
   const [orders, setOrders] = useState<PurchaseOrder[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [showOrderForm, setShowOrderForm] = useState(false);
@@ -85,7 +85,7 @@ export default function VendorManagementPage() {
 
   useEffect(() => { if (user) { loadVendors(); loadOrders(); } }, [user]);
 
-  // â”€â”€ Vendor handlers â”€â”€
+  // ── Vendor handlers ──
   const openCreate = () => { setEditId(null); setForm({ ...BLANK_V }); setShowForm(true); setVendorError(null); };
   const openEdit = (v: Vendor) => {
     setEditId(v.id);
@@ -114,7 +114,7 @@ export default function VendorManagementPage() {
     } catch { setVendorError('Delete failed'); }
   };
 
-  // â”€â”€ Order handlers â”€â”€
+  // ── Order handlers ──
   const addItem = () => setOrderItems(prev => [...prev, { ...BLANK_ITEM }]);
   const removeItem = (i: number) => setOrderItems(prev => prev.filter((_, idx) => idx !== i));
   const updateItem = (i: number, field: keyof OrderItem, val: string) =>
@@ -167,16 +167,16 @@ export default function VendorManagementPage() {
 
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
-          <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>â† Admin</Link>
-          <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 2px' }}>ðŸ­ Vendors & Parts Orders</h1>
+          <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
+          <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 2px' }}>🏭 Vendors & Parts Orders</h1>
           <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Manage suppliers and track parts orders</p>
         </div>
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'rgba(0,0,0,0.3)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
           {([
-            { id: 'vendors' as TabId, label: `ðŸ­ Vendors (${vendors.length})` },
-            { id: 'orders' as TabId,  label: `ðŸ“¦ Parts Orders (${orders.filter(o => o.status !== 'cancelled').length})` },
+            { id: 'vendors' as TabId, label: `🏭 Vendors (${vendors.length})` },
+            { id: 'orders' as TabId,  label: `📦 Parts Orders (${orders.filter(o => o.status !== 'cancelled').length})` },
           ]).map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               style={{ padding: '9px 20px', borderRadius: 7, border: 'none', background: activeTab === tab.id ? '#3b82f6' : 'transparent', color: activeTab === tab.id ? '#fff' : '#94a3b8', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
@@ -185,7 +185,7 @@ export default function VendorManagementPage() {
           ))}
         </div>
 
-        {/* â”€â”€ VENDORS TAB â”€â”€ */}
+        {/* ── VENDORS TAB ── */}
         {activeTab === 'vendors' && (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
@@ -219,8 +219,8 @@ export default function VendorManagementPage() {
 
             {displayed.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ­</div>
-                <p style={{ fontSize: 16 }}>{vendors.length === 0 ? 'No vendors yet â€” add your first parts supplier' : 'No vendors in this category'}</p>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🏭</div>
+                <p style={{ fontSize: 16 }}>{vendors.length === 0 ? 'No vendors yet — add your first parts supplier' : 'No vendors in this category'}</p>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
@@ -237,20 +237,20 @@ export default function VendorManagementPage() {
                       <span style={{ color: '#fbbf24', fontSize: 14 }}>{ratingStars(v.rating)}</span>
                     </div>
                     <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.7 }}>
-                      {v.contactName && <div>ðŸ‘¤ {v.contactName}</div>}
-                      {v.phone      && <div>ðŸ“ž {v.phone}</div>}
-                      {v.email      && <div>âœ‰ï¸ {v.email}</div>}
-                      {v.accountNumber && <div>ðŸ”– Acct: {v.accountNumber}</div>}
-                      {v.paymentTerms  && <div>ðŸ’³ {v.paymentTerms}</div>}
+                      {v.contactName && <div>👤 {v.contactName}</div>}
+                      {v.phone      && <div>📞 {v.phone}</div>}
+                      {v.email      && <div>✉️ {v.email}</div>}
+                      {v.accountNumber && <div>🔖 Acct: {v.accountNumber}</div>}
+                      {v.paymentTerms  && <div>💳 {v.paymentTerms}</div>}
                     </div>
                     {v.notes && <p style={{ color: '#64748b', fontSize: 12, marginTop: 10, fontStyle: 'italic' }}>{v.notes}</p>}
                     <div style={{ display: 'flex', gap: 8, marginTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
                       <button onClick={() => openEdit(v)} style={{ flex: 1, padding: '7px', borderRadius: 7, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: 13 }}>Edit</button>
                       <button onClick={() => { setOrderVendor(v.name); setActiveTab('orders'); setShowOrderForm(true); }}
                         style={{ flex: 1, padding: '7px', borderRadius: 7, border: '1px solid rgba(59,130,246,0.4)', background: 'rgba(59,130,246,0.1)', color: '#60a5fa', cursor: 'pointer', fontSize: 13 }}>
-                        ðŸ“¦ Order Parts
+                        📦 Order Parts
                       </button>
-                      <button onClick={() => handleDeleteVendor(v.id, v.name)} style={{ padding: '7px 12px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 13 }}>âœ•</button>
+                      <button onClick={() => handleDeleteVendor(v.id, v.name)} style={{ padding: '7px 12px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 13 }}>✕</button>
                     </div>
                   </div>
                 ))}
@@ -259,7 +259,7 @@ export default function VendorManagementPage() {
           </>
         )}
 
-        {/* â”€â”€ PARTS ORDERS TAB â”€â”€ */}
+        {/* ── PARTS ORDERS TAB ── */}
         {activeTab === 'orders' && (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
@@ -300,10 +300,10 @@ export default function VendorManagementPage() {
             </div>
 
             {ordersLoading ? (
-              <div style={{ textAlign: 'center', padding: 40, color: '#475569' }}>Loading ordersâ€¦</div>
+              <div style={{ textAlign: 'center', padding: 40, color: '#475569' }}>Loading orders…</div>
             ) : displayedOrders.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ“¦</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>📦</div>
                 <p style={{ fontSize: 16 }}>{orders.length === 0 ? 'No parts orders yet' : 'No orders with this status'}</p>
                 <button onClick={() => setShowOrderForm(true)} style={{ marginTop: 12, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#e5332a', color: 'white', fontWeight: 600, cursor: 'pointer' }}>+ New Order</button>
               </div>
@@ -318,8 +318,8 @@ export default function VendorManagementPage() {
                         <div style={{ flex: 1, minWidth: 160 }}>
                           <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: 15 }}>{order.vendor}</div>
                           <div style={{ color: '#64748b', fontSize: 12, marginTop: 2 }}>
-                            {new Date(order.createdAt).toLocaleDateString()} Â· {order.items.length} item{order.items.length !== 1 ? 's' : ''}
-                            {order.expectedDate && ` Â· Expected ${new Date(order.expectedDate).toLocaleDateString()}`}
+                            {new Date(order.createdAt).toLocaleDateString()} · {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                            {order.expectedDate && ` · Expected ${new Date(order.expectedDate).toLocaleDateString()}`}
                           </div>
                         </div>
                         <span style={{ background: sc.bg, color: sc.text, padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700, textTransform: 'capitalize' }}>{order.status}</span>
@@ -351,13 +351,13 @@ export default function VendorManagementPage() {
                           )}
                           <button onClick={() => handleDeleteOrder(order.id)}
                             style={{ padding: '5px 10px', borderRadius: 6, border: 'none', background: 'transparent', color: '#475569', cursor: 'pointer', fontSize: 12 }}>
-                            âœ•
+                            ✕
                           </button>
                         </div>
                       </div>
                       {expanded && (
                         <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 20px', background: 'rgba(0,0,0,0.15)' }}>
-                          {order.notes && <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 10px', fontStyle: 'italic' }}>ðŸ“ {order.notes}</p>}
+                          {order.notes && <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 10px', fontStyle: 'italic' }}>📝 {order.notes}</p>}
                           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                             <thead>
                               <tr style={{ color: '#475569' }}>
@@ -372,7 +372,7 @@ export default function VendorManagementPage() {
                               {order.items.map(item => (
                                 <tr key={item.id} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', color: '#e2e8f0' }}>
                                   <td style={{ padding: '6px 8px' }}>{item.itemName}</td>
-                                  <td style={{ padding: '6px 8px', color: '#64748b' }}>{item.sku || 'â€”'}</td>
+                                  <td style={{ padding: '6px 8px', color: '#64748b' }}>{item.sku || '—'}</td>
                                   <td style={{ padding: '6px 8px', textAlign: 'right' }}>{item.quantity}</td>
                                   <td style={{ padding: '6px 8px', textAlign: 'right' }}>${item.unitCost.toFixed(2)}</td>
                                   <td style={{ padding: '6px 8px', textAlign: 'right', fontWeight: 600 }}>${(item.unitCost * item.quantity).toFixed(2)}</td>
@@ -391,7 +391,7 @@ export default function VendorManagementPage() {
         )}
       </div>
 
-      {/* â”€â”€ VENDOR FORM MODAL â”€â”€ */}
+      {/* ── VENDOR FORM MODAL ── */}
       {showForm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}
           onClick={() => { setShowForm(false); setVendorError(null); }}>
@@ -445,7 +445,7 @@ export default function VendorManagementPage() {
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={handleSave} disabled={saving}
                 style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
-                {saving ? 'Savingâ€¦' : editId ? 'Update Vendor' : 'Add Vendor'}
+                {saving ? 'Saving…' : editId ? 'Update Vendor' : 'Add Vendor'}
               </button>
               <button onClick={() => { setShowForm(false); setVendorError(null); }}
                 style={{ padding: '11px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
@@ -456,19 +456,19 @@ export default function VendorManagementPage() {
         </div>
       )}
 
-      {/* â”€â”€ ORDER FORM MODAL â”€â”€ */}
+      {/* ── ORDER FORM MODAL ── */}
       {showOrderForm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}
           onClick={() => setShowOrderForm(false)}>
           <div style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: 28, width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto' }}
             onClick={e => e.stopPropagation()}>
-            <h2 style={{ color: '#f1f5f9', fontSize: 20, fontWeight: 700, margin: '0 0 20px' }}>ðŸ“¦ New Parts Order</h2>
+            <h2 style={{ color: '#f1f5f9', fontSize: 20, fontWeight: 700, margin: '0 0 20px' }}>📦 New Parts Order</h2>
 
             <div style={{ marginBottom: 16 }}>
               <label style={{ color: '#94a3b8', fontSize: 13, display: 'block', marginBottom: 4 }}>Vendor *</label>
               {vendors.length > 0 ? (
                 <select value={orderVendor} onChange={e => setOrderVendor(e.target.value)} style={{ ...inp, background: '#1e293b' }}>
-                  <option value="">â€” Select vendor â€”</option>
+                  <option value="">— Select vendor —</option>
                   {vendors.filter(v => v.isActive).map(v => <option key={v.id} value={v.name}>{v.name}</option>)}
                   <option value="__custom__">Other (type below)</option>
                 </select>
@@ -508,7 +508,7 @@ export default function VendorManagementPage() {
                     <input type="number" min="1" value={item.quantity} onChange={e => updateItem(i, 'quantity', e.target.value)} style={{ ...inp, padding: '6px 8px', fontSize: 13 }} />
                     <input type="number" step="0.01" min="0" value={item.unitCost} onChange={e => updateItem(i, 'unitCost', e.target.value)} placeholder="0.00" style={{ ...inp, padding: '6px 8px', fontSize: 13 }} />
                     <button onClick={() => removeItem(i)} disabled={orderItems.length === 1}
-                      style={{ background: 'none', border: 'none', color: orderItems.length === 1 ? '#374151' : '#f87171', cursor: orderItems.length === 1 ? 'default' : 'pointer', fontSize: 16, padding: 0 }}>âœ•</button>
+                      style={{ background: 'none', border: 'none', color: orderItems.length === 1 ? '#374151' : '#f87171', cursor: orderItems.length === 1 ? 'default' : 'pointer', fontSize: 16, padding: 0 }}>✕</button>
                   </div>
                 ))}
                 <div style={{ padding: '8px 10px', borderTop: '1px solid rgba(255,255,255,0.06)', textAlign: 'right', color: '#f1f5f9', fontSize: 14, fontWeight: 700 }}>
@@ -522,7 +522,7 @@ export default function VendorManagementPage() {
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={handleCreateOrder} disabled={savingOrder}
                 style={{ flex: 1, padding: 12, borderRadius: 8, border: 'none', background: savingOrder ? 'rgba(229,51,42,0.4)' : '#e5332a', color: '#fff', fontWeight: 700, cursor: savingOrder ? 'default' : 'pointer' }}>
-                {savingOrder ? 'Placingâ€¦' : 'Place Order'}
+                {savingOrder ? 'Placing…' : 'Place Order'}
               </button>
               <button onClick={() => setShowOrderForm(false)}
                 style={{ padding: '12px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>

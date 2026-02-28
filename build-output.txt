@@ -1,0 +1,39 @@
+﻿Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+node.exe : Turbopack build encountered 1 warnings:
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Turbopack build encountered 1 war 
+   nings::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+./src/app/api/auth/reset/request/route.ts:33:22
+Module not found: Can't resolve 'twilio'
+[0m [90m 31 |[39m     [36mtry[39m {
+ [90m 32 |[39m       [36mconst[39m req [33m=[39m require[33m;[39m
+[31m[1m>[22m[39m[90m 33 |[39m       [36mconst[39m twilioLib 
+[33m=[39m req([32m'twilio'[39m)[33m;[39m
+ [90m    |[39m                      [31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39
+m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 34 |[39m       [36mconst[39m client [33m=[39m twilioLib(process[33
+m.[39menv[33m.[39m[33mTWILIO_ACCOUNT_SID[39m[33m,[39m 
+process[33m.[39menv[33m.[39m[33mTWILIO_AUTH_TOKEN[39m)[33m;[39m
+ [90m 35 |[39m       [36mawait[39m 
+client[33m.[39mmessages[33m.[39mcreate({ to[33m:[39m phone[33m,[39m 
+[36mfrom[39m[33m:[39m 
+process[33m.[39menv[33m.[39m[33mTWILIO_FROM[39m[33m,[39m 
+body[33m:[39m [32m`Your verification code: ${raw}`[39m })[33m;[39m
+ [90m 36 |[39m       [36mreturn[39m [36mtrue[39m[33m;[39m[0m
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+Γ£ô Compiled successfully in 2.2min
+  Running TypeScript ...

@@ -66,10 +66,10 @@ export default function ManagerDashboard() {
         setData(dashboardData);
       } else {
         const errorData = await response.json();
-        console.error('âŒ Failed to fetch dashboard data:', response.status, errorData);
+        console.error('❌ Failed to fetch dashboard data:', response.status, errorData);
       }
     } catch (error) {
-      console.error('ðŸ’¥ Error fetching dashboard:', error);
+      console.error('💥 Error fetching dashboard:', error);
     } finally {
       setLoading(false);
     }
@@ -97,9 +97,9 @@ export default function ManagerDashboard() {
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(229,51,42,0.3)', padding: '20px 32px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
           <Link href="/manager/home" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
-            â† Back to Manager Home
+            ← Back to Manager Home
           </Link>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>ðŸ“Š Manager Dashboard</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>📊 Manager Dashboard</h1>
           <p style={{ fontSize: 14, color: '#9aa3b2' }}>Team overview and work order management</p>
         </div>
       </div>
@@ -132,7 +132,7 @@ export default function ManagerDashboard() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}>Recent Work Orders</h2>
               <Link href="/manager/assignments" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600 }}>
-                Assign Work â†’
+                Assign Work →
               </Link>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -199,12 +199,12 @@ export default function ManagerDashboard() {
             {/* Inventory Requests */}
             {data.stats.pendingInventoryRequests > 0 && (
               <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 12, padding: 20 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5332a', marginBottom: 8 }}>âš ï¸ Pending Inventory</h3>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5332a', marginBottom: 8 }}>⚠️ Pending Inventory</h3>
                 <p style={{ fontSize: 14, color: '#e5e7eb' }}>
                   {data.stats.pendingInventoryRequests} items need approval
                 </p>
                 <Link href="/shop/parts-labor" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginTop: 12, display: 'inline-block' }}>
-                  Review Requests â†’
+                  Review Requests →
                 </Link>
               </div>
             )}

@@ -166,7 +166,7 @@ export default function ShopAdminPage() {
       } else {
         // Set empty data structure if fetch fails
         const errorText = await response.text();
-        console.error('âŒ Failed to fetch shop stats:', response.status, errorText);
+        console.error('❌ Failed to fetch shop stats:', response.status, errorText);
         setShopStats({
           workOrders: { open: 0, completedToday: 0, completedThisWeek: 0, pendingApprovals: 0 },
           revenue: { today: 0, week: 0 },
@@ -175,7 +175,7 @@ export default function ShopAdminPage() {
         });
       }
     } catch (error) {
-      console.error('ðŸ’¥ Error fetching shop stats:', error);
+      console.error('💥 Error fetching shop stats:', error);
       // Set empty data structure on error
       setShopStats({
         workOrders: { open: 0, completedToday: 0, completedThisWeek: 0, pendingApprovals: 0 },
@@ -599,7 +599,7 @@ export default function ShopAdminPage() {
               <div>
                 {!shopStats ? (
                   <div style={{ textAlign: 'center', padding: 64, color: '#9aa3b2' }}>
-                    <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ“Š</div>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
                     <div style={{ fontSize: 18, marginBottom: 8 }}>Loading shop statistics...</div>
                     <div style={{ fontSize: 14 }}>Please wait while we fetch your data</div>
                   </div>
@@ -611,7 +611,7 @@ export default function ShopAdminPage() {
                         <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: 20, cursor: 'pointer' }}>
                           <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Open Work Orders</div>
                           <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6' }}>{shopStats.workOrders.open}</div>
-                          <div style={{ fontSize: 11, color: '#3b82f6', marginTop: 4 }}>View All â†’</div>
+                          <div style={{ fontSize: 11, color: '#3b82f6', marginTop: 4 }}>View All →</div>
                         </div>
                       </Link>
                       <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
@@ -658,7 +658,7 @@ export default function ShopAdminPage() {
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div style={{ fontSize: 24 }}>ðŸ“¦</div>
+                          <div style={{ fontSize: 24 }}>📦</div>
                           <div>
                             <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Current Inventory</h3>
                             <div style={{ color: '#9aa3b2', fontSize: 13 }}>Parts and supplies in stock</div>
@@ -683,7 +683,7 @@ export default function ShopAdminPage() {
 
                       {inventoryStock.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
-                          <div style={{ fontSize: 48, marginBottom: 12 }}>ðŸ“¦</div>
+                          <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
                           <div>No inventory items yet</div>
                           <div style={{ fontSize: 13 }}>Click "Add Inventory" to start tracking parts and supplies</div>
                         </div>
@@ -828,7 +828,7 @@ export default function ShopAdminPage() {
                                   cursor: 'pointer',
                                 }}
                               >
-                                View All {inventoryStock.length} Items â†’
+                                View All {inventoryStock.length} Items →
                               </button>
                             </div>
                           )}
@@ -862,7 +862,7 @@ export default function ShopAdminPage() {
                                 <div style={{fontSize:13, fontWeight:700, color:'#e5e7eb'}}>{item.itemName || 'Part'}</div>
                                 <span style={{padding:'3px 8px', background:badgeBg, color:text, borderRadius:8, fontSize:11, fontWeight:700}}>{badgeLabel}</span>
                               </div>
-                              <div style={{fontSize:12, color:'#9aa3b2', marginBottom:6}}>SKU: {item.sku || 'â€”'}</div>
+                              <div style={{fontSize:12, color:'#9aa3b2', marginBottom:6}}>SKU: {item.sku || '—'}</div>
                               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                                 <div style={{fontSize:11, color:'#9aa3b2'}}>On Hand</div>
                                 <div style={{fontSize:16, fontWeight:700, color:text}}>{item.quantity}</div>
@@ -876,14 +876,14 @@ export default function ShopAdminPage() {
                       <div style={{marginTop:16, display:'flex', gap:12}}>
                         <Link href="/shop/parts-labor">
                           <button style={{padding:'10px 14px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer'}}>
-                            Open Parts & Labor â†’
+                            Open Parts & Labor →
                           </button>
                         </Link>
                         <button
                           onClick={() => setTab('inventory')}
                           style={{padding:'10px 14px', background:'rgba(255,255,255,0.06)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.12)', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer'}}
                         >
-                          Go to Inventory â†’
+                          Go to Inventory →
                         </button>
                       </div>
                     </div>
@@ -902,7 +902,7 @@ export default function ShopAdminPage() {
                         marginBottom: 24 
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                          <div style={{ fontSize: 24 }}>ðŸ’°</div>
+                          <div style={{ fontSize: 24 }}>💰</div>
                           <div>
                             <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Payroll Budget Tracking</h3>
                             <div style={{ color: '#9aa3b2', fontSize: 13 }}>Monitor spending against budget limits</div>
@@ -972,7 +972,7 @@ export default function ShopAdminPage() {
                                   alignItems: 'center',
                                   gap: 8
                                 }}>
-                                  <span>âš ï¸</span>
+                                  <span>⚠️</span>
                                   <span>Over budget by ${(budgetData.weeklySpent - budgetData.weeklyBudget).toFixed(2)}</span>
                                 </div>
                               )}
@@ -1041,7 +1041,7 @@ export default function ShopAdminPage() {
                                   alignItems: 'center',
                                   gap: 8
                                 }}>
-                                  <span>âš ï¸</span>
+                                  <span>⚠️</span>
                                   <span>Over budget by ${(budgetData.monthlySpent - budgetData.monthlyBudget).toFixed(2)}</span>
                                 </div>
                               )}
@@ -1061,7 +1061,7 @@ export default function ShopAdminPage() {
                             alignItems: 'center',
                             gap: 12
                           }}>
-                            <div style={{ fontSize: 32 }}>ðŸš¨</div>
+                            <div style={{ fontSize: 32 }}>🚨</div>
                             <div>
                               <div style={{ color: '#ef4444', fontWeight: 700, fontSize: 15, marginBottom: 4 }}>
                                 Budget Alert: Payroll Spending Exceeded
@@ -1079,7 +1079,7 @@ export default function ShopAdminPage() {
                       {/* Currently Clocked In */}
                       <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                          <div style={{ fontSize: 24 }}>â°</div>
+                          <div style={{ fontSize: 24 }}>⏰</div>
                           <div>
                             <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Currently Clocked In</h3>
                             <div style={{ color: '#9aa3b2', fontSize: 13 }}>{shopStats.team.clockedIn} employees working</div>
@@ -1088,7 +1088,7 @@ export default function ShopAdminPage() {
 
                         {shopStats.team.currentlyWorking.length === 0 ? (
                           <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
-                            <div style={{ fontSize: 48, marginBottom: 12 }}>ðŸ•</div>
+                            <div style={{ fontSize: 48, marginBottom: 12 }}>🕐</div>
                             <div>No one currently clocked in</div>
                           </div>
                         ) : (
@@ -1114,7 +1114,7 @@ export default function ShopAdminPage() {
                                     justifyContent: 'center',
                                     fontSize: 16
                                   }}>
-                                    {emp.role === 'manager' ? 'ðŸ‘”' : 'ðŸ”§'}
+                                    {emp.role === 'manager' ? '👔' : '🔧'}
                                   </div>
                                   <div>
                                     <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 14 }}>{emp.name}</div>
@@ -1135,7 +1135,7 @@ export default function ShopAdminPage() {
                       {/* Quick Actions */}
                       <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                          <div style={{ fontSize: 24 }}>âš¡</div>
+                          <div style={{ fontSize: 24 }}>⚡</div>
                           <div>
                             <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Quick Actions</h3>
                             <div style={{ color: '#9aa3b2', fontSize: 13 }}>Common tasks and shortcuts</div>
@@ -1161,7 +1161,7 @@ export default function ShopAdminPage() {
                                 gap: 12,
                               }}
                             >
-                              <span style={{ fontSize: 20 }}>ðŸ‘¥</span>
+                              <span style={{ fontSize: 20 }}>👥</span>
                               <div>
                                 <div>Manage Team</div>
                                 <div style={{ fontSize: 11, opacity: 0.8 }}>Add or edit team members</div>
@@ -1187,7 +1187,7 @@ export default function ShopAdminPage() {
                                 gap: 12,
                               }}
                             >
-                              <span style={{ fontSize: 20 }}>ðŸ’°</span>
+                              <span style={{ fontSize: 20 }}>💰</span>
                               <div>
                                 <div>Payroll & Reports</div>
                                 <div style={{ fontSize: 11, opacity: 0.8 }}>Download employee hours report</div>
@@ -1213,7 +1213,7 @@ export default function ShopAdminPage() {
                                 gap: 12,
                               }}
                             >
-                              <span style={{ fontSize: 20 }}>âš™ï¸</span>
+                              <span style={{ fontSize: 20 }}>⚙️</span>
                               <div>
                                 <div>Shop Settings</div>
                                 <div style={{ fontSize: 11, opacity: 0.8 }}>Configure rates and margins</div>
@@ -1223,7 +1223,7 @@ export default function ShopAdminPage() {
 
                           <Link href="/shop/templates" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(251,191,36,0.2)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 8, color: '#fbbf24', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ“‹</span>
+                              <span style={{ fontSize: 20 }}>📋</span>
                               <div>
                                 <div>Work Order Templates</div>
                                 <div style={{ fontSize: 11, opacity: 0.8 }}>Save common job configurations</div>
@@ -1233,7 +1233,7 @@ export default function ShopAdminPage() {
 
                           <Link href="/shop/vendors" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(139,92,246,0.2)', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 8, color: '#a78bfa', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ­</span>
+                              <span style={{ fontSize: 20 }}>🏭</span>
                               <div>
                                 <div>Vendor Management</div>
                                 <div style={{ fontSize: 11, opacity: 0.8 }}>Manage parts suppliers</div>
@@ -1243,7 +1243,7 @@ export default function ShopAdminPage() {
 
                           <Link href="/shop/locations" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(20,184,166,0.2)', border: '1px solid rgba(20,184,166,0.3)', borderRadius: 8, color: '#2dd4bf', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ“</span>
+                              <span style={{ fontSize: 20 }}>📍</span>
                               <div>
                                 <div>Shop Locations</div>
                                 <div style={{ fontSize: 11, opacity: 0.8 }}>Manage multiple branches</div>
@@ -1253,7 +1253,7 @@ export default function ShopAdminPage() {
 
                           <Link href="/shop/settings/two-factor" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, color: '#60a5fa', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ”</span>
+                              <span style={{ fontSize: 20 }}>🔐</span>
                               <div>
                                 <div>Two-Factor Auth (2FA)</div>
                                 <div style={{ fontSize: 11, opacity: 0.8 }}>Secure your account</div>
@@ -1279,7 +1279,7 @@ export default function ShopAdminPage() {
                                 justifyContent: 'space-between',
                               }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                  <span style={{ fontSize: 20 }}>ðŸ“¦</span>
+                                  <span style={{ fontSize: 20 }}>📦</span>
                                   <div>
                                     <div>Pending Inventory Requests</div>
                                     <div style={{ fontSize: 11, opacity: 0.8 }}>Requires approval</div>
@@ -1300,35 +1300,35 @@ export default function ShopAdminPage() {
 
                           <Link href="/shop/analytics" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(236,72,153,0.2)', border: '1px solid rgba(236,72,153,0.3)', borderRadius: 8, color: '#ec4899', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ“ˆ</span>
+                              <span style={{ fontSize: 20 }}>📈</span>
                               <div><div>Shop Analytics</div><div style={{ fontSize: 11, opacity: 0.8 }}>Performance & revenue trends</div></div>
                             </button>
                           </Link>
 
                           <Link href="/shop/customer-messages" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, color: '#3b82f6', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ’¬</span>
+                              <span style={{ fontSize: 20 }}>💬</span>
                               <div><div>Customer Messages</div><div style={{ fontSize: 11, opacity: 0.8 }}>All customer conversations</div></div>
                             </button>
                           </Link>
 
                           <Link href="/shop/recurring-workorders" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, color: '#22c55e', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ”</span>
+                              <span style={{ fontSize: 20 }}>🔁</span>
                               <div><div>Recurring Jobs</div><div style={{ fontSize: 11, opacity: 0.8 }}>Manage scheduled services</div></div>
                             </button>
                           </Link>
 
                           <Link href="/shop/services" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(245,158,11,0.2)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, color: '#f59e0b', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸ› ï¸</span>
+                              <span style={{ fontSize: 20 }}>🛠️</span>
                               <div><div>Services</div><div style={{ fontSize: 11, opacity: 0.8 }}>Configure offered services</div></div>
                             </button>
                           </Link>
 
                           <Link href="/shop/new-inshop-job" style={{ textDecoration: 'none' }}>
                             <button style={{ width: '100%', padding: 16, background: 'rgba(229,51,42,0.2)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 8, color: '#e5332a', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                              <span style={{ fontSize: 20 }}>ðŸª</span>
+                              <span style={{ fontSize: 20 }}>🏪</span>
                               <div><div>New In-Shop Job</div><div style={{ fontSize: 11, opacity: 0.8 }}>Create a walk-in work order</div></div>
                             </button>
                           </Link>
@@ -1435,7 +1435,7 @@ export default function ShopAdminPage() {
                     paddingTop: 24, 
                     borderTop: '1px solid rgba(255,255,255,0.1)' 
                   }}>
-                    <h3 style={{ color: '#e5e7eb', marginBottom: 16, fontSize: 18 }}>ðŸ“ GPS Verification</h3>
+                    <h3 style={{ color: '#e5e7eb', marginBottom: 16, fontSize: 18 }}>📍 GPS Verification</h3>
                     
                     <div>
                       <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#e5e7eb', cursor: 'pointer', marginBottom: 16 }}>
@@ -1466,7 +1466,7 @@ export default function ShopAdminPage() {
                             }}
                             style={{ padding:'10px 20px', background:'rgba(59,130,246,0.2)', border:'1px solid rgba(59,130,246,0.4)', borderRadius:8, color:'#3b82f6', fontSize:13, fontWeight:600, cursor:'pointer' }}
                           >
-                            ðŸ“ Use My Current Location
+                            📍 Use My Current Location
                           </button>
                           <div style={{fontSize:11, color:'#9aa3b2', marginTop:4}}>Click while you're at the shop to auto-fill coordinates</div>
                         </div>
@@ -1565,8 +1565,8 @@ export default function ShopAdminPage() {
               <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 32 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                   <div>
-                    <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>ðŸ’° Payroll Report</h2>
-                    <div style={{ color: '#9aa3b2', fontSize: 13, marginTop: 4 }}>Live view â€¢ Updates every 5 seconds</div>
+                    <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>💰 Payroll Report</h2>
+                    <div style={{ color: '#9aa3b2', fontSize: 13, marginTop: 4 }}>Live view • Updates every 5 seconds</div>
                   </div>
                   <div style={{ display: 'flex', gap: 12 }}>
                     <button
@@ -1582,7 +1582,7 @@ export default function ShopAdminPage() {
                         fontWeight: 600,
                       }}
                     >
-                      {loading ? 'âŸ³ Refreshing...' : 'ðŸ”„ Refresh Now'}
+                      {loading ? '⟳ Refreshing...' : '🔄 Refresh Now'}
                     </button>
                     {payrollData && payrollData.employees.length > 0 && (
                       <>
@@ -1598,7 +1598,7 @@ export default function ShopAdminPage() {
                             fontWeight: 600,
                           }}
                         >
-                          ðŸ“¥ Download CSV
+                          📥 Download CSV
                         </button>
                         <button
                           onClick={downloadPayrollPDF}
@@ -1613,7 +1613,7 @@ export default function ShopAdminPage() {
                             fontWeight: 600,
                           }}
                         >
-                          {generatingPDF ? 'Generating...' : 'ðŸ“„ Download PDF'}
+                          {generatingPDF ? 'Generating...' : '📄 Download PDF'}
                         </button>
                       </>
                     )}
@@ -1662,7 +1662,7 @@ export default function ShopAdminPage() {
 
                 {(!payrollData || payrollData.employees.length === 0) && (
                   <div style={{ textAlign: 'center', padding: 48 }}>
-                    <div style={{ fontSize: 48, marginBottom: 16 }}>â°</div>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>⏰</div>
                     <div style={{ color: '#9aa3b2', fontSize: 16 }}>No completed time entries found</div>
                     <div style={{ color: '#6b7280', fontSize: 13, marginTop: 8 }}>
                       Time entries will appear here once employees clock out
@@ -1705,7 +1705,7 @@ export default function ShopAdminPage() {
                             <tr key={emp.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                               <td style={{ padding: 16, color: '#e5e7eb', fontWeight: 600 }}>{emp.name}</td>
                               <td style={{ padding: 16, color: '#9aa3b2' }}>
-                                {emp.role === 'manager' ? 'ðŸ‘” Manager' : 'ðŸ”§ Tech'}
+                                {emp.role === 'manager' ? '👔 Manager' : '🔧 Tech'}
                               </td>
                               <td style={{ padding: 16, textAlign: 'center', color: '#3b82f6', fontWeight: 600 }}>
                                 {emp.totalHours.toFixed(1)}
@@ -1730,7 +1730,7 @@ export default function ShopAdminPage() {
             {activeTab === 'team' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                  <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>ðŸ‘¥ Team Management</h2>
+                  <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>👥 Team Management</h2>
                   <Link href="/shop/manage-team" style={{
                     padding: '10px 20px',
                     background: 'rgba(59,130,246,0.2)',
@@ -1741,13 +1741,13 @@ export default function ShopAdminPage() {
                     fontWeight: 600,
                     fontSize: 14
                   }}>
-                    âž• Add Team Member
+                    ➕ Add Team Member
                   </Link>
                 </div>
 
                 {teamData.length === 0 ? (
                   <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 48, textAlign: 'center' }}>
-                    <div style={{ fontSize: 48, marginBottom: 16 }}>ðŸ‘¥</div>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>👥</div>
                     <div style={{ color: '#9aa3b2', fontSize: 16 }}>No team members found</div>
                   </div>
                 ) : (
@@ -1773,7 +1773,7 @@ export default function ShopAdminPage() {
                                 justifyContent: 'center',
                                 fontSize: 20
                               }}>
-                                {member.role === 'manager' ? 'ðŸ‘”' : 'ðŸ”§'}
+                                {member.role === 'manager' ? '👔' : '🔧'}
                               </div>
                               <div>
                                 <div style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700 }}>{member.name}</div>
@@ -1784,23 +1784,23 @@ export default function ShopAdminPage() {
                             </div>
                             {member.isClockedIn && (
                               <div style={{ color: '#22c55e', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
-                                ðŸŸ¢ Currently Clocked In
+                                🟢 Currently Clocked In
                               </div>
                             )}
                             <div style={{ color: '#9aa3b2', fontSize: 12 }}>
-                              ðŸ“§ {member.email}
+                              📧 {member.email}
                             </div>
                             <div style={{ color: '#9aa3b2', fontSize: 12 }}>
-                              ðŸ“ž {member.phone || 'No phone'}
+                              📞 {member.phone || 'No phone'}
                             </div>
                             {member.isClockedIn && member.clockedInLocation && (
                               <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 4 }}>
-                                ðŸ“ {member.clockedInLocation}
+                                📍 {member.clockedInLocation}
                               </div>
                             )}
                             {member.isClockedIn && member.clockedInNotes && (
                               <div style={{ color: '#9aa3b2', fontSize: 12 }}>
-                                ðŸ“ {member.clockedInNotes}
+                                📝 {member.clockedInNotes}
                               </div>
                             )}
                           </div>
@@ -1832,7 +1832,7 @@ export default function ShopAdminPage() {
                               whiteSpace: 'nowrap'
                             }}
                           >
-                            ðŸ‘¤ View Profile
+                            👤 View Profile
                           </Link>
                           <div style={{ color: '#9aa3b2', fontSize: 12 }}>
                             Last active: {member.lastActive ? new Date(member.lastActive).toLocaleDateString() : 'Never'}
@@ -1876,7 +1876,7 @@ export default function ShopAdminPage() {
               <div>
                 {/* Header with Filter */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                  <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>ðŸ“¦ Inventory Management</h2>
+                  <h2 style={{ color: '#e5e7eb', fontSize: 24, margin: 0 }}>📦 Inventory Management</h2>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#e5e7eb', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
@@ -1908,10 +1908,10 @@ export default function ShopAdminPage() {
                       <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, width: '100%', maxWidth: 560, padding: 28, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                           <h3 style={{ color: '#e5e7eb', fontSize: 20, margin: 0, fontWeight: 700 }}>Create Purchase Order</h3>
-                          <button onClick={() => setShowPoModal(false)} style={{ background: 'none', border: 'none', color: '#9aa3b2', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>âœ•</button>
+                          <button onClick={() => setShowPoModal(false)} style={{ background: 'none', border: 'none', color: '#9aa3b2', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>✕</button>
                         </div>
                         <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: 13, color: '#fbbf24' }}>
-                          âš ï¸ Customer approval is required before ordering. The PO will be flagged <strong>Awaiting Approval</strong> until the customer confirms.
+                          ⚠️ Customer approval is required before ordering. The PO will be flagged <strong>Awaiting Approval</strong> until the customer confirms.
                         </div>
                         <div style={{ display: 'grid', gap: 14, gridTemplateColumns: '1fr 1fr', marginBottom: 16 }}>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -1970,8 +1970,8 @@ export default function ShopAdminPage() {
                                   onClick={() => { setPoForm({ ...poForm, workOrderId: wo.id }); setWorkOrderSearch(wo.id); }}
                                   style={{ padding: '8px 12px', cursor: 'pointer', color: poForm.workOrderId === wo.id ? '#22c55e' : '#e5e7eb', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: 13, background: poForm.workOrderId === wo.id ? 'rgba(34,197,94,0.1)' : 'transparent' }}
                                 >
-                                  {wo.id.slice(-6)} â€¢ {wo.status} â€¢ {wo.issueDescription?.symptoms || ''}
-                                  {poForm.workOrderId === wo.id && ' âœ“'}
+                                  {wo.id.slice(-6)} • {wo.status} • {wo.issueDescription?.symptoms || ''}
+                                  {poForm.workOrderId === wo.id && ' ✓'}
                                 </div>
                               ))
                             )}
@@ -1982,7 +1982,7 @@ export default function ShopAdminPage() {
                             Cancel
                           </button>
                           <button onClick={handleCreatePurchaseOrder} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>
-                            Create PO â€” Awaiting Approval
+                            Create PO — Awaiting Approval
                           </button>
                         </div>
                       </div>
@@ -2003,24 +2003,24 @@ export default function ShopAdminPage() {
                           return (
                             <div key={po.id} style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, background: 'rgba(0,0,0,0.25)', overflow: 'hidden' }}>
                               <div style={{ background: bannerColor, color: 'white', padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 700 }}>
-                                <div>PO-{po.id.slice(-6)} {po.vendor ? `â€¢ ${po.vendor}` : ''}</div>
+                                <div>PO-{po.id.slice(-6)} {po.vendor ? `• ${po.vendor}` : ''}</div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                   <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(255,255,255,0.2)', color: 'white' }}>
                                     {po.status.toUpperCase()}
                                   </span>
                                   {po.customerApprovalStatus === 'pending' && (
                                     <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(245,158,11,0.25)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.4)' }}>
-                                      â³ AWAITING APPROVAL
+                                      ⏳ AWAITING APPROVAL
                                     </span>
                                   )}
                                   {po.customerApprovalStatus === 'approved' && (
                                     <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' }}>
-                                      âœ“ CUSTOMER APPROVED
+                                      ✓ CUSTOMER APPROVED
                                     </span>
                                   )}
                                   {po.customerApprovalStatus === 'rejected' && (
                                     <span style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)' }}>
-                                      âœ• CUSTOMER REJECTED
+                                      ✕ CUSTOMER REJECTED
                                     </span>
                                   )}
                                   {po.status !== 'received' && (
@@ -2035,7 +2035,7 @@ export default function ShopAdminPage() {
                               </div>
                               <div style={{ padding: 12 }}>
                                 <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 6 }}>
-                                  Vendor: {po.vendor || 'N/A'} â€¢ Items: {po.items?.length || 0} â€¢ Created: {new Date(po.createdAt).toLocaleDateString()}
+                                  Vendor: {po.vendor || 'N/A'} • Items: {po.items?.length || 0} • Created: {new Date(po.createdAt).toLocaleDateString()}
                                 </div>
                                 <div style={{ display: 'grid', gap: 6 }}>
                                   {po.items?.map((item: any) => (
@@ -2058,7 +2058,7 @@ export default function ShopAdminPage() {
                 {inventoryRequests.length > 0 && (
                   <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 12, padding: 24, marginBottom: 24 }}>
                     <h3 style={{ color: '#ef4444', fontSize: 18, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span>âš ï¸</span>
+                      <span>⚠️</span>
                       Pending Inventory Requests ({inventoryRequests.length})
                     </h3>
                     <div style={{ display: 'grid', gap: 12 }}>
@@ -2077,7 +2077,7 @@ export default function ShopAdminPage() {
                               {request.itemName} (x{request.quantity})
                             </div>
                             <div style={{ color: '#9aa3b2', fontSize: 13 }}>
-                              Requested by: {request.requesterName} â€¢ {request.reason || 'No reason provided'}
+                              Requested by: {request.requesterName} • {request.reason || 'No reason provided'}
                             </div>
                             <div style={{ color: '#9aa3b2', fontSize: 12, marginTop: 4 }}>
                               Urgency: <span style={{ 
@@ -2116,7 +2116,7 @@ export default function ShopAdminPage() {
                                 cursor: 'pointer',
                               }}
                             >
-                              âœ“ Approve
+                              ✓ Approve
                             </button>
                             <button
                               onClick={async () => {
@@ -2145,7 +2145,7 @@ export default function ShopAdminPage() {
                                 cursor: 'pointer',
                               }}
                             >
-                              âœ— Deny
+                              ✗ Deny
                             </button>
                           </div>
                         </div>
@@ -2174,7 +2174,7 @@ export default function ShopAdminPage() {
                         {inventoryStock.length === 0 ? (
                           <tr>
                             <td colSpan={8} style={{ padding: 48, textAlign: 'center', color: '#9aa3b2' }}>
-                              <div style={{ fontSize: 48, marginBottom: 12 }}>ðŸ“¦</div>
+                              <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
                               <div>No inventory items found</div>
                               <div style={{ fontSize: 13, marginTop: 8 }}>Add items using the API or import from CSV</div>
                             </td>
@@ -2217,7 +2217,7 @@ export default function ShopAdminPage() {
                                       fontWeight: 700,
                                       display: 'inline-block'
                                     }}>
-                                      âš ï¸ LOW STOCK
+                                      ⚠️ LOW STOCK
                                     </span>
                                   ) : (
                                     <span style={{
@@ -2230,7 +2230,7 @@ export default function ShopAdminPage() {
                                       fontWeight: 700,
                                       display: 'inline-block'
                                     }}>
-                                      âœ“ IN STOCK
+                                      ✓ IN STOCK
                                     </span>
                                   )}
                                 </td>
