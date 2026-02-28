@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { authenticateRequest, verifyToken } from '@/lib/auth';
 
 // POST /api/tech/tracking - Tech updates their GPS location
 export async function POST(request: NextRequest) {

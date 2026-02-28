@@ -61,6 +61,23 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
     { icon: '📍', label: 'Locations', href: '/shop/locations' },
     { icon: '�', label: 'Recurring Orders', href: '/shop/recurring-workorders' },
     { icon: '🔐', label: 'Two-Factor Auth', href: '/shop/settings/two-factor' },
+    { icon: '🚗', label: 'Bay Board', href: '/shop/bays' },
+    { icon: '🚙', label: 'Loaner Vehicles', href: '/shop/loaners' },
+    { icon: '🏢', label: 'Fleet Accounts', href: '/shop/fleet' },
+    { icon: '📦', label: 'Core Returns', href: '/shop/core-returns' },
+    { icon: '🔍', label: 'DVI Inspections', href: '/shop/dvi' },
+    { icon: '✍️', label: 'Work Authorizations', href: '/shop/work-authorizations' },
+    { icon: '⚡', label: 'Automations', href: '/shop/automations' },
+    { icon: '📸', label: 'Condition Reports', href: '/shop/condition-reports' },
+    { icon: '📊', label: 'AR Aging', href: '/shop/ar-aging' },
+    { icon: '💹', label: 'Profit Margins', href: '/shop/profit-margins' },
+    { icon: '🧾', label: 'Tax Settings', href: '/shop/tax-settings' },
+    { icon: '🎁', label: 'Referral Program', href: '/shop/referrals' },
+    { icon: '🚗', label: 'State Inspections', href: '/shop/inspections' },
+    { icon: '♻️', label: 'Environmental Fees', href: '/shop/environmental-fees' },
+    { icon: '🔌', label: 'Integrations', href: '/shop/integrations' },
+    { icon: '🎨', label: 'Shop Branding', href: '/shop/branding' },
+    { icon: '📺', label: 'Waiting Room TV', href: '/shop/waiting-room' },
   ];
 
   const managerMenuItems: MenuItem[] = [
@@ -80,6 +97,8 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
     { icon: '💬', label: 'Messages', href: '/tech/home#messages' },
     { icon: '🔧', label: 'All Tools', href: '/tech/all-tools' },
     { icon: '📸', label: 'Photos', href: '/tech/photos' },
+    { icon: '🔍', label: 'DVI Form', href: '/tech/dvi' },
+    { icon: '🔎', label: 'DTC Lookup', href: '/tech/dtc-lookup' },
   ];
 
   const menuItems = role === 'shop' ? shopMenuItems : role === 'manager' ? managerMenuItems : techMenuItems;

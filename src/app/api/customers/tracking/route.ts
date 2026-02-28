@@ -1,6 +1,6 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { authenticateRequest, verifyToken } from '@/lib/auth';
 import { getSocketServer } from '@/lib/socket-server';
 
 // GET /api/customers/tracking - Get real-time tech location for active work order

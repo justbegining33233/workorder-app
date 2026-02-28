@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
+import { authenticateRequest, verifyToken } from '@/lib/auth';
 
 // Helper to get week key (year-week format)
 function getWeekKey(date: Date): string {

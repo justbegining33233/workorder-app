@@ -1,0 +1,288 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import useRequireAuth from '@/lib/useRequireAuth';
+
+interface Bay {
+  id: string;
+  name: string;
+  type: string;
+  status: 'empty' | 'occupied' | 'reserved';
+  workOrderId?: string;
+  techId?: string;
+  vehicleDesc?: string;
+  notes?: string;
+  startedAt?: string;
+}
+
+const BAY_TYPES = ['general', 'alignment', 'tire', 'lube', 'inspection', 'detail'];
+const statusColors: Record<string, string> = {
+  empty: '#22c55e',
+  occupied: '#e5332a',
+  reserved: '#f59e0b',
+};
+const statusBg: Record<string, string> = {
+  empty: 'rgba(34,197,94,0.12)',
+  occupied: 'rgba(229,51,42,0.12)',
+  reserved: 'rgba(245,158,11,0.12)',
+};
+
+export default function BaysPage() {
+  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const [bays, setBays] = useState<Bay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newBay, setNewBay] = useState({ name: '', type: 'general' });
+  const [editBay, setEditBay] = useState<Bay | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [drag, setDrag] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchBays();
+  }, [user]);
+
+  const fetchBays = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch('/api/bays', { headers: { Authorization: `Bearer ${token}` } });
+      if (r.ok) setBays(await r.json());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addBay = async () => {
+    if (!newBay.name.trim()) return;
+    setSaving(true);
+    const token = localStorage.getItem('token');
+    const r = await fetch('/api/bays', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(newBay),
+    });
+    if (r.ok) {
+      setNewBay({ name: '', type: 'general' });
+      setShowAdd(false);
+      fetchBays();
+    }
+    setSaving(false);
+  };
+
+  const updateStatus = async (bayId: string, status: string, extra: Partial<Bay> = {}) => {
+    const token = localStorage.getItem('token');
+    await fetch(`/api/bays/${bayId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ status, ...extra }),
+    });
+    fetchBays();
+  };
+
+  const deleteBay = async (id: string) => {
+    if (!confirm('Remove this bay?')) return;
+    const token = localStorage.getItem('token');
+    await fetch(`/api/bays/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    fetchBays();
+  };
+
+  const saveEdit = async () => {
+    if (!editBay) return;
+    setSaving(true);
+    const token = localStorage.getItem('token');
+    await fetch(`/api/bays/${editBay.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(editBay),
+    });
+    setEditBay(null);
+    fetchBays();
+    setSaving(false);
+  };
+
+  if (isLoading) return (
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#3d3d3d,#111827)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>
+  );
+  if (!user) return null;
+
+  const stats = {
+    total: bays.length,
+    occupied: bays.filter(b => b.status === 'occupied').length,
+    reserved: bays.filter(b => b.status === 'reserved').length,
+    empty: bays.filter(b => b.status === 'empty').length,
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#1f2937,#111827)', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif' }}>
+      {/* Header */}
+      <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🏗️ Bay & Lift Board</h1>
+          <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Real-time view of all bays and lifts</p>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Total', value: stats.total, color: '#6b7280' },
+            { label: 'In Use', value: stats.occupied, color: '#e5332a' },
+            { label: 'Reserved', value: stats.reserved, color: '#f59e0b' },
+            { label: 'Open', value: stats.empty, color: '#22c55e' },
+          ].map(s => (
+            <div key={s.label} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '8px 18px', textAlign: 'center' }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</div>
+              <div style={{ fontSize: 11, color: '#9ca3af' }}>{s.label}</div>
+            </div>
+          ))}
+          <button onClick={() => setShowAdd(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ Add Bay</button>
+        </div>
+      </div>
+
+      {/* Bay Grid */}
+      <div style={{ padding: 32 }}>
+        {loading ? (
+          <div style={{ textAlign: 'center', color: '#6b7280', padding: 64, fontSize: 18 }}>Loading bays...</div>
+        ) : bays.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 80 }}>
+            <div style={{ fontSize: 64 }}>🏗️</div>
+            <div style={{ fontSize: 20, fontWeight: 600, margin: '16px 0 8px' }}>No bays configured</div>
+            <div style={{ color: '#9ca3af', marginBottom: 24 }}>Add your bays and lifts to start tracking vehicle locations</div>
+            <button onClick={() => setShowAdd(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Add First Bay</button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+            {bays.map(bay => (
+              <div key={bay.id}
+                draggable
+                onDragStart={() => setDrag(bay.id)}
+                style={{
+                  background: statusBg[bay.status],
+                  border: `2px solid ${statusColors[bay.status]}`,
+                  borderRadius: 14,
+                  padding: 20,
+                  cursor: 'grab',
+                  transition: 'transform 0.2s',
+                  opacity: drag === bay.id ? 0.5 : 1,
+                }}>
+                {/* Bay Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 18 }}>{bay.name}</div>
+                    <div style={{ fontSize: 12, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 1 }}>{bay.type}</div>
+                  </div>
+                  <span style={{ background: statusColors[bay.status], color: '#fff', borderRadius: 20, padding: '3px 12px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>
+                    {bay.status}
+                  </span>
+                </div>
+
+                {/* Content */}
+                {bay.status === 'empty' ? (
+                  <div style={{ textAlign: 'center', padding: '16px 0', color: '#9ca3af', fontSize: 14 }}>
+                    <div style={{ fontSize: 28, marginBottom: 4 }}>✅</div>
+                    Available
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 14, lineHeight: 1.7 }}>
+                    {bay.vehicleDesc && <div><span style={{ color: '#9ca3af' }}>Vehicle: </span>{bay.vehicleDesc}</div>}
+                    {bay.workOrderId && <div><span style={{ color: '#9ca3af' }}>WO: </span><span style={{ color: '#60a5fa' }}>#{bay.workOrderId.slice(-6).toUpperCase()}</span></div>}
+                    {bay.startedAt && <div><span style={{ color: '#9ca3af' }}>Started: </span>{new Date(bay.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>}
+                    {bay.notes && <div style={{ marginTop: 6, color: '#9ca3af', fontSize: 12, fontStyle: 'italic' }}>{bay.notes}</div>}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
+                  {bay.status !== 'occupied' && (
+                    <button onClick={() => setEditBay(bay)}
+                      style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 6, padding: '7px 0', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                      Assign Vehicle
+                    </button>
+                  )}
+                  {bay.status !== 'empty' && (
+                    <button onClick={() => updateStatus(bay.id, 'empty', { workOrderId: undefined, techId: undefined, vehicleDesc: undefined })}
+                      style={{ flex: 1, background: 'rgba(34,197,94,0.2)', color: '#22c55e', border: '1px solid #22c55e', borderRadius: 6, padding: '7px 0', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                      Clear Bay
+                    </button>
+                  )}
+                  {bay.status === 'empty' && (
+                    <button onClick={() => updateStatus(bay.id, 'reserved')}
+                      style={{ background: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid #f59e0b', borderRadius: 6, padding: '7px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                      Reserve
+                    </button>
+                  )}
+                  <button onClick={() => deleteBay(bay.id)}
+                    style={{ background: 'transparent', color: '#6b7280', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '7px 10px', fontSize: 12, cursor: 'pointer' }}>
+                    🗑
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Add Bay Modal */}
+      {showAdd && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 380, maxWidth: '90%' }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: 18 }}>Add Bay / Lift</h3>
+            <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Bay Name</label>
+            <input value={newBay.name} onChange={e => setNewBay(p => ({ ...p, name: e.target.value }))}
+              placeholder="e.g. Bay 1, Alignment Lift, Tire Bay"
+              style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 14px', color: '#e5e7eb', fontSize: 14, marginBottom: 14, boxSizing: 'border-box' }} />
+            <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Type</label>
+            <select value={newBay.type} onChange={e => setNewBay(p => ({ ...p, type: e.target.value }))}
+              style={{ width: '100%', background: '#374151', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 14px', color: '#e5e7eb', fontSize: 14, marginBottom: 20 }}>
+              {BAY_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
+            </select>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={addBay} disabled={saving} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+                {saving ? 'Adding...' : 'Add Bay'}
+              </button>
+              <button onClick={() => setShowAdd(false)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Vehicle Modal */}
+      {editBay && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 420, maxWidth: '90%' }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: 18 }}>Assign to {editBay.name}</h3>
+            {(['vehicleDesc', 'workOrderId', 'techId', 'notes'] as const).map(field => (
+              <div key={field} style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>
+                  {field === 'vehicleDesc' ? 'Vehicle (Year/Make/Model)' : field === 'workOrderId' ? 'Work Order ID (optional)' : field === 'techId' ? 'Tech Name/ID (optional)' : 'Notes'}
+                </label>
+                <input
+                  value={(editBay as any)[field] || ''}
+                  onChange={e => setEditBay(p => p ? { ...p, [field]: e.target.value } : p)}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 14px', color: '#e5e7eb', fontSize: 14, boxSizing: 'border-box' }}
+                />
+              </div>
+            ))}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Status</label>
+              <select value={editBay.status} onChange={e => setEditBay(p => p ? { ...p, status: e.target.value as Bay['status'] } : p)}
+                style={{ width: '100%', background: '#374151', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 14px', color: '#e5e7eb', fontSize: 14 }}>
+                <option value="occupied">Occupied</option>
+                <option value="reserved">Reserved</option>
+                <option value="empty">Empty</option>
+              </select>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={saveEdit} disabled={saving} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              <button onClick={() => setEditBay(null)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

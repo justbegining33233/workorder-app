@@ -26,15 +26,15 @@ model Customer {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  workOrders     WorkOrder[]
-  notifications  Notification[]
-  vehicles       Vehicle[]
-  paymentMethods PaymentMethod[]
-  reviews        Review[]
-  appointments   Appointment[]
-  favoriteShops  FavoriteShop[]
-  documents      CustomerDocument[]
-  messages       CustomerMessage[]
+  workOrders          WorkOrder[]
+  notifications       Notification[]
+  vehicles            Vehicle[]
+  paymentMethods      PaymentMethod[]
+  reviews             Review[]
+  appointments        Appointment[]
+  favoriteShops       FavoriteShop[]
+  documents           CustomerDocument[]
+  messages            CustomerMessage[]
   recurringWorkOrders RecurringWorkOrder[]
 
   @@map("customers")
@@ -72,8 +72,8 @@ model Shop {
   shopType        String? // diesel, gas, both
   profileComplete Boolean @default(false)
 
-    // Stripe Connect - payout account for work order payment splitting
-    stripeAccountId String? // Stripe connected account ID (acct_...)
+  // Stripe Connect - payout account for work order payment splitting
+  stripeAccountId String? // Stripe connected account ID (acct_...)
   capacity        Int     @default(1) // Number of bays/simultaneous appointments
   slotDuration    Int     @default(30) // Default time slot duration in minutes
 
@@ -83,20 +83,36 @@ model Shop {
   updatedAt  DateTime  @updatedAt
   approvedAt DateTime?
 
-  services       ShopService[]
-  shopLaborRates ShopLaborRate[]
-  workOrders     WorkOrder[]
-  techs          Tech[]
-  inventory      InventoryItem[]
-  settings       ShopSettings?
-  reviews        Review[]
-  appointments   Appointment[]
-  subscription   Subscription?
-  schedules      ShopSchedule[]
-  blockedDates   ShopBlockedDate[]
-  purchaseOrders PurchaseOrder[]
+  services            ShopService[]
+  shopLaborRates      ShopLaborRate[]
+  workOrders          WorkOrder[]
+  techs               Tech[]
+  inventory           InventoryItem[]
+  settings            ShopSettings?
+  reviews             Review[]
+  appointments        Appointment[]
+  subscription        Subscription?
+  schedules           ShopSchedule[]
+  blockedDates        ShopBlockedDate[]
+  purchaseOrders      PurchaseOrder[]
   recurringWorkOrders RecurringWorkOrder[]
-  monthlyReports ShopMonthlyReport[]
+  monthlyReports      ShopMonthlyReport[]
+  bays                Bay[]
+  loanerVehicles      LoanerVehicle[]
+  fleetAccounts       FleetAccount[]
+  coreReturns         CoreReturn[]
+  dviInspections      DVIInspection[]
+  automationRules     AutomationRule[]
+  referrals           Referral[]
+  stateInspections    StateInspection[]
+  environmentalFees   EnvironmentalFee[]
+  taxRules            TaxRule[]
+  integrations        IntegrationConfig[]
+  branding            ShopBranding?            @relation(fields: [shopBrandingId], references: [id])
+  paymentLinks        PaymentLink[]
+  workAuthorizations  WorkAuthorization[]
+  conditionReports    VehicleConditionReport[]
+  shopBrandingId      String?
 
   @@map("shops")
 }
@@ -107,10 +123,10 @@ model ShopSchedule {
   shopId String
   shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 
-  dayOfWeek Int      // 0=Sunday, 1=Monday, ... 6=Saturday
-  isOpen    Boolean  @default(true)
-  openTime  String   // "09:00" format (24hr)
-  closeTime String   // "17:00" format (24hr)
+  dayOfWeek Int // 0=Sunday, 1=Monday, ... 6=Saturday
+  isOpen    Boolean @default(true)
+  openTime  String // "09:00" format (24hr)
+  closeTime String // "17:00" format (24hr)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -127,7 +143,7 @@ model ShopBlockedDate {
   shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 
   date   DateTime // The blocked date
-  reason String?  // "Holiday", "Vacation", "Maintenance", etc.
+  reason String? // "Holiday", "Vacation", "Maintenance", etc.
 
   createdAt DateTime @default(now())
 
@@ -223,8 +239,8 @@ model Vehicle {
 
   createdAt DateTime @default(now())
 
-  workOrders   WorkOrder[]
-  appointments Appointment[]
+  workOrders          WorkOrder[]
+  appointments        Appointment[]
   recurringWorkOrders RecurringWorkOrder[]
 
   @@index([customerId])
@@ -264,7 +280,7 @@ model WorkOrder {
   // Assignment
   assignedTechId String?
   assignedTo     Tech?   @relation(fields: [assignedTechId], references: [id])
-  bay            Int?    // Bay number (1-999) where work is being performed
+  bay            Int? // Bay number (1-999) where work is being performed
 
   // Status
   status String @default("pending") // pending, assigned, in-progress, waiting-estimate, waiting-for-payment, closed, denied-estimate
@@ -291,13 +307,13 @@ model WorkOrder {
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
 
-  reviews          Review[]
-  messages         Message[]
-  statusHistory    StatusHistory[]
-  customerMessages CustomerMessage[]
-  tracking         TechTracking?
+  reviews            Review[]
+  messages           Message[]
+  statusHistory      StatusHistory[]
+  customerMessages   CustomerMessage[]
+  tracking           TechTracking?
   purchaseOrderItems PurchaseOrderItem[]
-  timeEntries      TimeEntry[]
+  timeEntries        TimeEntry[]
 
   @@index([customerId])
   @@index([shopId])
@@ -491,7 +507,7 @@ model TimeEntry {
   breakDuration Float? // Minutes
 
   // Support multiple breaks and historical break records
-  breaks Json?        // [{ start: string, end?: string, durationMinutes?: number, type?: 'break'|'pto' }]
+  breaks Json? // [{ start: string, end?: string, durationMinutes?: number, type?: 'break'|'pto' }]
 
   // Link a time entry to a Work Order (optional)
   workOrderId String?
@@ -501,10 +517,10 @@ model TimeEntry {
   isPto Boolean @default(false)
 
   // Approval & locking workflow
-  approved   Boolean  @default(false)
+  approved   Boolean   @default(false)
   approvedBy String?
   approvedAt DateTime?
-  locked     Boolean  @default(false)
+  locked     Boolean   @default(false)
 
   // Calculated fields
   hoursWorked Float? // Calculated when clocked out (excluding breaks)
@@ -559,9 +575,9 @@ model ShopSettings {
   monthlyPayrollBudget Float?
 
   // Shop-wide notification preferences
-  notificationsEnabled      Boolean @default(true)
-  notificationSoundEnabled  Boolean @default(true)
-  notificationPreferences   Json?
+  notificationsEnabled     Boolean @default(true)
+  notificationSoundEnabled Boolean @default(true)
+  notificationPreferences  Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -633,32 +649,32 @@ model InventoryStock {
 }
 
 model PurchaseOrder {
-  id          String   @id @default(cuid())
-  shopId      String
-  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  vendor      String?
-  status      String   @default("ordered") // ordered, shipped, received, cancelled
-  customerApprovalStatus String @default("pending") // pending, approved, rejected
-  expectedDate DateTime?
-  notes       String?
-  createdById String?
-  totalCost   Float?
+  id                     String    @id @default(cuid())
+  shopId                 String
+  shop                   Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  vendor                 String?
+  status                 String    @default("ordered") // ordered, shipped, received, cancelled
+  customerApprovalStatus String    @default("pending") // pending, approved, rejected
+  expectedDate           DateTime?
+  notes                  String?
+  createdById            String?
+  totalCost              Float?
 
-  items      PurchaseOrderItem[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  items     PurchaseOrderItem[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 
   @@index([shopId])
   @@map("purchase_orders")
 }
 
 model PurchaseOrderItem {
-  id               String         @id @default(cuid())
-  purchaseOrderId  String
-  purchaseOrder    PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
 
-  workOrderId      String?
-  workOrder        WorkOrder?     @relation(fields: [workOrderId], references: [id])
+  workOrderId String?
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id])
 
   inventoryStockId String?
   inventoryStock   InventoryStock? @relation(fields: [inventoryStockId], references: [id])
@@ -830,10 +846,10 @@ model CustomerDocument {
 
 // Customer Messages - Chat between customer and tech
 model CustomerMessage {
-  id          String    @id @default(cuid())
-  customerId  String
-  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
   // Can be linked to workOrder OR appointment (at least one required)
   workOrderId   String?
   workOrder     WorkOrder?   @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
@@ -940,7 +956,7 @@ model PageView {
   id        String   @id @default(cuid())
   path      String
   userAgent String?
-  ipHash    String?  // Hashed IP for privacy
+  ipHash    String? // Hashed IP for privacy
   sessionId String?
   referrer  String?
   createdAt DateTime @default(now())
@@ -964,10 +980,10 @@ model RecurringWorkOrder {
   vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
 
   // What to do
-  title            String  // e.g. "Oil Change"
+  title            String // e.g. "Oil Change"
   issueDescription String
-  vehicleType      String  @default("car")
-  serviceLocation  String  @default("in-shop")
+  vehicleType      String @default("car")
+  serviceLocation  String @default("in-shop")
 
   // Recurrence
   frequency String // weekly | biweekly | monthly | quarterly | annually
@@ -976,15 +992,15 @@ model RecurringWorkOrder {
 
   // Template values carried into each new work order
   estimatedCost Float?
-  priority      String @default("medium")
+  priority      String  @default("medium")
   notes         String?
 
-  active            Boolean  @default(true)
-  requiresApproval  Boolean  @default(true)  // If true, customer must confirm before WO is created
+  active           Boolean @default(true)
+  requiresApproval Boolean @default(true) // If true, customer must confirm before WO is created
 
   // Reminder tracking — prevents double-sending
-  reminder14SentAt  DateTime? // When the 14-day reminder was last sent
-  reminder7SentAt   DateTime? // When the 7-day reminder was last sent
+  reminder14SentAt DateTime? // When the 14-day reminder was last sent
+  reminder7SentAt  DateTime? // When the 7-day reminder was last sent
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -993,6 +1009,488 @@ model RecurringWorkOrder {
   @@index([customerId])
   @@index([nextRunAt])
   @@map("recurring_work_orders")
+}
+
+// ─────────────────────────────────────────────
+//  NEW FEATURE MODELS
+// ─────────────────────────────────────────────
+
+// Bay / Lift Scheduling Board
+model Bay {
+  id     String @id @default(cuid())
+  shopId String
+  name   String // "Bay 1", "Lift 2", "Alignment Bay"
+  type   String @default("general") // general, alignment, tire, lube, inspection
+
+  workOrderId String? // currently assigned WO
+  techId      String? // currently assigned tech
+  vehicleDesc String? // year/make/model summary
+  status      String    @default("empty") // empty, occupied, reserved
+  startedAt   DateTime?
+  notes       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@map("bays")
+}
+
+// Loaner Vehicle Management
+model LoanerVehicle {
+  id     String @id @default(cuid())
+  shopId String
+
+  make         String
+  model        String
+  year         Int
+  color        String?
+  licensePlate String?
+  vin          String?
+  mileageOut   Int?
+  mileageIn    Int?
+  fuelLevelOut String? // full, 3/4, 1/2, 1/4, empty
+  fuelLevelIn  String?
+  damageNotes  String?
+  photos       String? // JSON array of photo URLs
+
+  // Assignment
+  customerId   String?
+  workOrderId  String?
+  checkedOutAt DateTime?
+  expectedBack DateTime?
+  checkedInAt  DateTime?
+
+  status String @default("available") // available, out, maintenance
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([status])
+  @@map("loaner_vehicles")
+}
+
+// Fleet Accounts — B2B clients with multiple vehicles
+model FleetAccount {
+  id     String @id @default(cuid())
+  shopId String
+
+  companyName    String
+  contactName    String
+  contactEmail   String
+  contactPhone   String?
+  billingAddress String?
+  taxId          String?
+  netTerms       Int     @default(30) // Net-30, Net-60, etc.
+  creditLimit    Float   @default(0)
+  notes          String?
+  status         String  @default("active") // active, suspended, closed
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vehicles FleetVehicle[]
+  invoices FleetInvoice[]
+  Shop     Shop           @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@map("fleet_accounts")
+}
+
+model FleetVehicle {
+  id             String       @id @default(cuid())
+  fleetAccountId String
+  fleetAccount   FleetAccount @relation(fields: [fleetAccountId], references: [id], onDelete: Cascade)
+
+  make         String
+  model        String
+  year         Int
+  vin          String?
+  licensePlate String?
+  unitNumber   String? // fleet unit number
+  mileage      Int?
+  notes        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fleetAccountId])
+  @@map("fleet_vehicles")
+}
+
+model FleetInvoice {
+  id             String       @id @default(cuid())
+  fleetAccountId String
+  fleetAccount   FleetAccount @relation(fields: [fleetAccountId], references: [id], onDelete: Cascade)
+  shopId         String
+
+  invoiceNumber String    @unique
+  workOrderIds  String // JSON array of work order IDs
+  totalAmount   Float
+  amountPaid    Float     @default(0)
+  dueDate       DateTime
+  paidAt        DateTime?
+  status        String    @default("unpaid") // unpaid, partial, paid, overdue
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([fleetAccountId])
+  @@index([shopId])
+  @@index([status])
+  @@map("fleet_invoices")
+}
+
+// Core Return Tracking
+model CoreReturn {
+  id          String  @id @default(cuid())
+  shopId      String
+  workOrderId String?
+
+  partName       String // e.g. "Alternator", "Starter"
+  partNumber     String?
+  vendor         String?
+  coreValue      Float     @default(0)
+  returnedAt     DateTime?
+  creditReceived Float?    @default(0)
+  status         String    @default("pending") // pending, returned, credited, waived
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([status])
+  @@map("core_returns")
+}
+
+// Digital Vehicle Inspection (DVI)
+model DVIInspection {
+  id          String  @id @default(cuid())
+  shopId      String
+  workOrderId String?
+  techId      String?
+  customerId  String?
+
+  vehicleDesc      String? // year/make/model
+  mileage          Int?
+  customerApproved Boolean   @default(false)
+  approvedAt       DateTime?
+  approvalToken    String?   @unique // shared link token
+  notes            String?
+  status           String    @default("in-progress") // in-progress, sent, approved, declined
+
+  items DVIItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([workOrderId])
+  @@index([approvalToken])
+  @@map("dvi_inspections")
+}
+
+model DVIItem {
+  id           String        @id @default(cuid())
+  inspectionId String
+  inspection   DVIInspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  category      String // Engine, Brakes, Tires, Fluids, Lights, etc.
+  itemName      String // e.g. "Front Brake Pads"
+  condition     String  @default("green") // green, yellow, red
+  notes         String?
+  photos        String? // JSON array of photo URLs
+  estimatedCost Float?
+  approved      Boolean @default(false)
+
+  @@index([inspectionId])
+  @@map("dvi_items")
+}
+
+// Work Authorization / E-Signatures
+model WorkAuthorization {
+  id          String  @id @default(cuid())
+  shopId      String
+  workOrderId String?
+  customerId  String?
+
+  shop          Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  authToken     String    @unique // shared link token
+  estimateTotal Float?
+  workSummary   String // describes the work being authorized
+  signatureData String? // base64 SVG signature
+  signedAt      DateTime?
+  signerName    String?
+  signerIP      String?
+  status        String    @default("pending") // pending, signed, declined, expired
+
+  expiresAt DateTime?
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([workOrderId])
+  @@index([authToken])
+  @@map("work_authorizations")
+}
+
+// Automated Reminders & Marketing Campaigns
+model AutomationRule {
+  id     String @id @default(cuid())
+  shopId String
+
+  name            String
+  type            String // service_reminder, appointment_reminder, review_request, win_back, referral
+  trigger         String // mileage_since_service, days_since_service, days_before_appt, days_after_close, days_inactive
+  triggerValue    Int    @default(0) // e.g. 5000 (miles) or 90 (days)
+  channel         String @default("sms") // sms, email, both
+  messageTemplate String
+
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  executions AutomationExecution[]
+  Shop       Shop                  @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([type])
+  @@map("automation_rules")
+}
+
+model AutomationExecution {
+  id     String         @id @default(cuid())
+  ruleId String
+  rule   AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  customerId  String?
+  workOrderId String?
+  channel     String // sms, email
+  status      String   @default("sent") // sent, delivered, failed, clicked
+  sentAt      DateTime @default(now())
+
+  @@index([ruleId])
+  @@index([customerId])
+  @@map("automation_executions")
+}
+
+// Referral Program
+model Referral {
+  id     String @id @default(cuid())
+  shopId String
+
+  referrerCustomerId String
+  referredEmail      String?
+  referredCustomerId String?
+  referralCode       String  @unique
+
+  referrerReward Float     @default(0)
+  referredReward Float     @default(0)
+  status         String    @default("pending") // pending, completed, paid
+  workOrderId    String? // qualifying work order
+  completedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([referrerCustomerId])
+  @@index([referralCode])
+  @@map("referrals")
+}
+
+// State Inspection / Emissions Tracking
+model StateInspection {
+  id          String  @id @default(cuid())
+  shopId      String
+  workOrderId String?
+  customerId  String?
+
+  vehicleDesc    String?
+  vin            String?
+  licensePlate   String?
+  inspectionType String    @default("state") // state, emissions, safety, commercial
+  result         String    @default("pass") // pass, fail, rejected
+  stickerNumber  String?
+  inspectorId    String? // Tech ID
+  inspectedAt    DateTime  @default(now())
+  expiresAt      DateTime?
+  failReason     String?
+  notes          String?
+  reportUrl      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([vin])
+  @@map("state_inspections")
+}
+
+// Environmental Fee Templates
+model EnvironmentalFee {
+  id     String @id @default(cuid())
+  shopId String
+
+  name      String // "Used Oil Disposal", "Tire Disposal", "Refrigerant Recovery"
+  feeAmount Float   @default(0)
+  unit      String  @default("per_job") // per_job, per_quart, per_tire, per_lb
+  taxable   Boolean @default(false)
+  active    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@map("environmental_fees")
+}
+
+// Tax Rules
+model TaxRule {
+  id     String @id @default(cuid())
+  shopId String
+
+  name           String // e.g. "State Sales Tax", "Labor Exempt"
+  rate           Float   @default(0) // percentage, e.g. 7.5
+  appliesToLabor Boolean @default(false)
+  appliesToParts Boolean @default(true)
+  appliesToFees  Boolean @default(false)
+  exemptServices String? // JSON array of exempt service names
+  active         Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@map("tax_rules")
+}
+
+// Integration Configurations (QuickBooks, Xero, Google Calendar, etc.)
+model IntegrationConfig {
+  id     String @id @default(cuid())
+  shopId String
+
+  provider       String // quickbooks, xero, google_calendar, carfax, twilio, affirm
+  enabled        Boolean   @default(false)
+  accessToken    String? // encrypted
+  refreshToken   String? // encrypted
+  tokenExpiry    DateTime?
+  accountId      String?
+  settings       String? // JSON for provider-specific config
+  lastSyncAt     DateTime?
+  lastSyncStatus String? // success, error
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@unique([shopId, provider])
+  @@index([shopId])
+  @@map("integration_configs")
+}
+
+// Custom Shop Branding
+model ShopBranding {
+  id     String @id @default(cuid())
+  shopId String @unique
+
+  logoUrl        String?
+  primaryColor   String  @default("#e5332a")
+  accentColor    String  @default("#1f2937")
+  customDomain   String? @unique
+  tagline        String?
+  welcomeMessage String?
+  footerText     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop[]
+
+  @@map("shop_branding")
+}
+
+// Check-in / Check-out Condition Photos
+model VehicleConditionReport {
+  id          String  @id @default(cuid())
+  shopId      String
+  workOrderId String?
+  customerId  String?
+
+  shop          Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  type          String // checkin, checkout
+  vehicleDesc   String?
+  mileage       Int?
+  fuelLevel     String?
+  damageNotes   String?
+  photos        String? // JSON array of {url, timestamp, note}
+  techId        String?
+  signatureData String? // customer sign-off
+  signedAt      DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([shopId])
+  @@index([workOrderId])
+  @@map("vehicle_condition_reports")
+}
+
+// DTC Code lookup cache / history
+model DTCLookup {
+  id          String  @id @default(cuid())
+  shopId      String?
+  techId      String?
+  workOrderId String?
+
+  code           String // e.g. "P0300"
+  system         String? // engine, transmission, abs, etc.
+  description    String
+  possibleCauses String? // JSON array
+  commonFixes    String? // JSON array
+  severity       String  @default("moderate") // minor, moderate, severe
+
+  lookedUpAt DateTime @default(now())
+
+  @@index([code])
+  @@index([shopId])
+  @@map("dtc_lookups")
+}
+
+// Online Payment Links (pay without login)
+model PaymentLink {
+  id          String  @id @default(cuid())
+  shopId      String
+  workOrderId String?
+  customerId  String?
+
+  token       String    @unique
+  amount      Float
+  description String?
+  status      String    @default("pending") // pending, paid, expired
+  paidAt      DateTime?
+  expiresAt   DateTime?
+
+  stripePaymentIntentId   String?
+  stripeCheckoutSessionId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Shop      Shop     @relation(fields: [shopId], references: [id])
+
+  @@index([shopId])
+  @@index([token])
+  @@map("payment_links")
 }
 
 // Monthly report snapshots per shop (for /shop/reports)
@@ -1004,11 +1502,11 @@ model ShopMonthlyReport {
   year  Int // e.g. 2026
   month Int // 1-12
 
-  totalRevenue    Float @default(0)
-  totalJobs       Int   @default(0)
-  completedJobs   Int   @default(0)
-  pendingJobs     Int   @default(0)
-  avgJobValue     Float @default(0)
+  totalRevenue    Float  @default(0)
+  totalJobs       Int    @default(0)
+  completedJobs   Int    @default(0)
+  pendingJobs     Int    @default(0)
+  avgJobValue     Float  @default(0)
   topServicesJson String @default("[]") // JSON array of {service, count, revenue}
 
   frozenAt  DateTime? // Set when month is over and snapshot is locked
@@ -1019,4 +1517,3 @@ model ShopMonthlyReport {
   @@index([shopId])
   @@map("shop_monthly_reports")
 }
-
