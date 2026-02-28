@@ -18,10 +18,23 @@ export default function Rewards() {
   useRequireAuth(['customer']);
   const [userName, setUserName] = useState('');
   const [rewards] = useState<Reward[]>([]);
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
+
+    // Derive loyalty points from completed work orders (50 pts each)
+    fetch('/api/workorders', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        const orders: any[] = Array.isArray(data) ? data : (data?.workOrders ?? []);
+        const completed = orders.filter((w: any) =>
+          ['closed', 'completed', 'Completed'].includes(w.status)
+        ).length;
+        setLoyaltyPoints(completed * 50);
+      })
+      .catch(() => {});
   }, []);
 
   const handleSignOut = () => {
@@ -57,17 +70,28 @@ export default function Rewards() {
           <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Current Balance</h2>
           <div style={{display:'flex', alignItems:'center', gap:24}}>
             <div>
-              <div style={{fontSize:36, fontWeight:700, color:'#3b82f6'}}>250</div>
+              <div style={{fontSize:36, fontWeight:700, color:'#3b82f6'}}>{loyaltyPoints}</div>
               <div style={{fontSize:14, color:'#9aa3b2'}}>Loyalty Points</div>
             </div>
             <div style={{flex:1}}>
-              <div style={{display:'flex', justifyContent:'space-between', marginBottom:8}}>
-                <span style={{fontSize:14, color:'#e5e7eb'}}>Progress to next reward</span>
-                <span style={{fontSize:14, color:'#9aa3b2'}}>250 / 500</span>
-              </div>
-              <div style={{width:'100%', height:8, background:'rgba(255,255,255,0.1)', borderRadius:4}}>
-                <div style={{width:'50%', height:'100%', background:'#3b82f6', borderRadius:4}}></div>
-              </div>
+              {(() => {
+                const nextThreshold = loyaltyPoints >= 1000 ? 1000 : loyaltyPoints >= 200 ? 1000 : 200;
+                const prevThreshold = loyaltyPoints >= 1000 ? 1000 : loyaltyPoints >= 200 ? 200 : 0;
+                const pct = nextThreshold > prevThreshold
+                  ? Math.min(100, Math.round(((loyaltyPoints - prevThreshold) / (nextThreshold - prevThreshold)) * 100))
+                  : 100;
+                return (
+                  <>
+                    <div style={{display:'flex', justifyContent:'space-between', marginBottom:8}}>
+                      <span style={{fontSize:14, color:'#e5e7eb'}}>Progress to next reward</span>
+                      <span style={{fontSize:14, color:'#9aa3b2'}}>{loyaltyPoints} / {nextThreshold}</span>
+                    </div>
+                    <div style={{width:'100%', height:8, background:'rgba(255,255,255,0.1)', borderRadius:4}}>
+                      <div style={{width:`${pct}%`, height:'100%', background:'#3b82f6', borderRadius:4}}></div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>

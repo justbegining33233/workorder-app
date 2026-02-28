@@ -10,7 +10,6 @@ import '../../../styles/sos-theme.css';
 
 export default function CustomerDashboard() {
   useRequireAuth(['customer']);
-  // Placeholder data - will be replaced with real API calls
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [mounted, setMounted] = useState(false);

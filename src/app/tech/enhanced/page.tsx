@@ -9,12 +9,12 @@ import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 
 function TechPortalEnhancedContent() {
-  useRequireAuth(['tech']);
+  const { user } = useRequireAuth(['tech']);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('assignments');
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
-  const [techName, setTechName] = useState('Mike');
+  const techName = user ? `${(user as any).firstName || ''} ${(user as any).lastName || ''}`.trim() || (user as any).name || user.id : '';
   const [location, setLocation] = useState({ lat: 0, lng: 0 });
 
   useEffect(() => {
@@ -53,7 +53,13 @@ function TechPortalEnhancedContent() {
     { id: 'performance', icon: '📊', name: 'Performance' },
   ];
 
-  const assigned = workOrders.filter(w => w.assignedTo === techName && w.status !== 'closed');
+  // Work orders are already scoped to this tech's shop via the API;
+  // further filter to those assigned to this tech (by id or name)
+  const assigned = workOrders.filter(w => {
+    if (w.status === 'closed') return false;
+    if (!user) return true;
+    return !w.assignedTo || w.assignedTo === user.id || w.assignedTo === techName;
+  });
 
   return (
     <div className="sos-wrap">
@@ -202,10 +208,9 @@ function LocationTab({ location, techName }: { location: { lat: number, lng: num
 }
 
 function MessagesTab({ techName }: { techName: string }) {
-  const [messages] = useState([
-    { sender: 'Customer John', message: 'When will you arrive?', time: '10:15 AM', type: 'received' },
-    { sender: techName, message: 'I\'ll be there in 15 minutes', time: '10:16 AM', type: 'sent' },
-  ]);
+  const [messages] = useState<{sender:string;message:string;time:string;type:string}[]>([]);
+  // Real messages are handled on the main tech portal (/tech/home);
+  // this tab shows a live-fetched subset when wired to the messages API.
 
   return (
     <div>
