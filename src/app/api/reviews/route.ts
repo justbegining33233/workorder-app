@@ -52,7 +52,15 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ reviews });
+    // Mask customer last name to first initial for privacy
+    const maskedReviews = reviews.map(r => ({
+      ...r,
+      customer: r.customer
+        ? { id: r.customer.id, firstName: r.customer.firstName, lastName: r.customer.lastName.charAt(0) + '.' }
+        : null,
+    }));
+
+    return NextResponse.json({ reviews: maskedReviews });
   } catch (error) {
     console.error('Error fetching reviews:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
