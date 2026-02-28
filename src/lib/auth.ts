@@ -4,14 +4,18 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 const _jwtSecret = process.env.JWT_SECRET;
+// During `next build` (NEXT_PHASE=phase-production-build) env vars that are
+// injected at runtime by Vercel are not yet available. Only throw at actual
+// runtime so the build phase can complete successfully.
+const _isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 if (!_jwtSecret) {
   const msg = 'FATAL: JWT_SECRET env var is not set. Server cannot start safely.';
-  if (process.env.NODE_ENV === 'production') throw new Error(msg);
+  if (process.env.NODE_ENV === 'production' && !_isBuildPhase) throw new Error(msg);
   console.error(msg);
 }
 if (_jwtSecret && _jwtSecret.length < 32) {
   const msg = `FATAL: JWT_SECRET is too short (${_jwtSecret.length} chars). Minimum 32 required.`;
-  if (process.env.NODE_ENV === 'production') throw new Error(msg);
+  if (process.env.NODE_ENV === 'production' && !_isBuildPhase) throw new Error(msg);
   console.error(msg);
 }
 const JWT_SECRET = _jwtSecret || 'dev-only-insecure-secret-do-not-use-in-prod';
