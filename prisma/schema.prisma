@@ -113,6 +113,12 @@ model Shop {
   workAuthorizations  WorkAuthorization[]
   conditionReports    VehicleConditionReport[]
   shopBrandingId      String?
+  shifts              Shift[]
+  shiftSwapRequests   ShiftSwapRequest[]
+  leaveRequests       LeaveRequest[]
+  payPeriods          PayPeriod[]
+  payStubs            PayStub[]
+  overtimeRule        OvertimeRule?
 
   @@map("shops")
 }
@@ -216,9 +222,27 @@ model Tech {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Payroll settings
+  payType           String  @default("hourly") // hourly, salary
+  salary            Float?  // annual salary if payType = salary
+  overtimeRate      Float?  // defaults to 1.5x hourlyRate
+  department        String? // service, parts, admin, management
+  jobTitle          String?
+  employmentType    String  @default("full-time") // full-time, part-time, contractor
+  hireDate          DateTime?
+  terminatedAt      DateTime?
+  taxWithholding    String? // JSON: federal/state allowances
+  bankAccountInfo   String? // encrypted JSON: routing/account
+  emergencyContact  String? // JSON: name/phone/relationship
+
   assignedWorkOrders WorkOrder[]
   statusHistory      StatusHistory[]
   timeEntries        TimeEntry[]
+  shifts             Shift[]
+  shiftSwapsAsRequester ShiftSwapRequest[] @relation("SwapRequester")
+  shiftSwapsAsTarget    ShiftSwapRequest[] @relation("SwapTarget")
+  leaveRequests      LeaveRequest[]
+  payStubs           PayStub[]
 
   @@index([shopId])
   @@map("techs")
@@ -1491,6 +1515,222 @@ model PaymentLink {
   @@index([shopId])
   @@index([token])
   @@map("payment_links")
+}
+
+// ─────────────────────────────────────────────────────────────────
+// PAYROLL & SCHEDULING MODELS
+// ─────────────────────────────────────────────────────────────────
+
+// Scheduled shifts for team members
+model Shift {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  techId String
+  tech   Tech   @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  date      DateTime // The date of the shift (UTC midnight)
+  startTime String   // "08:00" 24-hour format
+  endTime   String   // "17:00" 24-hour format
+  shiftType String   @default("regular") // regular, on-call, overtime, training
+  position  String?  // e.g. "Lead Tech", "Service Advisor"
+  notes     String?
+
+  // Status
+  status          String    @default("scheduled") // scheduled, confirmed, no-show, late, worked, cancelled
+  confirmedAt     DateTime?
+  actualClockIn   DateTime?
+  actualClockOut  DateTime?
+  lateMinutes     Int       @default(0)
+  earlyDepartureMins Int    @default(0)
+
+  // Swap tracking
+  swapRequests ShiftSwapRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([techId])
+  @@index([date])
+  @@map("shifts")
+}
+
+// Shift swap requests between employees
+model ShiftSwapRequest {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  shiftId     String
+  shift       Shift  @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  requesterId String
+  requester   Tech   @relation("SwapRequester", fields: [requesterId], references: [id])
+  targetId    String?
+  target      Tech?  @relation("SwapTarget", fields: [targetId], references: [id])
+
+  reason       String?
+  status       String    @default("pending") // pending, approved, denied, withdrawn
+  approvedById String?
+  approvedAt   DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([shopId])
+  @@index([requesterId])
+  @@map("shift_swap_requests")
+}
+
+// PTO / Leave requests
+model LeaveRequest {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  techId String
+  tech   Tech   @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  leaveType  String   // pto, vacation, sick, personal, unpaid, bereavement, jury
+  startDate  DateTime
+  endDate    DateTime
+  totalHours Float    @default(0)
+  reason     String?
+
+  status       String    @default("pending") // pending, approved, denied, withdrawn
+  approvedById String?
+  approvedAt   DateTime?
+  deniedReason String?
+  notes        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([techId])
+  @@index([status])
+  @@map("leave_requests")
+}
+
+// Pay periods (weekly, biweekly, etc.)
+model PayPeriod {
+  id     String @id @default(cuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  periodType  String   @default("biweekly") // weekly, biweekly, semimonthly, monthly
+  startDate   DateTime
+  endDate     DateTime
+  payDate     DateTime?
+  status      String   @default("open") // open, processing, approved, paid, locked
+
+  // Totals (computed when period is run)
+  totalGross       Float @default(0)
+  totalNet         Float @default(0)
+  totalTaxes       Float @default(0)
+  totalDeductions  Float @default(0)
+  totalOvertimePay Float @default(0)
+  employeeCount    Int   @default(0)
+
+  notes     String?
+  processedAt DateTime?
+  processedBy String?
+
+  payStubs PayStub[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([status])
+  @@map("pay_periods")
+}
+
+// Individual employee pay stubs per period
+model PayStub {
+  id          String    @id @default(cuid())
+  shopId      String
+  shop        Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  techId      String
+  tech        Tech      @relation(fields: [techId], references: [id], onDelete: Cascade)
+  payPeriodId String
+  payPeriod   PayPeriod @relation(fields: [payPeriodId], references: [id], onDelete: Cascade)
+
+  // Hours breakdown
+  regularHours    Float @default(0)
+  overtimeHours   Float @default(0)
+  doubleTimeHours Float @default(0)
+  ptoHours        Float @default(0)
+  sickHours       Float @default(0)
+  holidayHours    Float @default(0)
+
+  // Pay breakdown
+  regularPay    Float @default(0)
+  overtimePay   Float @default(0)
+  doubleTimePay Float @default(0)
+  ptoPay        Float @default(0)
+  bonusPay      Float @default(0)
+  reimbursements Float @default(0)
+  grossPay      Float @default(0)
+
+  // Deductions
+  federalTax     Float @default(0)
+  stateTax       Float @default(0)
+  socialSecurity Float @default(0)
+  medicare       Float @default(0)
+  healthInsurance Float @default(0)
+  retirement401k Float @default(0)
+  otherDeductions Float @default(0)
+  totalDeductions Float @default(0)
+
+  netPay Float @default(0)
+
+  // YTD totals
+  ytdGross    Float @default(0)
+  ytdTaxes    Float @default(0)
+  ytdNet      Float @default(0)
+
+  status    String    @default("draft") // draft, approved, paid
+  paidAt    DateTime?
+  paidVia   String?   // direct-deposit, check, cash
+  checkNumber String?
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([techId])
+  @@index([payPeriodId])
+  @@map("pay_stubs")
+}
+
+// Shop overtime rules configuration
+model OvertimeRule {
+  id     String @id @default(cuid())
+  shopId String @unique
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  // Weekly OT
+  weeklyOvertimeEnabled   Boolean @default(true)
+  weeklyOvertimeThreshold Float   @default(40) // hours
+  overtimeMultiplier      Float   @default(1.5)
+
+  // Daily OT (California-style)
+  dailyOvertimeEnabled   Boolean @default(false)
+  dailyOvertimeThreshold Float   @default(8) // hours in a day
+  dailyOTMultiplier      Float   @default(1.5)
+
+  // Double time
+  doubleTimeEnabled   Boolean @default(false)
+  doubleTimeThreshold Float   @default(12) // hours in a day OR weekly hours
+  doubleTimeMultiplier Float  @default(2.0)
+
+  // 7th day rule (California)
+  seventhDayRule Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("overtime_rules")
 }
 
 // Monthly report snapshots per shop (for /shop/reports)

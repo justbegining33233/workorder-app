@@ -47,7 +47,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
     { icon: '🏪', label: 'Shop Home', href: '/shop/home' },
     { icon: '🗂', label: 'Assign Work Orders', href: '/workorders/list' },
     { icon: '👥', label: 'Team Management', href: '/shop/manage-team' },
-    { icon: '💰', label: 'Payroll', href: '/shop/admin#payroll' },
+    { icon: '💰', label: 'Payroll Center', href: '/shop/payroll' },
     { icon: '📦', label: 'Inventory', href: '/shop/inventory' },
     { icon: '🛠️', label: 'Services', href: '/shop/services' },
     { icon: '⚙️', label: 'Settings', href: '/shop/admin/settings' },
