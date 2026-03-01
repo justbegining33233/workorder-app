@@ -44,7 +44,7 @@ export default function AppGuidePage() {
       ]
     },
     {
-      name: 'Admin Panel',
+      name: 'Admin Panel - Core',
       icon: '👑',
       description: 'Platform administration and management',
       features: [
@@ -61,68 +61,197 @@ export default function AppGuidePage() {
       ]
     },
     {
-      name: 'Shop Management',
+      name: 'Admin Panel - Advanced',
+      icon: '⚙️',
+      description: 'Advanced admin tools and management',
+      features: [
+        { name: 'Command Center', description: 'Real-time platform monitoring', status: 'ready', route: '/admin/command-center', apiEndpoint: '/api/admin/command-center' },
+        { name: 'Email Templates', description: 'Manage system email templates', status: 'ready', route: '/admin/email-templates', apiEndpoint: '/api/admin/email-templates' },
+        { name: 'Security Settings', description: 'Configure security policies', status: 'ready', route: '/admin/security-settings', apiEndpoint: '/api/admin/security' },
+        { name: 'Backup & Restore', description: 'Database backup management', status: 'ready', route: '/admin/backup-restore', apiEndpoint: '/api/admin/backup' },
+        { name: 'Manage Tenants', description: 'Multi-tenant configuration', status: 'ready', route: '/admin/manage-tenants', apiEndpoint: '/api/tenants' },
+        { name: 'Admin Tools', description: 'Developer and admin utilities', status: 'ready', route: '/admin/admin-tools', apiEndpoint: '/api/admin/tools' },
+        { name: 'Revenue Analytics', description: 'Detailed revenue reporting', status: 'ready', route: '/admin/revenue', apiEndpoint: '/api/admin/revenue' },
+        { name: 'Session Management', description: 'Monitor active user sessions', status: 'ready', route: '/admin/sessions', apiEndpoint: '/api/admin/sessions' },
+        { name: 'Shop Details', description: 'Detailed shop information and management', status: 'ready', route: '/admin/shop-details/[id]', apiEndpoint: '/api/admin/shops/[id]' },
+        { name: 'Manage Customers', description: 'Platform-wide customer management', status: 'ready', route: '/admin/manage-customers', apiEndpoint: '/api/admin/customers' },
+      ]
+    },
+    {
+      name: 'Shop Management - Core',
       icon: '🏪',
       description: 'Shop owner features and settings',
       features: [
-        { name: 'Shop Dashboard', description: 'Shop overview and stats', status: 'ready', route: '/shop/dashboard' },
-        { name: 'Shop Profile', description: 'Edit shop info, hours, logo', status: 'ready', route: '/shop/profile', apiEndpoint: '/api/shop/profile' },
+        { name: 'Shop Dashboard', description: 'Shop overview and stats', status: 'ready', route: '/shop/home' },
+        { name: 'Shop Profile', description: 'Edit shop info, hours, logo', status: 'ready', route: '/shop/settings', apiEndpoint: '/api/shop/profile' },
         { name: 'Service Catalog', description: 'Manage services offered', status: 'ready', route: '/shop/services', apiEndpoint: '/api/shops/services' },
         { name: 'Labor Rates', description: 'Set hourly labor rates', status: 'ready', apiEndpoint: '/api/shops/labor-rates' },
-        { name: 'Team Management', description: 'Add/manage technicians', status: 'ready', route: '/shop/team', apiEndpoint: '/api/techs' },
+        { name: 'Team Management', description: 'Add/manage technicians', status: 'ready', route: '/shop/manage-team', apiEndpoint: '/api/shop/team' },
         { name: 'Manager Role', description: 'Assign manager permissions', status: 'ready', apiEndpoint: '/api/manager/dashboard' },
         { name: 'Work Assignments', description: 'Assign jobs to technicians', status: 'ready', apiEndpoint: '/api/manager/assignments' },
         { name: 'Shop Settings', description: 'Configure shop preferences', status: 'ready', apiEndpoint: '/api/shop/settings' },
         { name: 'Business Hours', description: 'Set operating hours', status: 'ready', notes: 'Part of shop profile' },
-        { name: 'Multiple Locations', description: 'Manage multiple shop locations', status: 'ready', route: '/shop/locations', apiEndpoint: '/api/shop/locations', notes: 'Full location CRUD — add branches, set main location, activate/deactivate' },
+        { name: 'Multiple Locations', description: 'Manage multiple shop locations', status: 'ready', route: '/shop/locations', apiEndpoint: '/api/shop/locations' },
       ]
     },
     {
-      name: 'Work Orders',
+      name: 'Shop Management - Business',
+      icon: '💼',
+      description: 'Business operations and management',
+      features: [
+        { name: 'Shop Analytics', description: 'Business performance metrics', status: 'ready', route: '/shop/analytics', apiEndpoint: '/api/shop/stats' },
+        { name: 'Financial Summary', description: 'Revenue and expense tracking', status: 'ready', apiEndpoint: '/api/shop/financial-summary' },
+        { name: 'Customer Reports', description: 'Customer analytics and insights', status: 'ready', route: '/shop/customer-reports', apiEndpoint: '/api/shop/customer-reports' },
+        { name: 'Work Order Stats', description: 'Job completion analytics', status: 'ready', apiEndpoint: '/api/shop/workorder-stats' },
+        { name: 'Team Performance', description: 'Technician productivity metrics', status: 'ready', apiEndpoint: '/api/shop/team-performance' },
+        { name: 'Recent Activity', description: 'Recent shop activities feed', status: 'ready', apiEndpoint: '/api/shop/recent-activity' },
+        { name: 'Urgent Alerts', description: 'Critical notifications and alerts', status: 'ready', apiEndpoint: '/api/shop/urgent-alerts' },
+        { name: 'Complete Profile Setup', description: 'Initial shop profile completion', status: 'ready', route: '/shop/complete-profile' },
+      ]
+    },
+    {
+      name: 'Shop Management - Operations',
+      icon: '🔧',
+      description: 'Day-to-day shop operations',
+      features: [
+        { name: 'Inventory Management', description: 'Parts and supplies tracking', status: 'ready', route: '/shop/inventory', apiEndpoint: '/api/inventory' },
+        { name: 'Vendor Management', description: 'Manage parts suppliers', status: 'ready', route: '/shop/vendors', apiEndpoint: '/api/shop/vendors' },
+        { name: 'Purchase Orders', description: 'Order parts and supplies', status: 'ready', route: '/shop/purchase-orders', apiEndpoint: '/api/shop/purchase-orders' },
+        { name: 'Payroll Management', description: 'Employee payroll processing', status: 'ready', route: '/shop/payroll', apiEndpoint: '/api/shop/payroll' },
+        { name: 'Team Schedule', description: 'Staff scheduling and shifts', status: 'ready', apiEndpoint: '/api/shop/team-schedule' },
+        { name: 'Work Authorizations', description: 'Customer work approvals', status: 'ready', route: '/shop/work-authorizations', apiEndpoint: '/api/work-authorizations' },
+        { name: 'Waiting Room', description: 'Customer waiting area management', status: 'ready', route: '/shop/waiting-room', apiEndpoint: '/api/waiting-room' },
+        { name: 'Recurring Work Orders', description: 'Scheduled maintenance jobs', status: 'ready', route: '/shop/recurring-workorders', apiEndpoint: '/api/recurring-workorders' },
+      ]
+    },
+    {
+      name: 'Shop Management - Specialized',
+      icon: '🔬',
+      description: 'Specialized shop services and features',
+      features: [
+        { name: 'AR Aging Reports', description: 'Accounts receivable aging', status: 'ready', route: '/shop/ar-aging', apiEndpoint: '/api/ar-aging' },
+        { name: 'Condition Reports', description: 'Vehicle condition assessments', status: 'ready', route: '/shop/condition-reports', apiEndpoint: '/api/condition-reports' },
+        { name: 'Core Returns', description: 'Parts core return tracking', status: 'ready', route: '/shop/core-returns', apiEndpoint: '/api/core-returns' },
+        { name: 'DVI (Damage Vehicle Inspection)', description: 'Vehicle damage documentation', status: 'ready', route: '/shop/dvi', apiEndpoint: '/api/dvi' },
+        { name: 'Environmental Fees', description: 'Environmental compliance fees', status: 'ready', route: '/shop/environmental-fees', apiEndpoint: '/api/environmental-fees' },
+        { name: 'Fleet Management', description: 'Commercial fleet services', status: 'ready', route: '/shop/fleet', apiEndpoint: '/api/fleet' },
+        { name: 'Loaners', description: 'Loaner vehicle management', status: 'ready', route: '/shop/loaners', apiEndpoint: '/api/loaners' },
+        { name: 'State Inspections', description: 'Vehicle state inspection services', status: 'ready', route: '/shop/inspections', apiEndpoint: '/api/state-inspections' },
+        { name: 'Tax Settings', description: 'Tax rate configuration', status: 'ready', route: '/shop/tax-settings', apiEndpoint: '/api/tax-rules' },
+        { name: 'Profit Margins', description: 'Service profitability analysis', status: 'ready', route: '/shop/profit-margins', apiEndpoint: '/api/profit-margins' },
+      ]
+    },
+    {
+      name: 'Shop Management - Integrations',
+      icon: '🔗',
+      description: 'Third-party integrations and automations',
+      features: [
+        { name: 'Automations', description: 'Workflow automation rules', status: 'ready', route: '/shop/automations', apiEndpoint: '/api/automations' },
+        { name: 'Integrations', description: 'Third-party service connections', status: 'ready', route: '/shop/integrations', apiEndpoint: '/api/integrations' },
+        { name: 'Referrals', description: 'Customer referral program', status: 'ready', route: '/shop/referrals', apiEndpoint: '/api/referrals' },
+        { name: 'Branding', description: 'Shop branding customization', status: 'ready', route: '/shop/branding', apiEndpoint: '/api/branding' },
+        { name: 'Bays Management', description: 'Service bay scheduling', status: 'ready', route: '/shop/bays', apiEndpoint: '/api/bays' },
+        { name: 'Distributors', description: 'Parts distributor management', status: 'ready', route: '/shop/distributors', apiEndpoint: '/api/shop/vendors' },
+      ]
+    },
+    {
+      name: 'Work Orders - Core',
       icon: '📋',
       description: 'Create and manage repair orders',
       features: [
         { name: 'Create Work Order', description: 'New work order with customer/vehicle', status: 'ready', route: '/shop/workorders/new', apiEndpoint: '/api/workorders' },
         { name: 'Work Order List', description: 'View all work orders', status: 'ready', route: '/shop/workorders', apiEndpoint: '/api/workorders' },
-        { name: 'Work Order Details', description: 'Full order details and editing', status: 'ready', route: '/shop/workorders/[id]' },
+        { name: 'Work Order Details', description: 'Full order details and editing', status: 'ready', route: '/workorders/[id]' },
         { name: 'Status Updates', description: 'Change order status (pending, in-progress, complete)', status: 'ready', apiEndpoint: '/api/workorders/[id]' },
         { name: 'Photo Uploads', description: 'Attach before/after photos', status: 'ready', apiEndpoint: '/api/workorders/[id]/photos' },
         { name: 'Add Line Items', description: 'Parts, labor, fees', status: 'ready', notes: 'Included in work order creation' },
         { name: 'Invoice Generation', description: 'Create invoice from work order', status: 'ready', apiEndpoint: '/api/workorders/[id]/invoice' },
         { name: 'Payment Processing', description: 'Record payments on orders', status: 'ready', apiEndpoint: '/api/workorders/payment' },
         { name: 'Print Work Order', description: 'Print-friendly work order view', status: 'ready', notes: 'Print-optimized layout with CSS @media print' },
-        { name: 'Work Order Templates', description: 'Save common job templates', status: 'ready', route: '/shop/templates', apiEndpoint: '/api/shop/templates', notes: 'Create reusable templates with service type, repairs, maintenance, cost, and labor hours' },
+        { name: 'Work Order Templates', description: 'Save common job templates', status: 'ready', route: '/shop/templates', apiEndpoint: '/api/shop/templates' },
       ]
     },
     {
-      name: 'Customer Management',
+      name: 'Technician Tools - Core',
+      icon: '🔧',
+      description: 'Field technician tools and features',
+      features: [
+        { name: 'Tech Dashboard', description: 'Technician overview and assignments', status: 'ready', route: '/tech/home' },
+        { name: 'New Roadside Job', description: 'Create roadside assistance work order', status: 'ready', route: '/tech/new-roadside-job', apiEndpoint: '/api/workorders' },
+        { name: 'New In-Shop Job', description: 'Create in-shop repair work order', status: 'ready', route: '/tech/new-inshop-job', apiEndpoint: '/api/workorders' },
+        { name: 'Share Location', description: 'GPS location sharing for customer tracking', status: 'ready', route: '/tech/share-location', apiEndpoint: '/api/tech/tracking' },
+        { name: 'Time Clock', description: 'Clock in/out and time tracking', status: 'ready', route: '/tech/timesheet', apiEndpoint: '/api/timeclock' },
+        { name: 'Active Jobs', description: 'View current work assignments', status: 'ready', route: '/tech/active-jobs' },
+        { name: 'Job History', description: 'Past completed work orders', status: 'ready', route: '/tech/job-history' },
+        { name: 'Customer Portal', description: 'Access customer information', status: 'ready', route: '/tech/customers' },
+      ]
+    },
+    {
+      name: 'Technician Tools - Advanced',
+      icon: '🛠️',
+      description: 'Advanced technician diagnostic and service tools',
+      features: [
+        { name: 'All Tools Dashboard', description: 'Complete technician toolkit', status: 'ready', route: '/tech/all-tools' },
+        { name: 'Diagnostics', description: 'Vehicle diagnostic tools', status: 'ready', route: '/tech/diagnostics', apiEndpoint: '/api/dtc-lookup' },
+        { name: 'DTC Lookup', description: 'Diagnostic trouble code lookup', status: 'ready', route: '/tech/dtc-lookup', apiEndpoint: '/api/dtc-lookup' },
+        { name: 'Service Manuals', description: 'Access service manuals', status: 'ready', route: '/tech/manuals' },
+        { name: 'Photo Upload', description: 'Upload work order photos', status: 'ready', route: '/tech/photos', apiEndpoint: '/api/photos' },
+        { name: 'Inventory Access', description: 'Check parts availability', status: 'ready', route: '/tech/inventory', apiEndpoint: '/api/inventory' },
+        { name: 'Messages', description: 'Communicate with shop and customers', status: 'ready', route: '/tech/messages', apiEndpoint: '/api/messages' },
+        { name: 'Enhanced Tools', description: 'Advanced technician features', status: 'ready', route: '/tech/enhanced' },
+      ]
+    },
+    {
+      name: 'Customer Portal - Core',
       icon: '👤',
-      description: 'Customer profiles and vehicles',
+      description: 'Customer account and service management',
       features: [
-        { name: 'Customer List', description: 'View all shop customers', status: 'ready', route: '/shop/customers', apiEndpoint: '/api/customers' },
-        { name: 'Add Customer', description: 'Create new customer profile', status: 'ready', apiEndpoint: '/api/customers' },
-        { name: 'Customer Profile', description: 'View/edit customer details', status: 'ready', apiEndpoint: '/api/customers/profile' },
-        { name: 'Vehicle Management', description: 'Add customer vehicles', status: 'ready', apiEndpoint: '/api/customers/vehicles' },
-        { name: 'Service History', description: 'View past work orders', status: 'ready', notes: 'Available in customer profile' },
-        { name: 'Customer Notes', description: 'Add notes to customer file', status: 'ready', notes: 'Part of customer profile' },
-        { name: 'Document Storage', description: 'Store customer documents', status: 'ready', apiEndpoint: '/api/customers/documents' },
-        { name: 'Payment Methods', description: 'Save payment methods', status: 'partial', apiEndpoint: '/api/customers/payment-methods', notes: 'Stripe integration required' },
+        { name: 'Customer Dashboard', description: 'Overview of orders and vehicles', status: 'ready', route: '/customer/dashboard' },
+        { name: 'Find Shops', description: 'Search and browse auto shops', status: 'ready', route: '/customer/findshops', apiEndpoint: '/api/customers/shops' },
+        { name: 'Favorite Shops', description: 'Save preferred shops', status: 'ready', apiEndpoint: '/api/customers/favorites' },
+        { name: 'View Work Orders', description: 'See order status and history', status: 'ready', route: '/customer/workorders' },
+        { name: 'Manage Vehicles', description: 'Add/edit vehicles', status: 'ready', route: '/customer/vehicles' },
+        { name: 'Service History', description: 'Past service records', status: 'ready', route: '/customer/history' },
+        { name: 'Documents', description: 'Access service documents', status: 'ready', route: '/customer/documents', apiEndpoint: '/api/customers/documents' },
+        { name: 'Messages', description: 'Chat with shops', status: 'ready', route: '/customer/messages', apiEndpoint: '/api/customers/messages' },
       ]
     },
     {
-      name: 'Customer Portal',
-      icon: '🌐',
-      description: 'Customer-facing features',
+      name: 'Customer Portal - Services',
+      icon: '🚗',
+      description: 'Customer service requests and management',
       features: [
-        { name: 'Customer Login', description: 'Customer account access', status: 'ready', route: '/customer/login' },
-        { name: 'Customer Dashboard', description: 'Overview of orders and vehicles', status: 'ready', route: '/customer/dashboard' },
-        { name: 'View Work Orders', description: 'See order status and history', status: 'ready', route: '/customer/orders' },
-        { name: 'Manage Vehicles', description: 'Add/edit vehicles', status: 'ready', route: '/customer/vehicles' },
-        { name: 'Favorite Shops', description: 'Save preferred shops', status: 'ready', apiEndpoint: '/api/customers/favorites' },
-        { name: 'Technician Tracking', description: 'Track tech location on mobile jobs', status: 'ready', apiEndpoint: '/api/tech/tracking', notes: 'Techs POST GPS to /api/tech/tracking; customers read via /api/customers/tracking' },
-        { name: 'Online Booking', description: 'Book appointments online', status: 'ready', route: '/customer/book', apiEndpoint: '/api/appointments' },
-        { name: 'Message Shop', description: 'Chat with shop', status: 'ready', apiEndpoint: '/api/customers/messages' },
+        { name: 'Online Booking', description: 'Schedule appointments online', status: 'ready', route: '/customer/appointments', apiEndpoint: '/api/appointments' },
+        { name: 'Service Estimates', description: 'Request and view estimates', status: 'ready', route: '/customer/estimates', apiEndpoint: '/api/customers/estimates' },
+        { name: 'Recurring Approvals', description: 'Manage recurring service approvals', status: 'ready', route: '/customer/recurring-approvals', apiEndpoint: '/api/customers/recurring-approvals' },
+        { name: 'Payment History', description: 'View past payments', status: 'ready', route: '/customer/payments', apiEndpoint: '/api/customers/payments' },
         { name: 'Pay Online', description: 'Pay invoices online', status: 'setup-required', notes: 'Requires Stripe configuration' },
+        { name: 'Technician Tracking', description: 'Track tech location on mobile jobs', status: 'ready', apiEndpoint: '/api/customers/tracking' },
+        { name: 'Reviews & Ratings', description: 'Rate and review services', status: 'ready', route: '/customer/reviews', apiEndpoint: '/api/reviews' },
+        { name: 'Rewards Program', description: 'Loyalty rewards and points', status: 'ready', route: '/customer/rewards' },
+      ]
+    },
+    {
+      name: 'Customer Portal - Insights',
+      icon: '📊',
+      description: 'Customer analytics and insights',
+      features: [
+        { name: 'Service Insights', description: 'Personal service analytics', status: 'ready', route: '/customer/insights' },
+        { name: 'Features Overview', description: 'Available platform features', status: 'ready', route: '/customer/features' },
+        { name: 'Home Dashboard', description: 'Customer home page', status: 'ready', route: '/customer/home' },
+        { name: 'Overview', description: 'Account overview and summary', status: 'ready', route: '/customer/overview' },
+        { name: 'Authorization', description: 'Service authorization management', status: 'ready', route: '/customer/authorization' },
+      ]
+    },
+    {
+      name: 'Manager Dashboard',
+      icon: '👔',
+      description: 'Team management and oversight features',
+      features: [
+        { name: 'Manager Dashboard', description: 'Team oversight and management', status: 'ready', route: '/manager/dashboard' },
+        { name: 'Team Assignments', description: 'Assign work to team members', status: 'ready', apiEndpoint: '/api/manager/assignments' },
+        { name: 'Performance Monitoring', description: 'Track team performance', status: 'ready', apiEndpoint: '/api/manager/performance' },
+        { name: 'Schedule Management', description: 'Manage team schedules', status: 'ready', apiEndpoint: '/api/manager/schedule' },
       ]
     },
     {
@@ -130,12 +259,12 @@ export default function AppGuidePage() {
       icon: '⏰',
       description: 'Employee time and payroll management',
       features: [
-        { name: 'Clock In/Out', description: 'Technician time clock', status: 'ready', route: '/tech/timeclock', apiEndpoint: '/api/timeclock' },
+        { name: 'Clock In/Out', description: 'Technician time clock', status: 'ready', route: '/tech/timesheet', apiEndpoint: '/api/timeclock' },
         { name: 'Time Entries', description: 'View and edit time records', status: 'ready', apiEndpoint: '/api/time-tracking' },
-        { name: 'GPS Verification', description: 'Location-based clock in', status: 'ready', apiEndpoint: '/api/time-tracking', notes: 'Haversine distance check against shop coordinates' },
+        { name: 'GPS Verification', description: 'Location-based clock in', status: 'ready', apiEndpoint: '/api/time-tracking' },
         { name: 'Payroll Reports', description: 'Generate payroll summaries', status: 'ready', apiEndpoint: '/api/shop/payroll' },
         { name: 'Overtime Calculation', description: 'Auto-calculate overtime', status: 'ready', notes: 'Based on time entries' },
-        { name: 'Export Payroll', description: 'Export for accounting', status: 'ready', notes: 'CSV and XLS export available via ?format=csv or ?format=xlsx' },
+        { name: 'Export Payroll', description: 'Export for accounting', status: 'ready', notes: 'CSV and XLS export available' },
       ]
     },
     {
@@ -148,9 +277,9 @@ export default function AppGuidePage() {
         { name: 'Low Stock Alerts', description: 'Notifications for low stock', status: 'ready', apiEndpoint: '/api/inventory/low-stock' },
         { name: 'Inventory Requests', description: 'Request parts from admin', status: 'ready', apiEndpoint: '/api/shop/inventory-requests' },
         { name: 'Stock Adjustments', description: 'Adjust quantities manually', status: 'ready', apiEndpoint: '/api/shop/inventory-stock' },
-        { name: 'Reorder Points', description: 'Set auto-reorder levels', status: 'ready', notes: 'reorderPoint field on InventoryPart; getItemsBelowReorderPoint() helper available' },
-        { name: 'Barcode Scanning', description: 'Scan parts with barcode', status: 'ready', notes: 'BarcodeScanner component (src/components/BarcodeScanner.tsx) uses native BarcodeDetector API (Chrome/Edge); falls back to manual entry' },
-        { name: 'Vendor Management', description: 'Manage parts suppliers', status: 'ready', route: '/shop/vendors', apiEndpoint: '/api/shop/vendors', notes: 'Full CRUD for suppliers/distributors — contact info, account numbers, payment terms, ratings' },
+        { name: 'Reorder Points', description: 'Set auto-reorder levels', status: 'ready', notes: 'reorderPoint field on InventoryPart' },
+        { name: 'Barcode Scanning', description: 'Scan parts with barcode', status: 'ready', notes: 'BarcodeScanner component uses native BarcodeDetector API' },
+        { name: 'Vendor Management', description: 'Manage parts suppliers', status: 'ready', route: '/shop/vendors', apiEndpoint: '/api/shop/vendors' },
       ]
     },
     {
@@ -174,9 +303,9 @@ export default function AppGuidePage() {
       features: [
         { name: 'Appointment Booking', description: 'Schedule appointments', status: 'ready', apiEndpoint: '/api/appointments' },
         { name: 'Available Slots', description: 'Define available time slots', status: 'ready', notes: 'Based on business hours' },
-        { name: 'Appointment Reminders', description: 'Auto-remind customers', status: 'ready', apiEndpoint: '/api/cron/appointment-reminders', notes: 'Cron endpoint sends in-app notifications for appointments in next 24h' },
+        { name: 'Appointment Reminders', description: 'Auto-remind customers', status: 'ready', apiEndpoint: '/api/cron/appointment-reminders' },
         { name: 'Calendar View', description: 'View appointments on calendar', status: 'ready', route: '/shop/calendar' },
-        { name: 'Recurring Appointments', description: 'Set up repeat bookings', status: 'ready', route: '/shop/appointments/recurring', apiEndpoint: '/api/appointments/recurring', notes: 'weekly/biweekly/monthly/quarterly/annually — pause, resume, mark ran (auto-advances date)' },
+        { name: 'Recurring Appointments', description: 'Set up repeat bookings', status: 'ready', route: '/shop/appointments/recurring', apiEndpoint: '/api/appointments/recurring' },
       ]
     },
     {
@@ -188,7 +317,7 @@ export default function AppGuidePage() {
         { name: 'View Reviews', description: 'Shop can see their reviews', status: 'ready', route: '/shop/reviews' },
         { name: 'Review Moderation', description: 'Admin can moderate reviews', status: 'ready', notes: 'Via admin panel' },
         { name: 'Rating Analytics', description: 'Average ratings and trends', status: 'ready', notes: 'Part of shop analytics' },
-        { name: 'Review Responses', description: 'Shop can respond to reviews', status: 'ready', route: '/shop/reviews', apiEndpoint: '/api/reviews/[id]', notes: 'Full PATCH/DELETE response API and shop reviews UI page' },
+        { name: 'Review Responses', description: 'Shop can respond to reviews', status: 'ready', route: '/shop/reviews', apiEndpoint: '/api/reviews/[id]' },
       ]
     },
     {
@@ -212,7 +341,7 @@ export default function AppGuidePage() {
         { name: 'Work Order Analytics', description: 'Job completion metrics', status: 'ready', apiEndpoint: '/api/analytics' },
         { name: 'Revenue Reports', description: 'Income and sales data', status: 'ready', route: '/shop/reports' },
         { name: 'Technician Performance', description: 'Tech productivity metrics', status: 'ready', notes: 'Based on work order completion' },
-        { name: 'Customer Reports', description: 'Customer acquisition and retention', status: 'ready', route: '/shop/customer-reports', apiEndpoint: '/api/shop/customer-reports', notes: 'Retention rate, top customers, monthly acquisition chart' },
+        { name: 'Customer Reports', description: 'Customer acquisition and retention', status: 'ready', route: '/shop/customer-reports', apiEndpoint: '/api/shop/customer-reports' },
         { name: 'Export to CSV', description: 'Download reports as CSV', status: 'ready', apiEndpoint: '/api/admin/export' },
         { name: 'Custom Date Ranges', description: 'Filter by date range', status: 'ready', notes: 'Available on most reports' },
       ]
@@ -234,11 +363,11 @@ export default function AppGuidePage() {
       description: 'Technical system features',
       features: [
         { name: 'Health Check Endpoint', description: 'API health monitoring', status: 'ready', apiEndpoint: '/api/health' },
-        { name: 'Neon (Postgres)', description: 'Production & development database (Neon)', status: 'ready', notes: 'Set DATABASE_URL to your Neon connection string' },
+        { name: 'Neon (Postgres)', description: 'Production & development database', status: 'ready', notes: 'Set DATABASE_URL to your Neon connection string' },
         { name: 'PostgreSQL Support', description: 'Production database option', status: 'ready', notes: 'Using Neon' },
         { name: 'Multi-tenant Architecture', description: 'Shop data isolation', status: 'ready', apiEndpoint: '/api/tenants' },
         { name: 'Audit Logging', description: 'Track system changes', status: 'ready', apiEndpoint: '/api/admin/audit-logs' },
-        { name: 'Backup & Restore', description: 'Database backups', status: 'ready', route: '/admin/backup-restore', apiEndpoint: '/api/admin/backup', notes: 'Full JSON export of all platform tables via download button' },
+        { name: 'Backup & Restore', description: 'Database backups', status: 'ready', route: '/admin/backup-restore', apiEndpoint: '/api/admin/backup' },
         { name: 'Docker Support', description: 'Container deployment', status: 'ready', notes: 'Dockerfile included' },
       ]
     },
