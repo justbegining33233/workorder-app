@@ -26,10 +26,13 @@ export default function AppGuidePage() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
   const categories: FeatureCategory[] = [
+    // ─────────────────────────────────────────────
+    // AUTHENTICATION & SECURITY
+    // ─────────────────────────────────────────────
     {
       name: 'Authentication & Security',
       icon: '🔐',
-      description: 'User login, registration, and security features',
+      description: 'User login, registration, and security features — all roles',
       features: [
         { name: 'User Login', description: 'Email/password authentication for all user types', status: 'ready', route: '/login', apiEndpoint: '/api/auth/login' },
         { name: 'User Registration', description: 'New user signup with email verification', status: 'ready', route: '/register', apiEndpoint: '/api/auth/register' },
@@ -390,6 +393,192 @@ export default function AppGuidePage() {
         { name: 'Audit Logging', description: 'Track system changes', status: 'ready', apiEndpoint: '/api/admin/audit-logs' },
         { name: 'Backup & Restore', description: 'Database backups', status: 'ready', route: '/admin/backup-restore', apiEndpoint: '/api/admin/backup' },
         { name: 'Docker Support', description: 'Container deployment', status: 'ready', notes: 'Dockerfile included' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // ADMIN — DATA, EXPORT & REPORTING
+    // ─────────────────────────────────────────────
+    {
+      name: 'Admin — Data & Export',
+      icon: '📤',
+      description: 'Admin-level data exports, performance, and usage reporting',
+      features: [
+        { name: 'Platform Stats', description: 'High-level platform-wide stats (users, shops, revenue)', status: 'ready', apiEndpoint: '/api/admin/stats' },
+        { name: 'Performance Reports', description: 'Admin performance dashboards across shops', status: 'ready', apiEndpoint: '/api/admin/performance' },
+        { name: 'Admin Usage Reports', description: 'Track feature usage across the platform', status: 'ready', apiEndpoint: '/api/admin/usage' },
+        { name: 'Client Data Export', description: 'Export all client data for compliance or migration', status: 'ready', apiEndpoint: '/api/admin/clients/export' },
+        { name: 'Full Platform Export', description: 'General data export endpoint', status: 'ready', apiEndpoint: '/api/admin/export' },
+        { name: 'Pageview Analytics', description: 'Track page and feature usage analytics', status: 'ready', apiEndpoint: '/api/analytics/pageview' },
+        { name: 'Global Activity Log', description: 'Platform-wide audit trail (separate from per-shop)', status: 'ready', apiEndpoint: '/api/activity-logs' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // SHOP SCHEDULE & AVAILABILITY
+    // ─────────────────────────────────────────────
+    {
+      name: 'Shop Schedule & Availability',
+      icon: '🗓️',
+      description: 'Configure shop schedule, blocked dates, and customer-facing availability',
+      features: [
+        { name: 'Shop Schedule Config', description: 'Set working hours and days per shop', status: 'ready', route: '/shop/settings/schedule', apiEndpoint: '/api/shop/schedule' },
+        { name: 'Blocked Dates', description: 'Block out holidays, closures, and special dates', status: 'ready', apiEndpoint: '/api/shop/schedule/blocked-dates' },
+        { name: 'Customer Availability Check', description: 'Customer-facing endpoint to check open appointment slots', status: 'ready', apiEndpoint: '/api/customers/shops/[id]/availability' },
+        { name: 'Team Schedule View', description: 'View team members scheduled hours', status: 'ready', apiEndpoint: '/api/shop/team-schedule' },
+        { name: 'Schedule Management (Manager)', description: 'Manager can adjust team schedules', status: 'ready', apiEndpoint: '/api/manager/schedule' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // TECH MANAGEMENT (SHOP/ADMIN)
+    // ─────────────────────────────────────────────
+    {
+      name: 'Tech Management (Shop/Admin)',
+      icon: '👷',
+      description: 'Manage technician profiles, assignments, and tracking from shop or admin level',
+      features: [
+        { name: 'List Technicians', description: 'View all technicians across a shop', status: 'ready', apiEndpoint: '/api/techs' },
+        { name: 'Technician Profile', description: 'Individual tech profile with stats and performance', status: 'ready', apiEndpoint: '/api/techs/[id]' },
+        { name: 'Assign Technician', description: 'Assign a technician to a work order', status: 'ready', apiEndpoint: '/api/techs/assign' },
+        { name: 'Clock Status Monitoring', description: 'See who is currently clocked in', status: 'ready', apiEndpoint: '/api/timeclock/status' },
+        { name: 'Tech DVI Forms', description: 'Technician digital vehicle inspection forms', status: 'ready', route: '/tech/dvi', apiEndpoint: '/api/dvi' },
+        { name: 'Tech Enhanced Dashboard', description: 'Advanced tech view with all tools in one place', status: 'ready', route: '/tech/enhanced' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // PAYROLL SYSTEM — ADVANCED
+    // ─────────────────────────────────────────────
+    {
+      name: 'Payroll System — Advanced',
+      icon: '💵',
+      description: 'Full enterprise payroll: pay periods, paystubs, leave, overtime, and scheduling',
+      features: [
+        { name: 'Pay Periods', description: 'Define weekly/biweekly/monthly pay periods', status: 'ready', apiEndpoint: '/api/payroll/pay-periods' },
+        { name: 'Pay Period Details', description: 'View/edit individual pay period records', status: 'ready', apiEndpoint: '/api/payroll/pay-periods/[id]' },
+        { name: 'Paystubs', description: 'Generate and store employee paystubs', status: 'ready', apiEndpoint: '/api/payroll/paystubs' },
+        { name: 'Paystub Detail', description: 'View individual paystub', status: 'ready', apiEndpoint: '/api/payroll/paystubs/[id]' },
+        { name: 'Employee Pay Profiles', description: 'Per-employee pay rates, type (hourly/salary), and settings', status: 'ready', apiEndpoint: '/api/payroll/employees' },
+        { name: 'Employee Pay Profile Detail', description: 'Edit individual employee payroll profile', status: 'ready', apiEndpoint: '/api/payroll/employees/[id]' },
+        { name: 'Leave Management', description: 'Track vacation, sick, and PTO requests', status: 'ready', apiEndpoint: '/api/payroll/leave' },
+        { name: 'Leave Request Detail', description: 'Approve or deny individual leave requests', status: 'ready', apiEndpoint: '/api/payroll/leave/[id]' },
+        { name: 'Overtime Rules', description: 'Configure overtime thresholds and multipliers', status: 'ready', apiEndpoint: '/api/payroll/overtime-rules' },
+        { name: 'Payroll Schedule', description: 'Automate payroll run schedule', status: 'ready', apiEndpoint: '/api/payroll/schedule' },
+        { name: 'Attendance Tracking', description: 'Track daily attendance and absences', status: 'ready', apiEndpoint: '/api/payroll/attendance' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // SUBSCRIPTION MANAGEMENT
+    // ─────────────────────────────────────────────
+    {
+      name: 'Subscription Management',
+      icon: '🔄',
+      description: 'Shop subscription plans, upgrades, cancellations, and suggestions',
+      features: [
+        { name: 'Update Subscription Plan', description: 'Upgrade or downgrade shop plan', status: 'ready', apiEndpoint: '/api/subscriptions/[shopId]/update-plan' },
+        { name: 'Cancel Subscription', description: 'Cancel shop subscription', status: 'ready', apiEndpoint: '/api/subscriptions/[shopId]/cancel' },
+        { name: 'Plan Suggestions', description: 'AI-based plan recommendation for shops', status: 'ready', apiEndpoint: '/api/subscriptions/[shopId]/suggestions' },
+        { name: 'Admin Subscription Management', description: 'Manage all shop subscriptions from admin', status: 'ready', route: '/admin/subscriptions', apiEndpoint: '/api/admin/subscriptions' },
+        { name: 'Shop Subscribe Page', description: 'Shop onboarding subscription selection', status: 'ready', route: '/shop/subscribe' },
+        { name: 'Payment Success / Cancel Pages', description: 'Post-payment flow pages', status: 'ready', route: '/payment/success' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // STRIPE CONNECT & ADVANCED PAYMENTS
+    // ─────────────────────────────────────────────
+    {
+      name: 'Stripe Connect & Advanced Payments',
+      icon: '💳',
+      description: 'Stripe Connect onboarding, customer portal, payment links, and webhooks',
+      features: [
+        { name: 'Stripe Connect Onboarding', description: 'Onboard shops to accept payments via Stripe Connect', status: 'setup-required', apiEndpoint: '/api/stripe/connect', notes: 'Requires STRIPE_SECRET_KEY in Vercel env vars (already set)' },
+        { name: 'Stripe Connect Callback', description: 'Handle OAuth callback after shop connects Stripe', status: 'setup-required', apiEndpoint: '/api/stripe/connect/callback' },
+        { name: 'Stripe Connect Refresh', description: 'Refresh Stripe Connect auth link', status: 'setup-required', apiEndpoint: '/api/stripe/connect/refresh' },
+        { name: 'Stripe Customer Portal', description: 'Let shops manage their billing via Stripe-hosted portal', status: 'setup-required', apiEndpoint: '/api/stripe/portal' },
+        { name: 'Stripe Checkout Session', description: 'Create Stripe checkout for subscription or one-time payment', status: 'setup-required', apiEndpoint: '/api/stripe/checkout' },
+        { name: 'Stripe Webhook Handler', description: 'Process Stripe events (payment intents, subscription updates)', status: 'setup-required', apiEndpoint: '/api/stripe/webhook', notes: 'Set STRIPE_WEBHOOK_SECRET in Vercel' },
+        { name: 'Payment Links', description: 'Generate shareable payment links for invoices', status: 'ready', apiEndpoint: '/api/payment-links' },
+        { name: 'Online Checkout Flow', description: 'Web checkout for customers paying invoices', status: 'setup-required', apiEndpoint: '/api/payment/checkout' },
+        { name: 'Customer Payment Methods', description: 'Save and manage customer payment methods', status: 'ready', apiEndpoint: '/api/customers/payment-methods' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // REAL-TIME, PUSH & CRON
+    // ─────────────────────────────────────────────
+    {
+      name: 'Real-time, Push & Cron',
+      icon: '🔔',
+      description: 'Push notifications, browser alerts, and scheduled background jobs',
+      features: [
+        { name: 'Push Notification Subscribe', description: 'Subscribe browser to push notifications', status: 'setup-required', apiEndpoint: '/api/push/subscribe', notes: 'Requires VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY in Vercel env vars' },
+        { name: 'Push Notification Unsubscribe', description: 'Remove push subscription', status: 'setup-required', apiEndpoint: '/api/push/unsubscribe' },
+        { name: 'Send Push Notification', description: 'Trigger push notification to user', status: 'setup-required', apiEndpoint: '/api/push/send' },
+        { name: 'DB-backed Notifications', description: 'Persistent notifications stored in database', status: 'ready', apiEndpoint: '/api/notifications-db' },
+        { name: 'Cron: DB Keepalive', description: 'Ping DB every 5 min to prevent Neon cold starts', status: 'ready', apiEndpoint: '/api/cron/keepalive', notes: 'CRON_SECRET must be set in Vercel (already done)' },
+        { name: 'Cron: Appointment Reminders', description: 'Daily cron to send appointment reminder notifications', status: 'ready', apiEndpoint: '/api/cron/appointment-reminders' },
+        { name: 'Cron: Recurring Work Orders', description: 'Daily cron to generate recurring work orders', status: 'ready', apiEndpoint: '/api/cron/recurring-workorders' },
+        { name: 'Cron: Recurring Reminders', description: 'Daily cron to send recurring job reminders', status: 'ready', apiEndpoint: '/api/cron/recurring-reminders' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // PORTAL CHAT
+    // ─────────────────────────────────────────────
+    {
+      name: 'Portal Chat',
+      icon: '💬',
+      description: 'Real-time streaming chat between customers, shops, and techs via the portal',
+      features: [
+        { name: 'Portal Chat by Role', description: 'Role-scoped chat endpoint (customer/shop/tech)', status: 'ready', apiEndpoint: '/api/portal-chat/[role]' },
+        { name: 'Portal Chat Streaming', description: 'Server-sent event streaming for real-time chat', status: 'ready', apiEndpoint: '/api/portal-chat/[role]/stream' },
+        { name: 'Customer Chat View', description: 'Customer-facing chat with their shop', status: 'ready', route: '/customer/messages', apiEndpoint: '/api/customers/messages' },
+        { name: 'Shop Customer Messages', description: 'Shop view of all customer chats', status: 'ready', route: '/shop/customer-messages', apiEndpoint: '/api/shop/messages' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // CUSTOMER VEHICLES
+    // ─────────────────────────────────────────────
+    {
+      name: 'Customer Vehicles',
+      icon: '🚙',
+      description: 'Full vehicle management for customer accounts',
+      features: [
+        { name: 'Vehicle List', description: 'View all vehicles on customer account', status: 'ready', route: '/customer/vehicles', apiEndpoint: '/api/customers/vehicles' },
+        { name: 'Add Vehicle', description: 'Add a new vehicle to account (year/make/model/VIN)', status: 'ready', apiEndpoint: '/api/customers/vehicles' },
+        { name: 'Edit Vehicle', description: 'Update vehicle details', status: 'ready', apiEndpoint: '/api/customers/vehicles/[id]' },
+        { name: 'Delete Vehicle', description: 'Remove vehicle from account', status: 'ready', apiEndpoint: '/api/customers/vehicles/[id]' },
+        { name: 'Vehicle Service History', description: 'All work orders associated with a vehicle', status: 'ready', route: '/customer/history' },
+        { name: 'Customer Search', description: 'Search customers by name, email, or phone', status: 'ready', apiEndpoint: '/api/customers/search' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // WORK AUTHORIZATIONS & RECURRING JOBS
+    // ─────────────────────────────────────────────
+    {
+      name: 'Work Authorizations & Recurring',
+      icon: '✍️',
+      description: 'Customer-signed work authorizations and recurring job approvals',
+      features: [
+        { name: 'Create Work Authorization', description: 'Generate authorization for customer to sign', status: 'ready', route: '/shop/work-authorizations', apiEndpoint: '/api/work-authorizations' },
+        { name: 'Token-based Auth Link', description: 'Customer receives unique link to authorize work', status: 'ready', apiEndpoint: '/api/work-authorizations/[token]' },
+        { name: 'Customer Auth Page', description: 'Customer-facing page to view and sign authorization', status: 'ready', route: '/customer/authorization/[token]' },
+        { name: 'Recurring Work Orders', description: 'Schedule jobs that repeat (oil changes, etc.)', status: 'ready', route: '/shop/recurring-workorders', apiEndpoint: '/api/recurring-workorders' },
+        { name: 'Recurring Job Approve/Reject', description: 'Customer approves or rejects a recurring job', status: 'ready', apiEndpoint: '/api/workorders/[id]/respond-recurring' },
+        { name: 'Customer Recurring Approvals', description: 'Customer portal view of pending recurring approvals', status: 'ready', route: '/customer/recurring-approvals', apiEndpoint: '/api/customers/recurring-approvals' },
+      ]
+    },
+    // ─────────────────────────────────────────────
+    // FINDSHOPS (CUSTOMER-FACING MARKETPLACE)
+    // ─────────────────────────────────────────────
+    {
+      name: 'FindShops Marketplace',
+      icon: '🗺️',
+      description: 'Customer-facing shop discovery, ratings, booking, and tracking — the public marketplace side of FixTray',
+      features: [
+        { name: 'Shop Search / Browse', description: 'Search shops by location, type, and services', status: 'ready', route: '/customer/findshops', apiEndpoint: '/api/customers/shops' },
+        { name: 'Shop Detail Page', description: 'Customer-facing shop profile with services, hours, reviews', status: 'ready', route: '/customer/shop/[id]', apiEndpoint: '/api/customers/shops/[id]' },
+        { name: 'Check Shop Availability', description: 'See open appointment slots for a shop', status: 'ready', apiEndpoint: '/api/customers/shops/[id]/availability' },
+        { name: 'Favorite a Shop', description: 'Save a shop to favorites list', status: 'ready', route: '/customer/favorites', apiEndpoint: '/api/customers/favorites' },
+        { name: 'Unfavorite a Shop', description: 'Remove shop from favorites', status: 'ready', apiEndpoint: '/api/customers/favorites/[id]' },
+        { name: 'Book Appointment from Profile', description: 'Book directly from shop profile page', status: 'ready', route: '/customer/appointments/new', apiEndpoint: '/api/appointments' },
+        { name: 'Track Tech in Real Time', description: 'Live technician GPS tracking on mobile jobs', status: 'ready', route: '/customer/tracking', apiEndpoint: '/api/customers/tracking' },
+        { name: 'Leave a Review', description: 'Customer submits star rating and written review', status: 'ready', route: '/customer/reviews', apiEndpoint: '/api/reviews' },
       ]
     },
   ];
