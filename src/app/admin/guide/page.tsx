@@ -66,6 +66,7 @@ export default function AppGuidePage() {
       description: 'Advanced admin tools and management',
       features: [
         { name: 'Command Center', description: 'Real-time platform monitoring', status: 'ready', route: '/admin/command-center', apiEndpoint: '/api/admin/command-center' },
+        { name: 'Enhanced Admin View', description: 'Advanced admin overview with enhanced metrics', status: 'ready', route: '/admin/enhanced' },
         { name: 'Email Templates', description: 'Manage system email templates', status: 'ready', route: '/admin/email-templates', apiEndpoint: '/api/admin/email-templates' },
         { name: 'Security Settings', description: 'Configure security policies', status: 'ready', route: '/admin/security-settings', apiEndpoint: '/api/admin/security' },
         { name: 'Backup & Restore', description: 'Database backup management', status: 'ready', route: '/admin/backup-restore', apiEndpoint: '/api/admin/backup' },
@@ -78,6 +79,21 @@ export default function AppGuidePage() {
       ]
     },
     {
+      name: 'Shop Admin Control Center',
+      icon: '🏢',
+      description: 'Full-featured shop admin panel — payroll, budget, team, employee profiles',
+      features: [
+        { name: 'Shop Admin Dashboard', description: 'Central control center with payroll budget, team clock status, and business overview', status: 'ready', route: '/shop/admin' },
+        { name: 'Payroll Center', description: '7-tab payroll system: summaries, employee breakdown, time entries, rate management, overrides, budget tracking, and export', status: 'ready', route: '/shop/payroll', apiEndpoint: '/api/shop/payroll' },
+        { name: 'Employee Profiles', description: 'Individual employee detail pages with hours, pay, and performance', status: 'ready', route: '/shop/admin/employee/[id]', apiEndpoint: '/api/shop/team' },
+        { name: 'Budget Tracking', description: 'Weekly and monthly payroll budget vs actual spend', status: 'ready', route: '/shop/admin', apiEndpoint: '/api/shop/payroll' },
+        { name: 'Admin Settings', description: 'Shop admin configuration panel', status: 'ready', route: '/shop/admin/settings' },
+        { name: 'Parts & Labor Management', description: 'Manage parts pricing, labor rates, and markups', status: 'ready', route: '/shop/parts-labor', apiEndpoint: '/api/shops/settings' },
+        { name: 'Customer Messages (Shop View)', description: 'Manage all customer conversations from the shop side', status: 'ready', route: '/shop/customer-messages', apiEndpoint: '/api/shop/messages' },
+        { name: 'Schedule Settings', description: 'Configure shop schedule and availability', status: 'ready', route: '/shop/settings/schedule' },
+      ]
+    },
+    {
       name: 'Shop Management - Core',
       icon: '🏪',
       description: 'Shop owner features and settings',
@@ -85,13 +101,14 @@ export default function AppGuidePage() {
         { name: 'Shop Dashboard', description: 'Shop overview and stats', status: 'ready', route: '/shop/home' },
         { name: 'Shop Profile', description: 'Edit shop info, hours, logo', status: 'ready', route: '/shop/settings', apiEndpoint: '/api/shop/profile' },
         { name: 'Service Catalog', description: 'Manage services offered', status: 'ready', route: '/shop/services', apiEndpoint: '/api/shops/services' },
-        { name: 'Labor Rates', description: 'Set hourly labor rates', status: 'ready', apiEndpoint: '/api/shops/labor-rates' },
+        { name: 'Labor Rates', description: 'Set hourly labor rates', status: 'ready', route: '/shop/parts-labor', apiEndpoint: '/api/shops/labor-rates' },
         { name: 'Team Management', description: 'Add/manage technicians', status: 'ready', route: '/shop/manage-team', apiEndpoint: '/api/shop/team' },
         { name: 'Manager Role', description: 'Assign manager permissions', status: 'ready', apiEndpoint: '/api/manager/dashboard' },
         { name: 'Work Assignments', description: 'Assign jobs to technicians', status: 'ready', apiEndpoint: '/api/manager/assignments' },
-        { name: 'Shop Settings', description: 'Configure shop preferences', status: 'ready', apiEndpoint: '/api/shop/settings' },
-        { name: 'Business Hours', description: 'Set operating hours', status: 'ready', notes: 'Part of shop profile' },
+        { name: 'Shop Settings', description: 'Configure shop preferences', status: 'ready', route: '/shop/settings', apiEndpoint: '/api/shop/settings' },
+        { name: 'Business Hours / Schedule', description: 'Set operating hours and availability', status: 'ready', route: '/shop/settings/schedule' },
         { name: 'Multiple Locations', description: 'Manage multiple shop locations', status: 'ready', route: '/shop/locations', apiEndpoint: '/api/shop/locations' },
+        { name: 'New In-Shop Job (Shop Role)', description: 'Create in-shop work orders directly from the shop dashboard', status: 'ready', route: '/shop/new-inshop-job', apiEndpoint: '/api/workorders' },
       ]
     },
     {
@@ -159,8 +176,9 @@ export default function AppGuidePage() {
       icon: '📋',
       description: 'Create and manage repair orders',
       features: [
-        { name: 'Create Work Order', description: 'New work order with customer/vehicle', status: 'ready', route: '/shop/workorders/new', apiEndpoint: '/api/workorders' },
-        { name: 'Work Order List', description: 'View all work orders', status: 'ready', route: '/shop/workorders', apiEndpoint: '/api/workorders' },
+        { name: 'Create Work Order', description: 'New work order with customer/vehicle', status: 'ready', route: '/workorders/new', apiEndpoint: '/api/workorders' },
+        { name: 'Work Order List', description: 'View all work orders with filters and search', status: 'ready', route: '/workorders/list', apiEndpoint: '/api/workorders' },
+        { name: 'In-Shop Work Orders', description: 'Dedicated in-shop repair order view', status: 'ready', route: '/workorders/inshop', apiEndpoint: '/api/workorders' },
         { name: 'Work Order Details', description: 'Full order details and editing', status: 'ready', route: '/workorders/[id]' },
         { name: 'Status Updates', description: 'Change order status (pending, in-progress, complete)', status: 'ready', apiEndpoint: '/api/workorders/[id]' },
         { name: 'Photo Uploads', description: 'Attach before/after photos', status: 'ready', apiEndpoint: '/api/workorders/[id]/photos' },
@@ -208,7 +226,8 @@ export default function AppGuidePage() {
       features: [
         { name: 'Customer Dashboard', description: 'Overview of orders and vehicles', status: 'ready', route: '/customer/dashboard' },
         { name: 'Find Shops', description: 'Search and browse auto shops', status: 'ready', route: '/customer/findshops', apiEndpoint: '/api/customers/shops' },
-        { name: 'Favorite Shops', description: 'Save preferred shops', status: 'ready', apiEndpoint: '/api/customers/favorites' },
+        { name: 'Favorite Shops', description: 'Save preferred shops', status: 'ready', route: '/customer/favorites', apiEndpoint: '/api/customers/favorites' },
+        { name: 'Shop Profile View', description: 'Customer-facing shop detail page with services, reviews, and booking', status: 'ready', route: '/customer/shop/[id]' },
         { name: 'View Work Orders', description: 'See order status and history', status: 'ready', route: '/customer/workorders' },
         { name: 'Manage Vehicles', description: 'Add/edit vehicles', status: 'ready', route: '/customer/vehicles' },
         { name: 'Service History', description: 'Past service records', status: 'ready', route: '/customer/history' },
@@ -248,8 +267,10 @@ export default function AppGuidePage() {
       icon: '👔',
       description: 'Team management and oversight features',
       features: [
-        { name: 'Manager Dashboard', description: 'Team oversight and management', status: 'ready', route: '/manager/dashboard' },
-        { name: 'Team Assignments', description: 'Assign work to team members', status: 'ready', apiEndpoint: '/api/manager/assignments' },
+        { name: 'Manager Home', description: 'Manager landing page with quick actions', status: 'ready', route: '/manager/home' },
+        { name: 'Manager Dashboard', description: 'Team oversight and full management panel', status: 'ready', route: '/manager/dashboard' },
+        { name: 'Manager Assignments', description: 'Assign work to team members', status: 'ready', route: '/manager/assignments', apiEndpoint: '/api/manager/assignments' },
+        { name: 'Manager Estimates', description: 'Create and manage estimates for customers', status: 'ready', route: '/manager/estimates', apiEndpoint: '/api/manager/estimates' },
         { name: 'Performance Monitoring', description: 'Track team performance', status: 'ready', apiEndpoint: '/api/manager/performance' },
         { name: 'Schedule Management', description: 'Manage team schedules', status: 'ready', apiEndpoint: '/api/manager/schedule' },
       ]
