@@ -4,16 +4,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  // Set DATABASE_URL in Vercel → Settings → Environment Variables.
-  // For best serverless performance on Neon, use the POOLED connection string:
-  //   Host format:  ep-xxx-pooler.region.neon.tech  (note the "-pooler" suffix)
-  //   Append these params: ?pgbouncer=true&connect_timeout=15
-  //   Full example: postgres://user:pass@ep-xxx-pooler.us-east-2.neon.tech/dbname?pgbouncer=true&connect_timeout=15
-  // If you also need to run `prisma migrate` / `prisma db push` from a local machine or CI,
-  // set DIRECT_URL to the non-pooled endpoint and uncomment the line below.
-  url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
+  provider  = "postgresql"
+  // DATABASE_URL         → Neon POOLED connection string (set by Vercel-Neon integration)
+  //                        Host has "-pooler" suffix: ep-xxx-pooler.region.neon.tech
+  // DATABASE_URL_UNPOOLED → Neon DIRECT connection string (also set by integration)
+  //                        Used here as directUrl for migrations (prisma migrate / db push)
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 // Customer model
