@@ -1,14 +1,27 @@
-// import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import ClientAuthProvider from '@/components/ClientAuthProvider';
 
 export const dynamic = 'force-dynamic';
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',          // enables env(safe-area-inset-*) on iOS + Android Chrome
+  themeColor: '#e5332a',         // Android Chrome toolbar color
+};
+
 export const metadata: Metadata = {
   title: "FixTray - Work Order Management",
   description: "Streamlined work order management for roadside and in-shop services",
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'FixTray',
+  },
 };
 
 export default function RootLayout({

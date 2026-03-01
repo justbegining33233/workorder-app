@@ -7,6 +7,8 @@
   "background_color": "#3d3d3d",
   "theme_color": "#e5332a",
   "orientation": "portrait-primary",
+  "display_override": ["standalone", "minimal-ui"],
+  "edge_side_panel": { "preferred_width": 400 },
   "categories": ["business", "productivity"],
   "lang": "en-US",
   "icons": [

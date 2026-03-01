@@ -172,14 +172,19 @@ export default function MobileNav({ role }: MobileNavProps) {
       <div style={{
         position: 'fixed',
         bottom: 0, left: 0, right: 0,
-        height: 68,
+        // minHeight covers the tap targets; padding adds safe-area on notch/gesture-nav devices
+        // env(safe-area-inset-bottom) resolves correctly on:
+        //   iOS Safari (any notched iPhone), Android Chrome 69+ with viewport-fit=cover
+        //   Falls back to 0 on older Android — the 68px height alone is sufficient there
+        minHeight: 'calc(68px + env(safe-area-inset-bottom, 0px))',
         background: 'rgba(10,15,28,0.97)',
         borderTop: '1px solid rgba(255,255,255,0.08)',
         display: 'flex',
-        alignItems: 'stretch',
+        alignItems: 'flex-start',  // items sit at top; padding pushes bar down
+        paddingTop: 0,
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         zIndex: 1100,
         backdropFilter: 'blur(12px)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
       }}>
         {primary.map((item) => {
           const active = isActive(item.path);
