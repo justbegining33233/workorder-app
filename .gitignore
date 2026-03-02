@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Local secrets / env setup files
+VERCEL_ENV_SETUP.txt
+tmp_secrets.txt
