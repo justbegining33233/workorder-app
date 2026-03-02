@@ -96,9 +96,8 @@ export async function GET(
       let bookedCount = 0;
       for (const appt of existingAppointments) {
         const apptStart = new Date(appt.scheduledDate);
-        // For now, assume 60 minutes if no service duration available
-        // TODO: Get duration from service type
-        const apptDuration = 60; // Default duration
+        // Use the requested duration as the appointment duration estimate
+        const apptDuration = duration;
         const apptEnd = new Date(apptStart);
         apptEnd.setMinutes(apptStart.getMinutes() + apptDuration);
 

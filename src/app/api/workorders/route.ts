@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
-import { sendWorkOrderCreatedEmail } from '@/lib/email';
+import { sendWorkOrderCreatedEmail } from '@/lib/emailService';
 import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
 import { workOrderCreateSchema } from '@/lib/validation';
 import { sanitizeObject } from '@/lib/sanitize';
@@ -97,24 +97,26 @@ export async function GET(request: NextRequest) {
       take: limit,
     });
     
-    // Parse JSON fields
+    // Fields (repairs, maintenance, partsMaterials, pictures, location, estimate,
+    // techLabor, partsUsed, workPhotos, completion) are now Prisma Json? — returned
+    // as native JS objects/arrays, no JSON.parse needed.
     const workOrders = rawWorkOrders.map(wo => ({
       ...wo,
       services: wo.repairs || wo.maintenance ? {
-        repairs: wo.repairs ? JSON.parse(wo.repairs) : undefined,
-        maintenance: wo.maintenance ? JSON.parse(wo.maintenance) : undefined,
+        repairs: wo.repairs ?? undefined,
+        maintenance: wo.maintenance ?? undefined,
       } : undefined,
-      partsMaterials: wo.partsMaterials ? JSON.parse(wo.partsMaterials) : undefined,
+      partsMaterials: wo.partsMaterials ?? undefined,
       issueDescription: {
         symptoms: wo.issueDescription,
-        pictures: wo.pictures ? JSON.parse(wo.pictures) : [],
+        pictures: (wo.pictures as string[] | null) ?? [],
       },
-      location: wo.location ? JSON.parse(wo.location) : undefined,
-      estimate: wo.estimate ? JSON.parse(wo.estimate) : undefined,
-      techLabor: wo.techLabor ? JSON.parse(wo.techLabor) : undefined,
-      partsUsed: wo.partsUsed ? JSON.parse(wo.partsUsed) : undefined,
-      workPhotos: wo.workPhotos ? JSON.parse(wo.workPhotos) : [],
-      completion: wo.completion ? JSON.parse(wo.completion) : undefined,
+      location: wo.location ?? undefined,
+      estimate: wo.estimate ?? undefined,
+      techLabor: wo.techLabor ?? undefined,
+      partsUsed: wo.partsUsed ?? undefined,
+      workPhotos: (wo.workPhotos as unknown[] | null) ?? [],
+      completion: wo.completion ?? undefined,
     }));
     
     return NextResponse.json({

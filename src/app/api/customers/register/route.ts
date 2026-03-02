@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validatePublicCsrf } from '@/lib/csrf';
 import prisma from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth';
-import { sendWelcomeEmail } from '@/lib/email';
+import { sendWelcomeEmail } from '@/lib/emailService';
 import { z } from 'zod';
 
 const registerSchema = z.object({

@@ -208,9 +208,36 @@ function LocationTab({ location, techName }: { location: { lat: number, lng: num
 }
 
 function MessagesTab({ techName }: { techName: string }) {
-  const [messages] = useState<{sender:string;message:string;time:string;type:string}[]>([]);
-  // Real messages are handled on the main tech portal (/tech/home);
-  // this tab shows a live-fetched subset when wired to the messages API.
+  const [messages, setMessages] = useState<{sender:string;message:string;time:string;type:string}[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const handleSend = async () => {
+    if (!newMessage.trim()) return;
+    setSending(true);
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ content: newMessage.trim(), recipientType: 'shop' }),
+      });
+      if (res.ok) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setMessages(prev => [...prev, { sender: techName || 'You', message: newMessage.trim(), time: timeStr, type: 'sent' }]);
+        setNewMessage('');
+      }
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleSend();
+  };
 
   return (
     <div>
@@ -218,6 +245,9 @@ function MessagesTab({ techName }: { techName: string }) {
       <p className="sos-desc">Chat with customers and managers</p>
       
       <div className="sos-list" style={{marginTop:24}}>
+        {messages.length === 0 && (
+          <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>No messages yet</div>
+        )}
         {messages.map((msg, i) => (
           <div key={i} className="sos-item" style={{
             flexDirection:'column',
@@ -232,8 +262,18 @@ function MessagesTab({ techName }: { techName: string }) {
       </div>
 
       <div style={{marginTop:16, display:'flex', gap:8}}>
-        <input className="sos-input" placeholder="Type a message..." style={{flex:1}} />
-        <button className="btn-primary">Send</button>
+        <input
+          className="sos-input"
+          placeholder="Type a message..."
+          style={{flex:1}}
+          value={newMessage}
+          onChange={e => setNewMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={sending}
+        />
+        <button className="btn-primary" onClick={handleSend} disabled={sending || !newMessage.trim()}>
+          {sending ? '...' : 'Send'}
+        </button>
       </div>
     </div>
   );

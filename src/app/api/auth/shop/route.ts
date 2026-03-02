@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load `prisma` and `bcrypt` in the handler
-import { generateAccessToken } from '@/lib/auth';
+import { generateAccessToken, generateTempToken } from '@/lib/auth';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     // Rate limiting — 5 attempts per 15 minutes per IP+username
     const clientIP = getClientIP(request);
     const rateLimitKey = `shop_login:${clientIP}:${String(username).toLowerCase()}`;
-    const rateLimit = checkRateLimit(rateLimitKey);
+    const rateLimit = await checkRateLimit(rateLimitKey);
     if (!rateLimit.success) {
       return NextResponse.json(
         { error: rateLimit.message, retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000) },
@@ -59,6 +59,13 @@ export async function POST(request: NextRequest) {
 
     // Reset rate limit counter on successful login
     resetRateLimit(rateLimitKey);
+
+    // If 2FA is enabled, issue a short-lived challenge token — UI must complete
+    // the second factor via POST /api/auth/2fa/challenge
+    if (shop.twoFactorEnabled) {
+      const tempToken = generateTempToken({ id: shop.id, type: '2fa_challenge' });
+      return NextResponse.json({ requires2FA: true, tempToken }, { status: 200 });
+    }
 
     // Generate access token
     const accessToken = generateAccessToken({ id: shop.id, username: shop.username, role: 'shop' });

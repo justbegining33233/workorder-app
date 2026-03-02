@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Insight {
@@ -14,18 +15,31 @@ interface Insight {
 
 export default function Insights() {
   useRequireAuth(['customer']);
+  const router = useRouter();
   const [userName, setUserName] = useState('');
-  const [insights] = useState<Insight[]>([]);
+  const [insights, setInsights] = useState<Insight[]>([]);
+  const [summary, setSummary] = useState<{totalSpent:number;servicesCompleted:number;averageRating:number|null;loyaltyPoints:number;last30Days:number} | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
+    fetch('/api/customers/insights', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data) {
+          setInsights(data.insights || []);
+          setSummary(data.summary || null);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
-    window.location.href = '/auth/login';
+    router.push('/auth/login');
   };
 
   const getTrendIcon = (trend: string) => {
@@ -55,6 +69,18 @@ export default function Insights() {
 
       <div style={{maxWidth:1200, margin:'0 auto', padding:32}}>
         <h1 style={{fontSize:32, fontWeight:700, color:'#e5e7eb', marginBottom:32}}>Service Insights</h1>
+
+        {loading && (
+          <div style={{textAlign:'center', padding:60, color:'#9aa3b2'}}>Loading insights...</div>
+        )}
+
+        {!loading && insights.length === 0 && (
+          <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:40, textAlign:'center', marginBottom:32}}>
+            <div style={{fontSize:48, marginBottom:16}}>📊</div>
+            <div style={{fontSize:18, color:'#e5e7eb', marginBottom:8}}>No insights yet</div>
+            <div style={{fontSize:14, color:'#9aa3b2'}}>Complete a service to start generating insights.</div>
+          </div>
+        )}
 
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap:24}}>
           {insights.map(insight => (
@@ -89,22 +115,22 @@ export default function Insights() {
 
         {/* Summary Section */}
         <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginTop:32}}>
-          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Quarterly Summary</h2>
+          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Summary</h2>
           <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:24}}>
             <div style={{textAlign:'center'}}>
-              <div style={{fontSize:32, fontWeight:700, color:'#22c55e'}}>$1,247</div>
+              <div style={{fontSize:32, fontWeight:700, color:'#22c55e'}}>${summary ? summary.totalSpent.toFixed(2) : '0.00'}</div>
               <div style={{fontSize:14, color:'#9aa3b2'}}>Total Spent</div>
             </div>
             <div style={{textAlign:'center'}}>
-              <div style={{fontSize:32, fontWeight:700, color:'#3b82f6'}}>8</div>
+              <div style={{fontSize:32, fontWeight:700, color:'#3b82f6'}}>{summary ? summary.servicesCompleted : 0}</div>
               <div style={{fontSize:14, color:'#9aa3b2'}}>Services Completed</div>
             </div>
             <div style={{textAlign:'center'}}>
-              <div style={{fontSize:32, fontWeight:700, color:'#f59e0b'}}>4.6</div>
+              <div style={{fontSize:32, fontWeight:700, color:'#f59e0b'}}>{summary?.averageRating ? summary.averageRating.toFixed(1) : '—'}</div>
               <div style={{fontSize:14, color:'#9aa3b2'}}>Average Rating</div>
             </div>
             <div style={{textAlign:'center'}}>
-              <div style={{fontSize:32, fontWeight:700, color:'#a855f7'}}>156</div>
+              <div style={{fontSize:32, fontWeight:700, color:'#a855f7'}}>{summary ? summary.loyaltyPoints : 0}</div>
               <div style={{fontSize:14, color:'#9aa3b2'}}>Points Earned</div>
             </div>
           </div>

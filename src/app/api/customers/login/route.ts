@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const clientIP = getClientIP(request);
     const identifier = String(data.email || data.username || '').toLowerCase();
     const rateLimitKey = `customer_login:${clientIP}:${identifier}`;
-    const rateLimit = checkRateLimit(rateLimitKey);
+    const rateLimit = await checkRateLimit(rateLimitKey);
     if (!rateLimit.success) {
       return NextResponse.json(
         { error: rateLimit.message, retryAfter: Math.ceil((rateLimit.resetTime - Date.now()) / 1000) },

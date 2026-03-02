@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
-import { sendEstimateEmail, sendStatusUpdateEmail } from '@/lib/email';
-import { sendEstimateReadyEmail, sendJobCompletedEmail } from '@/lib/emailService';
+import { sendEstimateReadyEmail, sendJobCompletedEmail, sendStatusUpdateEmail } from '@/lib/emailService';
 import { pushEstimateReady, pushJobCompleted } from '@/lib/serverPush';
 import { Estimate } from '@/types/workorder';
 import { validateRequest, workOrderUpdateSchema } from '@/lib/validationSchemas';
@@ -168,8 +167,6 @@ export async function PUT(
     
     // Send estimate email if estimated cost added
     if (data.estimatedCost && !current.estimatedCost) {
-      sendEstimateEmail(current.customer.email, id, data.estimatedCost).catch(console.error);
-      
       // Send branded estimate-ready email via Resend
       const totalDue = data.estimatedCost + 5;
       sendEstimateReadyEmail(

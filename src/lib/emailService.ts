@@ -430,3 +430,43 @@ export async function sendRecurringReminderEmail(
 
   return sendEmail({ to: customerEmail, subject, html });
 }
+// ---------------------------------------------------------------------------
+// Simple wrappers — replacements for the legacy nodemailer-based email.ts
+// These route through Resend (RESEND_API_KEY must be set).
+// ---------------------------------------------------------------------------
+
+export async function sendWelcomeEmail(toEmail: string, name: string): Promise<boolean> {
+  return sendEmail({
+    to: toEmail,
+    subject: 'Welcome to FixTray!',
+    html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;border-radius:10px;overflow:hidden;"><div style="background:#e5332a;padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-size:28px;font-weight:900;">FixTray</h1></div><div style="padding:32px;"><h2 style="color:#111827;">Welcome, ${name}!</h2><p style="color:#6b7280;">Thank you for registering with FixTray. You can now create work orders and track your vehicle service history.</p><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app'}/auth/login" style="display:inline-block;background:#e5332a;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;">Log In</a></div></div>`,
+  });
+}
+
+export async function sendWorkOrderCreatedEmail(toEmail: string, workOrderId: string): Promise<boolean> {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app'}/customer/workorders/${workOrderId}`;
+  return sendEmail({
+    to: toEmail,
+    subject: 'Work Order Created — FixTray',
+    html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;border-radius:10px;overflow:hidden;"><div style="background:#e5332a;padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-size:28px;font-weight:900;">FixTray</h1></div><div style="padding:32px;"><h2 style="color:#111827;">Work Order Received</h2><p style="color:#6b7280;">Your work order <strong>#${workOrderId.slice(-8).toUpperCase()}</strong> has been created. You'll be notified when the shop reviews it.</p><a href="${url}" style="display:inline-block;background:#e5332a;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;">View Work Order</a></div></div>`,
+  });
+}
+
+export async function sendStatusUpdateEmail(toEmail: string, workOrderId: string, status: string): Promise<boolean> {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app'}/customer/workorders/${workOrderId}`;
+  const label = status.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return sendEmail({
+    to: toEmail,
+    subject: `Work Order Status Updated — ${label}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;border-radius:10px;overflow:hidden;"><div style="background:#e5332a;padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-size:28px;font-weight:900;">FixTray</h1></div><div style="padding:32px;"><h2 style="color:#111827;">Work Order Update</h2><p style="color:#6b7280;">Work order <strong>#${workOrderId.slice(-8).toUpperCase()}</strong> is now: <strong style="color:#e5332a;">${label}</strong></p><a href="${url}" style="display:inline-block;background:#e5332a;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;">View Work Order</a></div></div>`,
+  });
+}
+
+export async function sendPaymentConfirmationEmail(toEmail: string, workOrderId: string, amount: number): Promise<boolean> {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app'}/customer/workorders/${workOrderId}`;
+  return sendEmail({
+    to: toEmail,
+    subject: `Payment Confirmation — $${amount.toFixed(2)}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;border-radius:10px;overflow:hidden;"><div style="background:#e5332a;padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-size:28px;font-weight:900;">FixTray</h1></div><div style="padding:32px;"><h2 style="color:#22c55e;">✅ Payment Confirmed</h2><p style="color:#6b7280;">Payment of <strong>$${amount.toFixed(2)}</strong> received for work order <strong>#${workOrderId.slice(-8).toUpperCase()}</strong>.</p><a href="${url}" style="display:inline-block;background:#3b82f6;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;">View Invoice</a></div></div>`,
+  });
+}

@@ -1,23 +1,35 @@
+/**
+ * POST /api/auth/2fa/setup
+ * Generates a TOTP secret + QR code for the authenticated shop.
+ * 2FA is NOT yet active — the shop must call /api/auth/2fa/verify to confirm.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth';
-import { generateOTP, is2FAEnabled } from '@/lib/two-factor';
+import { generateTotpSecret } from '@/lib/two-factor';
+import QRCode from 'qrcode';
 
-// POST /api/auth/2fa/setup — Generate an OTP and initiate 2FA setup
 export async function POST(request: NextRequest) {
-  const auth = requireRole(request, ['shop', 'tech', 'manager']);
+  const auth = requireRole(request, ['shop']);
   if (auth instanceof NextResponse) return auth;
 
-  const userId = auth.id;
-  const code = generateOTP(userId);
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    const shop = await prisma.shop.findUnique({ where: { id: auth.id } });
+    if (!shop) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
-  // In production: send code via email/SMS
-  // For demo: return the code directly so it can be tested
+    const { base32, otpauthUrl } = generateTotpSecret(shop.email);
 
-  return NextResponse.json({
-    message: '2FA setup initiated. Enter the code to confirm.',
-    // NOTE: In production, code is sent by email/SMS — remove from response
-    code, // demo only
-    userId,
-    alreadyEnabled: is2FAEnabled(userId),
-  });
+    // Save secret (not enabled yet — confirmed in /verify)
+    await prisma.shop.update({
+      where: { id: auth.id },
+      data: { twoFactorSecret: base32, twoFactorEnabled: false },
+    });
+
+    const qrCode = await QRCode.toDataURL(otpauthUrl);
+
+    return NextResponse.json({ secret: base32, qrCode, otpauthUrl });
+  } catch (error) {
+    console.error('2FA setup error:', error);
+    return NextResponse.json({ error: 'Failed to set up 2FA' }, { status: 500 });
+  }
 }

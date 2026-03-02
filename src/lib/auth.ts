@@ -31,6 +31,12 @@ export function generateAccessToken(payload: Record<string, unknown>): string {
   return jwt.sign(payload, JWT_SECRET, options);
 }
 
+/** Short-lived token for 2FA challenge step (default 5 minutes) */
+export function generateTempToken(payload: Record<string, unknown>, expiresIn = '5m'): string {
+  const options: SignOptions = { expiresIn: expiresIn as any };
+  return jwt.sign(payload, JWT_SECRET, options);
+}
+
 // Backwards-compatible alias used by some routes
 export const generateToken = generateAccessToken;
 

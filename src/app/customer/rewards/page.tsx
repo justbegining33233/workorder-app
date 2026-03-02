@@ -1,11 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Reward {
   id: string;
   claimed: boolean;
+  earned: boolean;
   name: string;
   value: string;
   description: string;
@@ -14,33 +16,42 @@ interface Reward {
   total?: number;
 }
 
+interface HistoryEntry {
+  id: string;
+  description: string;
+  points: number;
+  date: string;
+}
+
 export default function Rewards() {
   useRequireAuth(['customer']);
+  const router = useRouter();
   const [userName, setUserName] = useState('');
-  const [rewards] = useState<Reward[]>([]);
+  const [rewards, setRewards] = useState<Reward[]>([]);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
-
-    // Derive loyalty points from completed work orders (50 pts each)
-    fetch('/api/workorders', { credentials: 'include' })
+    fetch('/api/customers/rewards', { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
       .then(data => {
-        const orders: any[] = Array.isArray(data) ? data : (data?.workOrders ?? []);
-        const completed = orders.filter((w: any) =>
-          ['closed', 'completed', 'Completed'].includes(w.status)
-        ).length;
-        setLoyaltyPoints(completed * 50);
+        if (data) {
+          setLoyaltyPoints(data.loyaltyPoints ?? 0);
+          setRewards(data.rewards ?? []);
+          setHistory(data.history ?? []);
+        }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
-    window.location.href = '/auth/login';
+    router.push('/auth/login');
   };
 
   return (
@@ -134,20 +145,42 @@ export default function Rewards() {
                 <button style={{
                   width:'100%',
                   padding:'12px',
-                  background:'#3b82f6',
-                  color:'white',
+                  background: reward.earned ? '#22c55e' : 'rgba(255,255,255,0.1)',
+                  color: reward.earned ? 'white' : '#9aa3b2',
                   border:'none',
                   borderRadius:8,
                   fontSize:14,
                   fontWeight:600,
-                  cursor:'pointer'
+                  cursor: reward.earned ? 'pointer' : 'not-allowed'
                 }}>
-                  {reward.progress ? 'Continue Earning' : 'Claim Reward'}
+                  {reward.earned ? 'Claim Reward' : `${(reward.total ?? 0) - loyaltyPoints > 0 ? `${(reward.total ?? 0) - loyaltyPoints} pts needed` : 'Continue Earning'}`}
                 </button>
               )}
             </div>
           ))}
         </div>
+
+        {/* Points History */}
+        {history.length > 0 && (
+          <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginTop:32}}>
+            <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Points History</h2>
+            <div style={{display:'grid', gap:8}}>
+              {history.map(entry => (
+                <div key={entry.id} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 16px', background:'rgba(255,255,255,0.04)', borderRadius:8}}>
+                  <div>
+                    <div style={{fontSize:14, color:'#e5e7eb'}}>{entry.description}</div>
+                    <div style={{fontSize:12, color:'#9aa3b2'}}>{entry.date}</div>
+                  </div>
+                  <div style={{fontSize:16, fontWeight:700, color:'#a855f7'}}>+{entry.points} pts</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {loading && (
+          <div style={{textAlign:'center', padding:60, color:'#9aa3b2'}}>Loading rewards...</div>
+        )}
 
         {/* Back to Dashboard */}
         <div style={{marginTop:32, textAlign:'center'}}>

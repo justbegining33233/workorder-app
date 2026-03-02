@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     // Rate limiting - prevent brute force attacks
     const clientIP = getClientIP(request);
     const rateLimitKey = `customer_login:${clientIP}:${email}`;
-    const rateLimit = checkRateLimit(rateLimitKey);
+    const rateLimit = await checkRateLimit(rateLimitKey);
     
     if (!rateLimit.success) {
       return NextResponse.json(

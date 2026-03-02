@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/middleware';
 
+// DEPRECATED: Uses legacy CustomerMessage model.
+// New chat functionality uses /api/messages (DirectMessage model).
+// This route is kept for backwards compatibility with customer dashboard, tracking, and appointments pages.
+
 // GET /api/customers/messages - Get all messages for a customer
 export async function GET(request: NextRequest) {
   try {

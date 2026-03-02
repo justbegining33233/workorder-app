@@ -34,7 +34,8 @@ export const useSocket = () => {
     try {
       // Improved connection flow: try in-app '/api/socket' first, then fallback to external socket server.
       const primaryUrl = typeof window !== 'undefined' ? `${window.location.origin}` : 'http://localhost:3000';
-      const fallbackUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
+      const externalSocketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
+      const fallbackUrl = externalSocketUrl || 'http://localhost:3001';
       let attemptedFallback = false;
 
       const createSocket = (url: string, path?: string) => {
@@ -66,7 +67,14 @@ export const useSocket = () => {
           if (!attemptedFallback && url === primaryUrl) {
             attemptedFallback = true;
             try { s.disconnect(); } catch (e) {}
-            createSocket(fallbackUrl, '/api/socket'); // ensure fallback uses /api/socket path
+            // When NEXT_PUBLIC_SOCKET_URL points to the standalone socket-server.js,
+            // connect without a path (the standalone server listens at root).
+            // Fall back to /api/socket path only when using the self-hosted server.js.
+            if (externalSocketUrl) {
+              createSocket(fallbackUrl); // standalone server — no path
+            } else {
+              createSocket(fallbackUrl, '/api/socket'); // self-hosted server.js
+            }
           }
         });
 
@@ -81,8 +89,13 @@ export const useSocket = () => {
         return s;
       };
 
-      // Start with in-app path
-      createSocket(primaryUrl, '/api/socket');
+      // If a standalone socket server URL is configured (production/Vercel), connect directly.
+      // Otherwise try the in-app /api/socket path (local dev with server.js).
+      if (externalSocketUrl) {
+        createSocket(externalSocketUrl); // standalone socket-server.js — no path
+      } else {
+        createSocket(primaryUrl, '/api/socket');
+      }
 
       return () => {
         try {

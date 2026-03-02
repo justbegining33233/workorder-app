@@ -300,6 +300,7 @@ function ShopSettingsPageContent() {
   } | null>(null);
   const [billingLoading, setBillingLoading] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [connectLoading, setConnectLoading] = useState(false);
 
   const isCustomService = (service: Service) => {
     const defaults = SERVICE_OPTIONS[service.category as CategoryId] || [];
@@ -623,6 +624,30 @@ function ShopSettingsPageContent() {
       alert('Error opening billing portal');
     } finally {
       setBillingLoading(false);
+    }
+  };
+
+  const handleStripeConnect = async () => {
+    setConnectLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/stripe/connect', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+      });
+      if (res.ok) {
+        const { url } = await res.json();
+        window.location.href = url;
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err?.error || 'Failed to start Stripe Connect onboarding');
+      }
+    } catch (e) {
+      console.error('Stripe Connect error:', e);
+      alert('Error starting Stripe Connect');
+    } finally {
+      setConnectLoading(false);
     }
   };
 
@@ -1457,10 +1482,10 @@ function ShopSettingsPageContent() {
                   </div>
                 </div>
 
-                {/* Stripe Connect Payout Account - Coming Soon */}
+                {/* Stripe Connect Payout Account */}
                 <div style={{marginBottom:24}}>
                   <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>Payout Account</h3>
-                  <p style={{color:'#9aa3b2', fontSize:13, marginBottom:16}}>Connect your Stripe account to receive work order payments directly.</p>
+                  <p style={{color:'#9aa3b2', fontSize:13, marginBottom:16}}>Connect your Stripe account to receive work order payments directly to your bank.</p>
                   <div style={{
                     background:'rgba(255,255,255,0.05)',
                     borderRadius:12,
@@ -1468,20 +1493,28 @@ function ShopSettingsPageContent() {
                     display:'flex',
                     justifyContent:'space-between',
                     alignItems:'center',
-                    opacity:0.6,
                   }}>
                     <div>
-                      <div style={{color:'#e5e7eb', fontWeight:600, marginBottom:4}}>Payout Account</div>
-                      <div style={{color:'#9aa3b2', fontSize:13}}>This feature is coming soon.</div>
+                      <div style={{color:'#e5e7eb', fontWeight:600, marginBottom:4}}>Stripe Express Account</div>
+                      <div style={{color:'#9aa3b2', fontSize:13}}>Complete Stripe&apos;s onboarding to enable direct payouts.</div>
                     </div>
-                    <span style={{
-                      padding:'8px 16px',
-                      background:'rgba(255,255,255,0.08)',
-                      color:'#9aa3b2',
-                      borderRadius:8,
-                      fontSize:13,
-                      fontWeight:600,
-                    }}>Coming Soon</span>
+                    <button
+                      onClick={handleStripeConnect}
+                      disabled={connectLoading}
+                      style={{
+                        padding:'10px 20px',
+                        background: connectLoading ? 'rgba(255,255,255,0.1)' : '#635bff',
+                        color:'white',
+                        border:'none',
+                        borderRadius:8,
+                        fontSize:14,
+                        fontWeight:600,
+                        cursor: connectLoading ? 'not-allowed' : 'pointer',
+                        whiteSpace:'nowrap',
+                      }}
+                    >
+                      {connectLoading ? 'Loading...' : '🔗 Connect Stripe'}
+                    </button>
                   </div>
                 </div>
 

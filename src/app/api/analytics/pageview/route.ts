@@ -8,7 +8,7 @@ import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 export async function POST(request: NextRequest) {
   // Rate-limit unauthenticated tracking calls (30 req/min per IP) to prevent DB spam
   const ip = getClientIP(request);
-  const rl = checkRateLimit(`pageview:${ip}`, { maxRequests: 30, windowMs: 60 * 1000 });
+  const rl = await checkRateLimit(`pageview:${ip}`, { maxRequests: 30, windowMs: 60 * 1000 });
   if (!rl.success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }

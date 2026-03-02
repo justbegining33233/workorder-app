@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     // Rate limiting — 3 requests per hour per IP + identifier to prevent OTP spam
     const clientIP = getClientIP(request);
     const rateLimitKey = `pw_reset:${clientIP}:${String(identifier).toLowerCase()}`;
-    const rateLimit = checkRateLimit(rateLimitKey, { maxRequests: 3, windowMs: 60 * 60 * 1000 });
+    const rateLimit = await checkRateLimit(rateLimitKey, { maxRequests: 3, windowMs: 60 * 60 * 1000 });
     if (!rateLimit.success) {
       // Return generic success to avoid confirming account existence via timing
       return NextResponse.json({ success: true });

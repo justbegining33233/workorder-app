@@ -1,45 +1,55 @@
+/**
+ * POST /api/auth/2fa/verify
+ * Verifies a TOTP token against the pending secret and enables 2FA.
+ * 
+ * GET /api/auth/2fa/verify
+ * Returns current 2FA status from the DB.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth';
-import { verifyOTP, enable2FA, is2FAEnabled } from '@/lib/two-factor';
+import { verifyTotpToken } from '@/lib/two-factor';
 
-// POST /api/auth/2fa/verify — Verify OTP and enable 2FA
 export async function POST(request: NextRequest) {
-  const auth = requireRole(request, ['shop', 'tech', 'manager']);
+  const auth = requireRole(request, ['shop']);
   if (auth instanceof NextResponse) return auth;
 
   const body = await request.json().catch(() => null);
-  if (!body || typeof body !== 'object') {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
-  }
-  const { code } = body as Record<string, unknown>;
-
-  if (!code) {
-    return NextResponse.json({ error: 'Code is required' }, { status: 400 });
+  if (!body?.token) {
+    return NextResponse.json({ error: 'token is required' }, { status: 400 });
   }
 
-  const userId = auth.id;
-  const valid = verifyOTP(userId, String(code).trim());
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    const shop = await prisma.shop.findUnique({ where: { id: auth.id } });
+    if (!shop) return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
 
-  if (!valid) {
-    return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 });
+    if (!shop.twoFactorSecret) {
+      return NextResponse.json({ error: 'Run /api/auth/2fa/setup first' }, { status: 400 });
+    }
+
+    const valid = verifyTotpToken(shop.twoFactorSecret, String(body.token));
+    if (!valid) {
+      return NextResponse.json({ error: 'Invalid TOTP token' }, { status: 400 });
+    }
+
+    await prisma.shop.update({ where: { id: auth.id }, data: { twoFactorEnabled: true } });
+
+    return NextResponse.json({ message: '2FA enabled successfully', enabled: true });
+  } catch (error) {
+    console.error('2FA verify error:', error);
+    return NextResponse.json({ error: 'Verification failed' }, { status: 500 });
   }
-
-  enable2FA(userId);
-
-  return NextResponse.json({
-    message: '2FA enabled successfully',
-    enabled: true,
-    userId,
-  });
 }
 
-// GET /api/auth/2fa/verify — Check if 2FA is currently enabled
 export async function GET(request: NextRequest) {
-  const auth = requireRole(request, ['shop', 'tech', 'manager']);
+  const auth = requireRole(request, ['shop']);
   if (auth instanceof NextResponse) return auth;
 
-  return NextResponse.json({
-    enabled: is2FAEnabled(auth.id),
-    userId: auth.id,
+  const prisma = (await import('@/lib/prisma')).default;
+  const shop = await prisma.shop.findUnique({
+    where: { id: auth.id },
+    select: { twoFactorEnabled: true },
   });
+
+  return NextResponse.json({ enabled: shop?.twoFactorEnabled ?? false });
 }

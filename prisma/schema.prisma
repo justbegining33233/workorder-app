@@ -82,6 +82,10 @@ model Shop {
   capacity        Int     @default(1) // Number of bays/simultaneous appointments
   slotDuration    Int     @default(30) // Default time slot duration in minutes
 
+  // Two-Factor Authentication
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret  String? // TOTP secret (base32 encoded, store encrypted in prod)
+
   status String @default("pending") // pending, approved, suspended
 
   createdAt  DateTime  @default(now())
@@ -292,19 +296,19 @@ model WorkOrder {
   serviceLocation String // roadside, in-shop
 
   // Services requested
-  repairs     String? // RepairService[]
-  maintenance String? // MaintenanceService[]
+  repairs     Json? // RepairService[]
+  maintenance Json? // MaintenanceService[]
 
   // Parts
-  partsMaterials String? // PartsMaterials
+  partsMaterials Json? // PartsMaterials
 
   // Issue description
   issueDescription String
-  pictures         String? // string[]
+  pictures         Json? // string[]
   vinPhoto         String?
 
   // Location
-  location String? // VehicleLocation
+  location Json? // VehicleLocation
 
   // Assignment
   assignedTechId String?
@@ -315,15 +319,15 @@ model WorkOrder {
   status String @default("pending") // pending, assigned, in-progress, waiting-estimate, waiting-for-payment, closed, denied-estimate
 
   // Estimate
-  estimate String? // Estimate with line items
+  estimate Json? // Estimate with line items
 
   // Work details
-  techLabor  String? // TechnicianLabor
-  partsUsed  String? // PartLaborBreakdown
-  workPhotos String? // WorkPhoto[]
+  techLabor  Json? // TechnicianLabor
+  partsUsed  Json? // PartLaborBreakdown
+  workPhotos Json? // WorkPhoto[]
 
   // Completion
-  completion String? // CompletionVerification
+  completion Json? // CompletionVerification
 
   // Payment
   paymentStatus   String    @default("unpaid") // unpaid, pending, paid, refunded

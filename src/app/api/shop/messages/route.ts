@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest, verifyToken } from '@/lib/auth';
 
+// DEPRECATED: Uses legacy Message model scoped to work orders.
+// New chat functionality uses /api/messages (DirectMessage model).
+// This route is kept for backwards compatibility with shop/admin dashboard.
+
 // GET - Get all messages in the shop (from work orders)
 export async function GET(request: NextRequest) {
   try {
