@@ -48,11 +48,11 @@ export default function DTCLookupPage() {
     setLoading(false);
   };
 
-  if (isLoading) return <div style={{ minHeight: '100vh', background: '#111827', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (isLoading) return <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#1f2937,#111827)', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🔎 DTC Code Lookup</h1>
         <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Diagnose OBD-II fault codes with detailed repair information</p>

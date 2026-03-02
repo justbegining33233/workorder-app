@@ -77,7 +77,7 @@ function WorkOrderListPageContent() {
         </div>
         <div className="sos-header">
           <div className="sos-brand">
-            <span className="mark">SOS</span>
+            <span className="mark">FixTray</span>
             <span className="sub">Work Orders</span>
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
@@ -207,7 +207,7 @@ function WorkOrderListPageContent() {
         </div>
 
         <div className="sos-footer">
-          <span className="sos-tagline">© {new Date().getFullYear()} SOS • Service Order System</span>
+          <span className="sos-tagline">© {new Date().getFullYear()} FixTray</span>
         </div>
       </div>
     </div>

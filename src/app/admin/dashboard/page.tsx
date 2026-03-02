@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
 
   if (authLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)', padding: '40px 20px' }}>
+      <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', color: '#fff', textAlign: 'center' }}>
           Loading...
         </div>
@@ -70,7 +70,7 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)', padding: '40px 20px' }}>
+      <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', color: '#fff', textAlign: 'center' }}>
           Loading...
         </div>
@@ -79,7 +79,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)', padding: '40px 20px' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>

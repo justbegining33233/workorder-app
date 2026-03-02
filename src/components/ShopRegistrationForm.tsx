@@ -400,7 +400,7 @@ export default function ShopRegistrationForm() {
       <div className="sos-card" style={{maxWidth:800}}>
         <div className="sos-header">
           <div className="sos-brand">
-            <span className="mark">SOS</span>
+            <span className="mark">FixTray</span>
             <span className="sub">Shop Registration</span>
           </div>
           <div style={{fontSize:13, color:'#9aa3b2'}}>Step {step} of 5</div>

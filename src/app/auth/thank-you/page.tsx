@@ -53,8 +53,7 @@ export default function ThankYouPage() {
       <div className="sos-card">
         <div className="sos-header">
           <div className="sos-brand">
-            <span className="mark">SOS</span>
-            <span className="sub">Service Order System</span>
+            <span className="mark">FixTray</span>
           </div>
           <span className="sos-pill">Signed In</span>
         </div>

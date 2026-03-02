@@ -93,7 +93,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; border: string; text: string
 
 const ALL_CATEGORIES = Object.keys(CATALOG);
 
-const PAGE_BG = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)';
+const PAGE_BG = 'transparent';
 const CARD_BG = 'rgba(255,255,255,0.05)';
 const CARD_BORDER = '1px solid rgba(255,255,255,0.1)';
 

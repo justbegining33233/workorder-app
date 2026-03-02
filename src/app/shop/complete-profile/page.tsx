@@ -348,7 +348,7 @@ export default function CompleteProfile() {
   if (step === 2) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     return (
-      <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+      <div style={{minHeight:'100vh', background: 'transparent'}}>
         <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
           <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>FixTray</Link>
           <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>Step 2 of 2 — Connect Payout Account (Optional)</div>
@@ -410,7 +410,7 @@ export default function CompleteProfile() {
   }
 
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+    <div style={{minHeight:'100vh', background: 'transparent'}}>
       {/* Header */}
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <Link href="/" style={{fontSize:24, fontWeight:900, color:'#e5332a', textDecoration:'none'}}>FixTray</Link>

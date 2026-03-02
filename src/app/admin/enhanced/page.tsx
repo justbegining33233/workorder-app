@@ -81,7 +81,7 @@ function AdminPortalEnhancedContent() {
       <div className="sos-card" style={{maxWidth:1400}}>
         <div className="sos-header">
           <div className="sos-brand">
-            <span className="mark">SOS</span>
+            <span className="mark">FixTray</span>
             <span className="sub">Admin Portal - Super Admin</span>
           </div>
           <div style={{display:'flex', gap:12, alignItems:'center'}}>
@@ -135,7 +135,7 @@ function AdminPortalEnhancedContent() {
         </div>
 
         <div className="sos-footer">
-          <span className="sos-tagline">© {new Date().getFullYear()} SOS • Service Order System • Admin Control Panel</span>
+          <span className="sos-tagline">© {new Date().getFullYear()} FixTray • Admin Control Panel</span>
           <div className="accent-bar" style={{width:112, borderRadius:6}} />
         </div>
       </div>

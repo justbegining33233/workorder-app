@@ -6,6 +6,7 @@ import PasswordResetForm from '@/components/PasswordResetForm';
 import { getCsrfToken } from '@/lib/clientCsrf';
 import { useAuth } from '@/contexts/AuthContext';
 import '@/styles/sos-theme.css';
+import OilSlickCanvas from '@/components/OilSlickCanvas';
 
 const MIN_USERNAME_LENGTH = 3;
 const MIN_PASSWORD_LENGTH = 8;
@@ -193,11 +194,11 @@ export default function LoginClient() {
 
   return (
     <div className="sos-wrap">
+      <OilSlickCanvas />
       <div className="sos-card">
         <div className="sos-header">
           <div className="sos-brand">
-            <span className="mark">SOS</span>
-            <span className="sub">Service Order System</span>
+            <span className="mark">FixTray</span>
           </div>
         </div>
         <div className="sos-content">
@@ -368,7 +369,7 @@ export default function LoginClient() {
           </div>
         </div>
         <div className="sos-footer">
-          <span className="sos-tagline">© {new Date().getFullYear()} SOS • Service Order System</span>
+          <span className="sos-tagline">© {new Date().getFullYear()} FixTray</span>
           <div className="accent-bar" style={{width:112, borderRadius:6}} />
         </div>
       </div>

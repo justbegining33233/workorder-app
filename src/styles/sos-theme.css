@@ -1,20 +1,18 @@
-/* SOS Card-inspired theme without using images */
+/* SOS — Clean professional dark theme */
 :root {
-  --sos-bg: #3d3d3d;
-  --sos-surface: #4a4a4a;
-  --sos-card: #525252;
-  --sos-text: #f5f7fb;
-  --sos-text-muted: #b8beca;
-  --sos-accent: #e5332a; /* bold red accent */
-  --sos-accent-2: #ff7a59; /* warm secondary accent */
-  --sos-border: #5a5a5a;
+  --sos-bg:         #080e1c;
+  --sos-surface:    rgba(10, 16, 32, 0.72);
+  --sos-card:       rgba(12, 18, 36, 0.88);
+  --sos-text:       #f1f5f9;
+  --sos-text-muted: #94a3b8;
+  --sos-accent:     #e5332a;
+  --sos-accent-2:   #ff6b5e;
+  --sos-border:     rgba(255,255,255,0.08);
+  --sos-border-strong: rgba(255,255,255,0.13);
+  --font:           'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 }
 
-html, body {
-  background: radial-gradient(1200px 800px at 10% 10%, #474747 0%, var(--sos-bg) 60%),
-              radial-gradient(900px 700px at 90% 20%, #4a4a4a 0%, #363636 60%);
-  color: var(--sos-text);
-}
+/* body/html background is handled globally via globals.css */
 
 .sos-wrap {
   min-height: 100vh;
@@ -22,28 +20,36 @@ html, body {
   align-items: center;
   justify-content: center;
   padding: 0;
+  /* Canvas renders the oil-on-water effect — just need a dark fallback */
+  background: #020608;
+  position: relative;
+  overflow: hidden;
 }
 
 .sos-card {
   width: 100%;
   max-width: 100%;
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--sos-card) 0%, var(--sos-surface) 100%);
+  /* Frosted dark glass — oil-slick shows through */
+  background: rgba(8, 13, 26, 0.75);
+  backdrop-filter: blur(22px) saturate(1.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
   border: none;
   border-radius: 0;
   box-shadow: none;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
+  font-family: var(--font);
 }
 
 .sos-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 28px;
-  border-bottom: 1px solid var(--sos-border);
-  background:
-    linear-gradient(90deg, rgba(229,51,42,0.18) 0%, rgba(229,51,42,0) 35%),
-    linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 100%);
+  padding: 18px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.02);
 }
 
 .sos-brand {
@@ -53,17 +59,18 @@ html, body {
 }
 
 .sos-brand .mark {
-  font-weight: 900;
-  letter-spacing: 0.8px;
-  font-size: 22px;
-  color: var(--sos-text);
-  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-size: 20px;
+  color: var(--sos-accent);
+  font-family: var(--font);
 }
 
 .sos-brand .sub {
   font-weight: 500;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--sos-text-muted);
+  letter-spacing: 0.02em;
 }
 
 .sos-pill {
@@ -90,38 +97,48 @@ html, body {
 }
 
 .sos-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
-  letter-spacing: 0.3px;
+  letter-spacing: -0.5px;
+  color: var(--sos-text);
+  font-family: var(--font);
 }
 
 .sos-desc {
-  margin-top: 8px;
+  margin-top: 6px;
+  font-size: 13px;
   color: var(--sos-text-muted);
+  line-height: 1.6;
 }
 
 .sos-tabs {
   display: inline-flex;
-  gap: 6px;
+  gap: 4px;
   margin-top: 16px;
   border: 1px solid var(--sos-border);
-  background: #3a3a3a;
+  background: rgba(255,255,255,0.03);
   padding: 4px;
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .sos-tab {
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
   color: var(--sos-text-muted);
   cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+  transition: color 0.15s, background 0.15s;
 }
 
 .sos-tab.active {
   color: var(--sos-text);
-  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 100%);
-  border: 1px solid var(--sos-border);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--sos-border-strong);
+  font-weight: 600;
 }
 
 .sos-form {
@@ -132,19 +149,32 @@ html, body {
 
 .sos-field label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 12px;
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   color: var(--sos-text-muted);
+  font-family: var(--font);
 }
 
 .sos-input, .sos-select {
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--sos-border);
-  background: #404040;
+  padding: 10px 13px;
+  border-radius: 9px;
+  border: 1px solid var(--sos-border-strong);
+  background: rgba(255,255,255,0.05);
   color: var(--sos-text);
+  font-size: 13.5px;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
+.sos-input:focus, .sos-select:focus {
+  border-color: var(--sos-accent);
+  background: rgba(229,51,42,0.06);
+  box-shadow: 0 0 0 3px rgba(229,51,42,0.12);
+}
+.sos-input::placeholder { color: rgba(148,163,184,0.45); }
 
 .sos-actions {
   display: flex;
@@ -153,21 +183,35 @@ html, body {
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, var(--sos-accent) 0%, #b21c15 100%);
+  background: var(--sos-accent);
   color: white;
-  border: 1px solid rgba(0,0,0,0.4);
-  padding: 10px 14px;
-  border-radius: 10px;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 9px;
   font-weight: 700;
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(229,51,42,0.35);
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
 }
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .btn-outline {
-  background: transparent;
+  background: rgba(255,255,255,0.05);
   color: var(--sos-text);
-  border: 1px solid var(--sos-border);
+  border: 1px solid var(--sos-border-strong);
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 9px;
+  font-family: var(--font);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+.btn-outline:hover { background: rgba(255,255,255,0.09); }
 
 .sos-list {
   margin-top: 10px;
@@ -179,11 +223,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 9px;
   border: 1px solid var(--sos-border);
-  background: #454545;
+  background: rgba(255,255,255,0.04);
+  transition: background 0.12s;
 }
+.sos-item:hover { background: rgba(255,255,255,0.07); }
 
 .sos-footer {
   padding: 18px 28px;
@@ -199,8 +245,9 @@ html, body {
 }
 
 .accent-bar {
-  height: 3px;
+  height: 2px;
   background: linear-gradient(90deg, var(--sos-accent) 0%, var(--sos-accent-2) 100%);
+  opacity: 0.7;
 }
 
 /* Responsive Design */

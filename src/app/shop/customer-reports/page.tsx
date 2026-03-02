@@ -71,11 +71,11 @@ export default function CustomerReportsPage() {
 
   const maxAcq = Math.max(...acquisitionChart.map(p => p.count), 1);
 
-  if (isLoading) return <div style={{ minHeight: '100vh', background: '#3d3d3d', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (isLoading) return <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(229,51,42,0.3)', padding: '16px 32px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/shop/home" style={{ color: '#e5332a', fontSize: 22, fontWeight: 900, textDecoration: 'none' }}>FixTray</Link>

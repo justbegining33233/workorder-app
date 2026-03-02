@@ -73,7 +73,7 @@ export default function ShopSubscribePage() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb', fontSize: 18 }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb', fontSize: 18 }}>
         Loading...
       </div>
     );
@@ -81,7 +81,7 @@ export default function ShopSubscribePage() {
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '48px 24px' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', padding: '48px 24px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 48 }}>

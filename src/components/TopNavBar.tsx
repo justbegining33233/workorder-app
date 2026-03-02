@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useSocket } from '@/lib/socket';
+import OilSlickNavCanvas from '@/components/OilSlickNavCanvas';
 
 interface TopNavBarProps {
   onMenuToggle?: () => void;
@@ -199,19 +200,21 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
 
     return (
       <span style={{
-        padding: '4px 10px',
-        background: `${role.color}20`,
+        padding: '3px 9px',
+        background: `${role.color}18`,
         color: role.color,
-        border: `1px solid ${role.color}40`,
-        borderRadius: 6,
+        border: `1px solid ${role.color}30`,
+        borderRadius: 999,
         fontSize: 11,
         fontWeight: 600,
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
         display: 'inline-flex',
         alignItems: 'center',
         gap: 4,
         whiteSpace: 'nowrap',
+        letterSpacing: '0.02em',
       }}>
-        <span>{role.icon}</span>
+        <span style={{ fontSize: 11 }}>{role.icon}</span>
         <span>{role.label}</span>
       </span>
     );
@@ -395,36 +398,44 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
 
   return (
     <nav style={{
-      background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
-      borderBottom: '2px solid rgba(229,51,42,0.3)',
-      padding: '12px 16px',
       position: 'sticky',
       top: 0,
       zIndex: 1000,
-      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      height: 52,
+      display: 'flex',
+      alignItems: 'center',
+      overflow: 'hidden',
+      borderBottom: '1px solid rgba(255,255,255,0.07)',
     }}>
+      {/* Same oil-on-water canvas as the login page, clipped to nav height */}
+      <OilSlickNavCanvas />
+
+      {/* Nav content sits above the canvas */}
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', padding: '0 16px', display: 'flex', alignItems: 'center' }}>
       <div style={{
         maxWidth: 1400,
         margin: '0 auto',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {showMenuButton && (
             <button
               onClick={onMenuToggle}
               style={{
                 background: 'transparent',
-                border: '1px solid rgba(255,255,255,0.2)',
-                color: '#e5e7eb',
-                padding: '8px 12px',
-                borderRadius: 6,
+                border: '1px solid rgba(255,255,255,0.10)',
+                color: '#64748b',
+                width: 34, height: 34,
+                borderRadius: 8,
                 cursor: 'pointer',
-                fontSize: 18,
+                fontSize: 16,
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               ☰
@@ -432,34 +443,35 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
           )}
 
           <Link href={getHomeLink()} style={{ textDecoration: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{
-                fontSize: 28,
-                fontWeight: 900,
-                color: '#e5332a',
-                textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              }}>
-                FixTray
-              </div>
-            </div>
+            <span style={{
+              fontSize: 17,
+              fontWeight: 800,
+              color: '#e5332a',
+              letterSpacing: '-0.4px',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}>
+              FixTray
+            </span>
           </Link>
 
           {shopName && (
             <div style={{
-              padding: '4px 12px',
-              background: 'rgba(255,255,255,0.1)',
+              padding: '3px 10px',
+              background: 'rgba(255,255,255,0.05)',
               borderRadius: 6,
-              fontSize: 12,
-              color: '#9ca3af',
-              border: '1px solid rgba(255,255,255,0.1)',
+              fontSize: 11,
+              fontWeight: 500,
+              color: '#475569',
+              border: '1px solid rgba(255,255,255,0.07)',
               whiteSpace: 'nowrap',
+              letterSpacing: '0.02em',
             }}>
               {shopName}
             </div>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {getRoleBadge()}
 
           <NotificationButton />
@@ -469,51 +481,55 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               onClick={handleClockToggle}
               disabled={loading}
               style={{
-                padding: '8px 16px',
-                background: isClockedIn ? 'rgba(239,68,68,0.2)' : 'rgba(34,197,94,0.2)',
-                border: isClockedIn ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(34,197,94,0.5)',
-                color: isClockedIn ? '#f87171' : '#22c55e',
-                borderRadius: 6,
+                padding: '6px 14px',
+                background: isClockedIn ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)',
+                border: isClockedIn ? '1px solid rgba(239,68,68,0.30)' : '1px solid rgba(34,197,94,0.30)',
+                color: isClockedIn ? '#f87171' : '#4ade80',
+                borderRadius: 7,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 fontSize: 12,
                 fontWeight: 600,
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 display: 'flex',
                 alignItems: 'center',
-                gap: 6,
-                opacity: loading ? 0.6 : 1,
+                gap: 5,
+                opacity: loading ? 0.55 : 1,
                 whiteSpace: 'nowrap',
               }}
             >
-              <span>{isClockedIn ? '⏸️' : '▶️'}</span>
+              <span style={{ fontSize: 10 }}>{isClockedIn ? '◼' : '▶'}</span>
               {isClockedIn ? 'Clock Out' : 'Clock In'}
             </button>
           ) : null}
 
           <div
-            title={liveIndicator ? 'Connected to real-time server' : 'Disconnected from real-time server'}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.05)' }}
+            title={liveIndicator ? 'Connected' : 'Disconnected'}
+            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.05)' }}
           >
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#6b7280', display: 'inline-block' }} />
-            <span style={{ fontSize: 12, color: liveIndicator ? '#22c55e' : '#9ca3b2', fontWeight: 600 }}>{liveIndicator ? 'Live' : 'Offline'}</span>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
+            <span style={{ fontSize: 11, color: liveIndicator ? '#4ade80' : '#475569', fontWeight: 600 }}>{liveIndicator ? 'Live' : 'Offline'}</span>
           </div>
 
           <button
             onClick={handleSignOut}
             style={{
-              padding: '8px 16px',
+              padding: '6px 14px',
               background: '#e5332a',
               border: 'none',
               color: 'white',
-              borderRadius: 6,
+              borderRadius: 7,
               cursor: 'pointer',
               fontSize: 12,
-              fontWeight: 600,
+              fontWeight: 700,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               whiteSpace: 'nowrap',
+              letterSpacing: '0.01em',
             }}
           >
             Sign Out
           </button>
         </div>
+      </div>
       </div>
     </nav>
   );

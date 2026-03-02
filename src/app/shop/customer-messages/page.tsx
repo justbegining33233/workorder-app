@@ -24,7 +24,7 @@ export default function CustomerMessagesPage() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -54,7 +54,7 @@ export default function CustomerMessagesPage() {
   }
 
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #1f2937 0%, #374151 50%, #4b5563 100%)'}}>
+    <div style={{minHeight:'100vh', background: 'transparent'}}>
       {/* Header */}
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(75,85,99,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
         <div style={{display:'flex', alignItems:'center', gap:24}}>

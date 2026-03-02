@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -30,7 +30,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   received:  { bg: 'rgba(34,197,94,0.2)',   text: '#4ade80' },
   cancelled: { bg: 'rgba(239,68,68,0.2)',   text: '#f87171' },
 };
-const bg = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)';
+const bg = 'transparent';
 const inp: React.CSSProperties = { width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#f1f5f9', fontSize: 14, boxSizing: 'border-box' };
 
 export default function VendorManagementPage() {

@@ -100,13 +100,13 @@ export default function CustomerAuthorizationPage() {
   };
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ color: '#6b7280', fontSize: 16 }}>Loading authorization...</div>
     </div>
   );
 
   if (error) return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 64 }}>⚠️</div>
         <h2 style={{ color: '#111827', margin: '16px 0 8px' }}>Authorization Not Found</h2>
@@ -116,7 +116,7 @@ export default function CustomerAuthorizationPage() {
   );
 
   if (result === 'signed') return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center', padding: 32 }}>
         <div style={{ fontSize: 80 }}>✅</div>
         <h2 style={{ color: '#111827', margin: '16px 0 8px', fontSize: 26 }}>Authorization Signed!</h2>
@@ -127,7 +127,7 @@ export default function CustomerAuthorizationPage() {
   );
 
   if (result === 'declined') return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center', padding: 32 }}>
         <div style={{ fontSize: 80 }}>🚫</div>
         <h2 style={{ color: '#111827', margin: '16px 0 8px', fontSize: 26 }}>Authorization Declined</h2>
@@ -141,7 +141,7 @@ export default function CustomerAuthorizationPage() {
   const isDeclined = auth?.status === 'declined';
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb', fontFamily: 'system-ui,sans-serif' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', fontFamily: 'system-ui,sans-serif' }}>
       {/* Header */}
       <div style={{ background: '#1a1a2e', padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ width: 40, height: 40, background: '#e5332a', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🔧</div>

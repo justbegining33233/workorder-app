@@ -77,7 +77,7 @@ export default function SystemSettings() {
 
   if (isLoading || !settings) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb', fontSize: 18 }}>
+      <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb', fontSize: 18 }}>
         {isLoading ? 'Loading...' : 'Loading settings...'}
       </div>
     );
@@ -85,7 +85,7 @@ export default function SystemSettings() {
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent' }}>
       {toast && (
         <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 9999, padding: '12px 20px', borderRadius: 8, fontWeight: 600, fontSize: 14, background: toast.type === 'success' ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)', color: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
           {toast.type === 'success' ? '? ' : '? '}{toast.text}

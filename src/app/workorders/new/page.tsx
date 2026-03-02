@@ -160,7 +160,7 @@ function NewRoadsideJobContent() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#09090B', color: '#e5e7eb' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb' }}>
       <header style={{ background: '#0f172a', borderBottom: '1px solid #1f2937', padding: '16px 24px' }}>
         <div style={{ maxWidth: 820, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 16 }}>
           <button
@@ -376,7 +376,7 @@ function NewRoadsideJobContent() {
 
 export default function NewWorkOrderPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#09090B', color: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
       <NewRoadsideJobContent />
     </Suspense>
   );

@@ -199,7 +199,7 @@ export default function TechTimesheet() {
 
   if (isLoading) {
     return (
-      <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <div style={{minHeight:'100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <div style={{color: '#e5e7eb', fontSize: 18}}>Loading...</div>
       </div>
     );
@@ -213,7 +213,7 @@ export default function TechTimesheet() {
   const detailedEntries = entries.filter(e => e.workOrderId || e.isPto || (e.notes && e.notes.toString().trim() !== ''));
 
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+    <div style={{minHeight:'100vh', background: 'transparent'}}>
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
           <div>

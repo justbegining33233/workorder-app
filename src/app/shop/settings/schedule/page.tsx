@@ -144,7 +144,7 @@ export default function ScheduleSettingsPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', padding: 24 }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', padding: 24 }}>
         <div style={{ maxWidth: 900, margin: '0 auto', color: 'white', textAlign: 'center', paddingTop: 100 }}>
           Loading schedule settings...
         </div>
@@ -153,7 +153,7 @@ export default function ScheduleSettingsPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', padding: 24 }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', padding: 24 }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>

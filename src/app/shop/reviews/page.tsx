@@ -104,11 +104,11 @@ export default function ShopReviewsPage() {
     : '—';
   const ratingCounts = STARS.map(s => ({ star: s, count: reviews.filter(r => r.rating === s).length }));
 
-  if (isLoading) return <div style={{ minHeight: '100vh', background: '#3d3d3d', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (isLoading) return <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       {toast && (
         <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 9999, padding: '12px 20px', borderRadius: 8, fontWeight: 600, fontSize: 14, background: toast.type === 'success' ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)', color: '#fff' }}>
           {toast.text}

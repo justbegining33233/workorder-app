@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 
@@ -6,7 +6,7 @@ export default function CustomerBookingFeatures() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f172a 0%, #111827 100%)',
+      background: 'transparent',
       color: '#e5e7eb',
       padding: '48px 20px',
     }}>

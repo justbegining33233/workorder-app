@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -115,7 +115,7 @@ export default function EmployeeProfile() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ color: '#e5e7eb', fontSize: 18 }}>Loading...</div>
       </div>
     );
@@ -123,14 +123,14 @@ export default function EmployeeProfile() {
 
   if (!employee) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ color: '#e5e7eb', fontSize: 18 }}>Employee not found</div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       {/* Header */}
       <div style={{
         background: 'rgba(0,0,0,0.3)',

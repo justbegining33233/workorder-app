@@ -99,7 +99,7 @@ export default function WorkOrderTemplatesPage() {
     } catch { setError('Delete failed'); }
   };
 
-  const bg = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)';
+  const bg = 'transparent';
 
   if (isLoading || loading) {
     return <div style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;

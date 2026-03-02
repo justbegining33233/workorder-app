@@ -66,7 +66,7 @@ function TechPortalEnhancedContent() {
       <div className="sos-card" style={{maxWidth:1400}}>
         <div className="sos-header">
           <div className="sos-brand">
-            <span className="mark">SOS</span>
+            <span className="mark">FixTray</span>
             <span className="sub">Tech Portal - {techName}</span>
           </div>
           <div style={{display:'flex', gap:12, alignItems:'center'}}>
@@ -120,7 +120,7 @@ function TechPortalEnhancedContent() {
         </div>
 
         <div className="sos-footer">
-          <span className="sos-tagline">© {new Date().getFullYear()} SOS • Service Order System</span>
+          <span className="sos-tagline">© {new Date().getFullYear()} FixTray</span>
           <div className="accent-bar" style={{width:112, borderRadius:6}} />
         </div>
       </div>

@@ -122,7 +122,7 @@ export default function PendingShops() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)',
+        background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -250,7 +250,7 @@ export default function PendingShops() {
   };
 
   return (
-    <div style={{minHeight:'100vh', background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)'}}>
+    <div style={{minHeight:'100vh', background: 'transparent'}}>
       {/* Header */}
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>

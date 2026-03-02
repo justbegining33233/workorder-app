@@ -101,7 +101,7 @@ export default function CouponManagementPage() {
 
   if (authLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)', padding: '40px 20px' }}>
+      <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', color: '#fff', textAlign: 'center' }}>
           Loading...
         </div>
@@ -115,7 +115,7 @@ export default function CouponManagementPage() {
 
   if (loading && !showCreateForm) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)', padding: '40px 20px' }}>
+      <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', color: '#fff', textAlign: 'center' }}>
           Loading...
         </div>
@@ -124,7 +124,7 @@ export default function CouponManagementPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)', padding: '40px 20px' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>

@@ -57,7 +57,7 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', padding: '40px 20px' }}>
+      <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', color: '#fff', textAlign: 'center' }}>
           Loading analytics...
         </div>
@@ -66,7 +66,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', padding: '40px 20px' }}>
+    <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
       <div style={{ maxWidth: 1400, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: 32 }}>

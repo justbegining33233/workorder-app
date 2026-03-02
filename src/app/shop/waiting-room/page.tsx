@@ -64,7 +64,7 @@ function WaitingRoomContent() {
   const waiting = data?.orders.filter(o => o.status === 'pending') || [];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#0f172a,#1e293b,#0f172a)', color: '#e5e7eb', fontFamily: '"Inter",system-ui,sans-serif', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: '"Inter",system-ui,sans-serif', overflow: 'hidden' }}>
       {/* Header */}
       <div style={{ background: 'rgba(229,51,42,0.9)', padding: '16px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -155,7 +155,7 @@ function StatusCard({ order }: { order: WaitingRoomEntry }) {
 
 export default function WaitingRoomPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading waiting room...</div>}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading waiting room...</div>}>
       <WaitingRoomContent />
     </Suspense>
   );
