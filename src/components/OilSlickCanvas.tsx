@@ -54,6 +54,7 @@ export default function OilSlickCanvas() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const c: CanvasRenderingContext2D = ctx;
 
     let w = (canvas.width = window.innerWidth);
     let h = (canvas.height = window.innerHeight);
@@ -66,16 +67,16 @@ export default function OilSlickCanvas() {
     );
 
     // Seed the canvas black
-    ctx.fillStyle = "#020608";
-    ctx.fillRect(0, 0, w, h);
+    c.fillStyle = "#020608";
+    c.fillRect(0, 0, w, h);
 
     function frame() {
       t += 0.006;
       hueBase = (hueBase + 0.07) % 360;
 
       // Very slow dark fade — lets trails linger like real oil on water
-      ctx.fillStyle = "rgba(2, 6, 8, 0.016)";
-      ctx.fillRect(0, 0, w, h);
+      c.fillStyle = "rgba(2, 6, 8, 0.016)";
+      c.fillRect(0, 0, w, h);
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -95,12 +96,12 @@ export default function OilSlickCanvas() {
           Math.sin(lifeFrac * Math.PI) * 0.14 +
           0.02;
 
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(nx, ny);
-        ctx.strokeStyle = `hsla(${hue},${sat.toFixed(0)}%,${lum.toFixed(0)}%,${alpha.toFixed(3)})`;
-        ctx.lineWidth = 1.0 + Math.sin(p.age * 0.07) * 0.5;
-        ctx.stroke();
+        c.beginPath();
+        c.moveTo(p.x, p.y);
+        c.lineTo(nx, ny);
+        c.strokeStyle = `hsla(${hue},${sat.toFixed(0)}%,${lum.toFixed(0)}%,${alpha.toFixed(3)})`;
+        c.lineWidth = 1.0 + Math.sin(p.age * 0.07) * 0.5;
+        c.stroke();
 
         p.x = nx;
         p.y = ny;
@@ -119,8 +120,8 @@ export default function OilSlickCanvas() {
     const onResize = () => {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
-      ctx.fillStyle = "#020608";
-      ctx.fillRect(0, 0, w, h);
+      c.fillStyle = "#020608";
+      c.fillRect(0, 0, w, h);
     };
     window.addEventListener("resize", onResize);
 
