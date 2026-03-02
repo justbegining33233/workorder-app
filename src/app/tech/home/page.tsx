@@ -859,7 +859,7 @@ export default function TechHome() {
                     </div>
                     <div style={{display:'flex', justifyContent:'space-between', background:'rgba(34,197,94,0.2)', padding:'8px 12px', borderRadius:8, marginTop:4}}>
                       <span style={{fontSize:13, fontWeight:600, color:'#22c55e'}}>Hourly Rate:</span>
-                      <span style={{fontSize:16, fontWeight:700, color:'#22c55e'}}>${techProfile.hourlyRate.toFixed(2)}/hr</span>
+                      <span style={{fontSize:16, fontWeight:700, color:'#22c55e'}}>${(techProfile.hourlyRate ?? 0).toFixed(2)}/hr</span>
                     </div>
                     <div style={{display:'flex', justifyContent:'space-between'}}>
                       <span style={{fontSize:13, color:'#9aa3b2'}}>Status:</span>

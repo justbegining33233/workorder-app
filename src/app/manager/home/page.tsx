@@ -121,11 +121,12 @@ export default function ManagerHome() {
       
       if (response.ok) {
         const { summary } = await response.json();
-        setFinancialSummary(summary || {
+        setFinancialSummary({
           todayRevenue: 0,
           weeklyRevenue: 0,
           monthlyRevenue: 0,
           outstandingInvoices: 0,
+          ...(summary || {}),
         });
       }
     } catch (error) {
@@ -468,19 +469,19 @@ export default function ManagerHome() {
                     <div style={{display:'grid', gap:12}}>
                       <div style={{background:'rgba(34,197,94,0.1)', borderRadius:8, padding:12}}>
                         <div style={{color:'#22c55e', fontSize:12, marginBottom:4}}>Today's Revenue</div>
-                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${financialSummary.todayRevenue.toFixed(2)}</div>
+                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${(financialSummary.todayRevenue ?? 0).toFixed(2)}</div>
                       </div>
                       <div style={{background:'rgba(59,130,246,0.1)', borderRadius:8, padding:12}}>
                         <div style={{color:'#3b82f6', fontSize:12, marginBottom:4}}>This Week</div>
-                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${financialSummary.weeklyRevenue.toFixed(2)}</div>
+                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${(financialSummary.weeklyRevenue ?? 0).toFixed(2)}</div>
                       </div>
                       <div style={{background:'rgba(168,85,247,0.1)', borderRadius:8, padding:12}}>
                         <div style={{color:'#a855f7', fontSize:12, marginBottom:4}}>This Month</div>
-                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${financialSummary.monthlyRevenue.toFixed(2)}</div>
+                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${(financialSummary.monthlyRevenue ?? 0).toFixed(2)}</div>
                       </div>
                       <div style={{background:'rgba(245,158,11,0.1)', borderRadius:8, padding:12}}>
                         <div style={{color:'#f59e0b', fontSize:12, marginBottom:4}}>Outstanding</div>
-                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${financialSummary.outstandingInvoices.toFixed(2)}</div>
+                        <div style={{color:'#e5e7eb', fontSize:20, fontWeight:700}}>${(financialSummary.outstandingInvoices ?? 0).toFixed(2)}</div>
                       </div>
                     </div>
                   </div>

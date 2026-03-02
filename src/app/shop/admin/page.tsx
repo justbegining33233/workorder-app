@@ -620,11 +620,11 @@ export default function ShopAdminPage() {
                       </div>
                       <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
                         <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Today's Revenue</div>
-                        <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e' }}>${shopStats.revenue.today.toFixed(2)}</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#22c55e' }}>${(shopStats.revenue?.today ?? 0).toFixed(2)}</div>
                       </div>
                       <div style={{ background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 12, padding: 20 }}>
                         <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>This Week</div>
-                        <div style={{ fontSize: 32, fontWeight: 700, color: '#a855f7' }}>${shopStats.revenue.week.toFixed(2)}</div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: '#a855f7' }}>${(shopStats.revenue?.week ?? 0).toFixed(2)}</div>
                       </div>
                       <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: 20 }}>
                         <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Team Members</div>
@@ -921,7 +921,7 @@ export default function ShopAdminPage() {
                                   fontSize: 14,
                                   fontWeight: 600
                                 }}>
-                                  ${budgetData.weeklySpent.toFixed(2)} / ${budgetData.weeklyBudget.toFixed(2)}
+                                  ${(budgetData.weeklySpent ?? 0).toFixed(2)} / ${(budgetData.weeklyBudget ?? 0).toFixed(2)}
                                 </span>
                               </div>
                               <div style={{ 
@@ -973,7 +973,7 @@ export default function ShopAdminPage() {
                                   gap: 8
                                 }}>
                                   <span>??</span>
-                                  <span>Over budget by ${(budgetData.weeklySpent - budgetData.weeklyBudget).toFixed(2)}</span>
+                                  <span>Over budget by ${((budgetData.weeklySpent ?? 0) - (budgetData.weeklyBudget ?? 0)).toFixed(2)}</span>
                                 </div>
                               )}
                             </div>
@@ -990,7 +990,7 @@ export default function ShopAdminPage() {
                                   fontSize: 14,
                                   fontWeight: 600
                                 }}>
-                                  ${budgetData.monthlySpent.toFixed(2)} / ${budgetData.monthlyBudget.toFixed(2)}
+                                  ${(budgetData.monthlySpent ?? 0).toFixed(2)} / ${(budgetData.monthlyBudget ?? 0).toFixed(2)}
                                 </span>
                               </div>
                               <div style={{ 
@@ -1042,7 +1042,7 @@ export default function ShopAdminPage() {
                                   gap: 8
                                 }}>
                                   <span>??</span>
-                                  <span>Over budget by ${(budgetData.monthlySpent - budgetData.monthlyBudget).toFixed(2)}</span>
+                                  <span>Over budget by ${((budgetData.monthlySpent ?? 0) - (budgetData.monthlyBudget ?? 0)).toFixed(2)}</span>
                                 </div>
                               )}
                             </div>
@@ -1680,11 +1680,11 @@ export default function ShopAdminPage() {
                         </div>
                         <div style={{ textAlign: 'center' }}>
                           <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Hours</div>
-                          <div style={{ color: '#3b82f6', fontSize: 24, fontWeight: 700 }}>{payrollData.summary.totalHours.toFixed(1)}</div>
+                          <div style={{ color: '#3b82f6', fontSize: 24, fontWeight: 700 }}>{(payrollData.summary?.totalHours ?? 0).toFixed(1)}</div>
                         </div>
                         <div style={{ textAlign: 'center' }}>
                           <div style={{ color: '#9aa3b2', fontSize: 12 }}>Total Payroll</div>
-                          <div style={{ color: '#22c55e', fontSize: 24, fontWeight: 700 }}>${payrollData.summary.totalPayroll.toFixed(2)}</div>
+                          <div style={{ color: '#22c55e', fontSize: 24, fontWeight: 700 }}>${(payrollData.summary?.totalPayroll ?? 0).toFixed(2)}</div>
                         </div>
                       </div>
                     </div>
@@ -1708,13 +1708,13 @@ export default function ShopAdminPage() {
                                 {emp.role === 'manager' ? '?? Manager' : '?? Tech'}
                               </td>
                               <td style={{ padding: 16, textAlign: 'center', color: '#3b82f6', fontWeight: 600 }}>
-                                {emp.totalHours.toFixed(1)}
+                                {(emp.totalHours ?? 0).toFixed(1)}
                               </td>
                               <td style={{ padding: 16, textAlign: 'center', color: '#9aa3b2' }}>
                                 ${emp.hourlyRate || 0}
                               </td>
                               <td style={{ padding: 16, textAlign: 'center', color: '#22c55e', fontWeight: 700, fontSize: 16 }}>
-                                ${emp.totalPay.toFixed(2)}
+                                ${(emp.totalPay ?? 0).toFixed(2)}
                               </td>
                             </tr>
                           ))}
@@ -1807,7 +1807,7 @@ export default function ShopAdminPage() {
                           <div style={{ textAlign: 'right' }}>
                             <div style={{ color: '#9aa3b2', fontSize: 12, marginBottom: 4 }}>Weekly Hours</div>
                             <div style={{ color: '#3b82f6', fontWeight: 700, fontSize: 18 }}>
-                              {member.weeklyHours.toFixed(1)}
+                              {(member.weeklyHours ?? 0).toFixed(1)}
                             </div>
                           </div>
                           <div style={{ textAlign: 'right' }}>
