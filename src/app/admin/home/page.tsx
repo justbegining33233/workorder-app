@@ -128,6 +128,7 @@ function AdminHomeContent() {
 
   const quickLinks = [
     { href: '/admin/command-center', label: '🎛️ Command Center', icon: 'command', highlight: true },
+    { href: '/admin/messages', label: '💬 Messages', icon: 'messages' },
     { href: '/admin/revenue', label: '💰 Revenue & Payouts', icon: 'money' },
     { href: '/admin/pending-shops', label: 'Pending Approvals', badge: pendingShops.length, icon: 'clock' },
     { href: '/admin/accepted-shops', label: '🏪 Accepted Shops', icon: 'shops' },

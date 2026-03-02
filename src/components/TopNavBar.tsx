@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useSocket } from '@/lib/socket';
 import OilSlickNavCanvas from '@/components/OilSlickNavCanvas';
 
@@ -11,6 +12,7 @@ interface TopNavBarProps {
 }
 
 export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopNavBarProps) {
+  const router = useRouter();
   const { isConnected, emit, on, off } = useSocket();
   const [userRole, setUserRole] = useState('');
   const [shopName, setShopName] = useState('');
@@ -268,6 +270,23 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     }
   };
 
+  const getMessagesLink = () => {
+    switch (userRole) {
+      case 'tech': return '/tech/messages';
+      case 'manager': return '/manager/home';
+      case 'shop': return '/shop/admin';
+      case 'admin': return '/admin/messages';
+      case 'customer': return '/customer/messages';
+      default: return '/';
+    }
+  };
+
+  const handleNotificationClick = (n: { id: string; type?: string }) => {
+    markAsRead(n.id);
+    setShowNotifications(false);
+    router.push(getMessagesLink());
+  };
+
   const handleSignOut = () => {
     if (typeof window === 'undefined') return;
 
@@ -375,17 +394,17 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
             {filteredNotifications.length === 0 ? (
               <div style={{ padding: 16, color: '#9ca3af', fontSize: 13 }}>No notifications</div>
             ) : filteredNotifications.map(n => (
-              <div key={n.id} style={{ padding: 12, borderBottom: '1px solid rgba(255,255,255,0.05)', background: n.read ? 'transparent' : 'rgba(37,99,235,0.08)' }}>
+              <div
+                key={n.id}
+                onClick={() => handleNotificationClick(n)}
+                style={{ padding: 12, borderBottom: '1px solid rgba(255,255,255,0.05)', background: n.read ? 'transparent' : 'rgba(37,99,235,0.08)', cursor: 'pointer' }}
+              >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                   <div style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 13 }}>{n.title}</div>
                   <span style={{ color: '#9ca3af', fontSize: 12 }}>{n.time}</span>
                 </div>
                 <div style={{ color: '#cbd5e1', fontSize: 12, marginTop: 4 }}>{n.body}</div>
-                {!n.read && (
-                  <button onClick={() => markAsRead(n.id)} style={{ marginTop: 8, background: 'transparent', border: 'none', color: '#93c5fd', fontSize: 12, cursor: 'pointer' }}>
-                    Mark read
-                  </button>
-                )}
+                <div style={{ color: '#93c5fd', fontSize: 11, marginTop: 6 }}>Click to view messages →</div>
               </div>
             ))}
           </div>

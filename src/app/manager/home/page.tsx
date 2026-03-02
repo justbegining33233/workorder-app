@@ -545,9 +545,9 @@ export default function ManagerHome() {
                       <Link href="/manager/estimates" style={{padding:12, background:'rgba(34,197,94,0.2)', borderRadius:8, textDecoration:'none', color:'#22c55e', fontSize:14, fontWeight:700, border:'1px solid rgba(34,197,94,0.3)'}}>
                         💰 Create Estimates
                       </Link>
-                      <a href="/shop/home" style={{padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8, textDecoration:'none', color:'#3b82f6', fontSize:14, fontWeight:600, cursor:'pointer'}}>
+                      <Link href="/shop/home" style={{padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8, textDecoration:'none', color:'#3b82f6', fontSize:14, fontWeight:600, cursor:'pointer'}}>
                         📊 View Center Control
-                      </a>
+                      </Link>
                       <Link href="/shop/manage-team" style={{padding:12, background:'rgba(168,85,247,0.1)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:600}}>
                         👥 Manage Team
                       </Link>

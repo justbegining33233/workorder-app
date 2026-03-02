@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 
 // GET - Fetch messages/conversations for the logged-in user
 export async function GET(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const contactRole = searchParams.get('role'); // Filter by contact role
     const contactId = searchParams.get('contactId'); // Get conversation with specific contact
-    const limit = parseInt(searchParams.get('limit') || '100');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100') || 100, 500);
 
     const userId = decoded.id;
     const userRole = decoded.role;
@@ -31,8 +31,8 @@ export async function GET(request: NextRequest) {
       ],
     };
 
-    // Filter by contact role if specified
-    if (contactRole) {
+    // Filter by contact role if specified (only applied when contactId is NOT given)
+    if (contactRole && !contactId) {
       where.AND = [
         {
           OR: [
@@ -47,30 +47,24 @@ export async function GET(request: NextRequest) {
     if (contactId) {
       // SECURITY: Verify user has permission to view this conversation
       // Only allow if user is part of the conversation
-      where.AND = [
-        {
-          OR: [
-            {
-              senderId: userId,
-              senderRole: userRole,
-              receiverId: contactId,
-            },
-            {
-              receiverId: userId,
-              receiverRole: userRole,
-              senderId: contactId,
-            },
-          ],
-        },
+      const contactConditions: any[] = [
+        { senderId: userId, senderRole: userRole, receiverId: contactId },
+        { receiverId: userId, receiverRole: userRole, senderId: contactId },
       ];
+      // If a specific contact role was also supplied, further narrow the thread
+      if (contactRole) {
+        contactConditions[0].receiverRole = contactRole;
+        contactConditions[1].senderRole = contactRole;
+      }
+      where.AND = [{ OR: contactConditions }];
     }
 
     const messages = await prisma.directMessage.findMany({
       where,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: limit,
+      orderBy: { createdAt: contactId ? 'asc' : 'desc' },
+      // When fetching a specific conversation, return the full history (no cap).
+      // For the conversation list view, fetch the latest `limit` messages.
+      ...(contactId ? {} : { take: limit }),
     });
 
     // Group messages into conversations
@@ -84,8 +78,10 @@ export async function GET(request: NextRequest) {
       let otherRole = isRecipient ? msg.senderRole : msg.receiverRole;
       let otherName = isRecipient ? msg.senderName : msg.receiverName;
 
-      // If the logged-in user is a customer and the message is associated with a shop, collapse by shopId
-      if (userRole === 'customer' && msg.shopId) {
+      // For customers: only collapse messages that are explicitly to/from the 'shop' role into a
+      // single shop-level thread.  Direct messages to a specific tech or manager are kept as
+      // their own conversation threads so the customer can address each person individually.
+      if (userRole === 'customer' && msg.shopId && (otherRole === 'shop')) {
         otherId = msg.shopId;
         otherRole = 'shop';
         if (msg.receiverRole === 'shop') otherName = msg.receiverName;
@@ -188,11 +184,22 @@ export async function POST(request: NextRequest) {
       threadId,
     } = body;
 
+    const VALID_ROLES = ['customer', 'shop', 'manager', 'tech', 'admin'];
     if (!receiverId || !receiverRole || !receiverName || !messageBody) {
       return NextResponse.json(
         { error: 'Missing required fields: receiverId, receiverRole, receiverName, messageBody' },
         { status: 400 }
       );
+    }
+    if (!VALID_ROLES.includes(receiverRole)) {
+      return NextResponse.json({ error: 'Invalid receiverRole' }, { status: 400 });
+    }
+    const trimmedBody = String(messageBody).trim();
+    if (!trimmedBody) {
+      return NextResponse.json({ error: 'Message body cannot be empty' }, { status: 400 });
+    }
+    if (trimmedBody.length > 5000) {
+      return NextResponse.json({ error: 'Message body exceeds 5000 character limit' }, { status: 400 });
     }
 
     const senderId = decoded.id;
@@ -272,6 +279,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // When a customer messages a tech or manager directly, resolve their shopId so that
+    // conversations can be scoped to the correct shop on both sides.
+    if (senderRole === 'customer' && (receiverRole === 'tech' || receiverRole === 'manager')) {
+      if (!shopId) {
+        const staff = await prisma.tech.findUnique({
+          where: { id: receiverId },
+          select: { shopId: true },
+        });
+        if (staff) shopId = staff.shopId;
+      }
+    }
+
     const created = await Promise.all(targets.map((t) =>
       prisma.directMessage.create({
         data: {
@@ -282,7 +301,7 @@ export async function POST(request: NextRequest) {
           receiverRole: t.role,
           receiverName: t.name,
           subject: subject || null,
-          body: messageBody,
+          body: trimmedBody,
           shopId,
           threadId: threadId || null,
         },

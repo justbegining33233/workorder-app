@@ -5,11 +5,12 @@ import NotificationBell from '../../../components/NotificationBell';
 import TopNavBar from '../../../components/TopNavBar';
 import RealTimeWorkOrders from '../../../components/RealTimeWorkOrders';
 import CustomerMessagingCard from '../../../components/CustomerMessagingCard';
-import { useRequireAuth } from '../../../contexts/AuthContext';
+import { useRequireAuth, useAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 
 export default function CustomerDashboard() {
   useRequireAuth(['customer']);
+  const { logout } = useAuth();
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [mounted, setMounted] = useState(false);
@@ -186,9 +187,7 @@ export default function CustomerDashboard() {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userName');
-    window.location.href = '/auth/login';
+    logout();
   };
 
   const discoverFeatures = [
