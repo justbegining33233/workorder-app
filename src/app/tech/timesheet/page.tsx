@@ -327,7 +327,7 @@ export default function TechTimesheet() {
                       ) : (
                         e.workOrderId ? (
                           <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                            <a href={`/workorders/${e.workOrderId}`} style={{color:'#3b82f6', fontWeight:700, textDecoration:'none'}}>{e.workOrderId}</a>
+                            <Link href={`/workorders/${e.workOrderId}`} style={{color:'#3b82f6', fontWeight:700, textDecoration:'none'}}>{e.workOrderId}</Link>
                             <span style={{fontSize:11, background:'#052e16', color:'#bbf7d0', padding:'2px 6px', borderRadius:999}}>Billable</span>
                           </div>
                         ) : (
@@ -450,7 +450,7 @@ export default function TechTimesheet() {
                     <div style={{fontSize:13, color:'#9aa3b2'}}>{ci.toLocaleDateString()}</div>
                     <div style={{fontWeight:600, fontFamily:'monospace'}}>{formatTime(ci)}</div>
                     <div style={{fontWeight:600, fontFamily:'monospace'}}>{co ? formatTime(co) : <span style={{color:'#f59e0b'}}>In progress</span>}</div>
-                    <div><a href={`/workorders/${be.workOrderId}`} style={{color:'#3b82f6', fontWeight:700, textDecoration:'none'}}>{be.workOrderId}</a></div>
+                    <div><Link href={`/workorders/${be.workOrderId}`} style={{color:'#3b82f6', fontWeight:700, textDecoration:'none'}}>{be.workOrderId}</Link></div>
                   </div>
                 );
               })}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 interface SubscriptionData {
   id: string;
@@ -770,9 +771,9 @@ function ActionItem({ label, value, type, action, href }: { label: string; value
         <span className="text-sm text-[#FAFAFA]">{label}</span>
       </div>
       {href ? (
-        <a href={href} className={`text-xs font-medium ${colors[type].text} hover:underline`}>
+        <Link href={href} className={`text-xs font-medium ${colors[type].text} hover:underline`}>
           {action} →
-        </a>
+        </Link>
       ) : (
         <button className={`text-xs font-medium ${colors[type].text} hover:underline`}>
           {action} →

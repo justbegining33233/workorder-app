@@ -288,9 +288,9 @@ export default function CustomerAppointmentsPage() {
 
                 <div style={{ display: 'flex', gap: 8 }}>
                   {/* Track button - goes to shop page */}
-                  <a href={`/customer/shop/${apt.shop.id}`} style={{ flex: 1, padding: '10px', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'inline-block' }}>
+                  <Link href={`/customer/shop/${apt.shop.id}`} style={{ flex: 1, padding: '10px', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'inline-block' }}>
                     📍 Track
-                  </a>
+                  </Link>
 
                   {/* Message button - opens modal for this appointment */}
                   <button

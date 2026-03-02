@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import useRequireAuth from '@/lib/useRequireAuth';
 
 const INSPECTION_TEMPLATE = [
@@ -113,7 +114,7 @@ export default function TechDVIPage() {
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
           {inspectionLink && <button onClick={() => { navigator.clipboard.writeText(inspectionLink); }} style={{ background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>📋 Copy Link</button>}
           <button onClick={() => { setSaved(false); setVehicleDesc(''); setMileage(''); setWorkOrderId(''); setItems(INSPECTION_TEMPLATE.map(t => ({ ...t, condition: 'green', notes: '', estimatedCost: '' }))); }} style={{ background: 'rgba(255,255,255,0.08)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 20px', fontSize: 14, cursor: 'pointer' }}>New Inspection</button>
-          <a href="/shop/dvi" style={{ background: '#e5332a', color: '#fff', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>View All DVIs</a>
+          <Link href="/shop/dvi" style={{ background: '#e5332a', color: '#fff', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>View All DVIs</Link>
         </div>
       </div>
     </div>

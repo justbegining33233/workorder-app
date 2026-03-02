@@ -386,7 +386,7 @@ export default function TechHome() {
                             } catch (err) { console.error(err); alert('Error loading road calls'); }
                           }} style={{padding:8, borderRadius:8, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', color:'#e5e7eb', cursor:'pointer'}}>Show</button>
 
-                          <a href="/workorders/new?serviceLocation=roadside" style={{display:'inline-block', padding:'8px 10px', background:'#e5332a', color:'white', borderRadius:6, textDecoration:'none', fontWeight:700, fontSize:13}}>Create Road Call</a>
+                          <Link href="/workorders/new?serviceLocation=roadside" style={{display:'inline-block', padding:'8px 10px', background:'#e5332a', color:'white', borderRadius:6, textDecoration:'none', fontWeight:700, fontSize:13}}>Create Road Call</Link>
                         </div>
                       </div>
 
@@ -499,7 +499,7 @@ export default function TechHome() {
                             }
                           }} style={{padding:8, borderRadius:8, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', color:'#e5e7eb', cursor:'pointer'}}>Show</button>
 
-                          <a href="/tech/inventory" style={{display:'inline-block', padding:'8px 10px', background:'#10b981', color:'white', borderRadius:6, textDecoration:'none', fontWeight:700, fontSize:13}}>Open Inventory</a>
+                          <Link href="/tech/inventory" style={{display:'inline-block', padding:'8px 10px', background:'#10b981', color:'white', borderRadius:6, textDecoration:'none', fontWeight:700, fontSize:13}}>Open Inventory</Link>
                         </div>
                       </div>
 

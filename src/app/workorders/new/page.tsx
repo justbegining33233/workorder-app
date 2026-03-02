@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { createWorkOrderClient } from '@/lib/workordersClient';
 
 const VEHICLE_TYPES = ['Car', 'Truck', 'SUV', 'Van', 'Diesel Truck', 'Semi / 18-Wheeler', 'Box Truck', 'RV', 'Motorcycle', 'Heavy Equipment', 'Other'];
@@ -241,7 +242,7 @@ function NewRoadsideJobContent() {
           {services.length === 0 ? (
             <div style={{ color: '#6b7280', fontSize: 13, padding: '16px 0' }}>
               No services configured yet.{' '}
-              <a href="/shop/services" style={{ color: '#3b82f6' }}>Add services in shop settings →</a>
+              <Link href="/shop/services" style={{ color: '#3b82f6' }}>Add services in shop settings →</Link>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8 }}>
