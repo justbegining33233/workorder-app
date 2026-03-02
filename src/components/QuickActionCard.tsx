@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 interface QuickActionCardProps {
   icon: string;
   title: string;
@@ -147,9 +149,9 @@ export default function QuickActionCard(props: QuickActionCardProps) {
 
   if (href) {
     return (
-      <a href={href} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+      <Link href={href} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
         {renderContent()}
-      </a>
+      </Link>
     );
   }
 

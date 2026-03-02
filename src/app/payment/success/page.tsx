@@ -1,10 +1,11 @@
 'use client';
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const workOrderId = searchParams?.get('workOrderId');
   const [countdown, setCountdown] = useState(5);
 
@@ -14,7 +15,7 @@ function SuccessContent() {
       setCountdown(c => {
         if (c <= 1) {
           clearInterval(timer);
-          window.location.href = `/customer/workorders/${workOrderId}`;
+          router.push(`/customer/workorders/${workOrderId}`);
         }
         return c - 1;
       });

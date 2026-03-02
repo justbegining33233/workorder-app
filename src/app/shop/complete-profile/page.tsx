@@ -383,7 +383,7 @@ export default function CompleteProfile() {
               {stripeLoading ? 'Connecting...' : '🔗 Connect with Stripe'}
             </button>
             <button
-              onClick={() => { window.location.href = '/shop/home'; }}
+              onClick={() => { router.push('/shop/home'); }}
               style={{
                 display:'block',
                 width:'100%',
