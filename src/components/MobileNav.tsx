@@ -19,7 +19,7 @@ const navConfig: Record<string, { primary: NavItem[]; more: NavItem[] }> = {
     primary: [
       { icon: '🏠', label: 'Home',    path: '/customer/dashboard' },
       { icon: '🗓️', label: 'Appts',   path: '/customer/appointments' },
-      { icon: '🔧', label: 'Repairs', path: '/customer/repairs' },
+      { icon: '🔧', label: 'Repairs', path: '/customer/history' },
       { icon: '💬', label: 'Chat',    path: '/customer/messages' },
     ],
     more: [

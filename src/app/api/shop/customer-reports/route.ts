@@ -13,6 +13,12 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const shopId = searchParams.get('shopId');
+    // Data isolation: the requested shopId must belong to the authenticated user
+    // (admins/superadmins can query any shop)
+    if (decoded.role !== 'admin' && decoded.role !== 'superadmin' && shopId && shopId !== decoded.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const days = parseInt(searchParams.get('days') || '90');
     if (!shopId) return NextResponse.json({ error: 'shopId required' }, { status: 400 });
 

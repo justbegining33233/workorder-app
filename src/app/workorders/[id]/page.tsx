@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { WorkOrder, Message } from '@/types/workorder';
 import { getWorkOrderByIdClient, updateWorkOrderClient, deleteWorkOrderClient } from '@/lib/workordersClient';
 import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 type Part = { name: string; quantity: number; unitPrice: number };
 type Labor = { description: string; hours: number; ratePerHour: number };
@@ -13,6 +14,7 @@ type AdditionalCharge = { description: string; amount: number };
 type Photo = { url: string; type: string; caption?: string; timestamp: Date };
 
 export default function WorkOrderDetail({ params }: { params: Promise<{ id: string }> }) {
+  useRequireAuth(['shop', 'manager', 'tech', 'superadmin']);
   const router = useRouter();
   const [id, setId] = useState<string | null>(null);
   const [workOrder, setWorkOrder] = useState<WorkOrder | null>(null);
