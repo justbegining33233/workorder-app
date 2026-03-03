@@ -63,7 +63,7 @@ export default function TwoFactorSettingsPage() {
       setQrCode(null);
       setSecret(null);
       setTokenInput('');
-      setStatusMsg('âœ… Two-Factor Authentication is now enabled on your account.');
+      setStatusMsg('✅ Two-Factor Authentication is now enabled on your account.');
     } catch (e: any) {
       setErrorMsg(e.message);
     } finally {
@@ -110,12 +110,12 @@ export default function TwoFactorSettingsPage() {
       <div style={{ maxWidth: 560, margin: '0 auto' }}>
         <div style={{ marginBottom: 28 }}>
           <Link href="/shop/settings" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 14 }}>
-            â† Back to Settings
+            ← Back to Settings
           </Link>
         </div>
 
         <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 16, padding: 32, border: '1px solid rgba(255,255,255,0.1)' }}>
-          <h1 style={{ color: '#f1f5f9', fontSize: 24, fontWeight: 700, marginBottom: 8 }}>ðŸ” Two-Factor Authentication</h1>
+          <h1 style={{ color: '#f1f5f9', fontSize: 24, fontWeight: 700, marginBottom: 8 }}>🔒 Two-Factor Authentication</h1>
           <p style={{ color: '#94a3b8', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
             Use an authenticator app (Google Authenticator, Authy, 1Password) to generate time-based one-time codes.
           </p>
@@ -127,7 +127,7 @@ export default function TwoFactorSettingsPage() {
             borderRadius: 8, padding: '10px 16px', marginBottom: 24,
             display: 'flex', alignItems: 'center', gap: 8,
           }}>
-            <span style={{ fontSize: 18 }}>{enabled ? 'ðŸŸ¢' : 'ðŸ”´'}</span>
+            <span style={{ fontSize: 18 }}>{enabled ? '🟢' : '🔴'}</span>
             <span style={{ color: enabled ? '#86efac' : '#fca5a5', fontWeight: 600 }}>
               2FA is currently {enabled ? 'ENABLED' : 'DISABLED'}
             </span>
@@ -179,7 +179,7 @@ export default function TwoFactorSettingsPage() {
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={handleVerify} disabled={tokenInput.length !== 6 || fetching} style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#22c55e', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: tokenInput.length !== 6 ? 0.5 : 1 }}>
-                  {fetching ? 'Activatingâ€¦' : 'Activate 2FA'}
+                  {fetching ? 'Activating…' : 'Activate 2FA'}
                 </button>
                 <button onClick={() => { setStep('idle'); setQrCode(null); setSecret(null); setTokenInput(''); }} style={{ padding: '11px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
                   Cancel
@@ -210,7 +210,7 @@ export default function TwoFactorSettingsPage() {
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={handleDisable} disabled={tokenInput.length !== 6 || fetching} style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#ef4444', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: tokenInput.length !== 6 ? 0.5 : 1 }}>
-                  {fetching ? 'Disablingâ€¦' : 'Confirm Disable'}
+                  {fetching ? 'Disabling…' : 'Confirm Disable'}
                 </button>
                 <button onClick={() => { setStep('idle'); setTokenInput(''); }} style={{ padding: '11px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
                   Cancel
@@ -224,11 +224,11 @@ export default function TwoFactorSettingsPage() {
             <div>
               {!enabled ? (
                 <button onClick={handleSetup} disabled={fetching} style={{ width: '100%', padding: '13px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
-                  {fetching ? 'Generatingâ€¦' : 'ðŸ” Enable Two-Factor Authentication'}
+                  {fetching ? 'Generating…' : '🔒 Enable Two-Factor Authentication'}
                 </button>
               ) : (
                 <button onClick={() => { setStep('disable'); setTokenInput(''); setErrorMsg(null); }} style={{ width: '100%', padding: '13px', borderRadius: 10, border: '1px solid rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.1)', color: '#fca5a5', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
-                  ðŸ”“ Disable Two-Factor Authentication
+                  🔓 Disable Two-Factor Authentication
                 </button>
               )}
             </div>
