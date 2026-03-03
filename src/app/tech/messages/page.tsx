@@ -5,7 +5,7 @@ import MessagingCard from '@/components/MessagingCard';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function TechMessages() {
-  const { user, isLoading } = useRequireAuth(['tech', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
 
   if (isLoading) {
     return (

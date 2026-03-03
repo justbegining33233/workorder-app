@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function AllTechTools() {
-  const { user, isLoading } = useRequireAuth(['tech', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
 
   if (isLoading) {
     return (

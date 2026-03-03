@@ -23,7 +23,7 @@ const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
 
 export default function ShopReportsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [userRole, setUserRole] = useState('');
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);

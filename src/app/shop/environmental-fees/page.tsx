@@ -15,7 +15,7 @@ interface EnvFee {
 const FEE_ICONS: Record<string, string> = { oil: '🛢️', tire: '🔄', refrigerant: '❄️', battery: '🔋', coolant: '💧', other: '♻️' };
 
 export default function EnvironmentalFeesPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [fees, setFees] = useState<EnvFee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);

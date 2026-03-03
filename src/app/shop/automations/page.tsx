@@ -34,7 +34,7 @@ const TRIGGER_OPTIONS = [
 const VARIABLE_HINTS = ['{customer_name}', '{vehicle}', '{shop_name}', '{tech_name}', '{appointment_date}', '{appointment_time}', '{amount_due}', '{next_service_date}', '{review_link}'];
 
 export default function AutomationsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [rules, setRules] = useState<AutomationRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

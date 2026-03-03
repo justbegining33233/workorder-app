@@ -20,7 +20,7 @@ function fmtDurationMs(ms: number) {
 }
 
 export default function TechTimesheet() {
-  const { user, isLoading } = useRequireAuth(['tech', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
   const [entries, setEntries] = useState<any[]>([]);
   const [range, setRange] = useState<'week' | 'month'>('week');
   const [loading, setLoading] = useState(false);

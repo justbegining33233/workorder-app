@@ -23,7 +23,7 @@ const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','
 const BLANK: { name: string; address: string; city: string; state: string; zip: string; phone: string; email: string; isMain: boolean; status: 'active' | 'inactive'; notes: string } = { name: '', address: '', city: '', state: 'TX', zip: '', phone: '', email: '', isMain: false, status: 'active', notes: '' };
 
 export default function ShopLocationsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [locations, setLocations] = useState<ShopLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

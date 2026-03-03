@@ -25,7 +25,7 @@ interface WOMargin {
 }
 
 export default function ProfitMarginsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [data, setData] = useState<MarginData | null>(null);
   const [loading, setLoading] = useState(true);
   const [marginError, setMarginError] = useState('');

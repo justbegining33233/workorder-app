@@ -24,7 +24,7 @@ const statusColor: Record<string, { bg: string; color: string; text: string }> =
 };
 
 export default function WorkAuthorizationsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [auths, setAuths] = useState<WorkAuthorization[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);

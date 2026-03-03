@@ -24,7 +24,7 @@ interface EstimateData {
 }
 
 function ManagerEstimatesContent() {
-  useRequireAuth(['manager', 'shop']);
+  useRequireAuth(['manager']);
   const router = useRouter();
   const searchParams = useSearchParams();
   const workOrderId = searchParams?.get('workOrderId') || '';

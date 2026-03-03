@@ -74,7 +74,7 @@ function weekStart(d = new Date()) { const s = new Date(d); s.setDate(d.getDate(
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PayrollPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [tab, setTab] = useState<'overview' | 'schedule' | 'timecards' | 'attendance' | 'leave' | 'periods' | 'stubs' | 'settings'>('overview');
 
   // Data state

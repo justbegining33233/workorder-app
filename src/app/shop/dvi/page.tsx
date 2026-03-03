@@ -21,7 +21,7 @@ const conditionColor: Record<string, string> = { green: '#22c55e', yellow: '#f59
 const conditionBg: Record<string, string> = { green: 'rgba(34,197,94,0.1)', yellow: 'rgba(245,158,11,0.1)', red: 'rgba(229,51,42,0.1)' };
 
 export default function DVIPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [inspections, setInspections] = useState<DVIInspection[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<DVIInspection | null>(null);

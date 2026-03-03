@@ -28,7 +28,7 @@ const statusBg: Record<string, string> = {
 };
 
 export default function BaysPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [bays, setBays] = useState<Bay[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);

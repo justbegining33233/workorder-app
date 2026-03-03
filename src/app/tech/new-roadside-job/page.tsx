@@ -7,7 +7,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function NewRoadsideJob() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth(['tech', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
   const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',

@@ -100,7 +100,7 @@ const CARD_BORDER = '1px solid rgba(255,255,255,0.1)';
 type TabId = 'my' | 'catalog' | 'custom';
 
 export default function ShopServicesPage() {
-  useRequireAuth(['shop', 'manager']);
+  useRequireAuth(['shop']);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [shopId, setShopId] = useState('');

@@ -21,7 +21,7 @@ interface FleetInvoice { id: string; invoiceNumber: string; totalAmount: number;
 const statusColor: Record<string, string> = { active: '#22c55e', suspended: '#e5332a', closed: '#6b7280' };
 
 export default function FleetPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [accounts, setAccounts] = useState<FleetAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<FleetAccount | null>(null);

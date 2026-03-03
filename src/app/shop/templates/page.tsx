@@ -28,7 +28,7 @@ const BLANK_FORM = {
 };
 
 export default function WorkOrderTemplatesPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [templates, setTemplates] = useState<WorkOrderTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

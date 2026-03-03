@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ShareLocation() {
-  const { user, isLoading } = useRequireAuth(['tech', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
   const [location, setLocation] = useState<{lat: number; lng: number} | null>(null);
   const [address, setAddress] = useState('');
   const [sharing, setSharing] = useState(false);

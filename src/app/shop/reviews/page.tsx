@@ -18,7 +18,7 @@ interface Review {
 const STARS = [1, 2, 3, 4, 5];
 
 export default function ShopReviewsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [shopId, setShopId] = useState('');

@@ -7,7 +7,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 import { useEffect, useState, useRef } from 'react';
 
 export default function TechCustomers() {
-  const { user, isLoading } = useRequireAuth(['tech', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);

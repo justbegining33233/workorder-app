@@ -34,7 +34,7 @@ const bg = 'transparent';
 const inp: React.CSSProperties = { width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#f1f5f9', fontSize: 14, boxSizing: 'border-box' };
 
 export default function VendorManagementPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [activeTab, setActiveTab] = useState<TabId>('vendors');
 
   // ── Vendors state ──

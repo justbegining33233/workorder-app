@@ -3,7 +3,7 @@ import React from 'react';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ManagerDashboard() {
-  const { user, isLoading } = useRequireAuth(['manager', 'shop']);
+  const { user, isLoading } = useRequireAuth(['manager']);
   if (isLoading || !user) return null;
   return (
     <div className="flex min-h-screen">

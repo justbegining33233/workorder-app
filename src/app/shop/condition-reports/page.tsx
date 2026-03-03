@@ -20,7 +20,7 @@ interface ConditionReport {
 }
 
 export default function ConditionReportsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [reports, setReports] = useState<ConditionReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);

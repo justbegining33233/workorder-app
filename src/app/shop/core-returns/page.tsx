@@ -6,7 +6,7 @@ interface CoreReturn { id: string; partName: string; partNumber?: string; vendor
 const statusColor: Record<string, string> = { pending: '#f59e0b', returned: '#60a5fa', credited: '#22c55e', waived: '#6b7280' };
 
 export default function CoreReturnsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [items, setItems] = useState<CoreReturn[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);

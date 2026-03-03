@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 
 export default function AnalyticsPage() {
-  useRequireAuth(['shop', 'manager']);
+  useRequireAuth(['shop']);
   const router = useRouter();
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);

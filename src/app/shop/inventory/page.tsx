@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ShopInventoryPage() {
-  useRequireAuth(['shop', 'manager']);
+  useRequireAuth(['shop']);
   const router = useRouter();
   const [inventory, setInventory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

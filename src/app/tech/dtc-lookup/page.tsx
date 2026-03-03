@@ -18,7 +18,7 @@ const SEVERITY_STYLE: Record<string, { bg: string; color: string }> = {
 };
 
 export default function DTCLookupPage() {
-  const { user, isLoading } = useRequireAuth(['tech', 'shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
   const [code, setCode] = useState('');
   const [result, setResult] = useState<DTCResult | null>(null);
   const [loading, setLoading] = useState(false);

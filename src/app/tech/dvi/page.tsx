@@ -51,7 +51,7 @@ const conditionStyle: Record<Condition, { bg: string; border: string }> = {
 };
 
 export default function TechDVIPage() {
-  const { user, isLoading } = useRequireAuth(['tech', 'shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['tech']);
   const [vehicleDesc, setVehicleDesc] = useState('');
   const [mileage, setMileage] = useState('');
   const [workOrderId, setWorkOrderId] = useState('');

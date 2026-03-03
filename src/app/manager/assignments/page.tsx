@@ -26,7 +26,7 @@ interface Tech {
 
 export default function AssignmentsPage() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth(['manager', 'shop']);
+  const { user, isLoading } = useRequireAuth(['manager']);
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
   const [techs, setTechs] = useState<Tech[]>([]);
   const [selectedWorkOrder, setSelectedWorkOrder] = useState<string | null>(null);

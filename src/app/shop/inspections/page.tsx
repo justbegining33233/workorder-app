@@ -25,7 +25,7 @@ const RESULT_STYLE: Record<string, { bg: string; color: string; icon: string }> 
 };
 
 export default function StateInspectionsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [inspections, setInspections] = useState<StateInspection[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);

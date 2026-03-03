@@ -29,7 +29,7 @@ const FREQUENCY_LABELS: Record<string, string> = {
 };
 
 export default function RecurringWorkOrders() {
-  useRequireAuth(['shop', 'tech', 'manager']);
+  useRequireAuth(['shop']);
   const router = useRouter();
 
   const [schedules, setSchedules] = useState<RecurringSchedule[]>([]);

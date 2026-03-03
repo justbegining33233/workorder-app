@@ -51,7 +51,7 @@ type QuickAction = {
 
 export default function ShopHome() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState({

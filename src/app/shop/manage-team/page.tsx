@@ -27,7 +27,7 @@ interface StoredEmployee {
 }
 
 export default function ManageTeamPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 

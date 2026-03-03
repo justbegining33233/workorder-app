@@ -33,7 +33,7 @@ const STATUS_STYLES: Record<string, { bg: string; color: string; label: string }
 const EMPTY_ITEM: Omit<POItem, 'id'> = { partNumber: '', description: '', qty: 1, unitCost: 0 };
 
 export default function PurchaseOrdersPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const router = useRouter();
   const [orders, setOrders] = useState<PurchaseOrder[]>([]);
   const [loading, setLoading] = useState(true);

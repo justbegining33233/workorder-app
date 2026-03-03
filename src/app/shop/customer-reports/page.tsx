@@ -35,7 +35,7 @@ const PERIODS = [
 ];
 
 export default function CustomerReportsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [shopId, setShopId] = useState('');
   const [days, setDays] = useState(90);
   const [summary, setSummary] = useState<Summary | null>(null);

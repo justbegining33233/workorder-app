@@ -28,7 +28,7 @@ const statusColor: Record<string, string> = { available: '#22c55e', out: '#e5332
 const fuelOptions = ['Full', '3/4', '1/2', '1/4', 'Empty'];
 
 export default function LoanersPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [loaners, setLoaners] = useState<Loaner[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);

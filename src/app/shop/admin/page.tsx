@@ -13,7 +13,7 @@ import TeamTab from './tabs/TeamTab';
 import InventoryTab from './tabs/InventoryTab';
 
 export default function ShopAdminPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
   const [userName, setUserName] = useState('');
