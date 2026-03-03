@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/middleware';
+import { requireRole } from '@/lib/auth';
 import { createCoupon, listCoupons } from '@/lib/stripe';
 
 export async function GET(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   // Only super admins can manage coupons
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   // Only super admins can create coupons

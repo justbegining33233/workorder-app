@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/middleware';
-import { AuthUser } from '@/lib/auth';
+
+import { requireRole, AuthUser } from '@/lib/auth';
 import { getSettings, updateSettings, resetSettings } from '@/lib/platform-settings';
 
 export async function GET(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
   if ((auth as AuthUser).role !== 'admin') {
     return NextResponse.json({ error: 'Admin only' }, { status: 403 });
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
   if ((auth as AuthUser).role !== 'admin') {
     return NextResponse.json({ error: 'Admin only' }, { status: 403 });
@@ -28,7 +28,7 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
   if ((auth as AuthUser).role !== 'admin') {
     return NextResponse.json({ error: 'Admin only' }, { status: 403 });

@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { requireAuth } from '@/lib/middleware';
+import { requireRole } from '@/lib/auth';
 
 // Subscription pricing for MRR/ARR calculations
 const PLAN_PRICES: Record<string, number> = {
@@ -12,7 +12,7 @@ const PLAN_PRICES: Record<string, number> = {
 };
 
 export async function GET(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   if (auth.role !== 'admin') {

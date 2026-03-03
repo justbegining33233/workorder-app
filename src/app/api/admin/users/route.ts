@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logAdminAction } from '@/lib/auditLog';
 import prisma from '@/lib/prisma';
-import { requireAuth } from '@/lib/middleware';
+import { requireRole } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   // Only super admins can access user management
@@ -428,7 +428,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   if (auth.role !== 'admin') {
@@ -477,7 +477,7 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const auth = requireAuth(request);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   if (auth.role !== 'admin') {
