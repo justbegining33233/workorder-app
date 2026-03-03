@@ -1,56 +1,78 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 
-const IDLE_MS = 5 * 60 * 1000;      // 5 minutes until logout
-const WARN_MS = 30 * 1000;           // show warning 30 seconds before logout
+const IDLE_MS = 5 * 60 * 1000;   // 5 minutes until warning shows
+const WARN_MS = 30 * 1000;        // 30-second countdown after warning
 
 interface Options {
-  onIdle: () => void;       // called when countdown hits 0
-  onWarning: () => void;    // called when warning countdown starts
-  onActive: () => void;     // called when user becomes active again (dismisses warning)
+  onIdle: () => void;       // called when countdown hits 0 → logout
+  onWarning: () => void;    // called 30s before logout
+  onActive: () => void;     // called when user activity resumes during warning
   enabled: boolean;
 }
 
 export function useIdleTimeout({ onIdle, onWarning, onActive, enabled }: Options) {
-  const warnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isWarning = useRef(false);
+  // Store callbacks in refs so timer closures always see the latest version
+  // without being listed as deps (prevents timer reset on every render)
+  const onIdleRef   = useRef(onIdle);
+  const onWarnRef   = useRef(onWarning);
+  const onActiveRef = useRef(onActive);
+  const enabledRef  = useRef(enabled);
 
-  const clearTimers = useCallback(() => {
-    if (warnTimer.current) { clearTimeout(warnTimer.current); warnTimer.current = null; }
-    if (idleTimer.current) { clearTimeout(idleTimer.current); idleTimer.current = null; }
-  }, []);
+  onIdleRef.current   = onIdle;
+  onWarnRef.current   = onWarning;
+  onActiveRef.current = onActive;
+  enabledRef.current  = enabled;
 
-  const resetTimers = useCallback(() => {
-    if (!enabled) return;
-    clearTimers();
-    if (isWarning.current) {
-      isWarning.current = false;
-      onActive();
-    }
-    warnTimer.current = setTimeout(() => {
-      isWarning.current = true;
-      onWarning();
-      idleTimer.current = setTimeout(() => {
-        isWarning.current = false;
-        onIdle();
-      }, WARN_MS);
-    }, IDLE_MS - WARN_MS);
-  }, [enabled, clearTimers, onIdle, onWarning, onActive]);
+  const warnTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isWarning   = useRef(false);
+  const handlerRef  = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    if (!enabled) return;
+    const clearTimers = () => {
+      if (warnTimer.current) { clearTimeout(warnTimer.current); warnTimer.current = null; }
+      if (idleTimer.current) { clearTimeout(idleTimer.current); idleTimer.current = null; }
+    };
 
+    const resetTimers = () => {
+      if (!enabledRef.current) return;
+      clearTimers();
+      if (isWarning.current) {
+        isWarning.current = false;
+        onActiveRef.current();
+      }
+      warnTimer.current = setTimeout(() => {
+        isWarning.current = true;
+        onWarnRef.current();
+        idleTimer.current = setTimeout(() => {
+          isWarning.current = false;
+          onIdleRef.current();
+        }, WARN_MS);
+      }, IDLE_MS - WARN_MS);
+    };
+
+    // Remove previous handler if any
     const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
-    const handler = () => resetTimers();
+    if (handlerRef.current) {
+      events.forEach(e => window.removeEventListener(e, handlerRef.current!));
+    }
 
-    events.forEach(e => window.addEventListener(e, handler, { passive: true }));
-    resetTimers();
+    if (!enabled) {
+      clearTimers();
+      return;
+    }
+
+    handlerRef.current = resetTimers;
+    events.forEach(e => window.addEventListener(e, resetTimers, { passive: true }));
+    resetTimers(); // start the initial timer
 
     return () => {
-      events.forEach(e => window.removeEventListener(e, handler));
+      events.forEach(e => window.removeEventListener(e, resetTimers));
       clearTimers();
     };
-  }, [enabled, resetTimers, clearTimers]);
+  // Only re-run when enabled changes — NOT when callbacks change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
 }

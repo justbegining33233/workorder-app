@@ -13,42 +13,42 @@ export default function IdleTimeoutProvider({ children }: { children: React.Reac
   const [secondsLeft, setSecondsLeft] = useState(WARN_SECONDS);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const stopCountdown = useCallback(() => {
+  const stopCountdown = () => {
     if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null; }
-  }, []);
+  };
 
-  const startCountdown = useCallback(() => {
+  // Called by hook when idle timer fires → force logout
+  const handleIdle = useCallback(() => {
+    stopCountdown();
+    setShowWarning(false);
+    logout();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logout]);
+
+  // Called by hook when 30s warning period starts
+  const handleWarning = useCallback(() => {
     setSecondsLeft(WARN_SECONDS);
+    setShowWarning(true);
     countdownRef.current = setInterval(() => {
       setSecondsLeft(s => {
         if (s <= 1) { stopCountdown(); return 0; }
         return s - 1;
       });
     }, 1000);
-  }, [stopCountdown]);
+  }, []);
 
-  const handleWarning = useCallback(() => {
-    setShowWarning(true);
-    startCountdown();
-  }, [startCountdown]);
-
-  const handleIdle = useCallback(() => {
-    stopCountdown();
-    setShowWarning(false);
-    logout();
-  }, [logout, stopCountdown]);
-
+  // Called by hook when user moves/types during the warning period
   const handleActive = useCallback(() => {
     stopCountdown();
     setShowWarning(false);
     setSecondsLeft(WARN_SECONDS);
-  }, [stopCountdown]);
+  }, []);
 
-  const handleStay = useCallback(() => {
-    handleActive();
-    // reset timers by dispatching a synthetic activity event
+  // "Stay logged in" button — dispatch a real activity event so the
+  // hook resets its internal timers and calls handleActive for us
+  const handleStay = () => {
     window.dispatchEvent(new MouseEvent('mousemove'));
-  }, [handleActive]);
+  };
 
   useIdleTimeout({
     onWarning: handleWarning,
@@ -57,8 +57,8 @@ export default function IdleTimeoutProvider({ children }: { children: React.Reac
     enabled: isAuthenticated,
   });
 
-  // Clean up on unmount
-  useEffect(() => () => stopCountdown(), [stopCountdown]);
+  // Clean up interval on unmount
+  useEffect(() => () => stopCountdown(), []);
 
   return (
     <>

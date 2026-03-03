@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PasswordResetForm from '@/components/PasswordResetForm';
 import { getCsrfToken } from '@/lib/clientCsrf';
@@ -17,7 +17,6 @@ export default function LoginClient() {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
   const [showSecurityTip, setShowSecurityTip] = useState(false);
-  const securityTipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Reset form fields every time this page mounts (e.g. after logout)
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
@@ -30,11 +29,7 @@ export default function LoginClient() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showReset, setShowReset] = useState(false);
 
-  const showSecurityBanner = () => {
-    if (securityTipTimer.current) clearTimeout(securityTipTimer.current);
-    setShowSecurityTip(true);
-    securityTipTimer.current = setTimeout(() => setShowSecurityTip(false), 6000);
-  };
+  const showSecurityBanner = () => setShowSecurityTip(true);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,6 +204,53 @@ export default function LoginClient() {
 
   return (
     <div className="sos-wrap">
+      {/* Security tip modal — user must dismiss */}
+      {showSecurityTip && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 99999,
+          background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            background: '#1a1d27', border: '1px solid #e5332a',
+            borderRadius: 14, padding: '32px 36px', maxWidth: 400, width: '90%',
+            textAlign: 'center', boxShadow: '0 8px 40px rgba(229,51,42,0.3)',
+            position: 'relative',
+          }}>
+            <button
+              onClick={() => setShowSecurityTip(false)}
+              style={{
+                position: 'absolute', top: 14, right: 16,
+                background: 'none', border: 'none', color: '#9aa3b2',
+                cursor: 'pointer', fontSize: 20, lineHeight: 1,
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div style={{ fontSize: 44, marginBottom: 14 }}>🔒</div>
+            <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>
+              Keep your account safe
+            </h2>
+            <p style={{ color: '#b8beca', fontSize: 14, margin: '0 0 8px' }}>
+              For your security, please <strong style={{ color: '#ff948d' }}>do not save your password</strong> in the browser.
+            </p>
+            <p style={{ color: '#b8beca', fontSize: 13, margin: '0 0 24px' }}>
+              Never share your login credentials with anyone. Always sign out when you&apos;re done.
+            </p>
+            <button
+              onClick={() => setShowSecurityTip(false)}
+              style={{
+                background: '#e5332a', border: 'none', color: '#fff',
+                borderRadius: 8, padding: '11px 32px', cursor: 'pointer',
+                fontSize: 15, fontWeight: 600, width: '100%',
+              }}
+            >
+              Got it, I understand
+            </button>
+          </div>
+        </div>
+      )}
       <OilSlickCanvas />
       <div className="sos-card">
         <div className="sos-header">
@@ -226,26 +268,6 @@ export default function LoginClient() {
             </div>
             {activeTab === 'login' && (
               <form onSubmit={handleLoginSubmit} className="sos-form" autoComplete="off">
-                {/* Security tip banner */}
-                {showSecurityTip && (
-                  <div style={{
-                    background: 'rgba(229,51,42,0.12)', border: '1px solid rgba(229,51,42,0.4)',
-                    borderRadius: 8, padding: '10px 14px', marginBottom: 12,
-                    display: 'flex', alignItems: 'flex-start', gap: 10,
-                  }}>
-                    <span style={{ fontSize: 18, flexShrink: 0 }}>🔒</span>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, margin: '0 0 2px' }}>Security tip</p>
-                      <p style={{ color: '#b8beca', fontSize: 12, margin: 0 }}>
-                        For your safety, do <strong style={{color:'#ff948d'}}>not</strong> save your password in the browser. Keep your account information private.
-                      </p>
-                    </div>
-                    <button type="button" onClick={() => setShowSecurityTip(false)}
-                      style={{ background: 'none', border: 'none', color: '#9aa3b2', cursor: 'pointer', fontSize: 16, padding: 0, flexShrink: 0 }}>
-                      ✕
-                    </button>
-                  </div>
-                )}
                 <div className="sos-field">
                   <label>Username</label>
                   <input type="text" value={loginForm.username} onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} className="sos-input" placeholder="Username or email" autoComplete="off" />
