@@ -35,7 +35,6 @@ export default function NewRoadsideJob() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Roadside job created successfully!');
     router.push('/tech/home');
   };
 

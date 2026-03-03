@@ -53,6 +53,7 @@ export default function WorkOrderDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState('');
 
   const workOrderId = params?.id as string;
 
@@ -112,11 +113,11 @@ export default function WorkOrderDetailsPage() {
       if (data.url) {
         window.location.href = data.url; // redirect to Stripe Checkout
       } else {
-        alert(data.error || 'Failed to start payment');
+        setPayError(data.error || 'Failed to start payment');
         setPaying(false);
       }
     } catch {
-      alert('Something went wrong. Please try again.');
+      setPayError('Something went wrong. Please try again.');
       setPaying(false);
     }
   };
@@ -308,6 +309,7 @@ export default function WorkOrderDetailsPage() {
                     <span>${workOrder.estimate.totalDue.toFixed(2)}</span>
                   </div>
                 </div>
+                {payError && <div style={{color:'#ef4444',fontSize:13,marginBottom:12,padding:'8px 12px',background:'rgba(239,68,68,0.1)',borderRadius:6}}>{payError}</div>}
                 <button
                   onClick={handlePay}
                   disabled={paying}

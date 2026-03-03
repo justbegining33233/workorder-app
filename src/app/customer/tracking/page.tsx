@@ -47,6 +47,7 @@ export default function LiveTracking() {
     message: '',
     sending: false
   });
+  const [trackingMsg, setTrackingMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
@@ -144,13 +145,13 @@ export default function LiveTracking() {
       });
 
       if (response.ok) {
-        alert('Message sent successfully!');
+        setTrackingMsg({type:'success',text:'Message sent successfully!'});
         closeMessageModal();
       } else {
-        alert('Failed to send message. Please try again.');
+        setTrackingMsg({type:'error',text:'Failed to send message. Please try again.'});
       }
     } catch (error) {
-      alert('Failed to send message. Please try again.');
+      setTrackingMsg({type:'error',text:'Failed to send message. Please try again.'});
     } finally {
       setMessageModal(prev => ({ ...prev, sending: false }));
     }
@@ -394,6 +395,13 @@ export default function LiveTracking() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {trackingMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:trackingMsg.type==='success'?'#dcfce7':'#fde8e8',color:trackingMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {trackingMsg.text}
+          <button onClick={()=>setTrackingMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
         </div>
       )}
     </div>

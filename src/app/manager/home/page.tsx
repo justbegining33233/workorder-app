@@ -44,6 +44,7 @@ export default function ManagerHome() {
   const [teamSchedule, setTeamSchedule] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [urgentAlerts, setUrgentAlerts] = useState<any[]>([]);
+  const [managerMsg, setManagerMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   async function fetchShopName(shop: string) {
     try {
       const token = localStorage.getItem('token');
@@ -225,16 +226,16 @@ export default function ManagerHome() {
       });
 
       if (response.ok) {
-        alert('Inventory request submitted successfully!');
+        setManagerMsg({type:'success',text:'Inventory request submitted successfully!'});
         setShowRequestForm(false);
         setNewRequest({ itemName: '', quantity: 1, reason: '', urgency: 'normal' });
         fetchInventoryRequests(shopId);
       } else {
-        alert('Failed to submit request');
+        setManagerMsg({type:'error',text:'Failed to submit request'});
       }
     } catch (error) {
       console.error('Error submitting request:', error);
-      alert('Error submitting request');
+      setManagerMsg({type:'error',text:'Error submitting request'});
     }
   };
 
@@ -565,6 +566,12 @@ export default function ManagerHome() {
           )}
         </div>
       </div>
+      {managerMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:managerMsg.type==='success'?'#dcfce7':'#fde8e8',color:managerMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {managerMsg.text}
+          <button onClick={()=>setManagerMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

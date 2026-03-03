@@ -100,6 +100,8 @@ export default function ManageTenants() {
   const [showDetails, setShowDetails] = useState(false);
   const [showSubscription, setShowSubscription] = useState(false);
   const [updatingSubscription, setUpdatingSubscription] = useState(false);
+  const [tenantMsg, setTenantMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [cancelConfirmId, setCancelConfirmId] = useState<string|null>(null);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -129,25 +131,22 @@ export default function ManageTenants() {
 
       if (response.ok) {
         const result = await response.json();
-        alert(`✅ ${result.message}`);
+        setTenantMsg({type:'success',text:result.message});
         window.location.reload();
       } else {
         const error = await response.json();
-        alert(`❌ Error: ${error.error}`);
+        setTenantMsg({type:'error',text:error.error || 'Failed to update subscription plan'});
       }
     } catch (error) {
       console.error('Error updating plan:', error);
-      alert('❌ Failed to update subscription plan');
+      setTenantMsg({type:'error',text:'Failed to update subscription plan'});
     } finally {
       setUpdatingSubscription(false);
     }
   };
 
   const handleCancelSubscription = async (shopId: string) => {
-    if (!confirm('Are you sure you want to cancel this subscription? This action cannot be undone.')) {
-      return;
-    }
-
+    setCancelConfirmId(null);
     setUpdatingSubscription(true);
     try {
       const token = localStorage.getItem('token');
@@ -166,15 +165,15 @@ export default function ManageTenants() {
 
       if (response.ok) {
         const result = await response.json();
-        alert(`✅ ${result.message}`);
+        setTenantMsg({type:'success',text:result.message});
         window.location.reload();
       } else {
         const error = await response.json();
-        alert(`❌ Error: ${error.error}`);
+        setTenantMsg({type:'error',text:error.error || 'Failed to cancel subscription'});
       }
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      alert('❌ Failed to cancel subscription');
+      setTenantMsg({type:'error',text:'Failed to cancel subscription'});
     } finally {
       setUpdatingSubscription(false);
     }
@@ -531,7 +530,7 @@ export default function ManageTenants() {
                 {updatingSubscription ? 'Updating...' : 'Upgrade Plan'}
               </button>
               <button
-                onClick={() => handleCancelSubscription(selectedTenant.id)}
+                onClick={() => setCancelConfirmId(selectedTenant.id)}
                 disabled={updatingSubscription}
                 style={{
                   padding:'12px 24px',
@@ -613,6 +612,24 @@ export default function ManageTenants() {
               )}
             </div>
           </div>
+        </div>
+      )}
+      {cancelConfirmId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1e2533',borderRadius:14,padding:32,minWidth:320,maxWidth:440,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+            <h3 style={{fontSize:18,fontWeight:700,color:'#e5e7eb',marginBottom:12}}>Cancel Subscription?</h3>
+            <p style={{fontSize:14,color:'#9aa3b2',marginBottom:24}}>Are you sure you want to cancel this subscription? This action cannot be undone.</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={()=>handleCancelSubscription(cancelConfirmId)} disabled={updatingSubscription} style={{flex:1,padding:'10px 0',background:'#ef4444',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Cancel Subscription</button>
+              <button onClick={()=>setCancelConfirmId(null)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Keep</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {tenantMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:tenantMsg.type==='success'?'#dcfce7':'#fde8e8',color:tenantMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {tenantMsg.text}
+          <button onClick={()=>setTenantMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
         </div>
       )}
     </div>

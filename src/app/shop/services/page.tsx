@@ -114,6 +114,8 @@ export default function ShopServicesPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editForm, setEditForm] = useState({ serviceName: '', category: 'diesel', price: '', duration: '', description: '' });
   const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Custom tab
   const [customForm, setCustomForm] = useState({ serviceName: '', category: 'diesel', price: '', duration: '', description: '' });
@@ -125,6 +127,7 @@ export default function ShopServicesPage() {
   const [catalogPrices, setCatalogPrices] = useState<Record<string, string>>({});
   const [addingCatalog, setAddingCatalog] = useState<string | null>(null);
   const [catalogSuccess, setCatalogSuccess] = useState('');
+  const [catalogError, setCatalogError] = useState('');
   const [catalogFilterCat, setCatalogFilterCat] = useState('all');
 
   useEffect(() => {
@@ -174,13 +177,13 @@ export default function ShopServicesPage() {
     });
     setEditSaving(false);
     if (res.ok) { setShowEditModal(false); setEditingService(null); reload(); }
-    else { const d = await res.json(); alert(d.error || 'Failed to save'); }
+    else { const d = await res.json(); setEditError(d.error || 'Failed to save'); }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this service?')) return;
     const token = localStorage.getItem('token');
     await fetch(`/api/services/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    setDeleteConfirmId(null);
     reload();
   };
 
@@ -216,7 +219,7 @@ export default function ShopServicesPage() {
     });
     setAddingCatalog(null);
     if (res.ok) { setCatalogSuccess(`"${serviceName}" added!`); reload(); setTimeout(() => setCatalogSuccess(''), 3000); }
-    else { const d = await res.json(); alert(d.error || 'Failed to add'); }
+    else { const d = await res.json(); setCatalogError(d.error || 'Failed to add'); setTimeout(() => setCatalogError(''), 4000); }
   };
 
   const activeCats = ALL_CATEGORIES.filter(c => services.some(s => s.category === c));
@@ -303,7 +306,7 @@ export default function ShopServicesPage() {
                         </div>
                         <div style={{ display: 'flex', gap: 6, marginLeft: 8 }}>
                           <button onClick={() => openEdit(svc)} style={{ background: 'rgba(59,130,246,0.2)', border: 'none', color: '#60a5fa', padding: '5px 11px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>Edit</button>
-                          <button onClick={() => handleDelete(svc.id)} style={{ background: 'rgba(239,68,68,0.2)', border: 'none', color: '#f87171', padding: '5px 11px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✕</button>
+                          <button onClick={() => setDeleteConfirmId(svc.id)} style={{ background: 'rgba(239,68,68,0.2)', border: 'none', color: '#f87171', padding: '5px 11px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✕</button>
                         </div>
                       </div>
                       {svc.description && <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 10px' }}>{svc.description}</p>}
@@ -335,6 +338,9 @@ export default function ShopServicesPage() {
               </p>
               {catalogSuccess && (
                 <div style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 7, padding: '7px 14px', color: '#4ade80', fontSize: 13, fontWeight: 600 }}>{catalogSuccess}</div>
+              )}
+              {catalogError && (
+                <div style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 7, padding: '7px 14px', color: '#f87171', fontSize: 13, fontWeight: 600 }}>{catalogError}</div>
               )}
             </div>
 
@@ -501,6 +507,9 @@ export default function ShopServicesPage() {
                 <label style={labelStyle}>Description</label>
                 <textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} rows={3} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }} />
               </div>
+              {editError && (
+                <div style={{ marginBottom: 12, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '8px 14px', color: '#f87171', fontSize: 13, fontWeight: 600 }}>{editError}</div>
+              )}
               <div style={{ display: 'flex', gap: 10 }}>
                 <button type="submit" disabled={editSaving}
                   style={{ flex: 1, padding: 12, borderRadius: 8, border: 'none', background: '#e5332a', color: '#fff', fontWeight: 700, cursor: editSaving ? 'default' : 'pointer' }}>
@@ -512,6 +521,21 @@ export default function ShopServicesPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete service confirm modal */}
+      {deleteConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#1e1e2e', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Service?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This service will be removed from your catalog.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirmId)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+            </div>
           </div>
         </div>
       )}

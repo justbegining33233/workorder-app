@@ -23,6 +23,7 @@ const tireServiceOptions: { value: TireServiceType; label: string }[] = [
 export default function WorkOrderForm({ initialData, onSubmit, initialServiceLocation }: WorkOrderFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [formMsg, setFormMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const [step, setStep] = useState(1);
   const [userRole, setUserRole] = useState<'customer' | 'tech' | 'manager'>('customer');
   const [selectedShop, setSelectedShop] = useState<any>(null);
@@ -259,7 +260,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
       }
     } catch (error) {
       console.error('Error saving work order:', error);
-      alert('Failed to save work order');
+      setFormMsg({type:'error',text:'Failed to save work order'});
     } finally {
       setLoading(false);
     }
@@ -695,6 +696,12 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
           {step === totalSteps ? (loading ? 'Saving...' : 'Create Work Order') : 'Next →'}
         </button>
       </div>
+      {formMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:formMsg.type==='success'?'#dcfce7':'#fde8e8',color:formMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {formMsg.text}
+          <button onClick={()=>setFormMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </form>
   );
 }

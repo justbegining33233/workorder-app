@@ -62,6 +62,7 @@ export default function TechDVIPage() {
   const [saved, setSaved] = useState(false);
   const [inspectionLink, setInspectionLink] = useState('');
   const [activeCategory, setActiveCategory] = useState('Engine');
+  const [dviError, setDviError] = useState('');
   const categories = [...new Set(INSPECTION_TEMPLATE.map(t => t.category))];
 
   const updateItem = (idx: number, field: keyof InspectionItem, value: string) => {
@@ -69,7 +70,7 @@ export default function TechDVIPage() {
   };
 
   const submit = async () => {
-    if (!vehicleDesc) { alert('Please enter vehicle description.'); return; }
+    if (!vehicleDesc) { setDviError('Please enter vehicle description.'); return; }
     setSaving(true);
     const token = localStorage.getItem('token');
     const r = await fetch('/api/dvi', {
@@ -212,6 +213,7 @@ export default function TechDVIPage() {
           ))}
         </div>
 
+        {dviError && <p style={{color:'#ef4444',fontSize:13,margin:'0 0 12px',fontWeight:600}}>{dviError}</p>}
         <button onClick={submit} disabled={saving}
           style={{ width: '100%', background: '#e5332a', color: '#fff', border: 'none', borderRadius: 10, padding: '14px 0', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}>
           {saving ? 'Submitting...' : '✅ Submit Inspection'}

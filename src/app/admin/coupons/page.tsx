@@ -11,6 +11,7 @@ export default function CouponManagementPage() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [couponMsg, setCouponMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   const [newCoupon, setNewCoupon] = useState({
     id: '',
@@ -84,11 +85,11 @@ export default function CouponManagementPage() {
         });
         fetchCoupons();
       } else {
-        alert('Failed to create coupon');
+        setCouponMsg({type:'error',text:'Failed to create coupon'});
       }
     } catch (error) {
       console.error('Error creating coupon:', error);
-      alert('Error creating coupon');
+      setCouponMsg({type:'error',text:'Error creating coupon'});
     } finally {
       setLoading(false);
     }
@@ -411,6 +412,12 @@ export default function CouponManagementPage() {
           )}
         </div>
       </div>
+      {couponMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:couponMsg.type==='success'?'#dcfce7':'#fde8e8',color:couponMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {couponMsg.text}
+          <button onClick={()=>setCouponMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

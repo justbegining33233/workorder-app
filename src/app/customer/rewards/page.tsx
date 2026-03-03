@@ -86,16 +86,18 @@ export default function Rewards() {
             </div>
             <div style={{flex:1}}>
               {(() => {
-                const nextThreshold = loyaltyPoints >= 1000 ? 1000 : loyaltyPoints >= 200 ? 1000 : 200;
+                const nextThreshold = loyaltyPoints >= 1000 ? null : loyaltyPoints >= 200 ? 1000 : 200;
                 const prevThreshold = loyaltyPoints >= 1000 ? 1000 : loyaltyPoints >= 200 ? 200 : 0;
-                const pct = nextThreshold > prevThreshold
+                const pct = nextThreshold === null
+                  ? 100
+                  : nextThreshold > prevThreshold
                   ? Math.min(100, Math.round(((loyaltyPoints - prevThreshold) / (nextThreshold - prevThreshold)) * 100))
                   : 100;
                 return (
                   <>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:8}}>
                       <span style={{fontSize:14, color:'#e5e7eb'}}>Progress to next reward</span>
-                      <span style={{fontSize:14, color:'#9aa3b2'}}>{loyaltyPoints} / {nextThreshold}</span>
+                      <span style={{fontSize:14, color:'#9aa3b2'}}>{loyaltyPoints} / {nextThreshold ?? loyaltyPoints}</span>
                     </div>
                     <div style={{width:'100%', height:8, background:'rgba(255,255,255,0.1)', borderRadius:4}}>
                       <div style={{width:`${pct}%`, height:'100%', background:'#3b82f6', borderRadius:4}}></div>
@@ -142,7 +144,22 @@ export default function Rewards() {
                 )}
               </div>
               {!reward.claimed && (
-                <button style={{
+                <button
+                  onClick={async () => {
+                    if (!reward.earned) return;
+                    try {
+                      const token = localStorage.getItem('token');
+                      const r = await fetch('/api/customers/rewards/claim', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                        body: JSON.stringify({ rewardId: reward.id }),
+                      });
+                      if (r.ok) {
+                        setRewards(prev => prev.map(rw => rw.id === reward.id ? { ...rw, claimed: true } : rw));
+                      }
+                    } catch { /* ignore */ }
+                  }}
+                  style={{
                   width:'100%',
                   padding:'12px',
                   background: reward.earned ? '#22c55e' : 'rgba(255,255,255,0.1)',

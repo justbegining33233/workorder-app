@@ -46,6 +46,8 @@ export default function VendorManagementPage() {
   const [saving, setSaving] = useState(false);
   const [vendorError, setVendorError] = useState<string | null>(null);
   const [vendorSuccess, setVendorSuccess] = useState<string | null>(null);
+  const [deleteVendorConfirm, setDeleteVendorConfirm] = useState<{ id: string; name: string } | null>(null);
+  const [deleteOrderConfirmId, setDeleteOrderConfirmId] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState('all');
 
   // ── Orders state ──
@@ -107,11 +109,10 @@ export default function VendorManagementPage() {
     finally { setSaving(false); }
   };
   const handleDeleteVendor = async (id: string, name: string) => {
-    if (!confirm(`Remove vendor "${name}"?`)) return;
     try {
       await fetch(`/api/shop/vendors/${id}`, { method: 'DELETE', headers });
-      setVendorSuccess('Vendor removed'); loadVendors();
-    } catch { setVendorError('Delete failed'); }
+      setVendorSuccess('Vendor removed'); setDeleteVendorConfirm(null); loadVendors();
+    } catch { setVendorError('Delete failed'); setDeleteVendorConfirm(null); }
   };
 
   // ── Order handlers ──
@@ -148,8 +149,8 @@ export default function VendorManagementPage() {
   };
 
   const handleDeleteOrder = async (id: string) => {
-    if (!confirm('Delete this order?')) return;
     await fetch(`/api/shop/purchase-orders/${id}`, { method: 'DELETE', headers });
+    setDeleteOrderConfirmId(null);
     loadOrders();
   };
 
@@ -250,7 +251,7 @@ export default function VendorManagementPage() {
                         style={{ flex: 1, padding: '7px', borderRadius: 7, border: '1px solid rgba(59,130,246,0.4)', background: 'rgba(59,130,246,0.1)', color: '#60a5fa', cursor: 'pointer', fontSize: 13 }}>
                         📦 Order Parts
                       </button>
-                      <button onClick={() => handleDeleteVendor(v.id, v.name)} style={{ padding: '7px 12px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 13 }}>✕</button>
+                      <button onClick={() => setDeleteVendorConfirm({ id: v.id, name: v.name })} style={{ padding: '7px 12px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 13 }}>✕</button>
                     </div>
                   </div>
                 ))}
@@ -349,7 +350,7 @@ export default function VendorManagementPage() {
                               Cancel
                             </button>
                           )}
-                          <button onClick={() => handleDeleteOrder(order.id)}
+                          <button onClick={() => setDeleteOrderConfirmId(order.id)}
                             style={{ padding: '5px 10px', borderRadius: 6, border: 'none', background: 'transparent', color: '#475569', cursor: 'pointer', fontSize: 12 }}>
                             ✕
                           </button>
@@ -528,6 +529,36 @@ export default function VendorManagementPage() {
                 style={{ padding: '12px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete vendor confirm modal */}
+      {deleteVendorConfirm && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Remove Vendor?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>Remove "{deleteVendorConfirm.name}" from your vendor list?</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteVendorConfirm(null)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Cancel</button>
+              <button onClick={() => handleDeleteVendor(deleteVendorConfirm.id, deleteVendorConfirm.name)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete order confirm modal */}
+      {deleteOrderConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Order?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This purchase order will be permanently deleted.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteOrderConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Cancel</button>
+              <button onClick={() => handleDeleteOrder(deleteOrderConfirmId)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
             </div>
           </div>
         </div>

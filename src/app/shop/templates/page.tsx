@@ -37,6 +37,8 @@ export default function WorkOrderTemplatesPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [deleteConfirmName, setDeleteConfirmName] = useState('');
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
@@ -91,12 +93,12 @@ export default function WorkOrderTemplatesPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Delete template "${name}"?`)) return;
     try {
       await fetch(`/api/shop/templates/${id}`, { method: 'DELETE', headers });
       setSuccess('Template deleted');
+      setDeleteConfirmId(null);
       load();
-    } catch { setError('Delete failed'); }
+    } catch { setError('Delete failed'); setDeleteConfirmId(null); }
   };
 
   const bg = 'transparent';
@@ -143,7 +145,7 @@ export default function WorkOrderTemplatesPage() {
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button onClick={() => openEdit(t)} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: 12 }}>Edit</button>
-                    <button onClick={() => handleDelete(t.id, t.name)} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 12 }}>Del</button>
+                    <button onClick={() => { setDeleteConfirmId(t.id); setDeleteConfirmName(t.name); }} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 12 }}>Del</button>
                   </div>
                 </div>
                 {t.description && <p style={{ color: '#64748b', fontSize: 13, marginBottom: 10 }}>{t.description}</p>}
@@ -216,6 +218,21 @@ export default function WorkOrderTemplatesPage() {
           </div>
         )}
       </div>
+
+      {/* Delete template confirm modal */}
+      {deleteConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 420, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Template?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>Delete template "{deleteConfirmName}"? This cannot be undone.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirmId, deleteConfirmName)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

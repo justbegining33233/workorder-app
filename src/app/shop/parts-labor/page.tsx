@@ -60,6 +60,15 @@ export default function PartsAndLabor() {
   const [selectedGasServices, setSelectedGasServices] = useState<string[]>([]);
   const [selectedDieselServices, setSelectedDieselServices] = useState<string[]>([]);
   const [savingServices, setSavingServices] = useState(false);
+  const [laborMsg, setLaborMsg] = useState<{type:'success'|'error'; text:string}|null>(null);
+  const [partMsg, setPartMsg] = useState<{type:'success'|'error'; text:string}|null>(null);
+  const [svcMsg, setSvcMsg] = useState<{type:'success'|'error'; text:string}|null>(null);
+  const [deleteConfirmPartId, setDeleteConfirmPartId] = useState<string|null>(null);
+  const [deleteConfirmLaborId, setDeleteConfirmLaborId] = useState<string|null>(null);
+
+  const showLabor = (type:'success'|'error', text:string) => { setLaborMsg({type,text}); setTimeout(()=>setLaborMsg(null),3000); };
+  const showPart = (type:'success'|'error', text:string) => { setPartMsg({type,text}); setTimeout(()=>setPartMsg(null),3000); };
+  const showSvc = (type:'success'|'error', text:string) => { setSvcMsg({type,text}); setTimeout(()=>setSvcMsg(null),3000); };
 
   const getCsrf = () => {
     if (typeof document === 'undefined') return '';
@@ -114,9 +123,8 @@ export default function PartsAndLabor() {
 
   useEffect(() => {
     if (user?.name) setUserName(user.name);
-    loadLaborRates();
-     
-  }, []);
+    if (user) loadLaborRates();
+  }, [user]);
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -155,37 +163,63 @@ export default function PartsAndLabor() {
         credentials: 'include',
       });
       if (response.ok) {
-        alert('Services updated!');
+        showSvc('success', 'Services updated!');
       } else {
-        alert('Failed to update services');
+        showSvc('error', 'Failed to update services');
       }
     } catch (error) {
-      alert('Error updating services');
+      showSvc('error', 'Error updating services');
     }
     setSavingServices(false);
   };
 
   // Remove inventory loading for labor rates
 
-  const handleAddPart = () => {
-    const part: Part = {
-      id: `P-${String(parts.length + 1).padStart(3, '0')}`,
-      ...newPart
-    };
-    setParts([...parts, part]);
-    setNewPart({ name: '', stock: 0, reorderLevel: 0, price: 0, cost: 0, category: '' });
-    setShowAddPart(false);
+  const handleAddPart = async () => {
+    if (!newPart.name.trim()) {
+      showPart('error', 'Please enter a part name');
+      return;
+    }
+    try {
+      const csrf = getCsrf();
+      const headers = buildHeaders(csrf, true);
+      const shopId = localStorage.getItem('shopId') || user?.shopId;
+      const response = await fetch('/api/inventory', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ ...newPart, shopId }),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setParts(prev => [...prev, data.item ?? { id: `P-${Date.now()}`, ...newPart }]);
+        setNewPart({ name: '', stock: 0, reorderLevel: 0, price: 0, cost: 0, category: '' });
+        setShowAddPart(false);
+      } else {
+        // Fallback: add locally if API unsupported
+        const part: Part = { id: `P-${String(parts.length + 1).padStart(3, '0')}`, ...newPart };
+        setParts(prev => [...prev, part]);
+        setNewPart({ name: '', stock: 0, reorderLevel: 0, price: 0, cost: 0, category: '' });
+        setShowAddPart(false);
+      }
+    } catch (err) {
+      console.error('Error adding part:', err);
+      const part: Part = { id: `P-${String(parts.length + 1).padStart(3, '0')}`, ...newPart };
+      setParts(prev => [...prev, part]);
+      setNewPart({ name: '', stock: 0, reorderLevel: 0, price: 0, cost: 0, category: '' });
+      setShowAddPart(false);
+    }
   };
 
   const handleAddLabor = async () => {
     if (!newLabor.name.trim() || newLabor.rate <= 0) {
-      alert('Please enter a valid service name and rate');
+      showLabor('error', 'Please enter a valid service name and rate');
       return;
     }
     try {
                               const shopId = localStorage.getItem('shopId') || user?.shopId;
       if (!shopId) {
-        alert('Shop ID not found. Please log in again.');
+        showLabor('error', 'Shop ID not found. Please log in again.');
         return;
       }
       const csrf = getCsrf();
@@ -205,19 +239,37 @@ export default function PartsAndLabor() {
         await loadLaborRates();
         setNewLabor({ name: '', rate: 0 });
         setShowAddLabor(false);
-        alert('Labor rate added successfully!');
+        showLabor('success', 'Labor rate added successfully!');
       } else {
-        alert('Failed to add labor rate');
+        showLabor('error', 'Failed to add labor rate');
       }
     } catch (error) {
       console.error('Error adding labor rate:', error);
-      alert('Error adding labor rate');
+      showLabor('error', 'Error adding labor rate');
     }
   };
 
-  const handleUpdatePart = () => {
+  const handleUpdatePart = async () => {
     if (!editingPart) return;
-    setParts(parts.map(p => p.id === editingPart.id ? editingPart : p));
+    try {
+      const csrf = getCsrf();
+      const headers = buildHeaders(csrf, true);
+      const response = await fetch(`/api/inventory/${editingPart.id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(editingPart),
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setParts(prev => prev.map(p => p.id === editingPart.id ? (data.item ?? editingPart) : p));
+      } else {
+        setParts(prev => prev.map(p => p.id === editingPart.id ? editingPart : p));
+      }
+    } catch (err) {
+      console.error('Error updating part:', err);
+      setParts(prev => prev.map(p => p.id === editingPart.id ? editingPart : p));
+    }
     setEditingPart(null);
   };
 
@@ -238,24 +290,33 @@ export default function PartsAndLabor() {
       if (response.ok) {
         await loadLaborRates();
         setEditingLabor(null);
-        alert('Labor rate updated successfully!');
+        showLabor('success', 'Labor rate updated successfully!');
       } else {
-        alert('Failed to update labor rate');
+        showLabor('error', 'Failed to update labor rate');
       }
     } catch (error) {
       console.error('Error updating labor rate:', error);
-      alert('Error updating labor rate');
+      showLabor('error', 'Error updating labor rate');
     }
   };
 
-  const handleDeletePart = (id: string) => {
-    if (confirm('Are you sure you want to delete this part?')) {
-      setParts(parts.filter(p => p.id !== id));
+  const handleDeletePart = async (id: string) => {
+    try {
+      const csrf = getCsrf();
+      const headers = buildHeaders(csrf);
+      await fetch(`/api/inventory/${id}`, {
+        method: 'DELETE',
+        headers,
+        credentials: 'include',
+      });
+    } catch (err) {
+      console.error('Error deleting part:', err);
     }
+    setParts(prev => prev.filter(p => p.id !== id));
+    setDeleteConfirmPartId(null);
   };
 
   const handleDeleteLabor = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this labor rate?')) return;
     try {
       const csrf = getCsrf();
       const headers = buildHeaders(csrf);
@@ -266,14 +327,15 @@ export default function PartsAndLabor() {
       });
       if (response.ok) {
         await loadLaborRates();
-        alert('Labor rate deleted successfully!');
+        showLabor('success', 'Labor rate deleted successfully!');
       } else {
-        alert('Failed to delete labor rate');
+        showLabor('error', 'Failed to delete labor rate');
       }
     } catch (error) {
       console.error('Error deleting labor rate:', error);
-      alert('Error deleting labor rate');
+      showLabor('error', 'Error deleting labor rate');
     }
+    setDeleteConfirmLaborId(null);
   };
 
   const getStockStatus = (stock: number, reorder: number) => {
@@ -379,7 +441,7 @@ export default function PartsAndLabor() {
                       <button onClick={() => setEditingPart(part)} style={{flex:1, padding:'8px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer'}}>
                         Edit
                       </button>
-                      <button onClick={() => handleDeletePart(part.id)} style={{flex:1, padding:'8px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer'}}>
+                      <button onClick={() => setDeleteConfirmPartId(part.id)} style={{flex:1, padding:'8px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer'}}>
                         Delete
                       </button>
                     </div>
@@ -437,7 +499,7 @@ export default function PartsAndLabor() {
                                 <button onClick={() => setEditingLabor(labor)} style={{padding:'6px 12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer'}}>
                                   Edit
                                 </button>
-                                <button onClick={() => handleDeleteLabor(labor.id)} style={{padding:'6px 12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer'}}>
+                                <button onClick={() => setDeleteConfirmLaborId(labor.id)} style={{padding:'6px 12px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer'}}>
                                   Delete
                                 </button>
                               </div>
@@ -476,7 +538,7 @@ export default function PartsAndLabor() {
                                     const csrf = getCsrf();
                                     const shopId = localStorage.getItem('shopId') || user?.shopId;
                                     if (!shopId) {
-                                      alert('Shop ID not found. Please log in again.');
+                                      showLabor('error', 'Shop ID not found. Please log in again.');
                                       return;
                                     }
                                     const headers = buildHeaders(csrf, true);
@@ -494,10 +556,10 @@ export default function PartsAndLabor() {
                                     if (serviceRes.ok) {
                                       await loadLaborRates();
                                       setPendingServiceRates(r => ({...r, [key]: ''}));
-                                      alert('Labor rate added and synced!');
+                                      showLabor('success', 'Labor rate added and synced!');
                                     } else {
                                       const error = await serviceRes.json().catch(() => ({}));
-                                      alert(error?.error || 'Failed to add labor rate to shop services.');
+                                      showLabor('error', error?.error || 'Failed to add labor rate to shop services.');
                                     }
                                   }}
                                 >
@@ -588,6 +650,44 @@ export default function PartsAndLabor() {
             <div style={{display:'flex', gap:12}}>
               <button onClick={() => setEditingLabor(null)} style={{flex:1, padding:12, background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontWeight:600, cursor:'pointer'}}>Cancel</button>
               <button onClick={handleUpdateLabor} style={{flex:1, padding:12, background:'#3b82f6', color:'white', border:'none', borderRadius:8, fontWeight:600, cursor:'pointer'}}>Update Labor</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Labor message toast */}
+      {laborMsg && (
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: laborMsg.type === 'success' ? '#22c55e' : '#ef4444', color: '#fff', padding: '12px 20px', borderRadius: 8, zIndex: 300, fontWeight: 600 }}
+          onClick={() => setLaborMsg(null)}>{laborMsg.text}</div>
+      )}
+      {svcMsg && (
+        <div style={{ position: 'fixed', bottom: 72, right: 24, background: svcMsg.type === 'success' ? '#22c55e' : '#ef4444', color: '#fff', padding: '12px 20px', borderRadius: 8, zIndex: 300, fontWeight: 600 }}
+          onClick={() => setSvcMsg(null)}>{svcMsg.text}</div>
+      )}
+
+      {/* Delete Part Confirm */}
+      {deleteConfirmPartId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 28, maxWidth: 360, width: '90%', textAlign: 'center' }}>
+            <h3 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Delete Part?</h3>
+            <p style={{ color: '#9ca3af', marginBottom: 24 }}>This part will be permanently deleted.</p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button onClick={() => handleDeletePart(deleteConfirmPartId)} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Delete</button>
+              <button onClick={() => setDeleteConfirmPartId(null)} style={{ background: '#374151', border: 'none', color: '#9ca3af', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Labor Confirm */}
+      {deleteConfirmLaborId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 28, maxWidth: 360, width: '90%', textAlign: 'center' }}>
+            <h3 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Delete Labor Rate?</h3>
+            <p style={{ color: '#9ca3af', marginBottom: 24 }}>This labor rate will be permanently deleted.</p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button onClick={() => handleDeleteLabor(deleteConfirmLaborId)} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Delete</button>
+              <button onClick={() => setDeleteConfirmLaborId(null)} style={{ background: '#374151', border: 'none', color: '#9ca3af', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>

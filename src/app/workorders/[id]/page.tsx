@@ -55,6 +55,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showPhotoForm, setShowPhotoForm] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -318,7 +319,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
   };
 
   const handleDelete = async () => {
-    if (!id || !confirm('Are you sure you want to delete this work order?')) return;
+    if (!id) return;
     try {
       const deleted = deleteWorkOrderClient(id);
       if (deleted) {
@@ -328,7 +329,9 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
       }
     } catch (error) {
       console.error('Error deleting work order:', error);
-      alert('Failed to delete work order');
+      setError('Failed to delete work order');
+    } finally {
+      setDeleteConfirm(false);
     }
   };
 
@@ -405,7 +408,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                 {workOrder.status.replace('-', ' ').toUpperCase()}
               </span>
               {['tech', 'manager'].includes(role) && (
-                <button onClick={handleDelete} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
+                <button onClick={() => setDeleteConfirm(true)} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
                   Delete
                 </button>
               )}
@@ -1017,6 +1020,19 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
           </form>
         </div>
       </div>
+
+      {deleteConfirm && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1f2937',border:'1px solid rgba(255,255,255,0.1)',borderRadius:12,padding:28,maxWidth:380,width:'90%'}}>
+            <h3 style={{color:'#e5e7eb',fontSize:18,fontWeight:700,marginBottom:8}}>Delete Work Order?</h3>
+            <p style={{color:'#9aa3b2',fontSize:14,marginBottom:20}}>Are you sure you want to delete this work order? This cannot be undone.</p>
+            <div style={{display:'flex',gap:10}}>
+              <button onClick={handleDelete} style={{flex:1,padding:'10px 0',background:'#ef4444',color:'white',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Delete</button>
+              <button onClick={()=>setDeleteConfirm(false)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

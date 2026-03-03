@@ -29,7 +29,7 @@ export default function StateInspectionsPage() {
   const [inspections, setInspections] = useState<StateInspection[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);
-  const [form, setForm] = useState({ inspectionType: 'safety', result: 'pass', stickerId: '', expiryDate: '', odometer: '', fee: '37.00', notes: '', workOrderId: '' });
+  const [form, setForm] = useState({ inspectionType: 'safety', result: 'pass', stickerId: '', expiryDate: '', odometer: '', fee: '', notes: '', workOrderId: '' });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => { if (!user) return; load(); }, [user]);
@@ -50,7 +50,7 @@ export default function StateInspectionsPage() {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ ...form, odometer: form.odometer ? Number(form.odometer) : null, fee: form.fee ? Number(form.fee) : null }),
     });
-    if (r.ok) { setShowNew(false); load(); setForm({ inspectionType: 'safety', result: 'pass', stickerId: '', expiryDate: '', odometer: '', fee: '37.00', notes: '', workOrderId: '' }); }
+    if (r.ok) { setShowNew(false); load(); setForm({ inspectionType: 'safety', result: 'pass', stickerId: '', expiryDate: '', odometer: '', fee: '', notes: '', workOrderId: '' }); }
     setSaving(false);
   };
 

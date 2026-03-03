@@ -21,6 +21,7 @@ export default function AnalyticsPage() {
   const router = useRouter();
   const [analytics, setAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [analyticsError, setAnalyticsError] = useState('');
   const [shopId, setShopId] = useState('');
   const [dateRange, setDateRange] = useState({
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -47,9 +48,12 @@ export default function AnalyticsPage() {
       if (response.ok) {
         const data = await response.json();
         setAnalytics(data);
+      } else {
+        setAnalyticsError('Failed to load analytics data. Please try again.');
       }
     } catch (error) {
       console.error('Error fetching analytics:', error);
+      setAnalyticsError('Network error. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -60,6 +64,20 @@ export default function AnalyticsPage() {
       <div style={{ minHeight: "100vh", background: 'transparent', padding: '40px 20px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', color: '#fff', textAlign: 'center' }}>
           Loading analytics...
+        </div>
+      </div>
+    );
+  }
+
+  if (analyticsError) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'transparent', padding: '40px 20px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', textAlign: 'center', paddingTop: 80 }}>
+          <div style={{ fontSize: 52, marginBottom: 16 }}>⚠️</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', marginBottom: 8 }}>Unable to Load Analytics</div>
+          <div style={{ color: '#9ca3af', fontSize: 14, marginBottom: 24 }}>{analyticsError}</div>
+          <button onClick={() => { setAnalyticsError(''); fetchAnalytics(shopId); }}
+            style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Retry</button>
         </div>
       </div>
     );

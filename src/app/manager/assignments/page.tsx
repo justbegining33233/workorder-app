@@ -32,6 +32,7 @@ export default function AssignmentsPage() {
   const [selectedWorkOrder, setSelectedWorkOrder] = useState<string | null>(null);
   const [selectedTech, setSelectedTech] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [assignMsg, setAssignMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -92,7 +93,7 @@ export default function AssignmentsPage() {
 
   const handleAssign = async () => {
     if (!selectedWorkOrder || !selectedTech) {
-      alert('Please select both a work order and a technician');
+      setAssignMsg({type:'error',text:'Please select both a work order and a technician'});
       return;
     }
 
@@ -111,17 +112,17 @@ export default function AssignmentsPage() {
       });
 
       if (response.ok) {
-        alert('Work order assigned successfully!');
+        setAssignMsg({type:'success',text:'Work order assigned successfully!'});
         setSelectedWorkOrder(null);
         setSelectedTech('');
         fetchData(); // Refresh data
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to assign work order');
+        setAssignMsg({type:'error',text:error.error || 'Failed to assign work order'});
       }
     } catch (error) {
       console.error('Error assigning work order:', error);
-      alert('Failed to assign work order');
+      setAssignMsg({type:'error',text:'Failed to assign work order'});
     }
   };
 
@@ -312,6 +313,12 @@ export default function AssignmentsPage() {
           </div>
         </div>
       </div>
+      {assignMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:assignMsg.type==='success'?'#dcfce7':'#fde8e8',color:assignMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {assignMsg.text}
+          <button onClick={()=>setAssignMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

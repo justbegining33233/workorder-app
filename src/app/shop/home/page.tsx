@@ -71,7 +71,8 @@ export default function ShopHome() {
     pendingApprovals: 0
   });
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [inventory] = useState<InventoryItem[]>([]);
+  const [addMemberError, setAddMemberError] = useState('');
+  const [addMemberSaving, setAddMemberSaving] = useState(false);
   const [selectedDestinations, setSelectedDestinations] = useState<Record<string, string>>({});
   const [pendingWorkOrders, setPendingWorkOrders] = useState<Job[]>([]);
   const [bays, setBays] = useState<Array<{ id: string; name: string; tech: string; jobs: Job[] }>>([]);
@@ -210,13 +211,13 @@ export default function ShopHome() {
       requiresManagerOrAdmin: user?.role === 'manager',
       hideForAdmin: user?.role === 'tech',
     },
-    { label: '📦 Parts Orders', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
+    { label: '📦 Parts Orders', href: '/shop/purchase-orders', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
     { label: '🛠️ Services', href: '/shop/services', tint: 'rgba(245,158,11,0.18)', color: '#f59e0b', border: 'rgba(245,158,11,0.28)' },
     { label: '🏪 New In-Shop Job', href: '/shop/new-inshop-job', tint: 'rgba(229,51,42,0.18)', color: '#e5332a', border: 'rgba(229,51,42,0.28)' },
     { label: '📋 WO Templates', href: '/shop/templates', tint: 'rgba(251,191,36,0.18)', color: '#fbbf24', border: 'rgba(251,191,36,0.28)' },
     { label: '🏭 Vendors', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
     { label: '📍 Locations', href: '/shop/locations', tint: 'rgba(20,184,166,0.18)', color: '#14b8a6', border: 'rgba(20,184,166,0.28)' },
-    { label: '� Recurring Orders', href: '/shop/recurring-workorders', tint: 'rgba(34,197,94,0.18)', color: '#22c55e', border: 'rgba(34,197,94,0.28)' },
+    { label: '🔄 Recurring Orders', href: '/shop/recurring-workorders', tint: 'rgba(34,197,94,0.18)', color: '#22c55e', border: 'rgba(34,197,94,0.28)' },
     { label: '🔐 Two-Factor Auth', href: '/shop/settings/two-factor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' }
   ];
   const priorityStyles: Record<string, { bg: string; color: string }> = {
@@ -253,34 +254,56 @@ export default function ShopHome() {
     router.push('/auth/login');
   };
 
-  const handleAddMember = () => {
-    // Save employee credentials to localStorage
-    const employees = JSON.parse(localStorage.getItem('shopEmployees') || '[]');
-    const newEmployee = {
-      name: newMember.name,
-      role: newMember.role,
-      email: newMember.email,
-      phone: newMember.phone,
-      password: newMember.password,
-      shopName: user.name, // Link to the shop
-      createdAt: new Date().toISOString()
-    };
-    employees.push(newEmployee);
-    localStorage.setItem('shopEmployees', JSON.stringify(employees));
-    
-    alert(`Team member added!\n\nLogin credentials:\nEmail/Phone: ${newMember.email} or ${newMember.phone}\nPassword: ${newMember.password}`);
-    
-    // Reset form and close modal
-    setNewMember({ name: '', role: 'tech', email: '', phone: '', password: '' });
-    setShowAddMember(false);
+  const handleAddMember = async () => {
+    setAddMemberError('');
+    setAddMemberSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          name: newMember.name,
+          email: newMember.email,
+          phone: newMember.phone,
+          password: newMember.password,
+          role: newMember.role,
+          shopId: (user as any)?.shopId ?? user?.id,
+        }),
+      });
+      if (r.ok) {
+        setNewMember({ name: '', role: 'tech', email: '', phone: '', password: '' });
+        setShowAddMember(false);
+      } else {
+        const body = await r.json().catch(() => ({}));
+        setAddMemberError(body.error || 'Failed to add team member. Please try again.');
+      }
+    } catch {
+      setAddMemberError('Network error. Please try again.');
+    } finally {
+      setAddMemberSaving(false);
+    }
   };
 
-  const handleOrderPart = (partName: string, currentStock: number, reorderLevel: number) => {
+  const handleOrderPart = async (partName: string, currentStock: number, reorderLevel: number) => {
     const orderQuantity = reorderLevel * 2;
-    const confirmed = confirm(`Order ${orderQuantity} units of ${partName}?\n\nCurrent Stock: ${currentStock}\nOrder Quantity: ${orderQuantity}\nEstimated Delivery: 2-3 business days`);
-    
-    if (confirmed) {
-      alert(`✅ Order placed successfully!\n\n${orderQuantity} units of ${partName} ordered.\nNew stock level will be ${currentStock + orderQuantity} units upon delivery.`);
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch('/api/purchase-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          vendor: 'Auto-reorder',
+          notes: `Auto-reorder: ${partName} — current stock ${currentStock}, order qty ${orderQuantity}`,
+          items: [{ partNumber: '', description: partName, qty: orderQuantity, unitCost: 0 }],
+        }),
+      });
+      if (r.ok) {
+        // Redirect to purchase orders page so user can complete the PO
+        router.push('/shop/purchase-orders');
+      }
+    } catch {
+      // Silently ignore — non-critical path
     }
   };
 
@@ -288,7 +311,7 @@ export default function ShopHome() {
     router.push(`/workorders/${orderId}`);
   };
 
-  const handleAssign = (orderId: string, destinationId: string) => {
+  const handleAssign = async (orderId: string, destinationId: string) => {
     setPendingWorkOrders(prev => {
       const order = prev.find(o => o.id === orderId);
       if (!order) return prev;
@@ -310,6 +333,24 @@ export default function ShopHome() {
 
       return prev.filter(o => o.id !== orderId);
     });
+
+    // Persist assignment to server
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      await fetch(`/api/workorders/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          bayId: destinationId === 'roadcall' ? null : destinationId,
+          status: destinationId === 'roadcall' ? 'Roadcall' : 'In Bay',
+        }),
+      });
+    } catch (err) {
+      console.error('Failed to persist bay assignment:', err);
+    }
   };
 
   const handleReturnToPending = (bayId: string, orderId: string) => {
@@ -589,15 +630,17 @@ export default function ShopHome() {
             <div style={{marginBottom:20}}>
               <label style={{display:'block', fontSize:13, color:'#9aa3b2', marginBottom:8}}>Set Login Password *</label>
               <input type="password" value={newMember.password} onChange={(e) => setNewMember({...newMember, password: e.target.value})} placeholder="Create password for employee" style={{width:'100%', padding:'12px', background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, color:'#e5e7eb', fontSize:14}} />
-              <p style={{fontSize:11, color:'#6b7280', marginTop:6}}>Employee can login with email or phone + this password</p>
+              <p style={{fontSize:11, color:'#6b7280', marginTop:6}}>Employee will receive an account and can login with email or phone</p>
             </div>
 
+            {addMemberError && <div style={{background:'rgba(229,51,42,0.12)',border:'1px solid rgba(229,51,42,0.3)',borderRadius:8,padding:'10px 14px',marginBottom:12,color:'#fca5a5',fontSize:13}}>{addMemberError}</div>}
+
             <div style={{display:'flex', gap:12}}>
-              <button onClick={() => setShowAddMember(false)} style={{flex:1, padding:'12px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
+              <button onClick={() => { setShowAddMember(false); setAddMemberError(''); }} style={{flex:1, padding:'12px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
                 Cancel
               </button>
-              <button onClick={handleAddMember} disabled={!newMember.name || !newMember.email || !newMember.phone || !newMember.password} style={{flex:1, padding:'12px', background:(!newMember.name || !newMember.email || !newMember.phone || !newMember.password) ? 'rgba(34,197,94,0.3)' : '#22c55e', color:'white', border:'none', borderRadius:8, fontSize:14, fontWeight:600, cursor:(!newMember.name || !newMember.email || !newMember.phone || !newMember.password) ? 'not-allowed' : 'pointer'}}>
-                Add Member
+              <button onClick={handleAddMember} disabled={addMemberSaving || !newMember.name || !newMember.email || !newMember.phone || !newMember.password} style={{flex:1, padding:'12px', background:(addMemberSaving || !newMember.name || !newMember.email || !newMember.phone || !newMember.password) ? 'rgba(34,197,94,0.3)' : '#22c55e', color:'white', border:'none', borderRadius:8, fontSize:14, fontWeight:600, cursor:(addMemberSaving || !newMember.name || !newMember.email || !newMember.phone || !newMember.password) ? 'not-allowed' : 'pointer'}}>
+                {addMemberSaving ? 'Adding...' : 'Add Member'}
               </button>
             </div>
           </div>

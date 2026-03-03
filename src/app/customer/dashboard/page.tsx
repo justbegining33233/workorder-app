@@ -157,15 +157,39 @@ export default function CustomerDashboard() {
         paymentMethods: Array.isArray(paymentMethods) ? paymentMethods.length : 0,
       });
 
-      // Derive loyalty points from completed work orders (50 pts each)
       const allOrders = Array.isArray(workorders) ? workorders : [];
       const openOrders = allOrders.filter((w: any) => !['closed', 'completed', 'Completed'].includes(w.status)).length;
-      const pts = completed.length * 50;
-      setLoyaltyPoints(pts);
-      setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
+
+      // Fetch loyalty points from API; fall back to client-side calculation
+      let pts = completed.length * 50;
+      try {
+        const rewardsRes = await fetch('/api/customers/rewards', fetchOpts);
+        if (rewardsRes.ok) {
+          const rewardsData = await rewardsRes.json();
+          if (typeof rewardsData.points === 'number') pts = rewardsData.points;
+          if (typeof rewardsData.tier === 'string') {
+            setTier(rewardsData.tier);
+            setLoyaltyPoints(pts);
+          } else {
+            setLoyaltyPoints(pts);
+            setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
+          }
+        } else {
+          setLoyaltyPoints(pts);
+          setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
+        }
+      } catch {
+        setLoyaltyPoints(pts);
+        setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
+      }
+      const todayStr = new Date().toISOString().split('T')[0];
+      const completedToday = completed.filter((w: any) => {
+        const d = new Date(w.updatedAt || w.completedAt || w.createdAt || '');
+        return d.toISOString().split('T')[0] === todayStr;
+      }).length;
       setCustomerStats({
         openOrders,
-        completedToday: 0,
+        completedToday,
         messages: unread,
         appointments: upcoming,
       });

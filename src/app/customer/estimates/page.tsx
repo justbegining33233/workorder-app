@@ -74,6 +74,7 @@ export default function Estimates() {
     }
   ]);
   const [loading, setLoading] = useState<string | null>(null);
+  const [estimateMsg, setEstimateMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
@@ -85,7 +86,7 @@ export default function Estimates() {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Authentication required');
+        setEstimateMsg({type:'error',text:'Authentication required'});
         return;
       }
 
@@ -107,14 +108,14 @@ export default function Estimates() {
             ? { ...est, status: 'accepted' as const }
             : est
         ));
-        alert('Estimate accepted successfully!');
+        setEstimateMsg({type:'success',text:'Estimate accepted successfully!'});
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error}`);
+        setEstimateMsg({type:'error',text:`Error: ${error.error}`});
       }
     } catch (error) {
       console.error('Error accepting estimate:', error);
-      alert('Failed to accept estimate. Please try again.');
+      setEstimateMsg({type:'error',text:'Failed to accept estimate. Please try again.'});
     } finally {
       setLoading(null);
     }
@@ -125,7 +126,7 @@ export default function Estimates() {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Authentication required');
+        setEstimateMsg({type:'error',text:'Authentication required'});
         return;
       }
 
@@ -147,14 +148,14 @@ export default function Estimates() {
             ? { ...est, status: 'denied' as const }
             : est
         ));
-        alert('Estimate denied successfully!');
+        setEstimateMsg({type:'success',text:'Estimate denied successfully!'});
       } else {
         const error = await response.json();
-        alert(`Error: ${error.error}`);
+        setEstimateMsg({type:'error',text:`Error: ${error.error}`});
       }
     } catch (error) {
       console.error('Error denying estimate:', error);
-      alert('Failed to deny estimate. Please try again.');
+      setEstimateMsg({type:'error',text:'Failed to deny estimate. Please try again.'});
     } finally {
       setLoading(null);
     }
@@ -166,7 +167,7 @@ export default function Estimates() {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Authentication required');
+        setEstimateMsg({type:'error',text:'Authentication required'});
         return;
       }
 
@@ -185,14 +186,14 @@ export default function Estimates() {
       });
 
       if (response.ok) {
-        alert('Request sent to shop manager successfully!');
+        setEstimateMsg({type:'success',text:'Request sent to shop manager successfully!'});
       } else {
         const err = await response.json();
-        alert(`Failed to request new estimate: ${err.error || 'unknown'}`);
+        setEstimateMsg({type:'error',text:`Failed to request new estimate: ${err.error || 'unknown'}`});
       }
     } catch (error) {
       console.error('Error requesting new estimate:', error);
-      alert('Failed to request new estimate. Please try again.');
+      setEstimateMsg({type:'error',text:'Failed to request new estimate. Please try again.'});
     } finally {
       setLoading(null);
     }
@@ -610,6 +611,13 @@ export default function Estimates() {
           </Link>
         </div>
       </div>
+
+      {estimateMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:estimateMsg.type==='success'?'#dcfce7':'#fde8e8',color:estimateMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {estimateMsg.text}
+          <button onClick={()=>setEstimateMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

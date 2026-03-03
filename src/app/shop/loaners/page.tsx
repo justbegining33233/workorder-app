@@ -36,6 +36,7 @@ export default function LoanersPage() {
   const [modalMode, setModalMode] = useState<'checkout' | 'checkin' | 'edit'>('checkout');
   const [form, setForm] = useState<Partial<Loaner>>({});
   const [saving, setSaving] = useState(false);
+  const [deleteLoanerId, setDeleteLoanerId] = useState<string|null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -76,10 +77,15 @@ export default function LoanersPage() {
     setSaving(false);
   };
 
-  const deleteLoaner = async (id: string) => {
-    if (!confirm('Remove this loaner vehicle?')) return;
+  const deleteLoaner = (id: string) => {
+    setDeleteLoanerId(id);
+  };
+
+  const doDeleteLoaner = async () => {
+    if (!deleteLoanerId) return;
     const token = localStorage.getItem('token');
-    await fetch(`/api/loaners/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await fetch(`/api/loaners/${deleteLoanerId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    setDeleteLoanerId(null);
     fetchLoaners();
   };
 
@@ -104,7 +110,7 @@ export default function LoanersPage() {
   const F = (k: keyof Loaner) => (
     <div key={String(k)} style={{ marginBottom: 14 }}>
       <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>
-        {String(k).replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase())}
+        {k === 'vin' ? 'VIN' : String(k).replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase())}
       </label>
       <input
         value={String((form as any)[k] || '')}
@@ -241,6 +247,19 @@ export default function LoanersPage() {
                 {saving ? 'Saving...' : modalMode === 'checkout' ? 'Confirm Check Out' : 'Confirm Check In'}
               </button>
               <button onClick={() => setModalLoaner(null)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteLoanerId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.7)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1f2937',border:'1px solid rgba(255,255,255,0.1)',borderRadius:12,padding:28,maxWidth:360,width:'90%'}}>
+            <h3 style={{color:'#e5e7eb',fontSize:18,fontWeight:700,marginBottom:8}}>Remove Loaner Vehicle?</h3>
+            <p style={{color:'#9ca3af',fontSize:14,marginBottom:20}}>This action cannot be undone.</p>
+            <div style={{display:'flex',gap:10}}>
+              <button onClick={doDeleteLoaner} style={{flex:1,padding:'10px 0',background:'#e5332a',color:'white',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Remove</button>
+              <button onClick={()=>setDeleteLoanerId(null)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9ca3af',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
             </div>
           </div>
         </div>

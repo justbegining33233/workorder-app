@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import useRequireAuth from '@/lib/useRequireAuth';
 
 type CategoryId = 'diesel' | 'gas' | 'small-engine' | 'heavy-equipment' | 'resurfacing' | 'welding' | 'tire';
 
@@ -198,9 +199,11 @@ const CATEGORY_CONFIG: Array<{ id: CategoryId; label: string; note?: string }> =
 ];
 
 export default function CompleteProfile() {
+  const { user, isLoading } = useRequireAuth(['shop']);
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
+  const [submitError, setSubmitError] = useState('');
   const [formData, setFormData] = useState({
     businessLicense: '',
     insurancePolicy: '',
@@ -237,14 +240,15 @@ export default function CompleteProfile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
     // Validation
     if (!formData.businessLicense.trim()) {
-      alert('Please enter your business license number');
+      setSubmitError('Please enter your business license number');
       return;
     }
     
     if (!formData.insurancePolicy.trim()) {
-      alert('Please enter your insurance policy number');
+      setSubmitError('Please enter your insurance policy number');
       return;
     }
 
@@ -258,7 +262,7 @@ export default function CompleteProfile() {
       formData.tireServices.length;
 
     if (totalSelected === 0) {
-      alert('Please select at least one service');
+      setSubmitError('Please select at least one service');
       return;
     }
 
@@ -274,16 +278,17 @@ export default function CompleteProfile() {
     };
 
     if (!requiredByType[formData.shopType]) {
-      alert('Please select at least one service in your chosen shop category');
+      setSubmitError('Please select at least one service in your chosen shop category');
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const shopId = localStorage.getItem('shopId');
+      const shopId = user?.shopId || localStorage.getItem('shopId');
       if (!shopId) {
-        alert('Missing shop session. Please log in as your shop account and try again.');
+        setSubmitError('Missing shop session. Please log in as your shop account and try again.');
+        setSubmitting(false);
         return;
       }
 
@@ -313,11 +318,11 @@ export default function CompleteProfile() {
           // ignore
         }
         console.error('Complete profile failed', { status: response.status, errorMessage });
-        alert(`Error: ${errorMessage}`);
+        setSubmitError(`Error: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error completing profile:', error);
-      alert('Failed to complete profile. Please try again.');
+      setSubmitError('Failed to complete profile. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -336,11 +341,11 @@ export default function CompleteProfile() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Failed to start Stripe Connect. Please try again.');
+        setSubmitError(data.error || 'Failed to start Stripe Connect. Please try again.');
         setStripeLoading(false);
       }
     } catch {
-      alert('Failed to connect to Stripe. Please try again.');
+      setSubmitError('Failed to connect to Stripe. Please try again.');
       setStripeLoading(false);
     }
   };
@@ -597,6 +602,11 @@ export default function CompleteProfile() {
             >
               {submitting ? 'Completing Profile...' : 'Complete Profile & Continue'}
             </button>
+            {submitError && (
+              <div style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '12px 16px', marginTop: 12, color: '#ef4444', fontSize: 14 }}>
+                {submitError}
+              </div>
+            )}
           </form>
         </div>
       </div>

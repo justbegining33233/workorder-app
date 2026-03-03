@@ -48,11 +48,15 @@ export default function IntegrationsPage() {
   const save = async (provider: string, isEnabled: boolean) => {
     setSaving(true);
     const token = localStorage.getItem('token');
-    await fetch('/api/integrations', {
+    const r = await fetch('/api/integrations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ provider, isEnabled, settings: formFields }),
     });
+    if (!r.ok) {
+      setSaving(false);
+      return;
+    }
     setEditing(null);
     load();
     setSaving(false);

@@ -213,3 +213,546 @@
 - Test payment flows with Stripe test mode before going live
 
 ==============================================================
+
+
+==============================================================
+  AUDIT SESSION 2 — COMPREHENSIVE UI/UX BUG AUDIT
+  Scope: ALL files under src/app and src/components
+  Exclusions: Items 1–25 above (already fixed)
+  Total bugs found: 9 Critical · 70 Major · 13 Minor = 92
+==============================================================
+
+--------------------------------------------------------------
+  RED - CRITICAL (data loss / security / non-functional feature)
+--------------------------------------------------------------
+
+[ ] C1. MANAGE-TEAM PAGE HAS NO AUTH GUARD
+      File: src/app/shop/manage-team/page.tsx
+      Bug:  No `useRequireAuth` call at component top — unauthenticated
+            users (or wrong-role users) can access employee management.
+      Fix:  Add `const { user, isLoading } = useRequireAuth(['shop', 'manager']);`
+            and the standard isLoading / null guard block.
+
+[ ] C2. NEW IN-SHOP JOB NEVER SAVES TO DATABASE
+      File: src/app/shop/new-inshop-job/page.tsx  handleSubmit()
+      Bug:  Calls `createWorkOrderClient()` — a LOCAL id-generator utility —
+            and only writes to localStorage/React state.
+            No fetch('/api/workorders', { method:'POST' }) is ever made,
+            so created work orders vanish on page reload.
+      Fix:  Replace createWorkOrderClient() with a real POST to /api/workorders.
+
+[ ] C3. NEW IN-SHOP JOB NAVIGATES TO DEAD ROUTE
+      File: src/app/shop/new-inshop-job/page.tsx  ~line 80
+      Bug:  After submit: router.push('/workorders/list')
+            Route /workorders/list does not exist in this app.
+      Fix:  Change to router.push('/shop/home') or the correct work-order list route.
+
+[ ] C4. PARTS IN PARTS-LABOR PAGE NEVER PERSISTED TO DB
+      File: src/app/shop/parts-labor/page.tsx  lines ~149/193/197
+      Bug:  handleAddPart(), handleUpdatePart(), handleDeletePart() only mutate
+            local React state (setParts(...)). No API calls are made.
+            All part changes are lost on page reload.
+      Fix:  Add fetch('/api/inventory' or '/api/parts') calls in each handler;
+            reload state from API response.
+
+[ ] C5. WORK ORDER BAY ASSIGNMENT NEVER PERSISTED
+      File: src/app/shop/home/page.tsx  handleAssign()  ~line 319
+      Bug:  Dispatching a work order to a bay or a roadcall only updates local
+            React state — no API call is made to persist the assignment.
+      Fix:  Add PUT /api/workorders/{id} (with bayId / assignedTo) before updating UI state.
+
+[ ] C6. CORE-RETURNS "CREDITED" BUTTON USES prompt() — UNUSABLE ON MOBILE
+      File: src/app/shop/core-returns/page.tsx  ~line 100
+      Bug:  Uses prompt('Enter credit amount') — a blocking browser dialog.
+            prompt() is suppressed or broken on most mobile browsers.
+      Fix:  Replace with inline input field or a small modal component.
+
+[ ] C7. SETTINGS PAGE — OPERATING HOURS ALWAYS RESET TO HARDCODED DEFAULTS
+      File: src/app/shop/settings/page.tsx  loadSettings()  ~line 410
+      Bug:  After fetching shop data from the API, operatingHours is always
+            overwritten with hardcoded Mon-Fri 08:00–18:00 / Sat 09:00–14:00 /
+            Sun closed values. The saved hours from data.shop.operatingHours
+            are NEVER used. Every page load silently resets the schedule.
+      Fix:
+        operatingHours: data.shop.operatingHours ?? {
+          monday:    { open: '08:00', close: '18:00', closed: false },
+          tuesday:   { open: '08:00', close: '18:00', closed: false },
+          wednesday: { open: '08:00', close: '18:00', closed: false },
+          thursday:  { open: '08:00', close: '18:00', closed: false },
+          friday:    { open: '08:00', close: '18:00', closed: false },
+          saturday:  { open: '09:00', close: '14:00', closed: false },
+          sunday:    { open: '09:00', close: '14:00', closed: true  },
+        }
+
+[ ] C8. SHOP CUSTOMER-MESSAGES PAGE — MESSAGING ENTIRELY BROKEN
+      File: src/app/shop/customer-messages/page.tsx  ~line 77
+      Bug:  recipientId is hardcoded as an empty string ("") when passing to
+            <RealTimeMessaging>. There is no customer-selection dropdown anywhere
+            on the page. Messages sent have no recipient — shop can never message
+            a customer from this page.
+      Fix:  Add a customer-select dropdown (fetch /api/customers?shopId=...) and
+            pass the selected customerId as recipientId.
+
+[ ] C9. TECH PHOTOS PAGE USES prompt() FOR CAPTION AND WORK ORDER — UNUSABLE ON MOBILE
+      File: src/app/tech/photos/page.tsx  lines 160 and 173
+      Bug:  Line 160: caption = prompt('Enter caption') — blocking dialog.
+            Line 173: workOrderId = prompt('Enter work order ID') — blocking dialog.
+            Both calls are broken/suppressed on iOS Safari and most mobile browsers.
+            This is the primary mobile-facing tech interface for photo management.
+      Fix:  Replace both prompt() calls with inline edit fields or an overlay modal.
+
+
+--------------------------------------------------------------
+  ORANGE - MAJOR (UX-breaking, wrong behavior, silent failures)
+--------------------------------------------------------------
+
+NOTE: The largest category of major bugs is the pervasive use of
+browser alert() / confirm() / prompt() for user feedback and
+confirmations. These are:
+  • Blocked by default in many browsers when the page is cross-origin
+    or embedded (Stripe, OAuth flows, iframes)
+  • Suppressed entirely on iOS PWA home-screen mode
+  • Inaccessible (no ARIA, no keyboard focus management)
+  • Visually inconsistent with the rest of the app UI
+ALL should be replaced with inline error/success states, toast
+notifications, or modal dialogs using existing UI patterns.
+
+--- SHOP PAGES ---
+
+[ ] M1. shop/automations — alert() on form validation, no error state on save failure
+      File: src/app/shop/automations/page.tsx  ~lines 66, 75
+      Fix:  Inline validation message; setError state for API failure.
+
+[ ] M2. shop/automations — confirm() for delete
+      File: src/app/shop/automations/page.tsx  ~line 75
+      Fix:  Replace with a delete-confirmation modal or inline "Are you sure?" row.
+
+[ ] M3. shop/automations — save() silently does nothing on API failure
+      File: src/app/shop/automations/page.tsx  save()
+      Bug:  No check for !r.ok after POST — errors are swallowed.
+      Fix:  Add if (!r.ok) setError(...) branch.
+
+[ ] M4. shop/bays — confirm() for delete bay
+      File: src/app/shop/bays/page.tsx  ~line 82
+      Fix:  Inline confirmation row or modal.
+
+[ ] M5. shop/bays — drag-and-drop is non-functional
+      File: src/app/shop/bays/page.tsx
+      Bug:  Bay cards have `cursor: 'grab'` and `draggable` attribute but
+            onDrop / onDragOver handlers are never implemented. Dragging does nothing.
+      Fix:  Implement HTML5 drag-and-drop handlers (onDragStart, onDragOver, onDrop)
+            or use a library like @dnd-kit.
+
+[ ] M6. shop/bays — no user feedback on addBay / updateStatus / saveEdit failures
+      File: src/app/shop/bays/page.tsx
+      Fix:  Add setError / toast on API failure in all three handlers.
+
+[ ] M7. shop/branding — save() doesn't check response.ok, no success/error state
+      File: src/app/shop/branding/page.tsx  save()
+      Fix:  Check r.ok, show inline success/error message.
+
+[ ] M8. shop/complete-profile — multiple alert() calls for validation
+      File: src/app/shop/complete-profile/page.tsx  ~lines 240–260
+      Fix:  Inline field validation errors below each input.
+
+[ ] M9. shop/condition-reports — photo upload is a dead stub (photos always [])
+      File: src/app/shop/condition-reports/page.tsx
+      Bug:  photos state is always [] — no file input or upload API call is wired up.
+            The "Upload Photos" section of the form is completely non-functional.
+      Fix:  Add <input type="file"> with onChange uploading to /api/upload or
+            Cloudinary, then push resulting URL into the photos array.
+
+[ ] M10. shop/condition-reports — no form validation in create()
+       File: src/app/shop/condition-reports/page.tsx  create()
+       Bug:  vehicleDesc and other required fields are not validated before POST.
+       Fix:  Add required-field checks and inline error display.
+
+[ ] M11. shop/core-returns — coreValue sent as string, no explicit numeric conversion
+       File: src/app/shop/core-returns/page.tsx
+       Bug:  coreValue from state is a string; server may reject or mishandle it.
+       Fix:  Parse with parseFloat(coreValue) or Number(coreValue) before sending.
+
+[ ] M12. shop/core-returns — no form validation in save()
+       File: src/app/shop/core-returns/page.tsx  save()
+       Bug:  partName / coreValue not checked for empty/invalid before submit.
+       Fix:  Add inline validation before fetch call.
+
+[ ] M13. shop/customer-messages — infinite "Loading..." for shop owners with null shopId
+       File: src/app/shop/customer-messages/page.tsx
+       Bug:  When user.shopId is null the page stays in loading state forever —
+             no error message is shown, no redirect occurs.
+       Fix:  Add `if (!user?.shopId) return <error state>` after auth check.
+
+[ ] M14. shop/customer-reports — retentionRate renders as "undefined%"
+       File: src/app/shop/customer-reports/page.tsx
+       Bug:  When summary is null or API hasn't returned yet, retentionRate
+             renders as "undefined%" in the stat card.
+       Fix:  Add nullish coalescing: `{summary?.retentionRate ?? '—'}%`
+
+[ ] M15. shop/customer-reports — empty catch{} swallows all fetch errors silently
+       File: src/app/shop/customer-reports/page.tsx
+       Fix:  Add setError(err.message) inside catch block; render error UI.
+
+[ ] M16. shop/dvi — copyLink() builds a URL to a non-existent customer route
+       File: src/app/shop/dvi/page.tsx  copyLink()
+       Bug:  Copies `/customer/dvi/${token}` to clipboard, but no such route exists.
+       Fix:  Verify the correct customer-facing DVI token route and update the path.
+
+[ ] M17. shop/dvi — sendToCustomer() has no response.ok check and gives no feedback
+       File: src/app/shop/dvi/page.tsx  sendToCustomer()
+       Fix:  Check r.ok, show success toast or inline error.
+
+[ ] M18. shop/environmental-fees — alert() for validation
+       File: src/app/shop/environmental-fees/page.tsx  ~line 37
+       Fix:  Inline field-level error message.
+
+[ ] M19. shop/environmental-fees — fees cannot be edited or deleted after creation
+       File: src/app/shop/environmental-fees/page.tsx
+       Bug:  Existing fee cards have no Edit or Delete button — once created, a fee
+             is permanent via the UI.
+       Fix:  Add Edit (toggle inline form) and Delete (with confirmation) buttons
+             to each fee card.
+
+[ ] M20. shop/fleet — confirm() for delete fleet account
+       File: src/app/shop/fleet/page.tsx  ~line 53
+       Fix:  Replace with inline confirmation modal.
+
+[ ] M21. shop/fleet — fleet account detail panel has no "Add Vehicle" button
+       File: src/app/shop/fleet/page.tsx
+       Bug:  Clicking a fleet account opens the detail panel, but there is no way
+             to add a vehicle to the account from within the panel.
+       Fix:  Add an "Add Vehicle" form/button to the fleet detail panel.
+
+[ ] M22. shop/fleet — no form validation in save()
+       File: src/app/shop/fleet/page.tsx  save()
+       Fix:  Validate required fields (company name, contact) before fetch.
+
+[ ] M23. shop/inventory — alert() for errors in handlers
+       File: src/app/shop/inventory/page.tsx  lines 84, 104
+       Fix:  Replace with setError state + inline error banner.
+
+[ ] M24. shop/inventory — confirm() for delete
+       File: src/app/shop/inventory/page.tsx  line 103
+       Fix:  Replace with inline confirmation.
+
+[ ] M25. shop/inventory — showLowStockOnly toggle has stale-state race condition
+       File: src/app/shop/inventory/page.tsx
+       Bug:  handleToggleLowStock() calls setShowLowStockOnly(!val) then immediately
+             calls fetchInventory(), but the state hasn't been committed yet so
+             fetchInventory() reads the OLD value of showLowStockOnly.
+       Fix:  Pass the next value directly:
+               const next = !showLowStockOnly;
+               setShowLowStockOnly(next);
+               fetchInventory(next);
+
+[ ] M26. shop/manage-team — 8+ alert() and confirm() calls throughout
+       File: src/app/shop/manage-team/page.tsx  multiple lines
+       Fix:  Replace all with inline error states / modal confirmations.
+
+[ ] M27. shop/manage-team — saves to localStorage after API call (stale cache risk)
+       File: src/app/shop/manage-team/page.tsx  ~line 134
+       Bug:  On successful save, team data is written to localStorage('shopEmployees').
+             Later reads may use this stale cache instead of server data.
+       Fix:  Remove the localStorage write; always reload from API after mutation.
+
+[ ] M28. shop/manage-team — status badge always shows "● Active" regardless of member status
+       File: src/app/shop/manage-team/page.tsx  ~line 283
+       Bug:  Status badge hardcodes "Active" text — never reads member.status.
+       Fix:  Render `member.status` (and apply correct color per status value).
+
+[ ] M29. shop/parts-labor — alert() for success/error in parts and labor rate handlers
+       File: src/app/shop/parts-labor/page.tsx  ~lines 144, 151
+       Fix:  Replace with inline success/error state.
+
+[ ] M30. shop/ar-aging — no try/catch around fetch, throws unhandled rejection
+       File: src/app/shop/ar-aging/page.tsx
+       Bug:  The data-fetch call has no try/catch. A network error surfaces as an
+             unhandled promise rejection with no user-visible error state.
+       Fix:  Wrap fetch in try/catch, add setError state, render error UI.
+
+[ ] M31. shop/payroll — deleteShift() uses confirm()
+       File: src/app/shop/payroll/page.tsx  ~line 147
+       Fix:  Replace with inline confirmation row.
+
+[ ] M32. shop/payroll — addShift() / addLeave() / createPeriod() use alert() on error
+       File: src/app/shop/payroll/page.tsx  ~lines 141, 166, 176
+       Fix:  Replace with inline error state messages.
+
+[ ] M33. shop/payroll — runPayroll() uses confirm() + alert(); markPeriodPaid() uses confirm()
+       File: src/app/shop/payroll/page.tsx  ~lines 180–195
+       Fix:  Use a confirmation modal for runPayroll and markPeriodPaid.
+
+[ ] M34. shop/payroll — saveOtRule() uses alert() with no API error check
+       File: src/app/shop/payroll/page.tsx  ~line 198
+       Bug:  Calls alert('Saved!') even if the API responded with an error status.
+       Fix:  Check r.ok before showing success; show error state on failure.
+
+[ ] M35. shop/payroll — leave denial uses prompt() for denial reason
+       File: src/app/shop/payroll/page.tsx  ~line 484  (Deny button)
+       Bug:  Uses prompt('Enter denial reason') — blocking dialog, broken on mobile.
+       Fix:  Replace with an inline text input that appears on the leave-request row
+             when "Deny" is clicked, or use a modal.
+
+[ ] M36. shop/payroll — load() has no catch block; errors silently ignored
+       File: src/app/shop/payroll/page.tsx  load()
+       Fix:  Add catch block with setError state.
+
+[ ] M37. shop/recurring-workorders — handleDelete() uses confirm()
+       File: src/app/shop/recurring-workorders/page.tsx  ~line 148
+       Fix:  Inline confirmation.
+
+[ ] M38. shop/recurring-workorders — handleCreate() uses alert() on error
+       File: src/app/shop/recurring-workorders/page.tsx  ~line 123
+       Fix:  Inline error state.
+
+[ ] M39. shop/referrals — create() has no error handling, no form validation
+       File: src/app/shop/referrals/page.tsx  create()
+       Bug:  No check for !r.ok, no alert or error state, required fields not
+             validated, rewardValue sent as Number() without NaN guard.
+       Fix:  Add !r.ok check, setError state, required field validation, and
+             validate that rewardValue is a valid number before sending.
+
+[ ] M40. shop/reviews — handleDeleteResponse() uses confirm()
+       File: src/app/shop/reviews/page.tsx  ~line 83
+       Fix:  Inline confirmation.
+
+[ ] M41. shop/services — handleDelete() uses confirm(); handleEditSave() uses alert()
+       File: src/app/shop/services/page.tsx  ~lines 179, 189
+       Fix:  Inline confirmation for delete; inline error state for save failure.
+
+[ ] M42. shop/settings — 9+ alert() and confirm() calls across handlers
+       File: src/app/shop/settings/page.tsx  lines ~476–830
+       Affected handlers: handleSave, handleAddService, handleRemoveService,
+         handleUpdateService, cancelSubscription, openBillingPortal,
+         handleStripeConnect, upgradePlan, handlePopulateDefaults
+       Fix:  Replace all alert()/confirm() with inline state messages or modals.
+
+[ ] M43. shop/tax-settings — alert() for validation; no edit/delete on existing rules
+       File: src/app/shop/tax-settings/page.tsx  ~line 44
+       Bug:  Validation uses alert(). More critically, there are no Edit or Delete
+             buttons on the tax rule cards — rates cannot be changed once created.
+       Fix:  Inline validation. Add Edit (inline form toggle) and Delete controls
+             to each tax rule card.
+
+[ ] M44. shop/templates — handleDelete() uses confirm()
+       File: src/app/shop/templates/page.tsx  ~line 85
+       Fix:  Inline confirmation.
+
+[ ] M45. shop/vendors — handleDeleteVendor() and handleDeleteOrder() use confirm()
+       File: src/app/shop/vendors/page.tsx  ~lines 121, 152
+       Fix:  Inline confirmations.
+
+[ ] M46. shop/work-authorizations — create() uses alert() for validation; no error state on failure
+       File: src/app/shop/work-authorizations/page.tsx  ~line 48
+       Fix:  Inline validation; setError state for API failure.
+
+--- CUSTOMER PAGES ---
+
+[ ] M47. customer/dashboard — fetchStats() 9 parallel fetches with no user-visible error state
+       File: src/app/customer/dashboard/page.tsx  fetchStats()
+       Bug:  9 Promise.all() fetches with a single catch that only console.error().
+             If any fetch fails, the dashboard renders silently with missing data
+             and no error message shown to the user.
+       Fix:  Add a setError state and render an error banner when fetchStats fails.
+
+[ ] M48. customer/vehicles — 8+ alert() and confirm() calls in CRUD handlers
+       File: src/app/customer/vehicles/page.tsx
+       Affected: handleAddVehicle, handleUpdateVehicle, handleDeleteVehicle
+       Fix:  Replace all with inline form errors and confirmation dialogs.
+
+[ ] M49. customer/tracking — 3× alert() for message send result
+       File: src/app/customer/tracking/page.tsx  lines 147–153
+       Fix:  Inline success/error feedback near the message input.
+
+[ ] M50. customer/workorders/[id] — 2× alert() for payment errors
+       File: src/app/customer/workorders/[id]/page.tsx  lines 115–119
+       Fix:  Inline error message in the payment section.
+
+[ ] M51. customer/recurring-approvals — 2× alert() for approval/rejection errors
+       File: src/app/customer/recurring-approvals/page.tsx  lines 49–52
+       Fix:  Inline error state per approval card.
+
+[ ] M52. customer/payments — 2× alert() for payment errors
+       File: src/app/customer/payments/page.tsx  lines 72–76
+       Fix:  Inline error message in the payment form.
+
+[ ] M53. customer/pay/[token] — alert() for form validation
+       File: src/app/customer/pay/[token]/page.tsx  line 45
+       Fix:  Inline validation error near the form field.
+
+[ ] M54. customer/estimates — alert() for auth error
+       File: src/app/customer/estimates/page.tsx  line 88
+       Fix:  Redirect to login or show inline auth error state.
+
+--- TECH PAGES ---
+
+[ ] M55. tech/home — 7× alert() calls throughout handlers
+       File: src/app/tech/home/page.tsx  lines 376–530
+       Fix:  Replace with inline error states / toast notifications.
+
+[ ] M56. tech/timesheet — 4× alert(), 1× confirm()
+       File: src/app/tech/timesheet/page.tsx  lines 381–413
+       Fix:  Inline error states; inline confirmation for delete.
+
+[ ] M57. tech/share-location — 4× alert() calls
+       File: src/app/tech/share-location/page.tsx  lines 39–59
+       Fix:  Inline error states (GPS permission denied, API errors, etc.).
+
+[ ] M58. tech/new-roadside-job — alert() shown on success
+       File: src/app/tech/new-roadside-job/page.tsx  line 38
+       Fix:  Navigate to the job detail page and show a success banner there.
+
+[ ] M59. tech/new-inshop-job — alert() shown on success
+       File: src/app/tech/new-inshop-job/page.tsx  line 76
+       Fix:  Navigate to the job detail page and show a success banner there.
+
+--- ADMIN PAGES ---
+
+[ ] M60. admin/system-settings — confirm() for settings reset
+       File: src/app/admin/system-settings/page.tsx  line 49
+       Fix:  Replace with a modal with explicit "Reset" / "Cancel" buttons.
+
+[ ] M61. admin/shop-details/[id] — confirm() + 3× alert()
+       File: src/app/admin/shop-details/[id]/page.tsx  lines 104–129
+       Fix:  Inline error states; modal for destructive actions.
+
+[ ] M62. admin/sessions — confirm() for session revoke
+       File: src/app/admin/sessions/page.tsx  line 46
+       Fix:  Inline confirmation per session row.
+
+[ ] M63. admin/pending-shops — 4× alert(), 1× confirm()
+       File: src/app/admin/pending-shops/page.tsx  lines 195–232
+       Fix:  Inline success/error states; modal for approve/reject actions.
+
+[ ] M64. admin/manage-tenants — 5× alert(), 1× confirm()
+       File: src/app/admin/manage-tenants/page.tsx  lines 132–173
+       Fix:  Inline error states; modal for destructive tenant actions.
+
+--- COMPONENTS ---
+
+[ ] M65. LoginClient — 5× alert() in registration and signup flows
+       File: src/components/LoginClient.tsx  lines 172–199
+       Fix:  Replace all with inline error messages below the relevant form fields.
+
+[ ] M66. MessagingCard — 2× alert() for send errors
+       File: src/components/MessagingCard.tsx  lines 227–229
+       Fix:  Inline error message beneath the message input.
+
+[ ] M67. CustomerMessagingCard — 2× alert() for send errors
+       File: src/components/CustomerMessagingCard.tsx  lines 248–250
+       Fix:  Inline error message beneath the message input.
+
+[ ] M68. TopNavBar — 3× alert() for clock-in/out results
+       File: src/components/TopNavBar.tsx  lines 256–267
+       Fix:  Replace with a toast notification (clock-in/out happens in the nav bar,
+             an overlay alert is especially jarring here).
+
+[ ] M69. NewAppointmentClient — 3× alert() for validation and API errors
+       File: src/components/NewAppointmentClient.tsx  lines 200–232
+       Fix:  Inline form validation errors; inline error banner for API failures.
+
+[ ] M70. TimeClock — 6× alert() for GPS, camera, auth, and clock-in feedback
+       File: src/components/TimeClock.tsx  lines 152–262
+       Bug:  GPS permission denied, photo capture errors, and clock-in success/failure
+             are all surfaced via alert(). Particularly bad in PWA / mobile context.
+       Fix:  Use inline status messages or a non-blocking toast system.
+
+
+--------------------------------------------------------------
+  YELLOW - MINOR (cosmetic, edge-case, code quality)
+--------------------------------------------------------------
+
+[ ] mn1. shop/inventory — unused `idx` variable in .map()
+       File: src/app/shop/inventory/page.tsx  ~line 268
+       Fix:  Remove idx from destructure: .map((item) => ...)
+
+[ ] mn2. shop/inventory — useEffect depends on [router] but router is never used inside
+       File: src/app/shop/inventory/page.tsx  line 28
+       Fix:  Change dependency array to [].
+
+[ ] mn3. shop/loaners — VIN field label says "Vin" (incorrect capitalisation)
+       File: src/app/shop/loaners/page.tsx
+       Fix:  Rename label to "VIN".
+
+[ ] mn4. shop/loaners — deleteLoaner() uses confirm()
+       File: src/app/shop/loaners/page.tsx
+       Fix:  Inline confirmation.
+
+[ ] mn5. shop/inspections — default form state has hardcoded fee of '37.00'
+       File: src/app/shop/inspections/page.tsx
+       Bug:  New inspection forms are pre-filled with $37.00 — arbitrary default.
+       Fix:  Default to '' or read from shop settings.
+
+[ ] mn6. shop/locations — handleDelete() uses confirm()
+       File: src/app/shop/locations/page.tsx  ~line 71
+       Fix:  Inline confirmation.
+
+[ ] mn7. shop/complete-profile — reads shopId from localStorage (may be absent)
+       File: src/app/shop/complete-profile/page.tsx  ~line 280
+       Bug:  shopId = localStorage.getItem('shopId') — could be null on a new device
+             or after clearing storage, causing silent failures.
+       Fix:  Read shopId from user object (already available via useRequireAuth).
+
+[ ] mn8. shop/parts-labor — useEffect runs before user is available
+       File: src/app/shop/parts-labor/page.tsx
+       Bug:  useEffect(loadLaborRates, []) with empty dependency array means
+             loadLaborRates runs once on mount, potentially before `user` is set.
+       Fix:  Change dependency array to [user] and guard with if (!user) return.
+
+[ ] mn9. shop/settings — redirect useEffect may cause loops
+       File: src/app/shop/settings/page.tsx
+       Bug:  useEffect checks if pathname === '/shop/settings' and calls
+             router.replace('/shop/admin/settings') — but this IS the /shop/settings
+             page, so it would always redirect. Depending on middleware config
+             this can cause a redirect loop or broken navigation.
+       Fix:  Remove this redirect effect entirely; use Next.js middleware for
+             redirects if needed.
+
+[ ] mn10. shop/referrals — rewardValue parsed with Number() without NaN guard
+        File: src/app/shop/referrals/page.tsx  create()
+        Bug:  Number('') === 0, Number('abc') === NaN — both are silently submitted.
+        Fix:  Use parseFloat and validate isNaN before calling fetch.
+
+[ ] mn11. tech/dvi — alert() for form validation
+        File: src/app/tech/dvi/page.tsx  line 72
+        Fix:  Inline required-field error message.
+
+[ ] mn12. tech/photos — alert() for upload failure
+        File: src/app/tech/photos/page.tsx  line 57
+        Fix:  Inline error message below the upload button.
+
+[ ] mn13. customer/dashboard — loyalty points computed client-side (may not match DB)
+        File: src/app/customer/dashboard/page.tsx
+        Bug:  Points displayed are `completedWorkOrders * 50`, computed purely in the
+              browser. If the real loyalty system uses different accrual rules 
+              (sign-up bonus, referrals, manual adjustments) this will be wrong.
+        Fix:  Fetch points from /api/customers/rewards (already built in audit item 7)
+              and display the server value.
+
+
+--------------------------------------------------------------
+  PRIORITY ORDER (suggested fix sequence)
+--------------------------------------------------------------
+
+  1. C2 + C3  (new-inshop-job never saves + dead route) — data loss
+  2. C7       (operating hours reset on every load) — data loss
+  3. C4       (parts-labor parts never persisted) — data loss
+  4. C5       (bay assignment never persisted) — data loss
+  5. C8       (shop customer-messages entirely broken) — feature dead
+  6. C1       (manage-team no auth guard) — security
+  7. C6 + C9  (prompt() on mobile) — mobile UX blocked
+  8. M13      (customer-messages infinite loading) — UX dead-end
+  9. M14+M15  (customer-reports undefined% + silent errors)
+  10. M16     (DVI copy-link dead route)
+  11. M19+M43 (env-fees + tax-settings no edit/delete)
+  12. M5      (bays drag-and-drop non-functional)
+  13. M9      (condition-reports photo upload dead stub)
+  14. M21     (fleet no "add vehicle" button)
+  15. M25     (inventory stale-state race condition)
+  16. M27+M28 (manage-team stale localStorage + wrong status badge)
+  17. mn7     (complete-profile localStorage shopId risk)
+  18. mn9     (settings redirect loop)
+  19. All remaining M-class alert()/confirm() replacements (M1–M70)
+  20. All mn-class minor cleanup items
+
+==============================================================

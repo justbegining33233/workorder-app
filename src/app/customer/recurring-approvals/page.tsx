@@ -21,6 +21,7 @@ export default function RecurringApprovals() {
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState<string | null>(null);
   const [done, setDone] = useState<Record<string, 'confirmed' | 'skipped'>>({});
+  const [approvalMsg, setApprovalMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -46,10 +47,10 @@ export default function RecurringApprovals() {
       if (data.success) {
         setDone((prev) => ({ ...prev, [id]: action === 'confirm' ? 'confirmed' : 'skipped' }));
       } else {
-        alert(data.error || 'Something went wrong');
+        setApprovalMsg({type:'error',text:data.error || 'Something went wrong'});
       }
     } catch {
-      alert('Request failed. Please try again.');
+      setApprovalMsg({type:'error',text:'Request failed. Please try again.'});
     } finally {
       setActing(null);
     }
@@ -214,6 +215,13 @@ export default function RecurringApprovals() {
           </Link>
         </div>
       </div>
+
+      {approvalMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:approvalMsg.type==='success'?'#dcfce7':'#fde8e8',color:approvalMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {approvalMsg.text}
+          <button onClick={()=>setApprovalMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

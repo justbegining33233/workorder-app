@@ -32,6 +32,7 @@ export default function ShopLocationsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [deleteLocInfo, setDeleteLocInfo] = useState<{id:string;name:string}|null>(null);
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
@@ -77,11 +78,16 @@ export default function ShopLocationsPage() {
 
   const handleDelete = async (id: string, name: string, isMain: boolean) => {
     if (isMain) { setError('Cannot delete the main location. Set another as main first.'); return; }
-    if (!confirm(`Delete location "${name}"?`)) return;
+    setDeleteLocInfo({ id, name });
+  };
+
+  const doDelete = async () => {
+    if (!deleteLocInfo) return;
     try {
-      await fetch(`/api/shop/locations/${id}`, { method: 'DELETE', headers });
+      await fetch(`/api/shop/locations/${deleteLocInfo.id}`, { method: 'DELETE', headers });
       setSuccess('Location deleted'); load();
     } catch { setError('Delete failed'); }
+    setDeleteLocInfo(null);
   };
 
   const bg = 'transparent';
@@ -211,6 +217,19 @@ export default function ShopLocationsPage() {
           </div>
         )}
       </div>
+
+      {deleteLocInfo && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1f2937',border:'1px solid rgba(255,255,255,0.1)',borderRadius:12,padding:28,maxWidth:380,width:'90%'}}>
+            <h3 style={{color:'#e5e7eb',fontSize:18,fontWeight:700,marginBottom:8}}>Delete Location?</h3>
+            <p style={{color:'#9aa3b2',fontSize:14,marginBottom:20}}>Delete <strong style={{color:'#e5e7eb'}}>{deleteLocInfo.name}</strong>? This cannot be undone.</p>
+            <div style={{display:'flex',gap:10}}>
+              <button onClick={doDelete} style={{flex:1,padding:'10px 0',background:'#ef4444',color:'white',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Delete</button>
+              <button onClick={()=>setDeleteLocInfo(null)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

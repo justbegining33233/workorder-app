@@ -20,6 +20,7 @@ export default function BrandingPage() {
   const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<Branding>({
     logoUrl: '', primaryColor: '#e5332a', accentColor: '#f59e0b',
@@ -38,14 +39,17 @@ export default function BrandingPage() {
 
   const save = async () => {
     setSaving(true);
-    const token = localStorage.getItem('token');
-    await fetch('/api/branding', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(form),
-    });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setSaveError('');
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch('/api/branding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(form),
+      });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); setSaveError(d.error || 'Failed to save branding.'); }
+      else { setSaved(true); setTimeout(() => setSaved(false), 3000); }
+    } catch (err: any) { setSaveError(err?.message || 'Network error.'); }
     setSaving(false);
   };
 
@@ -63,9 +67,12 @@ export default function BrandingPage() {
           <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🎨 Shop Branding</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Customize your customer-facing pages, invoices, and communications</p>
         </div>
-        <button onClick={save} disabled={saving} style={{ background: saved ? '#22c55e' : '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-          {saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Branding'}
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+          <button onClick={save} disabled={saving} style={{ background: saved ? '#22c55e' : '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+            {saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Branding'}
+          </button>
+          {saveError && <div style={{ color: '#ef4444', fontSize: 13 }}>{saveError}</div>}
+        </div>
       </div>
 
       {loading ? <div style={{ padding: 48, color: '#6b7280' }}>Loading...</div> : (
@@ -127,7 +134,7 @@ export default function BrandingPage() {
               <div style={{ padding: '12px 16px', background: 'rgba(0,0,0,0.3)', fontSize: 12, color: '#9ca3af', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>Live Preview</div>
               {/* Mock header */}
               <div style={{ background: '#1a1a2e', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
-                {form.logoUrl ? <img src={form.logoUrl} alt="Logo" style={{ height: 36, borderRadius: 6 }} /> :
+                {form.logoUrl ? <img src={form.logoUrl} alt="Logo" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} style={{ height: 36, borderRadius: 6 }} /> :
                   <div style={{ width: 40, height: 40, background: previewBg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🔧</div>}
                 <div>
                   <div style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>{form.businessName || 'Your Shop Name'}</div>

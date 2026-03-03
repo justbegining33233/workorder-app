@@ -16,6 +16,7 @@ export default function EmployeeProfile() {
   const [shopId, setShopId] = useState('');
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState<any>({});
+  const [employeeMsg, setEmployeeMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
     const admin = localStorage.getItem('isShopAdmin');
@@ -66,16 +67,15 @@ export default function EmployeeProfile() {
             available: emp.available,
           });
         } else {
-          alert('Employee not found');
+          console.error('Employee not found');
           router.push('/shop/admin?tab=team');
         }
       } else {
-        alert('Failed to fetch employee data');
+        console.error('Failed to fetch employee data');
         router.push('/shop/admin?tab=team');
       }
     } catch (error) {
       console.error('Error fetching employee:', error);
-      alert('Error loading employee data');
       router.push('/shop/admin?tab=team');
     } finally {
       setLoading(false);
@@ -99,15 +99,15 @@ export default function EmployeeProfile() {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Employee updated successfully');
+        setEmployeeMsg({type:'success',text:'Employee updated successfully'});
         setEditing(false);
         fetchEmployeeData(shopId, employeeId);
       } else {
-        alert(`Failed to update employee: ${data.error || 'Unknown error'}\n${data.details || ''}`);
+        setEmployeeMsg({type:'error',text:`Failed to update employee: ${data.error || 'Unknown error'}${data.details ? '\n' + data.details : ''}` });
       }
     } catch (error) {
       console.error('Error updating employee:', error);
-      alert('Error updating employee: ' + (error as Error).message);
+      setEmployeeMsg({type:'error',text:'Error updating employee: ' + (error as Error).message});
     } finally {
       setLoading(false);
     }
@@ -468,6 +468,13 @@ export default function EmployeeProfile() {
           </div>
         </div>
       </div>
+
+      {employeeMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:employeeMsg.type==='success'?'#dcfce7':'#fde8e8',color:employeeMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {employeeMsg.text}
+          <button onClick={()=>setEmployeeMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

@@ -23,6 +23,8 @@ export default function CustomerVehiclesPage() {
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [vehicleMsg, setVehicleMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string|null>(null);
   const [formData, setFormData] = useState({
     vehicleType: 'semi-truck',
     make: '',
@@ -82,7 +84,7 @@ export default function CustomerVehiclesPage() {
 
   const handleAddVehicle = async () => {
     if (!formData.make || !formData.model) {
-      alert('Please enter make and model');
+      setVehicleMsg({type:'error',text:'Please enter make and model'});
       return;
     }
 
@@ -98,23 +100,23 @@ export default function CustomerVehiclesPage() {
       });
 
       if (response.ok) {
-        alert('Vehicle added successfully!');
+        setVehicleMsg({type:'success',text:'Vehicle added successfully!'});
         setShowAddForm(false);
         setFormData({ vehicleType: 'semi-truck', make: '', model: '', year: new Date().getFullYear(), vin: '', licensePlate: '' });
         fetchVehicles();
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to add vehicle');
+        setVehicleMsg({type:'error',text:error.error || 'Failed to add vehicle'});
       }
     } catch (error) {
       console.error('Error adding vehicle:', error);
-      alert('Failed to add vehicle');
+      setVehicleMsg({type:'error',text:'Failed to add vehicle'});
     }
   };
 
   const handleUpdateVehicle = async () => {
     if (!editingVehicle || !formData.make || !formData.model) {
-      alert('Please enter make and model');
+      setVehicleMsg({type:'error',text:'Please enter make and model'});
       return;
     }
 
@@ -130,23 +132,21 @@ export default function CustomerVehiclesPage() {
       });
 
       if (response.ok) {
-        alert('Vehicle updated successfully!');
+        setVehicleMsg({type:'success',text:'Vehicle updated successfully!'});
         setEditingVehicle(null);
         setFormData({ vehicleType: 'semi-truck', make: '', model: '', year: new Date().getFullYear(), vin: '', licensePlate: '' });
         fetchVehicles();
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to update vehicle');
+        setVehicleMsg({type:'error',text:error.error || 'Failed to update vehicle'});
       }
     } catch (error) {
       console.error('Error updating vehicle:', error);
-      alert('Failed to update vehicle');
+      setVehicleMsg({type:'error',text:'Failed to update vehicle'});
     }
   };
 
   const handleDeleteVehicle = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this vehicle?')) return;
-
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/customers/vehicles/${id}`, {
@@ -155,11 +155,13 @@ export default function CustomerVehiclesPage() {
       });
 
       if (response.ok) {
-        alert('Vehicle deleted');
+        setVehicleMsg({type:'success',text:'Vehicle deleted'});
         fetchVehicles();
       }
     } catch (error) {
       console.error('Error deleting vehicle:', error);
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -265,7 +267,7 @@ export default function CustomerVehiclesPage() {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDeleteVehicle(vehicle.id)}
+                    onClick={() => setDeleteConfirmId(vehicle.id)}
                     style={{ flex: 1, padding: '10px', background: 'rgba(229,51,42,0.2)', color: '#e5332a', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
                   >
                     Delete
@@ -375,6 +377,26 @@ export default function CustomerVehiclesPage() {
                   Cancel
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {vehicleMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:vehicleMsg.type==='success'?'#dcfce7':'#fde8e8',color:vehicleMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {vehicleMsg.text}
+          <button onClick={()=>setVehicleMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
+
+      {deleteConfirmId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#2a2a2a',border:'1px solid rgba(229,51,42,0.3)',borderRadius:12,padding:32,maxWidth:400,width:'90%'}}>
+            <h3 style={{color:'#e5e7eb',fontSize:18,fontWeight:700,marginBottom:12}}>Delete Vehicle?</h3>
+            <p style={{color:'#9aa3b2',fontSize:14,marginBottom:24}}>Are you sure you want to delete this vehicle? This action cannot be undone.</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={()=>handleDeleteVehicle(deleteConfirmId)} style={{flex:1,padding:'11px 0',background:'#e5332a',color:'white',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Delete</button>
+              <button onClick={()=>setDeleteConfirmId(null)} style={{flex:1,padding:'11px 0',background:'rgba(255,255,255,0.1)',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.2)',borderRadius:8,fontSize:14,fontWeight:600,cursor:'pointer'}}>Cancel</button>
             </div>
           </div>
         </div>

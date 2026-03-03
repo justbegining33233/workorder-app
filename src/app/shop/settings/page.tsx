@@ -211,11 +211,7 @@ function ShopSettingsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isLoading } = useRequireAuth(['shop']);
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.pathname === '/shop/settings') {
-      router.replace('/shop/admin/settings');
-    }
-  }, [router]);
+
   const [userName, setUserName] = useState('');
   const [shopId, setShopId] = useState('');
   const [activeTab, setActiveTab] = useState('general');
@@ -301,6 +297,10 @@ function ShopSettingsPageContent() {
   const [billingLoading, setBillingLoading] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [connectLoading, setConnectLoading] = useState(false);
+  const [settingsMsg, setSettingsMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [serviceMsg, setServiceMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [cancelSubConfirm, setCancelSubConfirm] = useState(false);
+  const [removeServiceConfirmId, setRemoveServiceConfirmId] = useState<string | null>(null);
 
   const isCustomService = (service: Service) => {
     const defaults = SERVICE_OPTIONS[service.category as CategoryId] || [];
@@ -421,7 +421,7 @@ function ShopSettingsPageContent() {
           businessLicense: data.shop.businessLicense || '',
           insurancePolicy: data.shop.insurancePolicy || '',
           shopType: data.shop.shopType || 'diesel',
-          operatingHours: {
+          operatingHours: data.shop.operatingHours ?? {
             monday: { open: '08:00', close: '18:00', closed: false },
             tuesday: { open: '08:00', close: '18:00', closed: false },
             wednesday: { open: '08:00', close: '18:00', closed: false },
@@ -477,13 +477,14 @@ function ShopSettingsPageContent() {
       });
 
       if (response.ok) {
-        alert('Settings saved successfully!');
+        setSettingsMsg({ type: 'success', text: 'Settings saved successfully!' });
+        setTimeout(() => setSettingsMsg(null), 3000);
       } else {
-        alert('Failed to save settings');
+        setSettingsMsg({ type: 'error', text: 'Failed to save settings' });
       }
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Error saving settings');
+      setSettingsMsg({ type: 'error', text: 'Error saving settings' });
     }
   };
 
@@ -595,7 +596,7 @@ function ShopSettingsPageContent() {
   // Billing functions
   const openBillingPortal = async () => {
     if (!shopId) {
-      alert('Missing shop ID. Please refresh and try again.');
+      setSettingsMsg({ type: 'error', text: 'Missing shop ID. Please refresh and try again.' });
       return;
     }
 
@@ -617,11 +618,11 @@ function ShopSettingsPageContent() {
         window.location.href = url;
       } else {
         const error = await response.json().catch(() => ({}));
-        alert(error?.error || 'Failed to open billing portal');
+        setSettingsMsg({ type: 'error', text: error?.error || 'Failed to open billing portal' });
       }
     } catch (error) {
       console.error('Error opening billing portal:', error);
-      alert('Error opening billing portal');
+      setSettingsMsg({ type: 'error', text: 'Error opening billing portal' });
     } finally {
       setBillingLoading(false);
     }
@@ -641,11 +642,11 @@ function ShopSettingsPageContent() {
         window.location.href = url;
       } else {
         const err = await res.json().catch(() => ({}));
-        alert(err?.error || 'Failed to start Stripe Connect onboarding');
+        setSettingsMsg({ type: 'error', text: err?.error || 'Failed to start Stripe Connect onboarding' });
       }
     } catch (e) {
       console.error('Stripe Connect error:', e);
-      alert('Error starting Stripe Connect');
+      setSettingsMsg({ type: 'error', text: 'Error starting Stripe Connect' });
     } finally {
       setConnectLoading(false);
     }
@@ -673,25 +674,26 @@ function ShopSettingsPageContent() {
         const { url } = await response.json();
         window.location.href = url;
       } else {
-        alert('Failed to start checkout');
+        setSettingsMsg({ type: 'error', text: 'Failed to start checkout' });
       }
     } catch (error) {
       console.error('Error upgrading plan:', error);
-      alert('Error upgrading plan');
+      setSettingsMsg({ type: 'error', text: 'Error upgrading plan' });
     } finally {
       setBillingLoading(false);
     }
   };
 
-  const cancelSubscription = async () => {
+  const cancelSubscription = () => {
     if (!shopId || !subscription?.stripeCustomerId) {
-      alert('No active subscription found to cancel.');
+      setSettingsMsg({ type: 'error', text: 'No active subscription found to cancel.' });
       return;
     }
+    setCancelSubConfirm(true);
+  };
 
-    const confirmCancel = window.confirm('Cancel subscription at period end? You will keep access until the current billing period ends.');
-    if (!confirmCancel) return;
-
+  const doCancelSubscription = async () => {
+    setCancelSubConfirm(false);
     setCancelling(true);
     try {
       const csrf = typeof document !== 'undefined' ? document.cookie.split(';').map(s=>s.trim()).find(s=>s.startsWith('csrf_token='))?.split('=')[1] : null;
@@ -709,14 +711,15 @@ function ShopSettingsPageContent() {
       if (response.ok) {
         const data = await response.json();
         setSubscription((prev) => prev ? { ...prev, cancelAtPeriodEnd: true, status: prev.status } : prev);
-        alert('Subscription cancellation scheduled. You retain access until the period ends.');
+        setSettingsMsg({ type: 'success', text: 'Subscription cancellation scheduled. You retain access until the period ends.' });
+        setTimeout(() => setSettingsMsg(null), 6000);
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to cancel subscription');
+        setSettingsMsg({ type: 'error', text: error.error || 'Failed to cancel subscription' });
       }
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      alert('Error cancelling subscription');
+      setSettingsMsg({ type: 'error', text: 'Error cancelling subscription' });
     } finally {
       setCancelling(false);
     }
@@ -734,7 +737,7 @@ function ShopSettingsPageContent() {
   const handleAddService = async () => {
     const serviceName = newServiceMode === 'custom' ? newService.customName.trim() : newService.serviceName.trim();
     if (!serviceName) {
-      alert(newServiceMode === 'custom' ? 'Please enter a custom service name' : 'Please select a service from the dropdown');
+      setServiceMsg({ type: 'error', text: newServiceMode === 'custom' ? 'Please enter a custom service name' : 'Please select a service from the dropdown' });
       return;
     }
 
@@ -758,19 +761,20 @@ function ShopSettingsPageContent() {
         setShowAddServiceModal(false);
         setNewService({ serviceName: '', customName: '', category: 'diesel', price: '' });
         setNewServiceMode('catalog');
-        alert('Service added successfully!');
+        setServiceMsg({ type: 'success', text: 'Service added successfully!' });
+        setTimeout(() => setServiceMsg(null), 3000);
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to add service');
+        setServiceMsg({ type: 'error', text: error.error || 'Failed to add service' });
       }
     } catch (error) {
       console.error('Error adding service:', error);
-      alert('Error adding service');
+      setServiceMsg({ type: 'error', text: 'Error adding service' });
     }
   };
 
   const handlePopulateDefaults = async () => {
-    if (!shopId) return alert('Shop ID not found');
+    if (!shopId) { setSettingsMsg({ type: 'error', text: 'Shop ID not found' }); return; }
     const toCreate = CATEGORY_CONFIG.flatMap((cat) =>
       (SERVICE_OPTIONS[cat.id] || []).map((s) => ({ serviceName: s, category: cat.id }))
     );
@@ -790,14 +794,13 @@ function ShopSettingsPageContent() {
         // ignore individual errors
       }
     }
-    alert(`Imported ${created} default services`);
+    setSettingsMsg({ type: 'success', text: `Imported ${created} default services` });
+    setTimeout(() => setSettingsMsg(null), 4000);
     // reload services
     await loadSettings(shopId);
   };
 
   const handleRemoveService = async (serviceId: string) => {
-    if (!confirm('Are you sure you want to remove this service?')) return;
-
     try {
       const csrf = typeof document !== 'undefined' ? document.cookie.split(';').map(s=>s.trim()).find(s=>s.startsWith('csrf_token='))?.split('=')[1] : null;
       const response = await fetch(`/api/shops/services?serviceId=${serviceId}`, {
@@ -808,13 +811,16 @@ function ShopSettingsPageContent() {
 
       if (response.ok) {
         setServices(services.filter(s => s.id !== serviceId));
-        alert('Service removed successfully!');
+        setServiceMsg({ type: 'success', text: 'Service removed successfully!' });
+        setTimeout(() => setServiceMsg(null), 3000);
       } else {
-        alert('Failed to remove service');
+        setServiceMsg({ type: 'error', text: 'Failed to remove service' });
       }
     } catch (error) {
       console.error('Error removing service:', error);
-      alert('Error removing service');
+      setServiceMsg({ type: 'error', text: 'Error removing service' });
+    } finally {
+      setRemoveServiceConfirmId(null);
     }
   };
 
@@ -850,13 +856,14 @@ function ShopSettingsPageContent() {
         setServices(services.map(s => s.id === selectedService.id ? data.service : s));
         setShowEditServiceModal(false);
         setSelectedService(null);
-        alert('Service updated successfully!');
+        setServiceMsg({ type: 'success', text: 'Service updated successfully!' });
+        setTimeout(() => setServiceMsg(null), 3000);
       } else {
-        alert('Failed to update service');
+        setServiceMsg({ type: 'error', text: 'Failed to update service' });
       }
     } catch (error) {
       console.error('Error updating service:', error);
-      alert('Error updating service');
+      setServiceMsg({ type: 'error', text: 'Error updating service' });
     }
   };
 
@@ -1159,7 +1166,7 @@ function ShopSettingsPageContent() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleRemoveService(service.id);
+                                  setRemoveServiceConfirmId(service.id);
                                 }}
                                 style={{background:'transparent', border:'none', color:'#e5332a', cursor:'pointer', fontSize:18, padding:4}}
                                 title="Remove service"
@@ -1220,7 +1227,7 @@ function ShopSettingsPageContent() {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleRemoveService(service.id);
+                                    setRemoveServiceConfirmId(service.id);
                                   }}
                                   style={{background:'transparent', border:'none', color:'#e5332a', cursor:'pointer', fontSize:18, padding:4}}
                                   title="Remove service"
@@ -1895,6 +1902,9 @@ function ShopSettingsPageContent() {
               />
             </div>
 
+            {serviceMsg && (
+              <div style={{ marginBottom: 16, background: serviceMsg.type === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)', border: `1px solid ${serviceMsg.type === 'success' ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.4)'}`, borderRadius: 8, padding: '8px 14px', color: serviceMsg.type === 'success' ? '#86efac' : '#fca5a5', fontSize: 13, fontWeight: 600 }}>{serviceMsg.text}</div>
+            )}
             <div style={{display:'flex', gap:12}}>
               <button 
                 onClick={() => setShowAddServiceModal(false)} 
@@ -1986,6 +1996,44 @@ function ShopSettingsPageContent() {
               >
                 Save Changes
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Settings toast */}
+      {settingsMsg && (
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: settingsMsg.type === 'success' ? '#dcfce7' : '#fde8e8', color: settingsMsg.type === 'success' ? '#166534' : '#991b1b', border: `1px solid ${settingsMsg.type === 'success' ? '#86efac' : '#fca5a5'}`, borderRadius: 10, padding: '12px 20px', zIndex: 9999, fontWeight: 600, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxWidth: 420 }}>
+          {settingsMsg.text}
+          <button onClick={() => setSettingsMsg(null)} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, color: settingsMsg.type === 'success' ? '#166534' : '#991b1b' }}>✕</button>
+        </div>
+      )}
+
+      {/* Cancel subscription confirm modal */}
+      {cancelSubConfirm && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
+          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 440, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>💳</div>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Cancel Subscription?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>Your subscription will be cancelled at the end of the current billing period. You will retain access until then.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setCancelSubConfirm(false)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Keep Subscription</button>
+              <button onClick={doCancelSubscription} disabled={cancelling} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Yes, Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Remove service confirm modal */}
+      {removeServiceConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
+          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Remove Service?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This service will be removed from your shop catalog.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setRemoveServiceConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Cancel</button>
+              <button onClick={() => handleRemoveService(removeServiceConfirmId)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Remove</button>
             </div>
           </div>
         </div>

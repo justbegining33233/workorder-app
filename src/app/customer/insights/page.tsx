@@ -96,7 +96,7 @@ export default function Insights() {
                 </div>
                 <div style={{fontSize:14, color:'#e5e7eb', lineHeight:1.5}}>{insight.description}</div>
               </div>
-              <button style={{
+              <button onClick={() => router.push('/customer/workorders')} style={{
                 width:'100%',
                 padding:'12px',
                 background:'#3b82f6',

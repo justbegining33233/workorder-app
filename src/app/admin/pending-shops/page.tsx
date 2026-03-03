@@ -34,6 +34,9 @@ export default function PendingShops() {
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
   const [shopToApprove, setShopToApprove] = useState<PendingShop | null>(null);
   const [approving, setApproving] = useState(false);
+  const [pendingMsg, setPendingMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [denyConfirmId, setDenyConfirmId] = useState<string|null>(null);
+  const [approveResult, setApproveResult] = useState<{shopName:string;username?:string;tempPassword?:string}|null>(null);
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
@@ -186,31 +189,28 @@ export default function PendingShops() {
 
       if (response.ok) {
         const data = await response.json();
-        // Show success message and display generated credentials when present
-        let msg = `✅ ${shopToApprove.shopName} has been approved!\n\nThe shop will now be able to:\n• Log in to their account\n• Complete their profile (business license, insurance, services)\n• Access their dashboard\n• Receive work orders`;
-        if (data?.shop?.username && data?.shop?.tempPassword) {
-          msg += `\n\nCredentials:\nUsername: ${data.shop.username}\nPassword: ${data.shop.tempPassword}\n\nPlease tell the shop to change their password after first login.`;
-        }
-
-        alert(msg);
+        setApproveResult({
+          shopName: shopToApprove.shopName,
+          username: data?.shop?.username,
+          tempPassword: data?.shop?.tempPassword,
+        });
         fetchPendingShops();
         setShowDetails(false);
         setShowApproveConfirm(false);
         setShopToApprove(null);
       } else {
-        alert('Failed to approve shop. Please try again.');
+        setPendingMsg({type:'error',text:'Failed to approve shop. Please try again.'});
       }
     } catch (error) {
       console.error('Error approving shop:', error);
-      alert('Failed to approve shop. Please try again.');
+      setPendingMsg({type:'error',text:'Failed to approve shop. Please try again.'});
     } finally {
       setApproving(false);
     }
   };
 
   const handleDeny = async (shopId: string) => {
-    if (!confirm('Are you sure you want to deny this shop application?')) return;
-    
+    setDenyConfirmId(null);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('/api/shops/pending', {
@@ -223,13 +223,13 @@ export default function PendingShops() {
       });
 
       if (response.ok) {
-        alert('Shop application denied');
+        setPendingMsg({type:'success',text:'Shop application denied'});
         fetchPendingShops();
         setShowDetails(false);
       }
     } catch (error) {
       console.error('Error denying shop:', error);
-      alert('Failed to deny shop');
+      setPendingMsg({type:'error',text:'Failed to deny shop'});
     }
   };
 
@@ -332,7 +332,7 @@ export default function PendingShops() {
                     Review Details
                   </button>
                   <button 
-                    onClick={() => handleDeny(shop.id)}
+                    onClick={() => setDenyConfirmId(shop.id)}
                     style={{padding:'12px 24px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
                   >
                     ✕ Deny
@@ -424,7 +424,7 @@ export default function PendingShops() {
                 ✓ Approve This Shop
               </button>
               <button 
-                onClick={() => handleDeny(selectedShop.id)}
+                onClick={() => setDenyConfirmId(selectedShop.id)}
                 style={{padding:'14px 32px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:15, fontWeight:600, cursor:'pointer'}}
               >
                 ✕ Deny Application
@@ -513,6 +513,41 @@ export default function PendingShops() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {denyConfirmId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1e2533',borderRadius:14,padding:32,minWidth:300,maxWidth:420,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+            <h3 style={{fontSize:18,fontWeight:700,color:'#e5e7eb',marginBottom:12}}>Deny Shop?</h3>
+            <p style={{fontSize:14,color:'#9aa3b2',marginBottom:24}}>Are you sure you want to deny this shop application? This action cannot be undone.</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={()=>handleDeny(denyConfirmId)} style={{flex:1,padding:'10px 0',background:'#ef4444',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Deny</button>
+              <button onClick={()=>setDenyConfirmId(null)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {approveResult && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1e2533',borderRadius:14,padding:32,minWidth:320,maxWidth:460,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+            <h3 style={{fontSize:18,fontWeight:700,color:'#22c55e',marginBottom:12}}>✅ {approveResult.shopName} Approved!</h3>
+            <p style={{fontSize:14,color:'#9aa3b2',marginBottom:16}}>The shop can now log in, complete their profile, access their dashboard and receive work orders.</p>
+            {approveResult.username && approveResult.tempPassword && (
+              <div style={{background:'rgba(255,255,255,0.06)',borderRadius:8,padding:'12px 16px',marginBottom:16}}>
+                <p style={{fontSize:13,color:'#e5e7eb',marginBottom:6,fontWeight:600}}>Generated Credentials:</p>
+                <p style={{fontSize:13,color:'#9aa3b2',margin:0}}>Username: <strong style={{color:'#e5e7eb'}}>{approveResult.username}</strong></p>
+                <p style={{fontSize:13,color:'#9aa3b2',margin:'4px 0 0'}}>Password: <strong style={{color:'#e5e7eb'}}>{approveResult.tempPassword}</strong></p>
+                <p style={{fontSize:12,color:'#6b7280',marginTop:8}}>Ask the shop to change their password after first login.</p>
+              </div>
+            )}
+            <button onClick={()=>setApproveResult(null)} style={{width:'100%',padding:'10px 0',background:'#22c55e',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Done</button>
+          </div>
+        </div>
+      )}
+      {pendingMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:pendingMsg.type==='success'?'#dcfce7':'#fde8e8',color:pendingMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {pendingMsg.text}
+          <button onClick={()=>setPendingMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
         </div>
       )}
     </div>

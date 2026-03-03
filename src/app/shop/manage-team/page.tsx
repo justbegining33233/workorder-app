@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface TeamMember {
   id: string;
@@ -26,6 +27,7 @@ interface StoredEmployee {
 }
 
 export default function ManageTeamPage() {
+  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
@@ -34,11 +36,24 @@ export default function ManageTeamPage() {
   
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+  const [removeConfirmId, setRemoveConfirmId] = useState<string | null>(null);
+  const [formError, setFormError] = useState('');
+  const [editError, setEditError] = useState('');
+
+  const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   // Load team members on mount
   React.useEffect(() => {
+    if (!user) return;
     loadTeamMembers();
-  }, []);
+  }, [user]);
+
+  if (isLoading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (!user) return null;
 
   const loadTeamMembers = async () => {
     try {
@@ -121,66 +136,36 @@ export default function ManageTeamPage() {
 
   const handleAddMember = async () => {
     if (!newMember.name || !newMember.email || !newMember.phone || !newMember.password) {
-      alert('Please fill in all fields');
+      setFormError('Please fill in all fields');
       return;
     }
-
+    setFormError('');
     try {
       const token = localStorage.getItem('token');
-      const shopId = localStorage.getItem('shopId');
-      
-      // Split name into first and last name
       const nameParts = newMember.name.trim().split(' ');
       const firstName = nameParts[0] || newMember.name;
       const lastName = nameParts.slice(1).join(' ') || nameParts[0];
-
-      // Call API to create tech/manager in database
       const response = await fetch('/api/techs', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          email: newMember.email,
-          password: newMember.password,
-          firstName: firstName,
-          lastName: lastName,
-          phone: newMember.phone,
-          role: newMember.role,
-        }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ email: newMember.email, password: newMember.password, firstName, lastName, phone: newMember.phone, role: newMember.role }),
       });
-
       if (!response.ok) {
         const error = await response.json();
-        alert(error.error || 'Failed to add team member');
+        setFormError(error.error || 'Failed to add team member');
         return;
       }
-
-      const createdTech = await response.json();
-
-      // Also save to localStorage for backward compatibility
-      const employees = JSON.parse(localStorage.getItem('shopEmployees') || '[]');
-      const newEmployee = {
-        ...newMember,
-        shopId,
-        createdAt: new Date().toISOString()
-      };
-      employees.push(newEmployee);
-      localStorage.setItem('shopEmployees', JSON.stringify(employees));
-
-      alert('Team member added successfully!');
       setShowAddModal(false);
       setNewMember({ name: '', role: 'tech', email: '', phone: '', password: '' });
+      showToast('Team member added successfully!');
       loadTeamMembers();
     } catch (error) {
       console.error('Error adding team member:', error);
-      alert('Failed to add team member. Please try again.');
+      setFormError('Failed to add team member. Please try again.');
     }
   };
 
   const handleRemoveMember = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this team member?')) return;
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`/api/techs/${id}`, {
@@ -189,16 +174,15 @@ export default function ManageTeamPage() {
       });
       if (res.ok) {
         setTeamMembers((prev) => prev.filter((m) => m.id !== id));
-        // Also clean localStorage
-        const employees = JSON.parse(localStorage.getItem('shopEmployees') || '[]');
-        localStorage.setItem('shopEmployees', JSON.stringify(employees.filter((e: any) => e.id !== id)));
-        alert('Team member removed successfully.');
+        showToast('Team member removed successfully.');
       } else {
         const err = await res.json();
-        alert(err.error || 'Failed to remove team member');
+        showToast(err.error || 'Failed to remove team member', 'error');
       }
     } catch {
-      alert('Failed to remove team member. Please try again.');
+      showToast('Failed to remove team member. Please try again.', 'error');
+    } finally {
+      setRemoveConfirmId(null);
     }
   };
 
@@ -221,19 +205,15 @@ export default function ManageTeamPage() {
 
   const handleUpdateMember = async () => {
     if (!editingMember || !editingMember.firstName || !editingMember.email || !editingMember.phone) {
-      alert('Please fill in all required fields');
+      setEditError('Please fill in all required fields');
       return;
     }
-
+    setEditError('');
     try {
       const token = localStorage.getItem('token');
-
       const response = await fetch(`/api/techs/${editingMember.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
           firstName: editingMember.firstName,
           lastName: editingMember.lastName,
@@ -243,21 +223,18 @@ export default function ManageTeamPage() {
           role: editingMember.role,
         }),
       });
-
       const data = await response.json();
-
       if (!response.ok) {
-        alert(data.error || 'Failed to update team member');
+        setEditError(data.error || 'Failed to update team member');
         return;
       }
-
-      alert('Team member updated successfully!');
+      showToast('Team member updated successfully!');
       setShowEditModal(false);
       setEditingMember(null);
       loadTeamMembers();
     } catch (error) {
       console.error('Error updating team member:', error);
-      alert('Failed to update team member. Please try again.');
+      setEditError('Failed to update team member. Please try again.');
     }
   };
 
@@ -318,8 +295,8 @@ export default function ManageTeamPage() {
                             <span style={{padding:'4px 12px', background:member.role === 'tech' ? 'rgba(34,197,94,0.2)' : 'rgba(59,130,246,0.2)', color:member.role === 'tech' ? '#22c55e' : '#3b82f6', borderRadius:12, fontSize:12, fontWeight:600}}>
                               {member.role === 'tech' ? 'Technician' : 'Manager'}
                             </span>
-                            <span style={{padding:'4px 12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', borderRadius:12, fontSize:12, fontWeight:600}}>
-                              ● Active
+                            <span style={{padding:'4px 12px', background: member.status === 'active' ? 'rgba(34,197,94,0.2)' : 'rgba(107,114,128,0.2)', color: member.status === 'active' ? '#22c55e' : '#9ca3af', borderRadius:12, fontSize:12, fontWeight:600}}>
+                              ● {member.status === 'active' ? 'Active' : 'Inactive'}
                             </span>
                           </div>
                         </div>
@@ -351,7 +328,7 @@ export default function ManageTeamPage() {
                         Edit
                       </button>
                       <button 
-                        onClick={() => handleRemoveMember(member.id)}
+                        onClick={() => setRemoveConfirmId(member.id)}
                         style={{padding:'8px 16px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:6, fontSize:13, fontWeight:600, cursor:'pointer'}}
                       >
                         Remove
@@ -416,6 +393,7 @@ export default function ManageTeamPage() {
                 Add Member
               </button>
             </div>
+            {formError && <div style={{marginTop:12, fontSize:13, color:'#f87171', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, padding:'10px 14px'}}>{formError}</div>}
           </div>
         </div>
       )}
@@ -485,12 +463,34 @@ export default function ManageTeamPage() {
                 Update Member
               </button>
             </div>
+            {editError && <div style={{marginTop:12, fontSize:13, color:'#f87171', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:8, padding:'10px 14px'}}>{editError}</div>}
           </div>
         </div>
       )}
           </div>
         </div>
       </div>
+
+      {/* Remove confirmation modal */}
+      {removeConfirmId && (
+        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1100}}>
+          <div style={{background:'#1f2937', border:'1px solid rgba(255,255,255,0.1)', borderRadius:14, padding:28, width:380, maxWidth:'90%'}}>
+            <h3 style={{margin:'0 0 12px', fontSize:18, color:'#e5e7eb'}}>Remove Team Member</h3>
+            <p style={{color:'#9ca3af', fontSize:14, marginBottom:20}}>Are you sure you want to remove this team member? This action cannot be undone.</p>
+            <div style={{display:'flex', gap:10}}>
+              <button onClick={() => handleRemoveMember(removeConfirmId)} style={{flex:1, background:'#e5332a', color:'#fff', border:'none', borderRadius:8, padding:'11px 0', fontSize:14, fontWeight:600, cursor:'pointer'}}>Remove</button>
+              <button onClick={() => setRemoveConfirmId(null)} style={{flex:1, background:'transparent', color:'#9ca3af', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, padding:'11px 0', fontSize:14, cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast notification */}
+      {toast && (
+        <div style={{position:'fixed', bottom:24, right:24, background: toast.type === 'success' ? '#22c55e' : '#e5332a', color:'#fff', padding:'12px 20px', borderRadius:10, fontSize:14, fontWeight:600, zIndex:2000, boxShadow:'0 4px 20px rgba(0,0,0,0.4)'}}>
+          {toast.msg}
+        </div>
+      )}
     </div>
   );
 }

@@ -36,6 +36,8 @@ export default function RecurringWorkOrders() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [shopId] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('shopId') || '' : '');
 
   // Customer search
@@ -123,10 +125,10 @@ export default function RecurringWorkOrders() {
         setSelectedCustomerName('');
         setShowCustomerDropdown(false);
       } else {
-        alert(data.error || 'Failed to create schedule');
+        setFormError(data.error || 'Failed to create schedule');
       }
     } catch (err) {
-      alert('Error creating schedule');
+      setFormError('Error creating schedule');
     } finally {
       setSaving(false);
     }
@@ -148,7 +150,6 @@ export default function RecurringWorkOrders() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this recurring schedule? This will not affect existing work orders.')) return;
     try {
       const token = localStorage.getItem('token');
       await fetch(`/api/recurring-workorders/${id}`, {
@@ -156,7 +157,7 @@ export default function RecurringWorkOrders() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSchedules((prev) => prev.filter((s) => s.id !== id));
-    } catch {}
+    } catch {} finally { setDeleteConfirmId(null); }
   };
 
   const formatDate = (iso: string) =>
@@ -326,6 +327,9 @@ export default function RecurringWorkOrders() {
                   </div>
                 </label>
               </div>
+              {formError && (
+                <div className="md:col-span-2 bg-red-900/30 border border-red-500/40 text-red-300 rounded-lg px-4 py-2 text-sm">{formError}</div>
+              )}
               <div className="md:col-span-2 flex gap-3">
                 <button
                   type="submit"
@@ -413,7 +417,7 @@ export default function RecurringWorkOrders() {
                       {s.active ? 'Pause' : 'Resume'}
                     </button>
                     <button
-                      onClick={() => handleDelete(s.id)}
+                      onClick={() => setDeleteConfirmId(s.id)}
                       className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
                     >
                       Delete
@@ -426,6 +430,21 @@ export default function RecurringWorkOrders() {
         )}
 
       </main>
+
+      {/* Delete confirm modal */}
+      {deleteConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 420, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Recurring Schedule?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This will not affect existing work orders.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirmId)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

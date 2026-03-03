@@ -52,6 +52,7 @@ export default function ShopAdminPage() {
   // Shop messages
   const [shopMessages, setShopMessages] = useState<any[]>([]);
   const [messageStats, setMessageStats] = useState<any>(null);
+  const [adminMsg, setAdminMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   // Team management
   const [teamData, setTeamData] = useState<any[]>([]);
@@ -349,13 +350,13 @@ export default function ShopAdminPage() {
       });
 
       if (response.ok) {
-        alert('Settings updated successfully!');
+        setAdminMsg({type:'success',text:'Settings updated successfully!'});
       } else {
-        alert('Failed to update settings');
+        setAdminMsg({type:'error',text:'Failed to update settings'});
       }
     } catch (error) {
       console.error('Error updating settings:', error);
-      alert('Error updating settings');
+      setAdminMsg({type:'error',text:'Error updating settings'});
     } finally {
       setLoading(false);
     }
@@ -411,7 +412,7 @@ export default function ShopAdminPage() {
       }
     } catch (error) {
       console.error('Error downloading CSV:', error);
-      alert('Error downloading CSV');
+      setAdminMsg({type:'error',text:'Error downloading CSV'});
     }
   };
 
@@ -498,7 +499,7 @@ export default function ShopAdminPage() {
       doc.save(`payroll_${payrollStartDate}_to_${payrollEndDate}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Error generating PDF');
+      setAdminMsg({type:'error',text:'Error generating PDF'});
     } finally {
       setGeneratingPDF(false);
     }
@@ -506,7 +507,7 @@ export default function ShopAdminPage() {
 
   const handleCreatePurchaseOrder = async () => {
     if (!shopId || !poForm.itemName) {
-      alert('Shop ID and item name are required');
+      setAdminMsg({type:'error',text:'Shop ID and item name are required'});
       return;
     }
 
@@ -540,14 +541,14 @@ export default function ShopAdminPage() {
         setPoForm({ vendor: '', itemName: '', quantity: 1, unitCost: 0, workOrderId: '' });
         setShowPoModal(false);
         fetchPurchaseOrders(shopId);
-        alert('Purchase order created. Awaiting customer approval.');
+        setAdminMsg({type:'success',text:'Purchase order created. Awaiting customer approval.'});
       } else {
         const data = await response.json().catch(() => ({}));
-        alert(data.error || 'Failed to create purchase order');
+        setAdminMsg({type:'error',text:data.error || 'Failed to create purchase order'});
       }
     } catch (error) {
       console.error('Error creating purchase order:', error);
-      alert('Failed to create purchase order');
+      setAdminMsg({type:'error',text:'Failed to create purchase order'});
     }
   };
 
@@ -568,11 +569,11 @@ export default function ShopAdminPage() {
         fetchInventoryStock(shopId);
       } else {
         const data = await response.json().catch(() => ({}));
-        alert(data.error || 'Failed to receive purchase order');
+        setAdminMsg({type:'error',text:data.error || 'Failed to receive purchase order'});
       }
     } catch (error) {
       console.error('Error receiving purchase order:', error);
-      alert('Failed to receive purchase order');
+      setAdminMsg({type:'error',text:'Failed to receive purchase order'});
     }
   };
 
@@ -663,6 +664,13 @@ export default function ShopAdminPage() {
           </div>
         </div>
       </div>
+
+      {adminMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:adminMsg.type==='success'?'#dcfce7':'#fde8e8',color:adminMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {adminMsg.text}
+          <button onClick={()=>setAdminMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

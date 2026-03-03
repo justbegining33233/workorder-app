@@ -31,6 +31,7 @@ export default function WorkAuthorizationsPage() {
   const [form, setForm] = useState({ workOrderId: '', workSummary: '', estimateTotal: '' });
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState('');
+  const [formError, setFormError] = useState('');
 
   useEffect(() => { if (!user) return; load(); }, [user]);
 
@@ -43,7 +44,7 @@ export default function WorkAuthorizationsPage() {
   };
 
   const create = async () => {
-    if (!form.workSummary.trim()) { alert('Work summary is required.'); return; }
+    if (!form.workSummary.trim()) { setFormError('Work summary is required.'); return; }
     setSaving(true);
     const token = localStorage.getItem('token');
     const r = await fetch('/api/work-authorizations', {
@@ -165,6 +166,9 @@ export default function WorkAuthorizationsPage() {
               💡 After creating, copy the link and send it to the customer via text or email. The link expires in 7 days and creates a legally binding digital record.
             </div>
 
+            {formError && (
+              <div style={{ marginBottom: 12, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '8px 14px', color: '#fca5a5', fontSize: 13, fontWeight: 600 }}>{formError}</div>
+            )}
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={create} disabled={saving} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>{saving ? 'Creating...' : 'Create & Get Link'}</button>
               <button onClick={() => setShowNew(false)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>

@@ -20,6 +20,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
   const [userId, setUserId] = useState('');
   const [isClockedIn, setIsClockedIn] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [navMsg, setNavMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const [notifications, setNotifications] = useState<Array<{ id: string; title: string; body: string; time: string; read?: boolean; type?: string }>>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -253,18 +254,18 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       if (response.ok) {
         const result = await response.json();
         setIsClockedIn(!isClockedIn);
-        alert(result.message);
+        setNavMsg({type:'success',text:result.message});
 
         if (emit) {
           emit('clock-status-change', { isClockedIn: !isClockedIn });
         }
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to update clock status');
+        setNavMsg({type:'error',text:error.error || 'Failed to update clock status'});
       }
     } catch (error) {
       console.error('Clock toggle error:', error);
-      alert('Failed to update clock status');
+      setNavMsg({type:'error',text:'Failed to update clock status'});
     } finally {
       setLoading(false);
     }
@@ -550,6 +551,12 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
         </div>
       </div>
       </div>
+      {navMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:navMsg.type==='success'?'#dcfce7':'#fde8e8',color:navMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {navMsg.text}
+          <button onClick={()=>setNavMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </nav>
   );
 }

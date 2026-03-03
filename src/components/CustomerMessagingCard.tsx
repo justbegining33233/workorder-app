@@ -70,6 +70,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState(false);
   const [userId, setUserId] = useState<string>("");
+  const [custMsgMsg, setCustMsgMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   // Compose-new message state
@@ -245,9 +246,9 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
         await fetchMessages();
       } else {
         const err = await res.json().catch(() => ({}));
-        alert(err.error || "Failed to send message");
+        setCustMsgMsg({type:'error',text:err.error || "Failed to send message"});
       }
-    } catch { alert("An error occurred while sending."); }
+    } catch { setCustMsgMsg({type:'error',text:"An error occurred while sending."}); }
     finally { setLoading(false); }
   };
 
@@ -481,6 +482,12 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
           )}
         </div>
       </div>
+      {custMsgMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:custMsgMsg.type==='success'?'#dcfce7':'#fde8e8',color:custMsgMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {custMsgMsg.text}
+          <button onClick={()=>setCustMsgMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

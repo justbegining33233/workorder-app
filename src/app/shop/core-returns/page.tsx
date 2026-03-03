@@ -13,6 +13,9 @@ export default function CoreReturnsPage() {
   const [form, setForm] = useState<Partial<CoreReturn>>({});
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState('all');
+  const [formError, setFormError] = useState('');
+  const [creditModal, setCreditModal] = useState<{ id: string; defaultAmt: number } | null>(null);
+  const [creditAmt, setCreditAmt] = useState('');
 
   useEffect(() => { if (!user) return; load(); }, [user]);
 
@@ -25,12 +28,16 @@ export default function CoreReturnsPage() {
   };
 
   const save = async () => {
+    setFormError('');
+    if (!form.partName?.trim()) { setFormError('Part name is required.'); return; }
+    const coreVal = parseFloat(String(form.coreValue || ''));
+    if (isNaN(coreVal) || coreVal <= 0) { setFormError('Valid core value (> 0) is required.'); return; }
     setSaving(true);
     const token = localStorage.getItem('token');
     await fetch('/api/core-returns', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, coreValue: coreVal }),
     });
     setSaving(false); setShowAdd(false); setForm({}); load();
   };
@@ -106,7 +113,7 @@ export default function CoreReturnsPage() {
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', gap: 6 }}>
                           {item.status === 'pending' && <button onClick={() => updateStatus(item.id, 'returned')} style={{ background: 'rgba(96,165,250,0.2)', color: '#60a5fa', border: '1px solid #60a5fa', borderRadius: 5, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>Returned</button>}
-                          {item.status === 'returned' && <button onClick={() => { const amt = prompt('Credit amount received?', String(item.coreValue)); if (amt) updateStatus(item.id, 'credited', { creditReceived: parseFloat(amt) }); }} style={{ background: 'rgba(34,197,94,0.2)', color: '#22c55e', border: '1px solid #22c55e', borderRadius: 5, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>Credited</button>}
+                          {item.status === 'returned' && <button onClick={() => { setCreditAmt(String(item.coreValue)); setCreditModal({ id: item.id, defaultAmt: item.coreValue }); }} style={{ background: 'rgba(34,197,94,0.2)', color: '#22c55e', border: '1px solid #22c55e', borderRadius: 5, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>Credited</button>}
                           {item.status === 'pending' && <button onClick={() => updateStatus(item.id, 'waived')} style={{ background: 'rgba(107,114,128,0.2)', color: '#9ca3af', border: '1px solid #6b7280', borderRadius: 5, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>Waive</button>}
                         </div>
                       </td>
@@ -122,6 +129,7 @@ export default function CoreReturnsPage() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
           <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 420, maxWidth: '90%' }}>
             <h3 style={{ margin: '0 0 20px', fontSize: 18 }}>Track Core Return</h3>
+            {formError && <div style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 13 }}>{formError}</div>}
             {[['partName', 'Part Name'], ['partNumber', 'Part Number (optional)'], ['vendor', 'Vendor'], ['coreValue', 'Core Value ($)'], ['workOrderId', 'Work Order ID (optional)'], ['notes', 'Notes']].map(([k, label]) => (
               <div key={k} style={{ marginBottom: 14 }}>
                 <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>{label}</label>
@@ -132,6 +140,35 @@ export default function CoreReturnsPage() {
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={save} disabled={saving} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>{saving ? 'Saving...' : 'Add Core'}</button>
               <button onClick={() => setShowAdd(false)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {creditModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 360, maxWidth: '90%' }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: 18 }}>Credit Amount Received</h3>
+            <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Amount ($)</label>
+            <input
+              type="number"
+              value={creditAmt}
+              onChange={e => setCreditAmt(e.target.value)}
+              style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 14px', color: '#e5e7eb', fontSize: 14, boxSizing: 'border-box', marginBottom: 20 }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => {
+                  const parsed = parseFloat(creditAmt);
+                  if (!isNaN(parsed)) updateStatus(creditModal.id, 'credited', { creditReceived: parsed });
+                  setCreditModal(null);
+                }}
+                style={{ flex: 1, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+              >
+                Confirm
+              </button>
+              <button onClick={() => setCreditModal(null)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>

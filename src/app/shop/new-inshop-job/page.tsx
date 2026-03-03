@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MaintenanceType } from '../../../types/workorder';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { createWorkOrderClient } from '@/lib/workordersClient';
 
 export default function ShopNewInShopJob() {
   const router = useRouter();
@@ -54,37 +53,45 @@ export default function ShopNewInShopJob() {
     return null;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Create work order
-    const workOrder = createWorkOrderClient({
-      vehicleType: 'personal-vehicle',
-      serviceLocationType: 'in-shop',
-      services: {
-        repairs: [],
-        maintenance: formData.services.map(s => ({ type: s as MaintenanceType })),
-      },
-      issueDescription: {
-        symptoms: formData.services.join(', ') || 'In-shop service',
-        pictures: [],
-        additionalNotes: `Customer: ${formData.customerName}\nPhone: ${formData.customerPhone}\nEmail: ${formData.customerEmail}\nVehicle: ${formData.vehicleYear} ${formData.vehicleMake} ${formData.vehicleModel}\nVIN: ${formData.vin}\nMileage: ${formData.mileage}\nAppointment: ${formData.appointmentDate} ${formData.appointmentTime}\nEstimated Hours: ${formData.estimatedHours}\n\n${formData.notes}`,
-      },
-      status: 'pending',
-      assignedTo: undefined,
-      messages: [],
-      partLaborBreakdown: {
-        partsUsed: [],
-        laborLines: [],
-        laborHours: parseFloat(formData.estimatedHours) || 0,
-        additionalCharges: [],
-      },
-      estimate: null,
-      createdBy: formData.customerName || userName,
-    });
-    
-    alert(`In-shop job ${workOrder.id} created successfully!`);
-    router.push('/workorders/list');
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const response = await fetch('/api/workorders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          vehicleType: 'personal-vehicle',
+          serviceLocationType: 'in-shop',
+          customerName: formData.customerName,
+          customerPhone: formData.customerPhone,
+          customerEmail: formData.customerEmail,
+          vehicleMake: formData.vehicleMake,
+          vehicleModel: formData.vehicleModel,
+          vehicleYear: formData.vehicleYear,
+          vin: formData.vin,
+          mileage: formData.mileage,
+          services: formData.services,
+          appointmentDate: formData.appointmentDate,
+          appointmentTime: formData.appointmentTime,
+          estimatedHours: parseFloat(formData.estimatedHours) || 0,
+          notes: formData.notes,
+          status: 'pending',
+          createdBy: formData.customerName || userName,
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        console.error('Failed to create work order', err);
+        return;
+      }
+      router.push('/shop/home');
+    } catch (err) {
+      console.error('Error creating work order', err);
+    }
   };
 
   const toggleService = (service: string) => {

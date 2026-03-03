@@ -27,6 +27,7 @@ export default function CustomerPayPage() {
   const [expiry, setExpiry] = useState('');
   const [cvv, setCvv] = useState('');
   const [name, setName] = useState('');
+  const [formError, setFormError] = useState('');
 
   useEffect(() => {
     if (!token) return;
@@ -42,7 +43,7 @@ export default function CustomerPayPage() {
   }, [token]);
 
   const handlePay = async () => {
-    if (!cardNumber || !expiry || !cvv || !name) { alert('Please fill in all card fields.'); return; }
+    if (!cardNumber || !expiry || !cvv || !name) { setFormError('Please fill in all card fields.'); return; }
     setPaying(true);
     // Simulate Stripe-like payment processing
     await new Promise(r => setTimeout(r, 1800));
@@ -144,6 +145,7 @@ export default function CustomerPayPage() {
               </div>
             </div>
 
+            {formError && <p style={{color:'#dc2626',fontSize:13,marginBottom:12,fontWeight:600}}>{formError}</p>}
             <button onClick={handlePay} disabled={paying}
               style={{ width: '100%', background: paying ? '#9ca3af' : '#e5332a', color: '#fff', border: 'none', borderRadius: 10, padding: '15px 0', fontSize: 16, fontWeight: 700, cursor: paying ? 'not-allowed' : 'pointer' }}>
               {paying ? '⏳ Processing...' : `Pay $${Number(link?.amount).toFixed(2)}`}

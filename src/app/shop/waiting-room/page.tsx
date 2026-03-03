@@ -113,7 +113,7 @@ function WaitingRoomContent() {
           <div>
             <div style={{ fontSize: 13, fontWeight: 800, color: '#22c55e', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>✅ Ready for Pickup!</div>
             {completed.map(o => (
-              <div key={o.id} style={{ background: 'rgba(34,197,94,0.15)', border: '2px solid #22c55e', borderRadius: 14, padding: '16px 20px', marginBottom: 10, animation: 'pulse 2s infinite' }}>
+              <div key={o.id} className="animate-pulse" style={{ background: 'rgba(34,197,94,0.15)', border: '2px solid #22c55e', borderRadius: 14, padding: '16px 20px', marginBottom: 10 }}>
                 <div style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{o.vehicle}</div>
                 <div style={{ fontSize: 28, marginTop: 8 }}>✅ <span style={{ color: '#22c55e', fontWeight: 800 }}>READY!</span></div>
                 {o.message && <div style={{ fontSize: 13, color: '#86efac', marginTop: 8 }}>{o.message}</div>}

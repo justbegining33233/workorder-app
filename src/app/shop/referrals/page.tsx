@@ -31,6 +31,7 @@ export default function ReferralsPage() {
   const [showNew, setShowNew] = useState(false);
   const [form, setForm] = useState({ referredName: '', referredEmail: '', referredPhone: '', rewardType: 'discount', rewardValue: '25', referrerId: '', notes: '' });
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
   const [copied, setCopied] = useState('');
 
   useEffect(() => { if (!user) return; load(); }, [user]);
@@ -44,14 +45,19 @@ export default function ReferralsPage() {
   };
 
   const create = async () => {
+    if (!form.referredName.trim()) { setFormError('Referred customer name is required.'); return; }
+    const rv = form.rewardValue ? parseFloat(form.rewardValue) : 0;
+    if (form.rewardValue && isNaN(rv)) { setFormError('Reward value must be a valid number.'); return; }
+    setFormError('');
     setSaving(true);
     const token = localStorage.getItem('token');
     const r = await fetch('/api/referrals', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ ...form, rewardValue: Number(form.rewardValue) }),
+      body: JSON.stringify({ ...form, rewardValue: rv }),
     });
     if (r.ok) { setShowNew(false); load(); }
+    else { const d = await r.json(); setFormError(d.error || 'Failed to create referral'); }
     setSaving(false);
   };
 
@@ -156,6 +162,9 @@ export default function ReferralsPage() {
                   style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 12px', color: '#e5e7eb', fontSize: 14, boxSizing: 'border-box' }} />
               </div>
             </div>
+            {formError && (
+              <div style={{ marginBottom: 14, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '8px 14px', color: '#fca5a5', fontSize: 13, fontWeight: 600 }}>{formError}</div>
+            )}
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={create} disabled={saving} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>{saving ? 'Saving...' : 'Create Referral'}</button>
               <button onClick={() => setShowNew(false)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>

@@ -13,6 +13,8 @@ export default function ShopInventoryPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showLowStockOnly, setShowLowStockOnly] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     type: '',
@@ -27,19 +29,18 @@ export default function ShopInventoryPage() {
 
   useEffect(() => {
     const id = localStorage.getItem('shopId');
-
     setShopId(id || '');
     fetchInventory(id || '');
-  }, [router]);
+  }, []);
 
-  const fetchInventory = async (id: string) => {
+  const fetchInventory = async (id: string, lowStockOverride?: boolean) => {
     try {
       const token = localStorage.getItem('token');
-      const lowStockParam = showLowStockOnly ? '&lowStockOnly=true' : '';
+      const useLowStock = lowStockOverride !== undefined ? lowStockOverride : showLowStockOnly;
+      const lowStockParam = useLowStock ? '&lowStockOnly=true' : '';
       const response = await fetch(`/api/inventory?shopId=${id}${lowStockParam}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.ok) {
         const data = await response.json();
         setInventory(data.inventory || []);
@@ -90,32 +91,31 @@ export default function ShopInventoryPage() {
         resetForm();
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to save item');
+        setSaveError(error.error || 'Failed to save item');
       }
     } catch (error) {
       console.error('Error saving item:', error);
-      alert('Failed to save item');
+      setSaveError('Failed to save item');
     }
   };
 
   const handleDelete = async (itemId: string) => {
-    if (!confirm('Are you sure you want to delete this item?')) return;
-
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/inventory/${itemId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.ok) {
         fetchInventory(shopId);
       } else {
-        alert('Failed to delete item');
+        setSaveError('Failed to delete item');
       }
     } catch (error) {
       console.error('Error deleting item:', error);
-      alert('Failed to delete item');
+      setSaveError('Failed to delete item');
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -218,9 +218,10 @@ export default function ShopInventoryPage() {
         <div style={{ marginBottom: 24 }}>
           <button
             onClick={() => {
-              setShowLowStockOnly(!showLowStockOnly);
+              const next = !showLowStockOnly;
+              setShowLowStockOnly(next);
               setLoading(true);
-              setTimeout(() => fetchInventory(shopId), 100);
+              fetchInventory(shopId, next);
             }}
             style={{
               background: showLowStockOnly ? 'rgba(229, 51, 42, 0.2)' : 'rgba(255,255,255,0.05)',
@@ -258,7 +259,7 @@ export default function ShopInventoryPage() {
                 </tr>
               </thead>
               <tbody>
-                {inventory.map((item, idx) => {
+                {inventory.map((item) => {
                   const isLowStock = item.reorderPoint && item.quantity <= item.reorderPoint;
                   return (
                     <tr key={item.id} style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
@@ -303,7 +304,7 @@ export default function ShopInventoryPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(item.id)}
+                            onClick={() => setDeleteConfirmId(item.id)}
                             style={{
                               background: 'rgba(239, 68, 68, 0.2)',
                               border: 'none',
@@ -565,6 +566,39 @@ export default function ShopInventoryPage() {
                 </div>
               </form>
             </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirmId && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#1e2433', borderRadius: 12, padding: 32, maxWidth: 360, width: '90%', textAlign: 'center' }}>
+              <h3 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Delete Item?</h3>
+              <p style={{ color: '#9aa3b2', marginBottom: 24 }}>This action cannot be undone.</p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                <button
+                  onClick={() => handleDelete(deleteConfirmId)}
+                  style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  style={{ background: '#374151', border: 'none', color: '#9aa3b2', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Save Error Toast */}
+        {saveError && (
+          <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#ef4444', color: '#fff', padding: '12px 20px', borderRadius: 8, zIndex: 300, fontWeight: 600 }}
+            onClick={() => setSaveError('')}
+          >
+            {saveError}
           </div>
         )}
       </div>

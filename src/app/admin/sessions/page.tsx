@@ -14,6 +14,7 @@ export default function AdminSessionsPage() {
   const { user, isLoading: authLoading } = useRequireAuth(['admin']);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(false);
+  const [revokeId, setRevokeId] = useState<string|null>(null);
 
   async function load() {
     setLoading(true);
@@ -43,7 +44,6 @@ export default function AdminSessionsPage() {
   }
 
   async function revoke(id: string) {
-    if (!confirm('Revoke this session?')) return;
     const csrf = document.cookie.split(';').map(s=>s.trim()).find(s=>s.startsWith('csrf_token='))?.split('=')[1];
     await fetch('/api/auth/sessions', {
       method: 'DELETE',
@@ -52,6 +52,7 @@ export default function AdminSessionsPage() {
       body: JSON.stringify({ id }),
     });
     setSessions(sessions.filter(s => s.id !== id));
+    setRevokeId(null);
   }
 
   return (
@@ -71,12 +72,24 @@ export default function AdminSessionsPage() {
                 {s.metadata && <div><strong>Meta:</strong> {JSON.stringify(s.metadata)}</div>}
               </div>
               <div>
-                <button onClick={() => revoke(s.id)} className="bg-red-600 text-white px-3 py-1 rounded">Revoke</button>
+                <button onClick={() => setRevokeId(s.id)} className="bg-red-600 text-white px-3 py-1 rounded">Revoke</button>
               </div>
             </div>
           </li>
         ))}
       </ul>
+      {revokeId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1e2533',borderRadius:14,padding:32,minWidth:300,maxWidth:400,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+            <h3 style={{fontSize:18,fontWeight:700,color:'#e5e7eb',marginBottom:12}}>Revoke Session?</h3>
+            <p style={{fontSize:14,color:'#9aa3b2',marginBottom:24}}>Are you sure you want to revoke this session? The user will be logged out immediately.</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={()=>revoke(revokeId)} style={{flex:1,padding:'10px 0',background:'#ef4444',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Revoke</button>
+              <button onClick={()=>setRevokeId(null)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

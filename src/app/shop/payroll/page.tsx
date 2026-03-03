@@ -95,6 +95,12 @@ export default function PayrollPage() {
   const [showAddLeave, setShowAddLeave] = useState(false);
   const [showAddPeriod, setShowAddPeriod] = useState(false);
   const [showEditEmployee, setShowEditEmployee] = useState<Employee | null>(null);
+  const [payrollMsg, setPayrollMsg] = useState('');
+  const [payrollError, setPayrollError] = useState('');
+  const [deleteConfirmShiftId, setDeleteConfirmShiftId] = useState<string | null>(null);
+  const [runPayrollConfirmId, setRunPayrollConfirmId] = useState<string | null>(null);
+  const [markPaidConfirmId, setMarkPaidConfirmId] = useState<string | null>(null);
+  const [denyModal, setDenyModal] = useState<{ id: string; reason: string } | null>(null);
 
   const [shiftForm, setShiftForm] = useState<any>({ shiftType: 'regular' });
   const [leaveForm, setLeaveForm] = useState<any>({ leaveType: 'pto' });
@@ -124,6 +130,8 @@ export default function PayrollPage() {
       const shiftEnd = new Date(weekOf.getTime() + 6 * 86400000 + 86399999);
       const shiftR = await fetch(`/api/payroll/schedule?startDate=${weekOf.toISOString()}&endDate=${shiftEnd.toISOString()}`, { headers });
       if (shiftR.ok) setShifts(await shiftR.json());
+    } catch (err) {
+      setPayrollError('Failed to load payroll data');
     } finally {
       setLoading(false);
     }
@@ -158,12 +166,12 @@ export default function PayrollPage() {
   const addShift = async () => {
     const r = await fetch('/api/payroll/schedule', { method: 'POST', headers, body: JSON.stringify(shiftForm) });
     if (r.ok) { setShowAddShift(false); setShiftForm({ shiftType: 'regular' }); load(); }
-    else { const d = await r.json(); alert(d.error); }
+    else { const d = await r.json(); setPayrollError(d.error || 'Failed to add shift'); }
   };
 
   const deleteShift = async (id: string) => {
-    if (!confirm('Delete this shift?')) return;
     await fetch(`/api/payroll/schedule/${id}`, { method: 'DELETE', headers });
+    setDeleteConfirmShiftId(null);
     load();
   };
 
@@ -175,37 +183,39 @@ export default function PayrollPage() {
   const addLeave = async () => {
     const r = await fetch('/api/payroll/leave', { method: 'POST', headers, body: JSON.stringify(leaveForm) });
     if (r.ok) { setShowAddLeave(false); setLeaveForm({ leaveType: 'pto' }); load(); }
-    else { const d = await r.json(); alert(d.error); }
+    else { const d = await r.json(); setPayrollError(d.error || 'Failed to add leave request'); }
   };
 
   const createPeriod = async () => {
     const r = await fetch('/api/payroll/pay-periods', { method: 'POST', headers, body: JSON.stringify(periodForm) });
     if (r.ok) { setShowAddPeriod(false); setPeriodForm({ periodType: 'biweekly' }); load(); }
-    else { const d = await r.json(); alert(d.error); }
+    else { const d = await r.json(); setPayrollError(d.error || 'Failed to create pay period'); }
   };
 
   const runPayroll = async (periodId: string) => {
-    if (!confirm('Run payroll for this period? This will generate pay stubs for all active employees.')) return;
+    setRunPayrollConfirmId(null);
     setRunningPayroll(true);
     try {
       const r = await fetch(`/api/payroll/pay-periods/${periodId}`, { method: 'PUT', headers, body: JSON.stringify({ action: 'run' }) });
       const d = await r.json();
       if (r.ok) {
-        alert(`✅ Payroll complete!\n${d.summary.employeeCount} employees\nTotal Gross: ${fmt(d.summary.totalGross)}\nTotal Net: ${fmt(d.summary.totalNet)}`);
+        setPayrollMsg(`✅ Payroll complete! ${d.summary.employeeCount} employees — Gross: ${fmt(d.summary.totalGross)}, Net: ${fmt(d.summary.totalNet)}`);
+        setTimeout(() => setPayrollMsg(''), 6000);
         load();
-      } else { alert('Error: ' + d.error); }
+      } else { setPayrollError('Error: ' + (d.error || 'Failed to run payroll')); }
     } finally { setRunningPayroll(false); }
   };
 
   const markPeriodPaid = async (periodId: string) => {
-    if (!confirm('Mark this period as PAID? This is final.')) return;
     await fetch(`/api/payroll/pay-periods/${periodId}`, { method: 'PUT', headers, body: JSON.stringify({ status: 'paid' }) });
+    setMarkPaidConfirmId(null);
     load();
   };
 
   const saveOtRule = async () => {
-    await fetch('/api/payroll/overtime-rules', { method: 'PUT', headers, body: JSON.stringify(otRule) });
-    alert('Overtime rules saved!');
+    const r = await fetch('/api/payroll/overtime-rules', { method: 'PUT', headers, body: JSON.stringify(otRule) });
+    if (r.ok) { setPayrollMsg('Overtime rules saved!'); setTimeout(() => setPayrollMsg(''), 3000); }
+    else { setPayrollError('Failed to save overtime rules'); }
   };
 
   const saveEmployee = async () => {
@@ -360,7 +370,7 @@ export default function PayrollPage() {
                           <div style={{ color: '#374151' }}>{shift.shiftType}</div>
                           {shift.lateMinutes > 0 && <div style={{ color: '#b45309', fontSize: 10 }}>⏰ {shift.lateMinutes}m late</div>}
                           {user?.role === 'shop' && (
-                            <button onClick={() => deleteShift(shift.id)} style={{ position: 'absolute', top: 2, right: 2, background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', fontSize: 12, lineHeight: 1 }}>×</button>
+                            <button onClick={() => setDeleteConfirmShiftId(shift.id)} style={{ position: 'absolute', top: 2, right: 2, background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', fontSize: 12, lineHeight: 1 }}>×</button>
                           )}
                         </div>
                       ) : (
@@ -508,7 +518,7 @@ export default function PayrollPage() {
               {user?.role === 'shop' && (
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button onClick={() => approveLeave(l.id, 'approved')} style={{ padding: '6px 16px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✓ Approve</button>
-                  <button onClick={() => { const reason = prompt('Reason for denial?') ?? ''; approveLeave(l.id, 'denied', reason); }} style={{ padding: '6px 16px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✗ Deny</button>
+                  <button onClick={() => setDenyModal({ id: l.id, reason: '' })} style={{ padding: '6px 16px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✗ Deny</button>
                 </div>
               )}
             </div>
@@ -633,12 +643,12 @@ export default function PayrollPage() {
           {user?.role === 'shop' && (
             <div style={{ marginTop: 16, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {(p.status === 'open' || p.status === 'processing') && (
-                <button onClick={() => runPayroll(p.id)} disabled={runningPayroll} style={{ padding: '8px 18px', background: runningPayroll ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 8, cursor: runningPayroll ? 'not-allowed' : 'pointer', fontWeight: 600 }}>
+                <button onClick={() => setRunPayrollConfirmId(p.id)} disabled={runningPayroll} style={{ padding: '8px 18px', background: runningPayroll ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 8, cursor: runningPayroll ? 'not-allowed' : 'pointer', fontWeight: 600 }}>
                   {runningPayroll ? '⌛ Running…' : '▶ Run Payroll'}
                 </button>
               )}
               {p.status === 'processing' && (
-                <button onClick={() => markPeriodPaid(p.id)} style={{ padding: '8px 18px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✓ Mark as Paid</button>
+                <button onClick={() => setMarkPaidConfirmId(p.id)} style={{ padding: '8px 18px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✓ Mark as Paid</button>
               )}
               <span style={{ display: 'inline-flex', alignItems: 'center', background: p.status === 'paid' ? '#dcfce7' : p.status === 'processing' ? '#dbeafe' : '#f3f4f6', color: p.status === 'paid' ? '#166534' : p.status === 'processing' ? '#1d4ed8' : '#374151', borderRadius: 8, padding: '8px 14px', fontWeight: 600, fontSize: 13 }}>
                 {p.status.toUpperCase()}
@@ -886,6 +896,81 @@ export default function PayrollPage() {
       {tab === 'periods' && <PayPeriodsTab />}
       {tab === 'stubs' && <PayStubsTab />}
       {tab === 'settings' && <SettingsTab />}
+
+      {/* Error toast */}
+      {payrollError && (
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#fde8e8', color: '#991b1b', border: '1px solid #fca5a5', borderRadius: 10, padding: '12px 20px', zIndex: 9999, fontWeight: 600, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxWidth: 400 }}>
+          {payrollError}
+          <button onClick={() => setPayrollError('')} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, color: '#991b1b' }}>✕</button>
+        </div>
+      )}
+
+      {/* Success toast */}
+      {payrollMsg && (
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#dcfce7', color: '#166534', border: '1px solid #86efac', borderRadius: 10, padding: '12px 20px', zIndex: 9999, fontWeight: 600, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxWidth: 400 }}>
+          {payrollMsg}
+        </div>
+      )}
+
+      {/* Delete shift confirm modal */}
+      {deleteConfirmShiftId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🗑️</div>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Delete Shift?</h3>
+            <p style={{ color: '#6b7280', marginBottom: 24 }}>This will permanently remove the shift from the schedule.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteConfirmShiftId(null)} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => deleteShift(deleteConfirmShiftId)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Run payroll confirm modal */}
+      {runPayrollConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 420, width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>💰</div>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Run Payroll?</h3>
+            <p style={{ color: '#6b7280', marginBottom: 24 }}>This will generate pay stubs for all active employees in this period.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setRunPayrollConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => runPayroll(runPayrollConfirmId)} disabled={runningPayroll} style={{ flex: 1, padding: '10px', background: runningPayroll ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: runningPayroll ? 'not-allowed' : 'pointer' }}>{runningPayroll ? 'Processing…' : 'Run Payroll'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mark period paid confirm modal */}
+      {markPaidConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>✅</div>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Mark Period as Paid?</h3>
+            <p style={{ color: '#6b7280', marginBottom: 24 }}>This action is final and cannot be undone.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setMarkPaidConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => markPeriodPaid(markPaidConfirmId)} style={{ flex: 1, padding: '10px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Confirm Paid</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Deny leave modal */}
+      {denyModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Deny Leave Request</h3>
+            <label style={{ display: 'block', fontWeight: 600, marginBottom: 8, fontSize: 14 }}>Reason for denial (optional)</label>
+            <textarea value={denyModal.reason} onChange={e => setDenyModal(d => d ? { ...d, reason: e.target.value } : d)} rows={3} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 8, resize: 'vertical', fontFamily: 'inherit', fontSize: 14, boxSizing: 'border-box' }} placeholder="Enter reason…" />
+            <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+              <button onClick={() => setDenyModal(null)} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => { approveLeave(denyModal.id, 'denied', denyModal.reason); setDenyModal(null); }} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>✗ Deny</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

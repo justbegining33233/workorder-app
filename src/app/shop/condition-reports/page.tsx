@@ -28,6 +28,8 @@ export default function ConditionReportsPage() {
   const [filter, setFilter] = useState<'all' | 'check_in' | 'check_out'>('all');
   const [form, setForm] = useState({ reportType: 'check_in', vehicleDesc: '', mileageIn: '', fuelLevelIn: '50', damageNotes: '', workOrderId: '', photos: [] as string[] });
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [photoUploading, setPhotoUploading] = useState(false);
 
   useEffect(() => { if (!user) return; load(); }, [user]);
 
@@ -40,6 +42,8 @@ export default function ConditionReportsPage() {
   };
 
   const create = async () => {
+    setFormError('');
+    if (!form.vehicleDesc.trim()) { setFormError('Vehicle description is required.'); return; }
     setSaving(true);
     const token = localStorage.getItem('token');
     const r = await fetch('/api/condition-reports', {
@@ -49,6 +53,21 @@ export default function ConditionReportsPage() {
     });
     if (r.ok) { setShowNew(false); load(); setForm({ reportType: 'check_in', vehicleDesc: '', mileageIn: '', fuelLevelIn: '50', damageNotes: '', workOrderId: '', photos: [] }); }
     setSaving(false);
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoUploading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const fd = new FormData();
+      fd.append('file', file);
+      const r = await fetch('/api/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (r.ok) { const d = await r.json(); setForm(p => ({ ...p, photos: [...p.photos, d.url] })); }
+      else { setFormError('Photo upload failed.'); }
+    } catch { setFormError('Photo upload failed.'); }
+    setPhotoUploading(false);
   };
 
   const filtered = filter === 'all' ? reports : reports.filter(r => r.reportType === filter);
@@ -129,6 +148,7 @@ export default function ConditionReportsPage() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999, padding: 20 }}>
           <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 450, maxWidth: '100%' }}>
             <h3 style={{ margin: '0 0 20px', fontSize: 18 }}>New Condition Report</h3>
+            {formError && <div style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 13 }}>{formError}</div>}
 
             <div style={{ marginBottom: 14 }}>
               <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Report Type</label>
@@ -158,6 +178,19 @@ export default function ConditionReportsPage() {
               <textarea value={form.damageNotes} onChange={e => setForm(p => ({ ...p, damageNotes: e.target.value }))} rows={3}
                 placeholder="Note any existing dents, scratches, or damage..."
                 style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 14px', color: '#e5e7eb', fontSize: 13, boxSizing: 'border-box', resize: 'vertical' }} />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Photos</label>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+                {form.photos.map((url, idx) => (
+                  <img key={idx} src={url} alt="photo" style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)' }} />
+                ))}
+              </div>
+              <label style={{ display: 'inline-block', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '8px 16px', fontSize: 13, color: '#e5e7eb', cursor: 'pointer' }}>
+                {photoUploading ? 'Uploading...' : '📷 Add Photo'}
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: 'none' }} disabled={photoUploading} />
+              </label>
             </div>
 
             <div style={{ display: 'flex', gap: 10 }}>

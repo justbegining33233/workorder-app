@@ -42,6 +42,7 @@ export default function CustomerReportsPage() {
   const [topCustomers, setTopCustomers] = useState<TopCustomer[]>([]);
   const [acquisitionChart, setAcquisitionChart] = useState<AcquisitionPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
   useEffect(() => {
     const sid = localStorage.getItem('shopId') || user?.id || '';
@@ -54,6 +55,7 @@ export default function CustomerReportsPage() {
 
   const fetchReport = async () => {
     setLoading(true);
+    setFetchError('');
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`/api/shop/customer-reports?shopId=${shopId}&days=${days}`, {
@@ -64,9 +66,12 @@ export default function CustomerReportsPage() {
         setSummary(data.summary);
         setTopCustomers(data.topCustomers);
         setAcquisitionChart(data.acquisitionChart);
+      } else {
+        setFetchError(data.error || 'Failed to load report');
       }
-    } catch {}
-    finally { setLoading(false); }
+    } catch (err: any) {
+      setFetchError(err?.message || 'Failed to load report');
+    } finally { setLoading(false); }
   };
 
   const maxAcq = Math.max(...acquisitionChart.map(p => p.count), 1);
@@ -96,6 +101,8 @@ export default function CustomerReportsPage() {
 
         {loading ? (
           <div style={{ textAlign: 'center', color: '#9aa3b2', padding: 80 }}>Loading report...</div>
+        ) : fetchError ? (
+          <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, padding: '16px 20px', color: '#f87171', marginBottom: 24 }}>{fetchError}</div>
         ) : (
           <>
             {/* Summary cards */}
@@ -104,7 +111,7 @@ export default function CustomerReportsPage() {
                 { label: 'Total Customers', value: summary?.totalCustomers, color: '#3b82f6' },
                 { label: `New (${days}d)`, value: summary?.newCustomers, color: '#22c55e' },
                 { label: 'Returning', value: summary?.returningCustomers, color: '#f59e0b' },
-                { label: 'Retention Rate', value: `${summary?.retentionRate}%`, color: '#a855f7' },
+                { label: 'Retention Rate', value: `${summary?.retentionRate ?? '—'}%`, color: '#a855f7' },
                 { label: 'Avg Jobs/Customer', value: summary?.avgJobsPerCustomer, color: '#06b6d4' },
               ].map(({ label, value, color }) => (
                 <div key={label} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '20px 16px', textAlign: 'center' }}>

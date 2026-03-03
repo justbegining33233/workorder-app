@@ -33,6 +33,7 @@ export default function Payments() {
   const [summary, setSummary] = useState<Summary>({ totalPaid: 0, totalPending: 0, paidCount: 0, pendingCount: 0 });
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState<string | null>(null);
+  const [payError, setPayError] = useState('');
 
   const fetchPayments = async () => {
     try {
@@ -69,11 +70,11 @@ export default function Payments() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert('Could not initiate payment. Please try again.');
+        setPayError('Could not initiate payment. Please try again.');
         setPaying(null);
       }
     } catch {
-      alert('Payment error. Please try again.');
+      setPayError('Payment error. Please try again.');
       setPaying(null);
     }
   };
@@ -220,6 +221,13 @@ export default function Payments() {
           </div>
         </div>
       </div>
+
+      {payError && (
+        <div style={{position:'fixed',bottom:24,right:24,background:'#fde8e8',color:'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {payError}
+          <button onClick={()=>setPayError('')} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

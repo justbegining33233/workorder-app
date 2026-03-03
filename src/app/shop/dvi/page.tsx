@@ -29,6 +29,8 @@ export default function DVIPage() {
   const [newForm, setNewForm] = useState({ vehicleDesc: '', mileage: '', workOrderId: '', notes: '' });
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState('');
+  const [sentId, setSentId] = useState('');
+  const [sendError, setSendError] = useState('');
 
   useEffect(() => { if (!user) return; load(); }, [user]);
 
@@ -93,13 +95,15 @@ export default function DVIPage() {
   };
 
   const sendToCustomer = async (id: string) => {
+    setSendError('');
     const token = localStorage.getItem('token');
-    await fetch(`/api/dvi/${id}`, {
+    const r = await fetch(`/api/dvi/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ _action: 'send' }),
     });
-    load();
+    if (r.ok) { setSentId(id); setTimeout(() => setSentId(''), 3000); load(); }
+    else { const d = await r.json().catch(() => ({})); setSendError(d.error || 'Failed to send to customer.'); }
   };
 
   const copyLink = (token: string | undefined) => {

@@ -28,6 +28,7 @@ export default function ProfitMarginsPage() {
   const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [data, setData] = useState<MarginData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [marginError, setMarginError] = useState('');
   const [days, setDays] = useState(30);
   const [sort, setSort] = useState<'margin' | 'profit' | 'revenue'>('profit');
 
@@ -35,10 +36,17 @@ export default function ProfitMarginsPage() {
 
   const load = async () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
-    const r = await fetch(`/api/profit-margins?days=${days}`, { headers: { Authorization: `Bearer ${token}` } });
-    if (r.ok) setData(await r.json());
-    setLoading(false);
+    setMarginError('');
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch(`/api/profit-margins?days=${days}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (r.ok) setData(await r.json());
+      else setMarginError('Failed to load profit margin data. Please try again.');
+    } catch {
+      setMarginError('Network error. Please check your connection.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const sorted = data?.workOrders?.slice().sort((a, b) => {
@@ -69,7 +77,16 @@ export default function ProfitMarginsPage() {
         </select>
       </div>
 
-      {loading ? <div style={{ padding: 48, color: '#6b7280' }}>Loading...</div> : !data ? null : (
+      {loading ? <div style={{ padding: 48, color: '#6b7280', textAlign: 'center' }}>Loading...</div> : marginError ? (
+        <div style={{ padding: 48, textAlign: 'center' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 8 }}>Unable to Load Data</div>
+          <div style={{ color: '#9ca3af', fontSize: 14, marginBottom: 24 }}>{marginError}</div>
+          <button onClick={load} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Retry</button>
+        </div>
+      ) : !data ? (
+        <div style={{ padding: 48, textAlign: 'center', color: '#6b7280' }}>No profit margin data found for this period.</div>
+      ) : (
         <div style={{ padding: 32 }}>
           {/* Summary Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>

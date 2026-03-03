@@ -46,6 +46,8 @@ export default function ShopDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [shopMsg, setShopMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [statusConfirm, setStatusConfirm] = useState<string|null>(null);
   
   const shopId = params?.id as string;
 
@@ -99,9 +101,8 @@ export default function ShopDetailsPage() {
 
   const handleStatusChange = async (newStatus: string) => {
     if (!shop) return;
-    
+    setStatusConfirm(null);
     const action = newStatus === 'suspended' ? 'suspend' : newStatus === 'approved' ? 'approve' : 'update';
-    if (!confirm(`Are you sure you want to ${action} this shop?`)) return;
     
     setActionLoading(true);
     try {
@@ -119,14 +120,14 @@ export default function ShopDetailsPage() {
       
       if (res.ok) {
         setShop(prev => prev ? { ...prev, status: newStatus } : null);
-        alert(`Shop has been ${action === 'suspend' ? 'suspended' : action === 'approve' ? 'approved' : 'updated'}.`);
+        setShopMsg({type:'success',text:`Shop has been ${action === 'suspend' ? 'suspended' : action === 'approve' ? 'approved' : 'updated'}.`});
       } else {
         const data = await res.json();
-        alert(data.error || 'Failed to update shop status');
+        setShopMsg({type:'error',text:data.error || 'Failed to update shop status'});
       }
     } catch (err) {
       console.error('Error updating shop status:', err);
-      alert('Failed to update shop status');
+      setShopMsg({type:'error',text:'Failed to update shop status'});
     } finally {
       setActionLoading(false);
     }
@@ -187,7 +188,7 @@ export default function ShopDetailsPage() {
             <div style={{ display: 'flex', gap: 12 }}>
               {shop.status === 'approved' && (
                 <button
-                  onClick={() => handleStatusChange('suspended')}
+                  onClick={() => setStatusConfirm('suspended')}
                   disabled={actionLoading}
                   style={{ padding: '10px 20px', background: 'rgba(229,51,42,0.2)', color: '#e5332a', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: actionLoading ? 'not-allowed' : 'pointer', opacity: actionLoading ? 0.6 : 1 }}
                 >
@@ -196,7 +197,7 @@ export default function ShopDetailsPage() {
               )}
               {shop.status === 'suspended' && (
                 <button
-                  onClick={() => handleStatusChange('approved')}
+                  onClick={() => setStatusConfirm('approved')}
                   disabled={actionLoading}
                   style={{ padding: '10px 20px', background: 'rgba(34,197,94,0.2)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: actionLoading ? 'not-allowed' : 'pointer', opacity: actionLoading ? 0.6 : 1 }}
                 >
@@ -205,7 +206,7 @@ export default function ShopDetailsPage() {
               )}
               {shop.status === 'pending' && (
                 <button
-                  onClick={() => handleStatusChange('approved')}
+                  onClick={() => setStatusConfirm('approved')}
                   disabled={actionLoading}
                   style={{ padding: '10px 20px', background: 'rgba(34,197,94,0.2)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: actionLoading ? 'not-allowed' : 'pointer', opacity: actionLoading ? 0.6 : 1 }}
                 >
@@ -347,6 +348,24 @@ export default function ShopDetailsPage() {
           </div>
         </div>
       </div>
+      {statusConfirm && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1e2533',borderRadius:14,padding:32,minWidth:300,maxWidth:420,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+            <h3 style={{fontSize:18,fontWeight:700,color:'#e5e7eb',marginBottom:12}}>Confirm Action</h3>
+            <p style={{fontSize:14,color:'#9aa3b2',marginBottom:24}}>Are you sure you want to {statusConfirm === 'suspended' ? 'suspend' : 'approve'} this shop?</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={()=>handleStatusChange(statusConfirm)} disabled={actionLoading} style={{flex:1,padding:'10px 0',background:statusConfirm==='suspended'?'#ef4444':'#22c55e',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Confirm</button>
+              <button onClick={()=>setStatusConfirm(null)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {shopMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:shopMsg.type==='success'?'#dcfce7':'#fde8e8',color:shopMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {shopMsg.text}
+          <button onClick={()=>setShopMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

@@ -41,6 +41,7 @@ function ManagerEstimatesContent() {
 
   const [workOrder, setWorkOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [estimateMsg, setEstimateMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
     if (workOrderId) {
@@ -152,14 +153,13 @@ function ManagerEstimatesContent() {
       });
 
       if (response.ok) {
-        alert('Estimate submitted successfully!');
         router.push(`/workorders/${workOrderId}`);
       } else {
-        alert('Failed to submit estimate');
+        setEstimateMsg({type:'error',text:'Failed to submit estimate'});
       }
     } catch (error) {
       console.error('Error submitting estimate:', error);
-      alert('Error submitting estimate');
+      setEstimateMsg({type:'error',text:'Error submitting estimate'});
     }
   };
 
@@ -415,6 +415,12 @@ function ManagerEstimatesContent() {
           </div>
         </div>
       </div>
+      {estimateMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:estimateMsg.type==='success'?'#dcfce7':'#fde8e8',color:estimateMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {estimateMsg.text}
+          <button onClick={()=>setEstimateMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

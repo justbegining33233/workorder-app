@@ -70,7 +70,6 @@ export default function InShopWorkOrderPage() {
       createdBy: formData.customerName || userName,
     });
     
-    alert(`In-shop job ${workOrder.id} created successfully!`);
     router.push('/workorders/list');
   };
 

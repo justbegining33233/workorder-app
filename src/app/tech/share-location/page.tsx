@@ -11,6 +11,7 @@ export default function ShareLocation() {
   const [address, setAddress] = useState('');
   const [sharing, setSharing] = useState(false);
   const [shareLink, setShareLink] = useState('');
+  const [locationMsg, setLocationMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   if (isLoading) {
     return (
@@ -36,17 +37,17 @@ export default function ShareLocation() {
           setAddress(`${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}`);
         },
         () => {
-          alert('Unable to get location. Please check location permissions.');
+          setLocationMsg({type:'error',text:'Unable to get location. Please check location permissions.'});
         }
       );
     } else {
-      alert('Geolocation is not supported by your browser');
+      setLocationMsg({type:'error',text:'Geolocation is not supported by your browser'});
     }
   };
 
   const startSharing = () => {
     if (!location) {
-      alert('Please get your current location first');
+      setLocationMsg({type:'error',text:'Please get your current location first'});
       return;
     }
     setSharing(true);
@@ -56,7 +57,7 @@ export default function ShareLocation() {
 
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
-    alert('Location link copied to clipboard!');
+    setLocationMsg({type:'success',text:'Location link copied to clipboard!'});
   };
 
   return (
@@ -160,6 +161,13 @@ export default function ShareLocation() {
           </div>
         </div>
       </div>
+
+      {locationMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:locationMsg.type==='success'?'#dcfce7':'#fde8e8',color:locationMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {locationMsg.text}
+          <button onClick={()=>setLocationMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

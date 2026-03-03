@@ -24,6 +24,7 @@ export default function TechHome() {
   const [shopCoords, setShopCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const [roadCalls, setRoadCalls] = useState<any[]>([]);
   const [partsVendors, setPartsVendors] = useState<{ vendor: string; address?: string; poId?: string }[]>([]);
+  const [homeMsg, setHomeMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const [shopStats, setShopStats] = useState({
     openJobs: 0,
     completedToday: 0,
@@ -373,9 +374,9 @@ export default function TechHome() {
                             try {
                               const token = localStorage.getItem('token');
                               const shopId = user?.shopId;
-                              if (!shopId) return alert('No shopId');
+                              if (!shopId) { setHomeMsg({type:'error',text:'No shopId'}); return; }
                               const res = await fetch(`/api/workorders?shopId=${shopId}&status=assigned,in-progress`, { headers: { Authorization: `Bearer ${token}` } });
-                              if (!res.ok) return alert('Failed to fetch road calls');
+                              if (!res.ok) { setHomeMsg({type:'error',text:'Failed to fetch road calls'}); return; }
                               const data = await res.json();
                               const wos = data.workOrders || [];
                               setRoadCalls(wos);
@@ -383,7 +384,7 @@ export default function TechHome() {
                               window.dispatchEvent(new CustomEvent('map:add_markers', { detail: { type: 'roadcall', markers } }));
                               btn.dataset.showing = '1';
                               btn.textContent = 'Hide';
-                            } catch (err) { console.error(err); alert('Error loading road calls'); }
+                            } catch (err) { console.error(err); setHomeMsg({type:'error',text:'Error loading road calls'}); }
                           }} style={{padding:8, borderRadius:8, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', color:'#e5e7eb', cursor:'pointer'}}>Show</button>
 
                           <Link href="/workorders/new?serviceLocation=roadside" style={{display:'inline-block', padding:'8px 10px', background:'#e5332a', color:'white', borderRadius:6, textDecoration:'none', fontWeight:700, fontSize:13}}>Create Road Call</Link>
@@ -420,7 +421,7 @@ export default function TechHome() {
                             }
 
                             try {
-                              if (!user?.shopId) return alert('No shopId');
+                              if (!user?.shopId) { setHomeMsg({type:'error',text:'No shopId'}); return; }
                               const token = localStorage.getItem('token');
                               const poRes = await fetch(`/api/purchase-orders?shopId=${user.shopId}`, { headers: { Authorization: `Bearer ${token}` } });
 
@@ -495,7 +496,7 @@ export default function TechHome() {
                               btn.dataset.showing = '1'; btn.textContent = 'Hide';
                             } catch (err) {
                               console.error('Error loading parts vendors', err);
-                              alert('Failed to load parts pickup locations');
+                              setHomeMsg({type:'error',text:'Failed to load parts pickup locations'});
                             }
                           }} style={{padding:8, borderRadius:8, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', color:'#e5e7eb', cursor:'pointer'}}>Show</button>
 
@@ -510,7 +511,7 @@ export default function TechHome() {
                         <div style={{display:'flex', gap:8}}>
                           <button id="share-location-btn" onClick={async () => {
                             try {
-                              if (!('geolocation' in navigator)) { alert('Geolocation not supported'); return; }
+                              if (!('geolocation' in navigator)) { setHomeMsg({type:'error',text:'Geolocation not supported'}); return; }
                               // request one-time position then start watch
                               const pos = await new Promise<GeolocationPosition>((res, rej) => navigator.geolocation.getCurrentPosition(res, rej));
                               const lat = pos.coords.latitude; const lng = pos.coords.longitude;
@@ -527,7 +528,7 @@ export default function TechHome() {
                               (document.getElementById('share-location-btn') as HTMLButtonElement).style.display = 'none';
                               const stopBtn = document.getElementById('stop-share-btn') as HTMLButtonElement | null;
                               if (stopBtn) stopBtn.style.display = 'inline-block';
-                            } catch (err) { console.error('Location error', err); alert('Failed to get location'); }
+                            } catch (err) { console.error('Location error', err); setHomeMsg({type:'error',text:'Failed to get location'}); }
                           }} style={{flex:1, padding:8, borderRadius:6, background:'#3b82f6', color:'white', border:'none', fontWeight:700}}>Share</button>
                           <button id="stop-share-btn" onClick={() => {
                             const id = (window as any).__shop_location_watch;
@@ -924,6 +925,13 @@ export default function TechHome() {
             <RealTimeWorkOrders userId={user.id} />
           </div>
         </div>
+
+      {homeMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:homeMsg.type==='success'?'#dcfce7':'#fde8e8',color:homeMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {homeMsg.text}
+          <button onClick={()=>setHomeMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </MobileLayout>
   );
 }

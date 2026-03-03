@@ -12,12 +12,25 @@ export default function CustomerMessagesPage() {
   const [userId, setUserId] = useState('');
   const [userName, setUserName] = useState('');
   const [shopId, setShopId] = useState('');
+  const [customers, setCustomers] = useState<Array<{ id: string; name: string; email: string }>>([]);
+  const [selectedCustomerId, setSelectedCustomerId] = useState('');
 
   useEffect(() => {
     if (user?.id) setUserId(user.id);
     if (user?.name) setUserName(user.name);
     if (user?.shopId) setShopId(user.shopId);
   }, [user]);
+
+  useEffect(() => {
+    if (!user?.shopId) return;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    fetch(`/api/customers?shopId=${user.shopId}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.customers) setCustomers(data.customers);
+      })
+      .catch(() => {});
+  }, [user?.shopId]);
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -50,7 +63,7 @@ export default function CustomerMessagesPage() {
   };
 
   if (!userId || !shopId) {
-    return <div>Loading...</div>;
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
   }
 
   return (
@@ -78,13 +91,32 @@ export default function CustomerMessagesPage() {
           <div style={{background:'rgba(0,0,0,0.2)', border:'1px solid rgba(75,85,99,0.2)', borderRadius:12, padding:'24px'}}>
             <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:24}}>Real-Time Customer Messaging</h2>
 
+            {/* Customer selector */}
+            <div style={{marginBottom:20}}>
+              <label style={{fontSize:13, color:'#9ca3af', display:'block', marginBottom:8}}>Select Customer</label>
+              <select
+                value={selectedCustomerId}
+                onChange={e => setSelectedCustomerId(e.target.value)}
+                style={{padding:'10px 14px', background:'#1f2937', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, color:'#e5e7eb', fontSize:14, minWidth:280}}
+              >
+                <option value="">— Choose a customer —</option>
+                {customers.map(c => (
+                  <option key={c.id} value={c.id}>{c.name} ({c.email})</option>
+                ))}
+              </select>
+            </div>
+
+            {selectedCustomerId ? (
             <RealTimeMessaging
               userId={userId}
               shopId={shopId}
               userRole="shop"
-              recipientId="" // Will be set when customer is selected
+              recipientId={selectedCustomerId}
               recipientRole="customer"
             />
+            ) : (
+              <div style={{color:'#9ca3af', padding:'40px 0', textAlign:'center'}}>Select a customer above to start messaging.</div>
+            )}
           </div>
         </div>
       </div>

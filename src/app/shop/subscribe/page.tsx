@@ -42,6 +42,7 @@ export default function ShopSubscribePage() {
   const [loading, setLoading] = useState(false);
   const [shopId, setShopId] = useState('');
   const [email, setEmail] = useState('');
+  const [checkoutError, setCheckoutError] = useState('');
 
   useEffect(() => {
     setShopId(localStorage.getItem('shopId') || '');
@@ -62,10 +63,10 @@ export default function ShopSubscribePage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Failed to start checkout. Please try again.');
+        setCheckoutError(data.error || 'Failed to start checkout. Please try again.');
       }
     } catch {
-      alert('Checkout failed. Please try again.');
+      setCheckoutError('Checkout failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -161,6 +162,12 @@ export default function ShopSubscribePage() {
           </button>
         </div>
       </div>
+      {checkoutError && (
+        <div style={{position:'fixed',bottom:24,right:24,background:'#fde8e8',color:'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {checkoutError}
+          <button onClick={()=>setCheckoutError('')} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

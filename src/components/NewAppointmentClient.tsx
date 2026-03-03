@@ -62,6 +62,7 @@ export default function NewAppointmentClient() {
   const [loading, setLoading] = useState(false);
   const [servicesLoading, setServicesLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [bookingMsg, setBookingMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -197,7 +198,7 @@ export default function NewAppointmentClient() {
 
   const handleSubmit = async () => {
     if (!selectedShop || !selectedService || !appointmentDate || !appointmentTime) {
-      alert('Please complete all required fields');
+      setBookingMsg({type:'error',text:'Please complete all required fields'});
       return;
     }
 
@@ -225,11 +226,11 @@ export default function NewAppointmentClient() {
         router.push('/customer/appointments?success=true');
       } else {
         const error = await res.json();
-        alert(error.error || 'Failed to book appointment');
+        setBookingMsg({type:'error',text:error.error || 'Failed to book appointment'});
       }
     } catch (error) {
       console.error('Error booking appointment:', error);
-      alert('Failed to book appointment');
+      setBookingMsg({type:'error',text:'Failed to book appointment'});
     } finally {
       setSubmitting(false);
     }
@@ -381,6 +382,12 @@ export default function NewAppointmentClient() {
         )}
         {/* Steps 2-4 omitted for brevity in this client wrapper; original logic preserved in full file */}
       </div>
+      {bookingMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:bookingMsg.type==='success'?'#dcfce7':'#fde8e8',color:bookingMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {bookingMsg.text}
+          <button onClick={()=>setBookingMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

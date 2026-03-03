@@ -34,6 +34,8 @@ export default function TechTimesheet() {
   // edit state for inline row editing
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<any>({ notes: '', workOrderId: '' });
+  const [timesheetMsg, setTimesheetMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [approveConfirmId, setApproveConfirmId] = useState<string|null>(null);
 
 
 
@@ -191,7 +193,7 @@ export default function TechTimesheet() {
       </body></html>
     `;
     const w = window.open('', '_blank');
-    if (!w) return alert('Unable to open print window');
+    if (!w) { setTimesheetMsg({type:'error',text:'Unable to open print window'}); return; }
     w.document.write(html);
     w.document.close();
     w.print();
@@ -378,11 +380,11 @@ export default function TechTimesheet() {
                                 setEditValues({ notes: '', workOrderId: '' });
                               } else {
                                 const { error } = await res.json();
-                                alert(error || 'Failed to save');
+                                setTimesheetMsg({type:'error',text:error || 'Failed to save'});
                               }
                             } catch (err) {
                               console.error(err);
-                              alert('Save failed');
+                              setTimesheetMsg({type:'error',text:'Save failed'});
                             }
                           }} style={{padding:'6px 8px', borderRadius:6, background:'#10b981', color:'white', border:'none'}}>Save</button>
                           <button onClick={() => { setEditingId(null); setEditValues({ notes: '', workOrderId: '' }); }} style={{padding:'6px 8px', borderRadius:6, background:'transparent', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.04)'}}>Cancel</button>
@@ -392,27 +394,7 @@ export default function TechTimesheet() {
                           <button onClick={() => { setEditingId(e.id); setEditValues({ notes: e.notes || '', workOrderId: e.workOrderId || '' }); }} style={{padding:'0', borderRadius:4, background:'transparent', color:'#3b82f6', border:'none', fontSize:13, fontWeight:600, cursor:'pointer'}}>Edit</button>
 
                           {(user.role === 'manager' || user.role === 'admin') && (
-                            <button onClick={async () => {
-                              // Approve & lock entry
-                              if (!confirm('Approve and lock this timesheet entry?')) return;
-                              try {
-                                const token = localStorage.getItem('token');
-                                const res = await fetch(`/api/time-tracking/${e.id}`, {
-                                  method: 'PUT',
-                                  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                                  body: JSON.stringify({ approved: true, locked: true }),
-                                });
-                                if (res.ok) {
-                                  await fetchEntries();
-                                } else {
-                                  const { error } = await res.json();
-                                  alert(error || 'Failed to approve');
-                                }
-                              } catch (err) {
-                                console.error(err);
-                                alert('Approve failed');
-                              }
-                            }} style={{padding:'6px 8px', borderRadius:6, background:'#f59e0b', color:'#1f2937', border:'none'}}>Approve</button>
+                            <button onClick={() => setApproveConfirmId(e.id)} style={{padding:'6px 8px', borderRadius:6, background:'#f59e0b', color:'#1f2937', border:'none'}}>Approve</button>
                           )}
                         </>
                       )}
@@ -459,6 +441,38 @@ export default function TechTimesheet() {
 
         </div>
       </div>
+
+      {timesheetMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:timesheetMsg.type==='success'?'#dcfce7':'#fde8e8',color:timesheetMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {timesheetMsg.text}
+          <button onClick={()=>setTimesheetMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
+
+      {approveConfirmId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1f2937',border:'1px solid rgba(255,255,255,0.1)',borderRadius:12,padding:32,maxWidth:400,width:'90%'}}>
+            <h3 style={{color:'#e5e7eb',fontSize:18,fontWeight:700,marginBottom:12}}>Approve Entry?</h3>
+            <p style={{color:'#9aa3b2',fontSize:14,marginBottom:24}}>Approve and lock this timesheet entry? This cannot be undone.</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={async () => {
+                try {
+                  const token = localStorage.getItem('token');
+                  const res = await fetch(`/api/time-tracking/${approveConfirmId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    body: JSON.stringify({ approved: true, locked: true }),
+                  });
+                  if (res.ok) { await fetchEntries(); }
+                  else { const { error } = await res.json(); setTimesheetMsg({type:'error',text:error || 'Failed to approve'}); }
+                } catch (err) { console.error(err); setTimesheetMsg({type:'error',text:'Approve failed'}); }
+                setApproveConfirmId(null);
+              }} style={{flex:1,padding:'11px 0',background:'#f59e0b',color:'#1f2937',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Approve</button>
+              <button onClick={()=>setApproveConfirmId(null)} style={{flex:1,padding:'11px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,fontWeight:600,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

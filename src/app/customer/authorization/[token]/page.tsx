@@ -28,6 +28,8 @@ export default function CustomerAuthorizationPage() {
   const [hasSig, setHasSig] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<'signed' | 'declined' | null>(null);
+  const [formError, setFormError] = useState('');
+  const [declineConfirm, setDeclineConfirm] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -72,8 +74,9 @@ export default function CustomerAuthorizationPage() {
   };
 
   const sign = async () => {
-    if (!hasSig) { alert('Please sign above.'); return; }
-    if (!signerName.trim()) { alert('Please enter your full name.'); return; }
+    if (!hasSig) { setFormError('Please sign above.'); return; }
+    if (!signerName.trim()) { setFormError('Please enter your full name.'); return; }
+    setFormError('');
     const canvas = canvasRef.current!;
     const signatureData = canvas.toDataURL('image/png');
     setSubmitting(true);
@@ -83,12 +86,12 @@ export default function CustomerAuthorizationPage() {
       body: JSON.stringify({ _action: 'sign', signatureData, signerName }),
     });
     if (r.ok) setResult('signed');
-    else alert('Failed to submit. Please try again.');
+    else setFormError('Failed to submit. Please try again.');
     setSubmitting(false);
   };
 
   const decline = async () => {
-    if (!confirm('Are you sure you want to decline this authorization?')) return;
+    setDeclineConfirm(false);
     setSubmitting(true);
     const r = await fetch(`/api/work-authorizations/${token}`, {
       method: 'POST',
@@ -199,12 +202,13 @@ export default function CustomerAuthorizationPage() {
               {!hasSig && <p style={{ color: '#9ca3af', fontSize: 12, margin: '6px 0 0', textAlign: 'center' }}>Draw your signature above using mouse or touch</p>}
             </div>
 
+            {formError && <p style={{color:'#dc2626',fontSize:13,marginBottom:12,fontWeight:600,padding:'8px 12px',background:'#fef2f2',borderRadius:6,border:'1px solid #fca5a5'}}>{formError}</p>}
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <button onClick={sign} disabled={submitting}
                 style={{ flex: 2, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '13px 0', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
                 {submitting ? 'Submitting...' : '✍️ Authorize Work'}
               </button>
-              <button onClick={decline} disabled={submitting}
+              <button onClick={() => setDeclineConfirm(true)} disabled={submitting}
                 style={{ flex: 1, background: '#fff', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: 8, padding: '13px 0', fontSize: 14, cursor: 'pointer' }}>
                 Decline
               </button>
@@ -217,6 +221,19 @@ export default function CustomerAuthorizationPage() {
           </div>
         )}
       </div>
+
+      {declineConfirm && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#fff',borderRadius:12,padding:32,maxWidth:400,width:'90%'}}>
+            <h3 style={{margin:'0 0 12px',fontSize:18,color:'#111827'}}>Decline Authorization?</h3>
+            <p style={{color:'#6b7280',fontSize:14,margin:'0 0 24px'}}>Are you sure you want to decline this work authorization? The shop will be notified.</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={decline} style={{flex:1,padding:'11px 0',background:'#e5332a',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Yes, Decline</button>
+              <button onClick={()=>setDeclineConfirm(false)} style={{flex:1,padding:'11px 0',background:'#f3f4f6',color:'#374151',border:'none',borderRadius:8,fontSize:14,fontWeight:600,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

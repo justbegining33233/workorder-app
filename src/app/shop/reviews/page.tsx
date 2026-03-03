@@ -28,6 +28,7 @@ export default function ShopReviewsPage() {
   const [responseText, setResponseText] = useState('');
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [deleteResponseConfirmId, setDeleteResponseConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
     const sid = localStorage.getItem('shopId') || user?.id || '';
@@ -80,7 +81,7 @@ export default function ShopReviewsPage() {
   };
 
   const handleDeleteResponse = async (reviewId: string) => {
-    if (!confirm('Remove your response from this review?')) return;
+    setDeleteResponseConfirmId(null);
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`/api/reviews/${reviewId}`, {
@@ -208,7 +209,7 @@ export default function ShopReviewsPage() {
                     {responding !== review.id && (
                       <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                         <button onClick={() => { setResponding(review.id); setResponseText(review.shopResponse || ''); }} style={{ fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>Edit</button>
-                        <button onClick={() => handleDeleteResponse(review.id)} style={{ fontSize: 12, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>Remove</button>
+                        <button onClick={() => setDeleteResponseConfirmId(review.id)} style={{ fontSize: 12, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>Remove</button>
                       </div>
                     )}
                   </div>
@@ -245,6 +246,21 @@ export default function ShopReviewsPage() {
           </div>
         )}
       </div>
+
+      {/* Delete response confirm modal */}
+      {deleteResponseConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>💬</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Remove Response?</h3>
+            <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This will remove your shop response from the review.</p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setDeleteResponseConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#334155', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', color: '#e2e8f0' }}>Cancel</button>
+              <button onClick={() => handleDeleteResponse(deleteResponseConfirmId)} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

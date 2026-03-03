@@ -26,18 +26,22 @@ export default function ARAgingPage() {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [totalAR, setTotalAR] = useState(0);
+  const [fetchError, setFetchError] = useState('');
 
   useEffect(() => { if (!user) return; load(); }, [user]);
 
   const load = async () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
-    const r = await fetch('/api/ar-aging', { headers: { Authorization: `Bearer ${token}` } });
-    if (r.ok) {
-      const d = await r.json();
-      setData(d.buckets || []);
-      setTotalAR(d.totalOutstanding || 0);
-    }
+    setFetchError('');
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch('/api/ar-aging', { headers: { Authorization: `Bearer ${token}` } });
+      if (r.ok) {
+        const d = await r.json();
+        setData(d.buckets || []);
+        setTotalAR(d.totalOutstanding || 0);
+      } else { setFetchError('Failed to load AR aging data.'); }
+    } catch (err: any) { setFetchError(err?.message || 'Network error.'); }
     setLoading(false);
   };
 
@@ -66,6 +70,7 @@ export default function ARAgingPage() {
       </div>
 
       <div style={{ padding: '0 32px 32px' }}>
+        {fetchError && <div style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>{fetchError}</div>}
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           data.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>

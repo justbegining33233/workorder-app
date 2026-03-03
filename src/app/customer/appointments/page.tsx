@@ -39,6 +39,8 @@ export default function CustomerAppointmentsPage() {
     serviceType: 'oil-change',
     notes: ''
   });
+  const [apptMsg, setApptMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [cancelApptId, setCancelApptId] = useState<string|null>(null);
 
   useEffect(() => {
     fetchAppointments();
@@ -121,14 +123,14 @@ export default function CustomerAppointmentsPage() {
       });
 
       if (response.ok) {
-        alert('Message sent successfully!');
+        setApptMsg({type:'success',text:'Message sent successfully!'});
         closeMessageModal();
       } else {
-        alert('Failed to send message. Please try again.');
+        setApptMsg({type:'error',text:'Failed to send message. Please try again.'});
       }
     } catch (error) {
       console.error('Failed to send message:', error);
-      alert('Failed to send message. Please try again.');
+      setApptMsg({type:'error',text:'Failed to send message. Please try again.'});
     } finally {
       setMessageModal(prev => ({ ...prev, sending: false }));
     }
@@ -136,7 +138,7 @@ export default function CustomerAppointmentsPage() {
 
   const handleBookAppointment = async () => {
     if (!newAppointment.shopId || !newAppointment.scheduledDate) {
-      alert('Please select a shop and date/time');
+      setApptMsg({type:'error',text:'Please select a shop and date/time'});
       return;
     }
 
@@ -155,23 +157,21 @@ export default function CustomerAppointmentsPage() {
       });
 
       if (response.ok) {
-        alert('Appointment booked successfully!');
+        setApptMsg({type:'success',text:'Appointment booked successfully!'});
         setShowBookForm(false);
         setNewAppointment({ shopId: '', vehicleId: '', scheduledDate: '', serviceType: 'oil-change', notes: '' });
         fetchAppointments();
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to book appointment');
+        setApptMsg({type:'error',text:error.error || 'Failed to book appointment'});
       }
     } catch (error) {
       console.error('Error booking appointment:', error);
-      alert('Failed to book appointment');
+      setApptMsg({type:'error',text:'Failed to book appointment'});
     }
   };
 
   const handleCancelAppointment = async (id: string) => {
-    if (!confirm('Are you sure you want to cancel this appointment?')) return;
-
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/appointments/${id}`, {
@@ -180,11 +180,13 @@ export default function CustomerAppointmentsPage() {
       });
 
       if (response.ok) {
-        alert('Appointment cancelled');
+        setApptMsg({type:'success',text:'Appointment cancelled'});
         fetchAppointments();
       }
     } catch (error) {
       console.error('Error cancelling appointment:', error);
+    } finally {
+      setCancelApptId(null);
     }
   };
 
@@ -421,6 +423,26 @@ export default function CustomerAppointmentsPage() {
             <div style={{display: 'flex', gap: 12, justifyContent: 'flex-end'}}>
               <button onClick={closeMessageModal} style={{ padding: '8px 16px', background: 'transparent', color: '#9aa3b2', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6, cursor: 'pointer', fontSize: 14 }}>Cancel</button>
               <button onClick={sendMessage} disabled={!messageModal.message.trim() || messageModal.sending} style={{ padding: '8px 16px', background: '#a855f7', color: 'white', border: 'none', borderRadius: 6, cursor: messageModal.message.trim() && !messageModal.sending ? 'pointer' : 'not-allowed', fontSize: 14, fontWeight: 600, opacity: messageModal.message.trim() && !messageModal.sending ? 1 : 0.5 }}>{messageModal.sending ? 'Sending...' : 'Send Message'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {apptMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:apptMsg.type==='success'?'#dcfce7':'#fde8e8',color:apptMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {apptMsg.text}
+          <button onClick={()=>setApptMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
+
+      {cancelApptId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#2a2a2a',border:'1px solid rgba(255,255,255,0.1)',borderRadius:12,padding:32,maxWidth:400,width:'90%'}}>
+            <h3 style={{color:'#e5e7eb',fontSize:18,fontWeight:700,marginBottom:12}}>Cancel Appointment?</h3>
+            <p style={{color:'#9aa3b2',fontSize:14,marginBottom:24}}>Are you sure you want to cancel this appointment?</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={()=>handleCancelAppointment(cancelApptId)} style={{flex:1,padding:'11px 0',background:'#e5332a',color:'white',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Yes, Cancel</button>
+              <button onClick={()=>setCancelApptId(null)} style={{flex:1,padding:'11px 0',background:'rgba(255,255,255,0.1)',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.2)',borderRadius:8,fontSize:14,fontWeight:600,cursor:'pointer'}}>Keep It</button>
             </div>
           </div>
         </div>

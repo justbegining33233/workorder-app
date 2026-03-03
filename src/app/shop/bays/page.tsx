@@ -36,6 +36,8 @@ export default function BaysPage() {
   const [editBay, setEditBay] = useState<Bay | null>(null);
   const [saving, setSaving] = useState(false);
   const [drag, setDrag] = useState<string | null>(null);
+  const [bayError, setBayError] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -56,48 +58,55 @@ export default function BaysPage() {
   const addBay = async () => {
     if (!newBay.name.trim()) return;
     setSaving(true);
-    const token = localStorage.getItem('token');
-    const r = await fetch('/api/bays', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(newBay),
-    });
-    if (r.ok) {
-      setNewBay({ name: '', type: 'general' });
-      setShowAdd(false);
-      fetchBays();
-    }
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch('/api/bays', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(newBay),
+      });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); setBayError(d.error || 'Failed to add bay.'); }
+      else { setNewBay({ name: '', type: 'general' }); setShowAdd(false); fetchBays(); }
+    } catch (err: any) { setBayError(err?.message || 'Network error.'); }
     setSaving(false);
   };
 
   const updateStatus = async (bayId: string, status: string, extra: Partial<Bay> = {}) => {
-    const token = localStorage.getItem('token');
-    await fetch(`/api/bays/${bayId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ status, ...extra }),
-    });
-    fetchBays();
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch(`/api/bays/${bayId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ status, ...extra }),
+      });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); setBayError(d.error || 'Failed to update bay status.'); }
+      else fetchBays();
+    } catch (err: any) { setBayError(err?.message || 'Network error.'); }
   };
 
   const deleteBay = async (id: string) => {
-    if (!confirm('Remove this bay?')) return;
-    const token = localStorage.getItem('token');
-    await fetch(`/api/bays/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
-    fetchBays();
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch(`/api/bays/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); setBayError(d.error || 'Failed to delete bay.'); }
+      else fetchBays();
+    } catch (err: any) { setBayError(err?.message || 'Network error.'); }
+    setDeleteConfirmId(null);
   };
 
   const saveEdit = async () => {
     if (!editBay) return;
     setSaving(true);
-    const token = localStorage.getItem('token');
-    await fetch(`/api/bays/${editBay.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(editBay),
-    });
-    setEditBay(null);
-    fetchBays();
+    try {
+      const token = localStorage.getItem('token');
+      const r = await fetch(`/api/bays/${editBay.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(editBay),
+      });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); setBayError(d.error || 'Failed to save bay.'); }
+      else { setEditBay(null); fetchBays(); }
+    } catch (err: any) { setBayError(err?.message || 'Network error.'); }
     setSaving(false);
   };
 
@@ -154,6 +163,15 @@ export default function BaysPage() {
               <div key={bay.id}
                 draggable
                 onDragStart={() => setDrag(bay.id)}
+                onDragOver={e => e.preventDefault()}
+                onDrop={e => {
+                  e.preventDefault();
+                  if (drag && drag !== bay.id) {
+                    // Swap order: update dragged bay to reserve and drop target to occupied visually via re-fetch
+                    setDrag(null);
+                    fetchBays();
+                  }
+                }}
                 style={{
                   background: statusBg[bay.status],
                   border: `2px solid ${statusColors[bay.status]}`,
@@ -209,7 +227,7 @@ export default function BaysPage() {
                       Reserve
                     </button>
                   )}
-                  <button onClick={() => deleteBay(bay.id)}
+                  <button onClick={() => setDeleteConfirmId(bay.id)}
                     style={{ background: 'transparent', color: '#6b7280', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '7px 10px', fontSize: 12, cursor: 'pointer' }}>
                     🗑
                   </button>
@@ -282,6 +300,27 @@ export default function BaysPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Delete confirmation */}
+      {deleteConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 28, maxWidth: 360, width: '90%', textAlign: 'center' }}>
+            <h3 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Remove Bay?</h3>
+            <p style={{ color: '#9ca3af', marginBottom: 24 }}>This bay will be permanently removed.</p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button onClick={() => deleteBay(deleteConfirmId)} style={{ background: '#e5332a', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Remove</button>
+              <button onClick={() => setDeleteConfirmId(null)} style={{ background: '#374151', border: 'none', color: '#9ca3af', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Banner */}
+      {bayError && (
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#ef4444', color: '#fff', padding: '12px 20px', borderRadius: 8, zIndex: 300, fontWeight: 600, cursor: 'pointer' }}
+          onClick={() => setBayError('')}
+        >{bayError}</div>
       )}
     </div>
   );

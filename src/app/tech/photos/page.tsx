@@ -15,6 +15,14 @@ export default function TechPhotos() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [modalFile, setModalFile] = useState<File | null>(null);
   const [modalPreview, setModalPreview] = useState<string>('');
+  // inline edit caption modal
+  const [captionModal, setCaptionModal] = useState<{ id: string; current: string } | null>(null);
+  const [captionInput, setCaptionInput] = useState('');
+  // inline assign WO modal
+  const [assignModal, setAssignModal] = useState<{ id: string; url: string; caption: string; current: string } | null>(null);
+  const [assignInput, setAssignInput] = useState('');
+  const [photoMsg, setPhotoMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [removePhotoId, setRemovePhotoId] = useState<string|null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -54,11 +62,19 @@ export default function TechPhotos() {
       }
     } catch (err) {
       console.error(err);
-      alert('Upload failed');
       setPhotos(p => p.filter(x => x.id !== temp.id));
     } finally {
       setUploading(false);
     }
+  };
+
+  const doRemovePhoto = async () => {
+    if (!removePhotoId) return;
+    try {
+      await fetch(`/api/photos/${removePhotoId}`, { method: 'DELETE' });
+      setPhotos(prev => prev.filter(x => x.id !== removePhotoId));
+    } catch (err) { console.error(err); }
+    setRemovePhotoId(null);
   };
 
   if (isLoading) {
@@ -127,7 +143,7 @@ export default function TechPhotos() {
 
                       <div style={{display:'flex', gap:8, marginTop:8}}>
                         <button onClick={async () => {
-                          if (!modalFile) return alert('Select an image first');
+                          if (!modalFile) { setPhotoMsg({type:'error',text:'Select an image first'}); return; }
                           await onFile(modalFile);
                           setShowUploadModal(false);
                           setModalFile(null);
@@ -155,48 +171,96 @@ export default function TechPhotos() {
               <div style={{position:'absolute', left:8, bottom:8, right:8, display:'flex', justifyContent:'space-between', gap:8, alignItems:'center'}}>
                 <div style={{background:'rgba(0,0,0,0.6)', color:'#fff', padding:'4px 8px', borderRadius:6, fontSize:12, maxWidth:'55%', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{p.caption || p.filename || ''}</div>
                 <div style={{display:'flex', gap:6}}>
-                  <button onClick={() => { navigator.clipboard?.writeText(p.url); alert('Image URL copied'); }} style={{background:'rgba(255,255,255,0.03)', color:'#fff', border:'none', padding:'6px 8px', borderRadius:6, cursor:'pointer'}}>Copy URL</button>
+                  <button onClick={() => { navigator.clipboard?.writeText(p.url); setPhotoMsg({type:'success',text:'Image URL copied'}); }} style={{background:'rgba(255,255,255,0.03)', color:'#fff', border:'none', padding:'6px 8px', borderRadius:6, cursor:'pointer'}}>Copy URL</button>
                   <button onClick={async () => {
-                    const newCaption = prompt('Caption', p.caption || '');
-                    if (newCaption !== null) {
-                      // update on server
-                      try {
-                        const res = await fetch(`/api/photos/${p.id}`, { method: 'PUT', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ caption: newCaption }) });
-                        if (res.ok) {
-                          const j = await res.json();
-                          setPhotos(prev => prev.map(x => x.id === p.id ? j.photo : x));
-                        }
-                      } catch (err) { console.error(err); }
-                    }
+                    setCaptionInput(p.caption || '');
+                    setCaptionModal({ id: p.id, current: p.caption || '' });
                   }} style={{background:'rgba(255,255,255,0.03)', color:'#fff', border:'none', padding:'6px 8px', borderRadius:6, cursor:'pointer'}}>Edit</button>
                   <button onClick={async () => {
-                    const wo = prompt('Assign to Work Order ID', p.workOrderId || '');
-                    if (!wo) return;
-                    try {
-                      // attach to work order (server will also update work order photos)
-                      await fetch(`/api/workorders/${wo}/photos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: p.url, caption: p.caption || '' }) });
-                      // update local metadata
-                      const r = await fetch(`/api/photos/${p.id}`, { method: 'PUT', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ workOrderId: wo }) });
-                      if (r.ok) {
-                        const j = await r.json();
-                        setPhotos(prev => prev.map(x => x.id === p.id ? j.photo : x));
-                        alert('Assigned to WO ' + wo);
-                      }
-                    } catch (err) { console.error(err); alert('Assign failed'); }
+                    setAssignInput(p.workOrderId || '');
+                    setAssignModal({ id: p.id, url: p.url, caption: p.caption || '', current: p.workOrderId || '' });
                   }} style={{background:'rgba(255,255,255,0.03)', color:'#fff', border:'none', padding:'6px 8px', borderRadius:6, cursor:'pointer'}}>Assign</button>
-                  <button onClick={async () => {
-                    if (!confirm('Remove photo?')) return;
-                    try {
-                      await fetch(`/api/photos/${p.id}`, { method: 'DELETE' });
-                      setPhotos(prev => prev.filter(x => x.id !== p.id));
-                    } catch (err) { console.error(err); }
-                  }} style={{background:'rgba(255,255,255,0.03)', color:'#fff', border:'none', padding:'6px 8px', borderRadius:6, cursor:'pointer'}}>Remove</button>
+                  <button onClick={() => setRemovePhotoId(p.id)} style={{background:'rgba(255,255,255,0.03)', color:'#fff', border:'none', padding:'6px 8px', borderRadius:6, cursor:'pointer'}}>Remove</button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Caption edit modal */}
+      {captionModal && (
+        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:99}}>
+          <div style={{background:'#1f2937', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, width:360, maxWidth:'90%'}}>
+            <h3 style={{margin:'0 0 14px', fontSize:17, color:'#e5e7eb'}}>Edit Caption</h3>
+            <input
+              value={captionInput}
+              onChange={e => setCaptionInput(e.target.value)}
+              style={{width:'100%', padding:'10px 14px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, color:'#e5e7eb', fontSize:14, boxSizing:'border-box', marginBottom:16}}
+              autoFocus
+            />
+            <div style={{display:'flex', gap:10}}>
+              <button onClick={async () => {
+                try {
+                  const res = await fetch(`/api/photos/${captionModal.id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ caption: captionInput }) });
+                  if (res.ok) { const j = await res.json(); setPhotos(prev => prev.map(x => x.id === captionModal.id ? j.photo : x)); }
+                } catch (err) { console.error(err); }
+                setCaptionModal(null);
+              }} style={{flex:1, background:'#3b82f6', color:'#fff', border:'none', borderRadius:8, padding:'10px 0', fontSize:14, fontWeight:600, cursor:'pointer'}}>Save</button>
+              <button onClick={() => setCaptionModal(null)} style={{flex:1, background:'transparent', color:'#9ca3af', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, padding:'10px 0', fontSize:14, cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign WO modal */}
+      {assignModal && (
+        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:99}}>
+          <div style={{background:'#1f2937', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, width:360, maxWidth:'90%'}}>
+            <h3 style={{margin:'0 0 14px', fontSize:17, color:'#e5e7eb'}}>Assign to Work Order</h3>
+            <label style={{fontSize:13, color:'#9ca3af', display:'block', marginBottom:6}}>Work Order ID</label>
+            <input
+              value={assignInput}
+              onChange={e => setAssignInput(e.target.value)}
+              style={{width:'100%', padding:'10px 14px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, color:'#e5e7eb', fontSize:14, boxSizing:'border-box', marginBottom:16}}
+              autoFocus
+            />
+            <div style={{display:'flex', gap:10}}>
+              <button onClick={async () => {
+                const wo = assignInput.trim();
+                if (!wo) { setAssignModal(null); return; }
+                try {
+                  await fetch(`/api/workorders/${wo}/photos`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ url: assignModal.url, caption: assignModal.caption }) });
+                  const r = await fetch(`/api/photos/${assignModal.id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ workOrderId: wo }) });
+                  if (r.ok) { const j = await r.json(); setPhotos(prev => prev.map(x => x.id === assignModal.id ? j.photo : x)); }
+                } catch (err) { console.error(err); }
+                setAssignModal(null);
+              }} style={{flex:1, background:'#3b82f6', color:'#fff', border:'none', borderRadius:8, padding:'10px 0', fontSize:14, fontWeight:600, cursor:'pointer'}}>Assign</button>
+              <button onClick={() => setAssignModal(null)} style={{flex:1, background:'transparent', color:'#9ca3af', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, padding:'10px 0', fontSize:14, cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {photoMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:photoMsg.type==='success'?'#dcfce7':'#fde8e8',color:photoMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {photoMsg.text}
+          <button onClick={()=>setPhotoMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
+
+      {removePhotoId && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.7)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:100}}>
+          <div style={{background:'#1f2937',border:'1px solid rgba(255,255,255,0.1)',borderRadius:12,padding:24,width:360,maxWidth:'90%'}}>
+            <h3 style={{margin:'0 0 12px',fontSize:17,color:'#e5e7eb'}}>Remove Photo?</h3>
+            <p style={{color:'#9ca3af',fontSize:14,margin:'0 0 20px'}}>This photo will be permanently deleted.</p>
+            <div style={{display:'flex',gap:10}}>
+              <button onClick={doRemovePhoto} style={{flex:1,background:'#e5332a',color:'#fff',border:'none',borderRadius:8,padding:'10px 0',fontSize:14,fontWeight:600,cursor:'pointer'}}>Remove</button>
+              <button onClick={()=>setRemovePhotoId(null)} style={{flex:1,background:'transparent',color:'#9ca3af',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,padding:'10px 0',fontSize:14,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

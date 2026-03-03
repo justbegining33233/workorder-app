@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 interface SettingsTabProps {
   settings: any;
   setSettings: (s: any) => void;
@@ -8,6 +10,7 @@ interface SettingsTabProps {
 }
 
 export default function SettingsTab({ settings, setSettings, loading, handleUpdateSettings }: SettingsTabProps) {
+  const [geoMsg, setGeoMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   if (!settings) return null;
 
   return (
@@ -91,13 +94,13 @@ export default function SettingsTab({ settings, setSettings, loading, handleUpda
                 <button
                   type="button"
                   onClick={() => {
-                    if (!navigator.geolocation) { alert('Geolocation not supported by this browser.'); return; }
+                    if (!navigator.geolocation) { setGeoMsg({type:'error',text:'Geolocation not supported by this browser.'}); return; }
                     navigator.geolocation.getCurrentPosition(
                       (pos) => {
                         setSettings({ ...settings, shopLatitude: pos.coords.latitude, shopLongitude: pos.coords.longitude });
-                        alert(`Location set: ${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`);
+                        setGeoMsg({type:'success',text:`Location set: ${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`});
                       },
-                      () => alert('Could not get location. Please allow location access and try again.'),
+                      () => setGeoMsg({type:'error',text:'Could not get location. Please allow location access and try again.'}),
                       { enableHighAccuracy: true, timeout: 10000 }
                     );
                   }}
@@ -106,6 +109,9 @@ export default function SettingsTab({ settings, setSettings, loading, handleUpda
                   ?? Use My Current Location
                 </button>
                 <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>Click while you're at the shop to auto-fill coordinates</div>
+                {geoMsg && (
+                  <p style={{marginTop:8,fontSize:13,fontWeight:600,color:geoMsg.type==='success'?'#4ade80':'#f87171'}}>{geoMsg.text}</p>
+                )}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
                 <div>

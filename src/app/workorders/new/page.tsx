@@ -17,6 +17,7 @@ function NewRoadsideJobContent() {
   const [submitting, setSubmitting] = useState(false);
   const [locating, setLocating] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [formError, setFormError] = useState('');
 
   const [form, setForm] = useState({
     customerName: '',
@@ -53,7 +54,7 @@ function NewRoadsideJobContent() {
   };
 
   const handleGetLocation = () => {
-    if (!navigator.geolocation) return alert('Geolocation not supported on this device.');
+    if (!navigator.geolocation) { setFormError('Geolocation not supported on this device.'); return; }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -71,7 +72,7 @@ function NewRoadsideJobContent() {
       },
       () => {
         setLocating(false);
-        alert('Could not get location. Please enter address manually.');
+        setFormError('Could not get location. Please enter address manually.');
       }
     );
   };
@@ -87,11 +88,12 @@ function NewRoadsideJobContent() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.customerName.trim()) return alert('Customer name is required.');
-    if (!form.customerPhone.trim()) return alert('Customer phone is required.');
-    if (!form.vehicleMake.trim()) return alert('Vehicle make is required.');
-    if (form.selectedServices.length === 0) return alert('Please select at least one service.');
-    if (!form.locationAddress.trim()) return alert('Location is required.');
+    setFormError('');
+    if (!form.customerName.trim()) { setFormError('Customer name is required.'); return; }
+    if (!form.customerPhone.trim()) { setFormError('Customer phone is required.'); return; }
+    if (!form.vehicleMake.trim()) { setFormError('Vehicle make is required.'); return; }
+    if (form.selectedServices.length === 0) { setFormError('Please select at least one service.'); return; }
+    if (!form.locationAddress.trim()) { setFormError('Location is required.'); return; }
 
     setSubmitting(true);
 
@@ -349,6 +351,9 @@ function NewRoadsideJobContent() {
         </div>
 
         {/* Submit */}
+        {formError && (
+          <p style={{color:'#f87171',fontSize:14,fontWeight:600,margin:'0 0 8px',padding:'10px 14px',background:'rgba(239,68,68,0.1)',borderRadius:8,border:'1px solid rgba(239,68,68,0.3)'}}>{formError}</p>
+        )}
         <div style={{ display: 'flex', gap: 12 }}>
           <button
             type="submit"

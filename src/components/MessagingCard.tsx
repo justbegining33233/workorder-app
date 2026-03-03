@@ -67,6 +67,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
   const [messageText, setMessageText] = useState('');
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState(false);
+  const [msgMsg, setMsgMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   // Compose state
@@ -224,9 +225,9 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
         await fetchMessages();
       } else {
         const err = await res.json().catch(() => ({}));
-        alert(err.error || 'Failed to send message');
+        setMsgMsg({type:'error',text:err.error || 'Failed to send message'});
       }
-    } catch { alert('Error sending message'); }
+    } catch { setMsgMsg({type:'error',text:'Error sending message'}); }
     finally { setLoading(false); }
   };
 
@@ -455,6 +456,12 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
           )}
         </div>
       </div>
+      {msgMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:msgMsg.type==='success'?'#dcfce7':'#fde8e8',color:msgMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {msgMsg.text}
+          <button onClick={()=>setMsgMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

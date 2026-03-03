@@ -28,6 +28,7 @@ export default function LoginClient() {
   const [shopSignupForm, setShopSignupForm] = useState({ shopName: '', ownerName: '', address: '', city: '', state: '', zip: '', phone: '', email: '', username: '', password: '', confirmPassword: '', agreeToTerms: false });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showReset, setShowReset] = useState(false);
+  const [regMsg, setRegMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   const showSecurityBanner = () => setShowSecurityTip(true);
 
@@ -169,8 +170,8 @@ export default function LoginClient() {
       localStorage.setItem('shopCredentials', JSON.stringify(shopCredentials));
       try {
         const response = await fetch('/api/shops/pending', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ shopName: shopSignupForm.shopName, ownerName: shopSignupForm.ownerName || shopSignupForm.shopName, email: shopSignupForm.email, phone: shopSignupForm.phone, address: shopSignupForm.address, city: shopSignupForm.city, state: shopSignupForm.state, zipCode: shopSignupForm.zip, location: `${shopSignupForm.city}, ${shopSignupForm.state}`, businessLicense: 'Pending verification', insurancePolicy: 'Pending verification', services: 0, status: 'pending', username: shopSignupForm.username, password: shopSignupForm.password }) });
-        if (response.ok) { setTimeout(() => { router.push('/auth/pending-approval'); setLoading(false); }, 1000); } else { alert('Failed to submit shop registration. Please try again.'); setLoading(false); }
-      } catch (error) { alert('Error submitting registration. Please try again.'); setLoading(false); }
+        if (response.ok) { setTimeout(() => { router.push('/auth/pending-approval'); setLoading(false); }, 1000); } else { setRegMsg({type:'error',text:'Failed to submit shop registration. Please try again.'}); setLoading(false); }
+      } catch (error) { setRegMsg({type:'error',text:'Error submitting registration. Please try again.'}); setLoading(false); }
     } else {
       try {
         // Always fetch a fresh CSRF token immediately before registration
@@ -187,7 +188,7 @@ export default function LoginClient() {
           csrfToken = getCsrfToken();
         }
         if (!csrfToken) {
-          alert('Security token missing. Please refresh the page and try again.');
+          setRegMsg({type:'error',text:'Security token missing. Please refresh the page and try again.'});
           setLoading(false);
           return;
         }
@@ -195,8 +196,8 @@ export default function LoginClient() {
         const firstName = nameParts[0] || signupForm.fullName;
         const lastName = nameParts.slice(1).join(' ') || 'User';
         const response = await fetch('/api/customers/register', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken }, body: JSON.stringify({ email: signupForm.email, username: signupForm.username || signupForm.email.split('@')[0], password: signupForm.password, firstName, lastName }) });
-        if (response.ok) { const data = await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you'); setLoading(false); }, 1000); } else { const errorData = await response.json(); alert(errorData.error || 'Failed to create customer account. Please try again.'); setLoading(false); }
-      } catch (error) { alert('Error creating account. Please try again.'); setLoading(false); }
+        if (response.ok) { const data = await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you'); setLoading(false); }, 1000); } else { const errorData = await response.json(); setRegMsg({type:'error',text:errorData.error || 'Failed to create customer account. Please try again.'}); setLoading(false); }
+      } catch (error) { setRegMsg({type:'error',text:'Error creating account. Please try again.'}); setLoading(false); }
     }
   };
 
@@ -292,12 +293,12 @@ export default function LoginClient() {
                 <div className="sos-field">
                   <label>I am signing up as: *</label>
                   <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
-                    <button type="button" onClick={() => { setAccountType('customer'); setErrors({}); }} className={`btn-outline ${accountType === 'customer' ? '' : ''}`} style={{padding:'16px', borderWidth:2, background: accountType === 'customer' ? 'rgba(229,51,42,0.14)' : 'transparent'}}>
+                    <button type="button" onClick={() => { setAccountType('customer'); setErrors({}); }} className={`btn-outline ${accountType === 'customer' ? 'active' : ''}`} style={{padding:'16px', borderWidth:2, background: accountType === 'customer' ? 'rgba(229,51,42,0.14)' : 'transparent', boxShadow: accountType === 'customer' ? '0 0 0 2px #e5332a' : 'none'}}>
                       <div style={{fontSize:'18px', marginBottom:'6px'}}>👤</div>
                       <div>Customer</div>
                       <div style={{fontSize:'11px', color:'#9aa3b2', marginTop:'4px'}}>Need service</div>
                     </button>
-                    <button type="button" onClick={() => { setAccountType('shop'); setErrors({}); }} className={`btn-outline ${accountType === 'shop' ? '' : ''}`} style={{padding:'16px', borderWidth:2, background: accountType === 'shop' ? 'rgba(229,51,42,0.14)' : 'transparent'}}>
+                    <button type="button" onClick={() => { setAccountType('shop'); setErrors({}); }} className={`btn-outline ${accountType === 'shop' ? 'active' : ''}`} style={{padding:'16px', borderWidth:2, background: accountType === 'shop' ? 'rgba(229,51,42,0.14)' : 'transparent', boxShadow: accountType === 'shop' ? '0 0 0 2px #e5332a' : 'none'}}>
                       <div style={{fontSize:'18px', marginBottom:'6px'}}>🏪</div>
                       <div>Shop</div>
                       <div style={{fontSize:'11px', color:'#9aa3b2', marginTop:'4px'}}>Provide service</div>
@@ -336,7 +337,7 @@ export default function LoginClient() {
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={signupForm.agreeToTerms} onChange={(e) => setSignupForm({ ...signupForm, agreeToTerms: e.target.checked })} />
                       <span style={{fontSize:12, color:'#b8beca'}}>
-                        I agree to the <button type="button" className="btn-outline" style={{padding:'2px 6px'}}>Terms of Service</button> and <button type="button" className="btn-outline" style={{padding:'2px 6px'}}>Privacy Policy</button>
+                        I agree to the <button type="button" className="btn-outline" style={{padding:'2px 6px'}} onClick={() => window.open('/terms-of-service', '_blank')}>Terms of Service</button> and <button type="button" className="btn-outline" style={{padding:'2px 6px'}} onClick={() => window.open('/privacy-policy', '_blank')}>Privacy Policy</button>
                       </span>
                     </label>
                     {errors.agreeToTerms && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.agreeToTerms}</p>)}
@@ -403,7 +404,7 @@ export default function LoginClient() {
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={shopSignupForm.agreeToTerms} onChange={(e) => setShopSignupForm({ ...shopSignupForm, agreeToTerms: e.target.checked })} />
                       <span style={{fontSize:12, color:'#b8beca'}}>
-                        I agree to the <button type="button" className="btn-outline" style={{padding:'2px 6px'}}>Terms of Service</button> and <button type="button" className="btn-outline" style={{padding:'2px 6px'}}>Privacy Policy</button>
+                        I agree to the <button type="button" className="btn-outline" style={{padding:'2px 6px'}} onClick={() => window.open('/terms-of-service', '_blank')}>Terms of Service</button> and <button type="button" className="btn-outline" style={{padding:'2px 6px'}} onClick={() => window.open('/privacy-policy', '_blank')}>Privacy Policy</button>
                       </span>
                     </label>
                     {errors.agreeToTerms && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.agreeToTerms}</p>)}
@@ -430,6 +431,12 @@ export default function LoginClient() {
           <div className="accent-bar" style={{width:112, borderRadius:6}} />
         </div>
       </div>
+      {regMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:regMsg.type==='success'?'#dcfce7':'#fde8e8',color:regMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {regMsg.text}
+          <button onClick={()=>setRegMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+        </div>
+      )}
     </div>
   );
 }

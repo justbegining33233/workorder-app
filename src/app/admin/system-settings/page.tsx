@@ -10,6 +10,7 @@ export default function SystemSettings() {
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [resetConfirm, setResetConfirm] = useState(false);
 
   useEffect(() => {
     if (user) loadSettings();
@@ -46,7 +47,7 @@ export default function SystemSettings() {
   };
 
   const handleReset = async () => {
-    if (!confirm('Reset all settings to defaults?')) return;
+    setResetConfirm(false);
     setResetting(true);
     try {
       const token = localStorage.getItem('token');
@@ -160,7 +161,7 @@ export default function SystemSettings() {
         )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <button onClick={handleReset} disabled={resetting} style={{ padding: '11px 22px', background: 'transparent', color: '#9aa3b2', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: resetting ? 'not-allowed' : 'pointer' }}>
+          <button onClick={() => setResetConfirm(true)} disabled={resetting} style={{ padding: '11px 22px', background: 'transparent', color: '#9aa3b2', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: resetting ? 'not-allowed' : 'pointer' }}>
             {resetting ? 'Resetting...' : 'Reset to Defaults'}
           </button>
           <button onClick={handleSave} disabled={saving} style={{ padding: '11px 28px', background: saving ? '#16a34a80' : '#22c55e', color: '#fff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer' }}>
@@ -168,6 +169,18 @@ export default function SystemSettings() {
           </button>
         </div>
       </div>
+      {resetConfirm && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
+          <div style={{background:'#1e2533',borderRadius:14,padding:32,minWidth:320,maxWidth:420,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+            <h3 style={{fontSize:18,fontWeight:700,color:'#e5e7eb',marginBottom:12}}>Reset to Defaults?</h3>
+            <p style={{fontSize:14,color:'#9aa3b2',marginBottom:24}}>This will reset all settings to their default values. This action cannot be undone.</p>
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={handleReset} style={{flex:1,padding:'10px 0',background:'#ef4444',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:700,cursor:'pointer'}}>Reset</button>
+              <button onClick={()=>setResetConfirm(false)} style={{flex:1,padding:'10px 0',background:'transparent',color:'#9aa3b2',border:'1px solid rgba(255,255,255,0.15)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -24,6 +24,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [clockMsg, setClockMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
     checkClockStatus();
@@ -149,7 +150,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       }
     } catch (error) {
       console.error('Camera access denied:', error);
-      alert('Camera access denied. Photo verification disabled.');
+      setClockMsg({type:'error',text:'Camera access denied. Photo verification disabled.'});
     }
   };
 
@@ -215,17 +216,17 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
           
           // Check if within allowed radius (default 100 feet = 30.48 meters)
           if (distance > gpsRadius) {
-            alert(`You must be within ${(gpsRadius * 3.28084).toFixed(0)} feet of the shop to clock in. You are currently ${(distance * 3.28084).toFixed(0)} feet away.`);
+            setClockMsg({type:'error',text:`You must be within ${(gpsRadius * 3.28084).toFixed(0)} feet of the shop to clock in. You are currently ${(distance * 3.28084).toFixed(0)} feet away.`});
             setLoading(false);
             return;
           }
         } catch (error) {
-          alert('GPS verification failed. Please enable location services and try again.');
+          setClockMsg({type:'error',text:'GPS verification failed. Please enable location services and try again.'});
           setLoading(false);
           return;
         }
       } else if (gpsEnabled && !shopLocation) {
-        alert('Shop location not configured. Please contact your manager.');
+        setClockMsg({type:'error',text:'Shop location not configured. Please contact your manager.'});
         setLoading(false);
         return;
       }
@@ -233,7 +234,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       const token = localStorage.getItem('token');
       
       if (!token) {
-        alert('Authentication token not found. Please log in again.');
+        setClockMsg({type:'error',text:'Authentication token not found. Please log in again.'});
         setLoading(false);
         return;
       }
@@ -256,14 +257,14 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
         const { timeEntry } = await response.json();
         setIsClockedIn(true);
         setCurrentEntry(timeEntry);
-        alert('Clocked in successfully!');
+        setClockMsg({type:'success',text:'Clocked in successfully!'});
       } else {
         const { error } = await response.json();
-        alert(error || 'Failed to clock in');
+        setClockMsg({type:'error',text:error || 'Failed to clock in'});
       }
     } catch (error) {
       console.error('Error clocking in:', error);
-      alert('Error clocking in');
+      setClockMsg({type:'error',text:'Error clocking in'});
     } finally {
       setLoading(false);
     }
@@ -289,12 +290,12 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
           
           // Check if within allowed radius for clock out
           if (distance > gpsRadius) {
-            alert(`You must be within ${(gpsRadius * 3.28084).toFixed(0)} feet of the shop to clock out. You are currently ${(distance * 3.28084).toFixed(0)} feet away.`);
+            setClockMsg({type:'error',text:`You must be within ${(gpsRadius * 3.28084).toFixed(0)} feet of the shop to clock out. You are currently ${(distance * 3.28084).toFixed(0)} feet away.`});
             setLoading(false);
             return;
           }
         } catch (error) {
-          alert('GPS verification failed. Please enable location services and try again.');
+          setClockMsg({type:'error',text:'GPS verification failed. Please enable location services and try again.'});
           setLoading(false);
           return;
         }
@@ -322,14 +323,14 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
         setCurrentEntry(null);
         setElapsedTime('00:00:00');
         setBreakTime('00:00:00');
-        alert(`Clocked out successfully! Hours worked: ${hoursWorked?.toFixed(2)}`);
+        setClockMsg({type:'success',text:`Clocked out successfully! Hours worked: ${hoursWorked?.toFixed(2)}`});
       } else {
         const { error } = await response.json();
-        alert(error || 'Failed to clock out');
+        setClockMsg({type:'error',text:error || 'Failed to clock out'});
       }
     } catch (error) {
       console.error('Error clocking out:', error);
-      alert('Error clocking out');
+      setClockMsg({type:'error',text:'Error clocking out'});
     } finally {
       setLoading(false);
     }
@@ -356,11 +357,11 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
         const { timeEntry } = await response.json();
         setOnBreak(true);
         setCurrentEntry(timeEntry);
-        alert('Break started');
+        setClockMsg({type:'success',text:'Break started'});
       }
     } catch (error) {
       console.error('Error starting break:', error);
-      alert('Error starting break');
+      setClockMsg({type:'error',text:'Error starting break'});
     } finally {
       setLoading(false);
     }
@@ -388,11 +389,11 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
         setOnBreak(false);
         setCurrentEntry(timeEntry);
         setBreakTime('00:00:00');
-        alert(`Break ended. Duration: ${breakDuration?.toFixed(0)} minutes`);
+        setClockMsg({type:'success',text:`Break ended. Duration: ${breakDuration?.toFixed(0)} minutes`});
       }
     } catch (error) {
       console.error('Error ending break:', error);
-      alert('Error ending break');
+      setClockMsg({type:'error',text:'Error ending break'});
     } finally {
       setLoading(false);
     }
@@ -509,6 +510,12 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
               📸 Photo verification enabled
             </div>
           )}
+        </div>
+      )}
+      {clockMsg && (
+        <div style={{position:'fixed',bottom:24,right:24,background:clockMsg.type==='success'?'#dcfce7':'#fde8e8',color:clockMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
+          {clockMsg.text}
+          <button onClick={()=>setClockMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
         </div>
       )}
     </div>

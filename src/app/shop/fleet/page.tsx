@@ -28,6 +28,10 @@ export default function FleetPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState<Partial<FleetAccount>>({});
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [showAddVehicle, setShowAddVehicle] = useState(false);
+  const [vehicleForm, setVehicleForm] = useState({ make: '', model: '', year: '', vin: '', licensePlate: '', unitNumber: '' });
 
   useEffect(() => { if (!user) return; fetch2(); }, [user]);
 
@@ -38,10 +42,11 @@ export default function FleetPage() {
     if (r.ok) setAccounts(await r.json());
     setLoading(false);
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { if (user) fetch2(); }, [user]);
 
   const save = async () => {
+    setFormError('');
+    if (!(form as any).companyName?.trim()) { setFormError('Company name is required.'); return; }
+    if (!(form as any).contactName?.trim()) { setFormError('Contact name is required.'); return; }
     setSaving(true);
     const token = localStorage.getItem('token');
     const r = await window.fetch('/api/fleet', {
@@ -54,10 +59,19 @@ export default function FleetPage() {
   };
 
   const del = async (id: string) => {
-    if (!confirm('Delete this fleet account?')) return;
     const token = localStorage.getItem('token');
     await window.fetch(`/api/fleet/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
-    setSelected(null); fetch2();
+    setSelected(null); setDeleteConfirmId(null); fetch2();
+  };
+
+  const addVehicle = async (accountId: string) => {
+    const token = localStorage.getItem('token');
+    const r = await window.fetch(`/api/fleet/${accountId}/vehicles`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ ...vehicleForm, year: Number(vehicleForm.year) }),
+    });
+    if (r.ok) { setShowAddVehicle(false); setVehicleForm({ make: '', model: '', year: '', vin: '', licensePlate: '', unitNumber: '' }); fetch2(); }
   };
 
   const F = (k: keyof FleetAccount, label: string, type = 'text') => (
@@ -137,7 +151,22 @@ export default function FleetPage() {
             </div>
 
             <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 10 }}>🚗 Vehicles ({selected.vehicles.length})</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>🚗 Vehicles ({selected.vehicles.length})</div>
+                <button onClick={() => setShowAddVehicle(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>+ Add Vehicle</button>
+              </div>
+              {showAddVehicle && (
+                <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 14, marginBottom: 10 }}>
+                  {(['make', 'model', 'year', 'vin', 'licensePlate', 'unitNumber'] as const).map(k => (
+                    <input key={k} value={vehicleForm[k]} onChange={e => setVehicleForm(p => ({ ...p, [k]: e.target.value }))} placeholder={k.charAt(0).toUpperCase() + k.slice(1)}
+                      style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, padding: '8px 12px', color: '#e5e7eb', fontSize: 13, marginBottom: 8, boxSizing: 'border-box' }} />
+                  ))}
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => addVehicle(selected.id)} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 0', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Add</button>
+                    <button onClick={() => setShowAddVehicle(false)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, padding: '8px 0', fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                  </div>
+                </div>
+              )}
               {selected.vehicles.length === 0 ? <div style={{ color: '#6b7280', fontSize: 13 }}>No vehicles added</div> :
                 selected.vehicles.map(v => (
                   <div key={v.id} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px', marginBottom: 6, fontSize: 13 }}>
@@ -158,7 +187,7 @@ export default function FleetPage() {
                 ))}
             </div>
 
-            <button onClick={() => del(selected.id)}
+            <button onClick={() => setDeleteConfirmId(selected.id)}
               style={{ width: '100%', background: 'rgba(229,51,42,0.1)', color: '#e5332a', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 8, padding: '10px 0', fontSize: 14, cursor: 'pointer' }}>
               Delete Account
             </button>
@@ -171,6 +200,7 @@ export default function FleetPage() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
           <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 480, maxWidth: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 style={{ margin: '0 0 20px', fontSize: 18 }}>New Fleet Account</h3>
+            {formError && <div style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 13 }}>{formError}</div>}
             {F('companyName', 'Company Name')}
             {F('contactName', 'Contact Name')}
             {F('contactEmail', 'Contact Email', 'email')}
@@ -181,6 +211,20 @@ export default function FleetPage() {
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={save} disabled={saving} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>{saving ? 'Saving...' : 'Create Account'}</button>
               <button onClick={() => setShowAdd(false)} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {deleteConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 28, maxWidth: 360, width: '90%', textAlign: 'center' }}>
+            <h3 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Delete Fleet Account?</h3>
+            <p style={{ color: '#9ca3af', marginBottom: 24 }}>This fleet account and all related data will be deleted.</p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button onClick={() => del(deleteConfirmId)} style={{ background: '#ef4444', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Delete</button>
+              <button onClick={() => setDeleteConfirmId(null)} style={{ background: '#374151', border: 'none', color: '#9ca3af', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>

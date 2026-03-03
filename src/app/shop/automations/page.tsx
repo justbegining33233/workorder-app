@@ -41,6 +41,9 @@ export default function AutomationsPage() {
   const [editing, setEditing] = useState<AutomationRule | null>(null);
   const [form, setForm] = useState({ name: '', type: 'appointment_reminder', trigger: 'days_before_appointment', triggerValue: '1', channel: 'sms', messageTemplate: '', isActive: true });
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => { if (!user) return; load(); }, [user]);
 
@@ -59,14 +62,22 @@ export default function AutomationsPage() {
   };
 
   const save = async () => {
-    if (!form.name.trim() || !form.messageTemplate.trim()) { alert('Name and message template are required.'); return; }
+    setFormError('');
+    if (!form.name.trim()) { setFormError('Rule name is required.'); return; }
+    if (!form.messageTemplate.trim()) { setFormError('Message template is required.'); return; }
     setSaving(true);
-    const token = localStorage.getItem('token');
-    const method = editing ? 'PUT' : 'POST';
-    const url = editing ? `/api/automations/${editing.id}` : '/api/automations';
-    const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(form) });
-    if (r.ok) { setShowForm(false); setEditing(null); load(); }
-    setSaving(false);
+    try {
+      const token = localStorage.getItem('token');
+      const method = editing ? 'PUT' : 'POST';
+      const url = editing ? `/api/automations/${editing.id}` : '/api/automations';
+      const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(form) });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); setFormError(d.error || 'Failed to save automation.'); }
+      else { setShowForm(false); setEditing(null); load(); }
+    } catch (err: any) {
+      setFormError(err?.message || 'Network error.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const toggleActive = async (rule: AutomationRule) => {
@@ -76,9 +87,9 @@ export default function AutomationsPage() {
   };
 
   const deleteRule = async (id: string) => {
-    if (!confirm('Delete this automation rule?')) return;
     const token = localStorage.getItem('token');
     await fetch(`/api/automations/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    setDeleteConfirmId(null);
     load();
   };
 
@@ -129,7 +140,7 @@ export default function AutomationsPage() {
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button onClick={() => openEdit(rule)} style={{ flex: 1, background: 'rgba(255,255,255,0.08)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 7, padding: '6px 0', fontSize: 13, cursor: 'pointer' }}>Edit</button>
-                    <button onClick={() => deleteRule(rule.id)} style={{ background: 'rgba(229,51,42,0.15)', color: '#e5332a', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 7, padding: '6px 14px', fontSize: 13, cursor: 'pointer' }}>Delete</button>
+                    <button onClick={() => setDeleteConfirmId(rule.id)} style={{ background: 'rgba(229,51,42,0.15)', color: '#e5332a', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 7, padding: '6px 14px', fontSize: 13, cursor: 'pointer' }}>Delete</button>
                   </div>
                 </div>
               ))}
@@ -199,9 +210,24 @@ export default function AutomationsPage() {
                 style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 14px', color: '#e5e7eb', fontSize: 13, boxSizing: 'border-box', resize: 'vertical' }} />
             </div>
 
+            {formError && <div style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 13 }}>{formError}</div>}
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <button onClick={save} disabled={saving} style={{ flex: 1, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>{saving ? 'Saving...' : editing ? 'Save Changes' : 'Create Rule'}</button>
-              <button onClick={() => { setShowForm(false); setEditing(null); }} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => { setShowForm(false); setEditing(null); setFormError(''); }} style={{ flex: 1, background: 'transparent', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '11px 0', fontSize: 14, cursor: 'pointer' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 28, maxWidth: 360, width: '90%', textAlign: 'center' }}>
+            <h3 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Delete Rule?</h3>
+            <p style={{ color: '#9ca3af', marginBottom: 24 }}>This automation rule will be permanently deleted.</p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button onClick={() => deleteRule(deleteConfirmId)} style={{ background: '#e5332a', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Delete</button>
+              <button onClick={() => setDeleteConfirmId(null)} style={{ background: '#374151', border: 'none', color: '#9ca3af', padding: '10px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>
