@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import PasswordResetForm from '@/components/PasswordResetForm';
 import { getCsrfToken } from '@/lib/clientCsrf';
@@ -16,13 +16,25 @@ export default function LoginClient() {
   const { login } = useAuth();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
+  const [showSecurityTip, setShowSecurityTip] = useState(false);
+  const securityTipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Reset form fields every time this page mounts (e.g. after logout)
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  useEffect(() => {
+    setLoginForm({ username: '', password: '' });
+  }, []);
   const [accountType, setAccountType] = useState<'customer' | 'shop' | null>(null);
   const [signupForm, setSignupForm] = useState({ fullName: '', username: '', email: '', password: '', confirmPassword: '', agreeToTerms: false });
   const [shopSignupForm, setShopSignupForm] = useState({ shopName: '', ownerName: '', address: '', city: '', state: '', zip: '', phone: '', email: '', username: '', password: '', confirmPassword: '', agreeToTerms: false });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showReset, setShowReset] = useState(false);
+
+  const showSecurityBanner = () => {
+    if (securityTipTimer.current) clearTimeout(securityTipTimer.current);
+    setShowSecurityTip(true);
+    securityTipTimer.current = setTimeout(() => setShowSecurityTip(false), 6000);
+  };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +44,9 @@ export default function LoginClient() {
     if (!loginForm.username) newErrors.username = 'Username is required';
     if (!loginForm.password) newErrors['password'] = 'Password is required';
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
+
+    // Show security tip every time sign-in is attempted
+    showSecurityBanner();
 
     setLoading(true);
     try {
@@ -210,15 +225,35 @@ export default function LoginClient() {
               <button className={`sos-tab ${activeTab === 'signup' ? 'active' : ''}`} onClick={() => { setActiveTab('signup'); setErrors({}); }}>Create Account</button>
             </div>
             {activeTab === 'login' && (
-              <form onSubmit={handleLoginSubmit} className="sos-form">
+              <form onSubmit={handleLoginSubmit} className="sos-form" autoComplete="off">
+                {/* Security tip banner */}
+                {showSecurityTip && (
+                  <div style={{
+                    background: 'rgba(229,51,42,0.12)', border: '1px solid rgba(229,51,42,0.4)',
+                    borderRadius: 8, padding: '10px 14px', marginBottom: 12,
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                  }}>
+                    <span style={{ fontSize: 18, flexShrink: 0 }}>🔒</span>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, margin: '0 0 2px' }}>Security tip</p>
+                      <p style={{ color: '#b8beca', fontSize: 12, margin: 0 }}>
+                        For your safety, do <strong style={{color:'#ff948d'}}>not</strong> save your password in the browser. Keep your account information private.
+                      </p>
+                    </div>
+                    <button type="button" onClick={() => setShowSecurityTip(false)}
+                      style={{ background: 'none', border: 'none', color: '#9aa3b2', cursor: 'pointer', fontSize: 16, padding: 0, flexShrink: 0 }}>
+                      ✕
+                    </button>
+                  </div>
+                )}
                 <div className="sos-field">
                   <label>Username</label>
-                  <input type="text" value={loginForm.username} onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} className="sos-input" placeholder="Username or email" />
+                  <input type="text" value={loginForm.username} onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })} className="sos-input" placeholder="Username or email" autoComplete="off" />
                   {errors.username && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.username}</p>)}
                 </div>
                 <div className="sos-field">
                   <label>Password</label>
-                  <input type="password" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="sos-input" placeholder="••••••••" />
+                  <input type="password" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="sos-input" placeholder="••••••••" autoComplete="new-password" />
                   {errors.password && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.password}</p>)}
                 </div>
                 <div className="sos-actions">
