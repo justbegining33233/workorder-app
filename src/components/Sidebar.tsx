@@ -132,19 +132,26 @@ const managerGroups: MenuGroup[] = [
     icon: '🏠',
     defaultOpen: true,
     items: [
-      { icon: '🏠', label: 'Home',      href: '/manager/home' },
-      { icon: '💬', label: 'Messages',  href: '/manager/home#messages' },
+      { icon: '🏠', label: 'Dashboard',   href: '/manager/home' },
+      { icon: '💬', label: 'Messages',    href: '/manager/home#messages' },
     ],
   },
   {
-    label: 'Work & Team',
+    label: 'Work Orders',
     icon: '📋',
     defaultOpen: true,
     items: [
-      { icon: '🗂',  label: 'Work Orders',  href: '/workorders/list' },
+      { icon: '🗂',  label: 'All Orders',   href: '/workorders/list' },
       { icon: '📋',  label: 'Assignments',  href: '/manager/assignments' },
-      { icon: '👥',  label: 'View Team',    href: '/shop/manage-team' },
       { icon: '📝',  label: 'Estimates',    href: '/manager/estimates' },
+    ],
+  },
+  {
+    label: 'Team',
+    icon: '👥',
+    defaultOpen: true,
+    items: [
+      { icon: '👥', label: 'Team Overview', href: '/manager/team' },
     ],
   },
   {
@@ -152,9 +159,8 @@ const managerGroups: MenuGroup[] = [
     icon: '🔧',
     defaultOpen: false,
     items: [
-      { icon: '⏰', label: 'Time Clock',  href: '/manager/home#timeclock' },
-      { icon: '📦', label: 'Inventory',   href: '/manager/home#inventory' },
-      { icon: '🔧', label: 'All Tools',   href: '/tech/all-tools' },
+      { icon: '⏰', label: 'Time Clock',   href: '/manager/home#timeclock' },
+      { icon: '📦', label: 'Inventory',    href: '/manager/home#inventory' },
     ],
   },
 ];

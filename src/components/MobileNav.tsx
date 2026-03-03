@@ -65,14 +65,14 @@ const navConfig: Record<string, { primary: NavItem[]; more: NavItem[] }> = {
     primary: [
       { icon: '🏠', label: 'Home',       path: '/manager/home' },
       { icon: '📋', label: 'Assign',     path: '/manager/assignments' },
-      { icon: '👥', label: 'Team',       path: '/shop/manage-team' },
+      { icon: '👥', label: 'Team',       path: '/manager/team' },
       { icon: '💬', label: 'Messages',   path: '/manager/home#messages' },
     ],
     more: [
-      { icon: '📊', label: 'Reports',    path: '/shop/reports' },
+      { icon: '📝', label: 'Estimates',  path: '/manager/estimates' },
       { icon: '⏰', label: 'Time Clock', path: '/manager/home#timeclock' },
       { icon: '📦', label: 'Inventory',  path: '/manager/home#inventory' },
-      { icon: '🔧', label: 'All Tools',  path: '/tech/all-tools' },
+      { icon: '🗂',  label: 'All Orders', path: '/workorders/list' },
     ],
   },
 };
