@@ -35,12 +35,10 @@ export async function GET(req: NextRequest) {
     const laborHours = wo.timeEntries.reduce((sum, te) => sum + (te.hoursWorked || 0), 0);
     const laborRate = wo.assignedTo?.hourlyRate || 0;
     const laborCost = laborHours * laborRate;
-    // Estimate parts cost from markup
+    // Estimate parts cost from markup (partsUsed is a Json? field — already parsed by Prisma)
     const partsCost = wo.partsUsed ? (() => {
-      try {
-        const parts = JSON.parse(wo.partsUsed);
-        return Array.isArray(parts) ? parts.reduce((sum: number, p: { cost?: number; price?: number }) => sum + (p.cost || p.price || 0), 0) : 0;
-      } catch { return 0; }
+      const parts = wo.partsUsed as unknown;
+      return Array.isArray(parts) ? parts.reduce((sum: number, p: { cost?: number; price?: number }) => sum + (p.cost || p.price || 0), 0) : 0;
     })() : 0;
     const totalCost = laborCost + partsCost;
     const grossProfit = revenue - totalCost;

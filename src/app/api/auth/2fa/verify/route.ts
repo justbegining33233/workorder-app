@@ -7,7 +7,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth';
-import { verifyTotpToken } from '@/lib/two-factor';
+import { verifyTotpToken, decryptSecret } from '@/lib/two-factor';
 
 export async function POST(request: NextRequest) {
   const auth = requireRole(request, ['shop']);
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Run /api/auth/2fa/setup first' }, { status: 400 });
     }
 
-    const valid = verifyTotpToken(shop.twoFactorSecret, String(body.token));
+    const valid = verifyTotpToken(decryptSecret(shop.twoFactorSecret), String(body.token));
     if (!valid) {
       return NextResponse.json({ error: 'Invalid TOTP token' }, { status: 400 });
     }

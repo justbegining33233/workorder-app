@@ -5,7 +5,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth';
-import { generateTotpSecret } from '@/lib/two-factor';
+import { generateTotpSecret, encryptSecret } from '@/lib/two-factor';
 import QRCode from 'qrcode';
 
 export async function POST(request: NextRequest) {
@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
 
     const { base32, otpauthUrl } = generateTotpSecret(shop.email);
 
-    // Save secret (not enabled yet — confirmed in /verify)
+    // Save encrypted secret (not enabled yet — confirmed in /verify)
     await prisma.shop.update({
       where: { id: auth.id },
-      data: { twoFactorSecret: base32, twoFactorEnabled: false },
+      data: { twoFactorSecret: encryptSecret(base32), twoFactorEnabled: false },
     });
 
     const qrCode = await QRCode.toDataURL(otpauthUrl);
