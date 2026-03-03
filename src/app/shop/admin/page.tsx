@@ -13,7 +13,7 @@ import TeamTab from './tabs/TeamTab';
 import InventoryTab from './tabs/InventoryTab';
 
 export default function ShopAdminPage() {
-  const { user, isLoading } = useRequireAuth(['shop']);
+  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
   const [userName, setUserName] = useState('');
@@ -75,6 +75,8 @@ export default function ShopAdminPage() {
 
   // Keep tab selection in sync with URL hashes so sidebar anchor clicks switch cards
   const setTab = (tab: 'overview' | 'settings' | 'payroll' | 'team' | 'inventory') => {
+    // Managers cannot access the settings tab (billing, Stripe, subscription)
+    if (tab === 'settings' && user?.role === 'manager') return;
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', `#${tab}`);
@@ -97,7 +99,8 @@ export default function ShopAdminPage() {
 
   useEffect(() => {
     if (isLoading) return;
-    if (user && !user.isShopAdmin) {
+    const isManager = user?.role === 'manager';
+    if (user && !user.isShopAdmin && !isManager) {
       router.replace('/shop/home');
       return;
     }
@@ -107,12 +110,14 @@ export default function ShopAdminPage() {
     const name = localStorage.getItem('userName');
     const profileComplete = localStorage.getItem('shopProfileComplete') === 'true';
 
-    if (admin !== 'true') {
+    // Only shop owners need isShopAdmin flag; managers bypass this check
+    if (admin !== 'true' && !isManager) {
       router.push('/shop/home');
       return;
     }
 
-    if (!profileComplete) {
+    // Only shop owners need a complete profile; managers don't set up the shop
+    if (!profileComplete && !isManager) {
       router.push('/shop/complete-profile');
       return;
     }
@@ -613,7 +618,7 @@ export default function ShopAdminPage() {
               />
             )}
 
-            {activeTab === 'settings' && settings && (
+            {activeTab === 'settings' && settings && user?.role !== 'manager' && (
               <SettingsTab
                 settings={settings}
                 setSettings={setSettings}

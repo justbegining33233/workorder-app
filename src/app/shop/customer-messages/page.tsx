@@ -8,7 +8,7 @@ import RealTimeMessaging from '@/components/RealTimeMessaging';
 
 export default function CustomerMessagesPage() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth(['shop']);
+  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [userId, setUserId] = useState('');
   const [userName, setUserName] = useState('');
   const [shopId, setShopId] = useState('');

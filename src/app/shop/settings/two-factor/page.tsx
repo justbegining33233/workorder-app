@@ -7,7 +7,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 type Step = 'idle' | 'setup' | 'verify' | 'disable';
 
 export default function TwoFactorSettingsPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
+  const { user, isLoading } = useRequireAuth(['shop']);
   const [enabled, setEnabled] = useState(false);
   const [step, setStep] = useState<Step>('idle');
   const [qrCode, setQrCode] = useState<string | null>(null);

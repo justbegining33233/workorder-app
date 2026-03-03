@@ -1,6 +1,10 @@
+'use client';
 import React from 'react';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ManagerDashboard() {
+  const { user, isLoading } = useRequireAuth(['manager', 'shop']);
+  if (isLoading || !user) return null;
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}

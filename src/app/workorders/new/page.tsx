@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createWorkOrderClient } from '@/lib/workordersClient';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 const VEHICLE_TYPES = ['Car', 'Truck', 'SUV', 'Van', 'Diesel Truck', 'Semi / 18-Wheeler', 'Box Truck', 'RV', 'Motorcycle', 'Heavy Equipment', 'Other'];
 
@@ -381,6 +382,8 @@ function NewRoadsideJobContent() {
 }
 
 export default function NewWorkOrderPage() {
+  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  if (isLoading || !user) return null;
   return (
     <Suspense fallback={<div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
       <NewRoadsideJobContent />

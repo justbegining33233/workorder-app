@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MaintenanceType } from '../../../types/workorder';
 import { createWorkOrderClient } from '@/lib/workordersClient';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function InShopWorkOrderPage() {
+  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
   const router = useRouter();
   const [userRole, setUserRole] = useState('');
   const [userName, setUserName] = useState('');

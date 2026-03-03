@@ -7,7 +7,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ReportsAnalytics() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth();
+  const { user, isLoading } = useRequireAuth(['admin', 'shop', 'manager']);
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
   const [dateRange, setDateRange] = useState('30days');

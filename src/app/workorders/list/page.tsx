@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '@/styles/sos-theme.css';
 import { getAllWorkOrdersClient } from '@/lib/workordersClient';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface WorkOrder {
   id: string;
@@ -215,6 +216,8 @@ function WorkOrderListPageContent() {
 }
 
 export default function WorkOrderListPage() {
+  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  if (isLoading || !user) return null;
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <WorkOrderListPageContent />

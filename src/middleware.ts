@@ -4,10 +4,13 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /** Which roles may access each top-level route prefix */
 const ROUTE_ROLES: Record<string, string[]> = {
-  '/admin':    ['admin', 'superadmin'],
-  '/shop':     ['shop', 'manager', 'superadmin'],
-  '/tech':     ['tech', 'superadmin'],
-  '/customer': ['customer', 'superadmin'],
+  '/admin':      ['admin', 'superadmin'],
+  '/shop':       ['shop', 'manager', 'superadmin'],
+  '/tech':       ['tech', 'superadmin'],
+  '/customer':   ['customer', 'superadmin'],
+  '/manager':    ['manager', 'shop', 'superadmin'],
+  '/workorders': ['shop', 'manager', 'tech', 'superadmin'],
+  '/reports':    ['admin', 'shop', 'manager', 'superadmin'],
 };
 
 /** Where to send a logged-in user based on their role */
@@ -87,5 +90,8 @@ export const config = {
     '/shop/:path*',
     '/tech/:path*',
     '/customer/:path*',
+    '/manager/:path*',
+    '/workorders/:path*',
+    '/reports',
   ],
 };

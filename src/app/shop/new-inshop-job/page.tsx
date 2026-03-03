@@ -8,7 +8,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ShopNewInShopJob() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth(['shop']);
+  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [userName, setUserName] = useState('');
   const [formData, setFormData] = useState({
     customerName: '',

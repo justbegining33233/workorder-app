@@ -42,7 +42,7 @@ type LaborRate = {
 export default function PartsAndLabor() {
 
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth(['shop']);
+  const { user, isLoading } = useRequireAuth(['shop', 'manager']);
   const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState<'parts' | 'labor'>('parts');
   const [showAddPart, setShowAddPart] = useState(false);
