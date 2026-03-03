@@ -228,11 +228,20 @@ export function useAuth() {
   return context;
 }
 
+/** Where each role belongs — must mirror src/middleware.ts */
+const ROLE_HOME_MAP: Record<string, string> = {
+  admin:      '/admin/home',
+  superadmin: '/admin/home',
+  shop:       '/shop/home',
+  manager:    '/shop/home',
+  tech:       '/tech/home',
+  customer:   '/customer/dashboard',
+};
+
 // Hook for role-based access control
 export function useRequireAuth(requiredRoles?: string[]) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
-
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -241,7 +250,9 @@ export function useRequireAuth(requiredRoles?: string[]) {
     }
 
     if (!isLoading && user && requiredRoles && !requiredRoles.includes(user.role)) {
-      router.push('/auth/login');
+      // Redirect to the user's own section, not to login
+      const home = ROLE_HOME_MAP[user.role] ?? '/auth/login';
+      router.push(home);
     }
   }, [user, isLoading, requiredRoles]); // Remove router from dependencies
 
