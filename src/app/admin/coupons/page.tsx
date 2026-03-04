@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function CouponManagementPage() {
-  const { user, isLoading: authLoading } = useRequireAuth(['admin']);
+  const { user, isLoading: authLoading } = useRequireAuth(['admin', 'superadmin']);
   const router = useRouter();
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

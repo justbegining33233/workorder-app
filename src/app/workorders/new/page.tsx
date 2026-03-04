@@ -382,7 +382,7 @@ function NewRoadsideJobContent() {
 }
 
 export default function NewWorkOrderPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech', 'superadmin']);
   if (isLoading || !user) return null;
   return (
     <Suspense fallback={<div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>

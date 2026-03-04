@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 function AdminHomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, isLoading } = useRequireAuth(['admin']);
+  const { user, isLoading } = useRequireAuth(['admin', 'superadmin']);
   const isSuperAdmin = user?.isSuperAdmin;
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchOpen, setSearchOpen] = useState(false);

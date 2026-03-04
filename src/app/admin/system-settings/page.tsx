@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function SystemSettings() {
-  const { user, isLoading } = useRequireAuth(['admin']);
+  const { user, isLoading } = useRequireAuth(['admin', 'superadmin']);
   const [settings, setSettings] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);

@@ -216,7 +216,7 @@ function WorkOrderListPageContent() {
 }
 
 export default function WorkOrderListPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech', 'superadmin']);
   if (isLoading || !user) return null;
   return (
     <Suspense fallback={<div>Loading...</div>}>

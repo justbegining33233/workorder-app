@@ -5,7 +5,7 @@ import MessagingCard from '@/components/MessagingCard';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function AdminMessages() {
-  const { user, isLoading } = useRequireAuth(['admin']);
+  const { user, isLoading } = useRequireAuth(['admin', 'superadmin']);
 
   if (isLoading) {
     return (

@@ -11,7 +11,7 @@ type Session = {
 };
 
 export default function AdminSessionsPage() {
-  const { user, isLoading: authLoading } = useRequireAuth(['admin']);
+  const { user, isLoading: authLoading } = useRequireAuth(['admin', 'superadmin']);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(false);
   const [revokeId, setRevokeId] = useState<string|null>(null);

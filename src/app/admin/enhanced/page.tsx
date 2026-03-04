@@ -9,7 +9,7 @@ import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 
 function AdminPortalEnhancedContent() {
-  const { user, isLoading: authLoading } = useRequireAuth(['admin']);
+  const { user, isLoading: authLoading } = useRequireAuth(['admin', 'superadmin']);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
