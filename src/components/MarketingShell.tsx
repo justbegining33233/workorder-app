@@ -4,10 +4,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 const navLinks = [
-  { href: "/features", label: "Features" },
+  { href: "#features", label: "Features" },
+  { href: "#roles", label: "Roles" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/security", label: "Security" },
-  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" }
 ];
 

@@ -1,20 +1,118 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import MarketingShell from "@/components/MarketingShell";
 
+const features = [
+  { icon: "📊", title: "Comprehensive Dashboards", description: "Real-time insights into revenue, jobs, team performance, and more for every role." },
+  { icon: "🔧", title: "Job Management", description: "Create, assign, and track work orders, inspections, and road calls efficiently." },
+  { icon: "👥", title: "Customer Engagement", description: "Messaging, live tracking, reviews, and loyalty programs to keep customers happy." },
+  { icon: "💼", title: "Inventory & Financials", description: "Manage parts, vendors, payroll, reports, and integrations seamlessly." },
+  { icon: "🛡️", title: "Security & Admin Tools", description: "Role-based access, audits, backups, and customizable settings for peace of mind." },
+  { icon: "📱", title: "Mobile-Friendly", description: "Techs and customers can access tools on-the-go with GPS, photos, and more." }
+];
+
+const roles = [
+  { key: "admin", label: "Admin / Superadmin", description: "Oversee the entire platform with tools for user management, analytics, financial reports, and system settings. Manage shops, customers, and global configurations effortlessly." },
+  { key: "shop", label: "Shop Owner", description: "Run your shop with dashboards for stats, bays, teams, and customers. Handle inventory, payroll, reports, integrations, and more to optimize operations." },
+  { key: "manager", label: "Manager", description: "Focus on day-to-day ops with alerts, work orders, team performance, inventory requests, and financial summaries. Assign tasks and monitor schedules." },
+  { key: "tech", label: "Technician", description: "Access tools for job creation, diagnostics, inspections, inventory lookup, manuals, messaging, and time tracking. Share locations and upload photos on the go." },
+  { key: "customer", label: "Customer", description: "Book appointments, track techs live, chat, view history, manage payments, earn rewards, and access documents all in one place." }
+];
+
 export default function Home() {
-  const primaryButtonStyle: React.CSSProperties = {
-    background: "linear-gradient(90deg, #22D3EE 0%, #6366F1 55%, #EC4899 100%)",
-    color: "#FFFFFF",
-    boxShadow: "0 18px 40px rgba(59,130,246,0.35)"
-  };
-  const ghostButtonStyle: React.CSSProperties = {
-    border: "1px solid rgba(148,163,184,0.4)",
-    background: "rgba(15,23,42,0.4)",
-    color: "#E2E8F0",
-    backdropFilter: "blur(10px)"
-  };
+  const [openRole, setOpenRole] = useState<string>("admin");
+
+  return (
+    <MarketingShell>
+      {/* Hero */}
+      <section
+        className="py-24 text-center text-white"
+        style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)" }}
+      >
+        <div className="mx-auto max-w-4xl px-6">
+          <h1 className="text-4xl font-bold leading-tight sm:text-5xl">Welcome to FixTray</h1>
+          <p className="mt-5 text-lg text-blue-100">
+            The all-in-one platform for auto repair shops: Manage operations, teams, customers, and more with ease.
+          </p>
+          <Link
+            href="/auth/login"
+            className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-base font-semibold text-blue-600 shadow-lg transition hover:bg-blue-50"
+          >
+            Get Started Free
+          </Link>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section id="features" className="bg-slate-900 py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <h2 className="mb-12 text-center text-3xl font-bold text-white">Key Features</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((f) => (
+              <div
+                key={f.title}
+                className="rounded-2xl border border-slate-700/60 bg-slate-800/70 p-6 shadow-lg transition hover:border-blue-500/40"
+              >
+                <div className="mb-3 text-3xl">{f.icon}</div>
+                <h4 className="mb-2 text-lg font-semibold text-white">{f.title}</h4>
+                <p className="text-sm text-slate-300">{f.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Roles */}
+      <section id="roles" className="py-20">
+        <div className="mx-auto max-w-3xl px-6">
+          <h2 className="mb-12 text-center text-3xl font-bold text-white">Tailored for Every Role</h2>
+          <div className="divide-y divide-slate-700 overflow-hidden rounded-2xl border border-slate-700">
+            {roles.map((role) => {
+              const isOpen = openRole === role.key;
+              return (
+                <div key={role.key} className="bg-slate-800/60">
+                  <button
+                    type="button"
+                    onClick={() => setOpenRole(isOpen ? "" : role.key)}
+                    className="flex w-full items-center justify-between px-6 py-4 text-left text-base font-semibold text-white transition hover:bg-slate-700/50 focus:outline-none"
+                  >
+                    <span>{role.label}</span>
+                    <span className="ml-4 text-slate-400">{isOpen ? "▲" : "▼"}</span>
+                  </button>
+                  {isOpen && (
+                    <div className="border-t border-slate-700 px-6 py-4 text-sm text-slate-300">
+                      {role.description}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section
+        id="signup"
+        className="py-20 text-center text-white"
+        style={{ background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)" }}
+      >
+        <div className="mx-auto max-w-2xl px-6">
+          <h2 className="text-3xl font-bold">Ready to Transform Your Auto Repair Business?</h2>
+          <p className="mt-4 text-lg text-green-100">Sign up today and experience the power of FixTray.</p>
+          <Link
+            href="/auth/login"
+            className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-base font-semibold text-green-700 shadow-lg transition hover:bg-green-50"
+          >
+            Start Your Free Trial
+          </Link>
+        </div>
+      </section>
+    </MarketingShell>
+  );
+}
   const glassCardStyle: React.CSSProperties = {
     background: "linear-gradient(145deg, rgba(15,23,42,0.78) 0%, rgba(30,41,59,0.88) 100%)",
     border: "1px solid rgba(148,163,184,0.2)",
