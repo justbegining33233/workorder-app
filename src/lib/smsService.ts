@@ -46,13 +46,11 @@ export async function sendSms(to: string, body: string): Promise<boolean> {
   if (!messagingServiceSid && !from) return false;
 
   try {
-    const params: Record<string, string> = { to: normalized, body };
     if (messagingServiceSid) {
-      params.messagingServiceSid = messagingServiceSid;
+      await client.messages.create({ messagingServiceSid, to: normalized, body });
     } else {
-      params.from = from!;
+      await client.messages.create({ from: from!, to: normalized, body });
     }
-    await client.messages.create(params);
     return true;
   } catch (err) {
     // Log but don't throw — SMS failure should never break the main flow
