@@ -11,28 +11,40 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // If Stripe is not configured in the environment (e.g. during build),
-    // return an empty list instead of calling the Stripe SDK.
+    // Always return a plain array so the dashboard can call Array.isArray() on it.
+
+    // If Stripe is not configured, serve from the local PaymentMethod table.
     if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ paymentMethods: [] });
+      const methods = await prisma.paymentMethod.findMany({
+        where: { customerId: user.id },
+        orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
+        select: { id: true, type: true, last4: true, brand: true, expiryMonth: true, expiryYear: true, isDefault: true, createdAt: true },
+      });
+      return NextResponse.json(methods);
     }
 
-    // Get customer's stripe customer ID
+    // Get customer's Stripe customer ID
     const customer = await prisma.customer.findUnique({
       where: { id: user.id },
     });
 
     if (!customer?.stripeCustomerId) {
-      return NextResponse.json({ paymentMethods: [] });
+      // Fall back to local table (e.g. manually added records)
+      const methods = await prisma.paymentMethod.findMany({
+        where: { customerId: user.id },
+        orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
+        select: { id: true, type: true, last4: true, brand: true, expiryMonth: true, expiryYear: true, isDefault: true, createdAt: true },
+      });
+      return NextResponse.json(methods);
     }
 
-    // Fetch payment methods from Stripe
-    const paymentMethods = await stripe.paymentMethods.list({
+    // Fetch from Stripe and return as a plain array
+    const stripeResult = await stripe.paymentMethods.list({
       customer: customer.stripeCustomerId,
       type: 'card',
     });
 
-    return NextResponse.json({ paymentMethods: paymentMethods.data });
+    return NextResponse.json(stripeResult.data);
   } catch (error) {
     console.error('Error fetching payment methods:', error);
     return NextResponse.json({ error: 'Failed to fetch payment methods' }, { status: 500 });
