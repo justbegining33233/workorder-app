@@ -42,14 +42,11 @@ const nextConfig: NextConfig = {
 export default withSentryConfig(nextConfig, {
   org: "fixtray",
   project: "javascript-nextjs",
-  // Suppresses source map uploading logs during build
   silent: !process.env.CI,
-  // Upload source maps to Sentry for better stack traces
   widenClientFileUpload: true,
-  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers
   tunnelRoute: "/monitoring",
-  // Hides source maps from generated client bundles
-  hideSourceMaps: true,
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
   disableLogger: true,
 });
