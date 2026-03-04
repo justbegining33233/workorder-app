@@ -46,8 +46,6 @@ export default withSentryConfig(nextConfig, {
   silent: !process.env.CI,
   // Upload source maps to Sentry for better stack traces
   widenClientFileUpload: true,
-  // Transpile SDK to be compatible with IE11
-  transpileClientSDK: false,
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers
   tunnelRoute: "/monitoring",
   // Hides source maps from generated client bundles
