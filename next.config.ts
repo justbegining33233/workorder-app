@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const nextConfig: NextConfig = {
@@ -38,4 +39,19 @@ const nextConfig: NextConfig = {
   // Note: custom webpack function removed to avoid Turbopack/webpack detection
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "fixtray",
+  project: "javascript-nextjs",
+  // Suppresses source map uploading logs during build
+  silent: !process.env.CI,
+  // Upload source maps to Sentry for better stack traces
+  widenClientFileUpload: true,
+  // Transpile SDK to be compatible with IE11
+  transpileClientSDK: false,
+  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers
+  tunnelRoute: "/monitoring",
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  disableLogger: true,
+});
