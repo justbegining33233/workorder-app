@@ -1,67 +1,99 @@
-﻿// In-memory notification store
+﻿// Notification store — backed by the Prisma `notifications` table.
+// Functions are async; falls back gracefully if Prisma is unavailable.
 import { Notification } from '@/types/customer';
 
-const notifications: Map<string, Notification[]> = new Map();
-
-export function getNotifications(customerId?: string): Notification[] {
-  if (!customerId) return [];
-  return notifications.get(customerId) || [];
-}
-
-export function addNotification(customerId: string, notification: Omit<Notification, 'id' | 'createdAt'>): Notification {
-  const newNotification: Notification = {
-    ...notification,
-    id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    createdAt: new Date(),
+function toDomainNotification(rec: any): Notification {
+  return {
+    id: rec.id,
+    type: rec.type as Notification['type'],
+    title: rec.title,
+    message: rec.message,
+    workOrderId: rec.workOrderId ?? undefined,
+    read: rec.read,
+    createdAt: new Date(rec.createdAt),
+    deliveryMethod: rec.deliveryMethod
+      ? rec.deliveryMethod.split(',').map((s: string) => s.trim()).filter(Boolean)
+      : [],
   };
-  
-  const userNotifs = notifications.get(customerId) || [];
-  notifications.set(customerId, [newNotification, ...userNotifs]);
-  
-  // Simulate sending based on delivery method
-  if (notification.deliveryMethod.includes('email')) {
-  }
-  if (notification.deliveryMethod.includes('sms')) {
-  }
-  if (notification.deliveryMethod.includes('push')) {
-  }
-  
-  return newNotification;
 }
 
-export function markAsRead(customerId: string, notificationId: string): boolean {
-  const userNotifs = notifications.get(customerId);
-  if (!userNotifs) return false;
-  
-  const notif = userNotifs.find(n => n.id === notificationId);
-  if (notif) {
-    notif.read = true;
+export async function getNotifications(customerId?: string): Promise<Notification[]> {
+  if (!customerId) return [];
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    const records = await prisma.notification.findMany({
+      where: { customerId },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+    return records.map(toDomainNotification);
+  } catch {
+    return [];
+  }
+}
+
+export async function addNotification(
+  customerId: string,
+  notification: Omit<Notification, 'id' | 'createdAt'>,
+): Promise<Notification> {
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    const deliveryStr = Array.isArray(notification.deliveryMethod)
+      ? notification.deliveryMethod.join(',')
+      : String(notification.deliveryMethod ?? 'in-app');
+    const rec = await prisma.notification.create({
+      data: {
+        customerId,
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        workOrderId: notification.workOrderId ?? null,
+        read: notification.read ?? false,
+        deliveryMethod: deliveryStr,
+      },
+    });
+    return toDomainNotification(rec);
+  } catch {
+    return { ...notification, id: `notif-${Date.now()}`, createdAt: new Date() };
+  }
+}
+
+export async function markAsRead(customerId: string, notificationId: string): Promise<boolean> {
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    await prisma.notification.updateMany({
+      where: { id: notificationId, customerId },
+      data: { read: true, readAt: new Date() },
+    });
     return true;
-  }
-  return false;
+  } catch { return false; }
 }
 
-export function markAllAsRead(customerId: string): void {
-  const userNotifs = notifications.get(customerId);
-  if (userNotifs) {
-    userNotifs.forEach(n => n.read = true);
-  }
+export async function markAllAsRead(customerId: string): Promise<void> {
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    await prisma.notification.updateMany({
+      where: { customerId, read: false },
+      data: { read: true, readAt: new Date() },
+    });
+  } catch { /* ignore */ }
 }
 
-export function deleteNotification(customerId: string, notificationId: string): boolean {
-  const userNotifs = notifications.get(customerId);
-  if (!userNotifs) return false;
-  
-  const index = userNotifs.findIndex(n => n.id === notificationId);
-  if (index > -1) {
-    userNotifs.splice(index, 1);
+export async function deleteNotification(customerId: string, notificationId: string): Promise<boolean> {
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    await prisma.notification.deleteMany({ where: { id: notificationId, customerId } });
     return true;
-  }
-  return false;
+  } catch { return false; }
 }
 
 // Helper to create work order status notifications
-export function notifyStatusChange(customerId: string, workOrderId: string, oldStatus: string, newStatus: string) {
+export async function notifyStatusChange(
+  customerId: string,
+  workOrderId: string,
+  oldStatus: string,
+  newStatus: string,
+) {
   const messages: Record<string, string> = {
     'pending': 'Your work order has been received and is pending assignment.',
     'in-progress': 'Your technician has started working on your vehicle!',
@@ -69,8 +101,7 @@ export function notifyStatusChange(customerId: string, workOrderId: string, oldS
     'closed': 'Your work order has been completed. Thank you!',
     'denied-estimate': 'Your estimate was not approved.',
   };
-  
-  addNotification(customerId, {
+  await addNotification(customerId, {
     type: 'status_change',
     title: 'Work Order Status Updated',
     message: messages[newStatus] || `Status changed from ${oldStatus} to ${newStatus}`,

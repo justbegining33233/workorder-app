@@ -38,12 +38,13 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.created': {
         const subscription = event.data.object as Stripe.Subscription;
         
+        const sub0 = subscription as any;
         await prisma.subscription.updateMany({
           where: { stripeSubscriptionId: subscription.id },
           data: {
             status: subscription.status === 'active' ? 'active' : 'trialing',
-            // currentPeriodStart: new Date(subscription.current_period_start * 1000),
-            // currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            currentPeriodStart: sub0.current_period_start ? new Date(sub0.current_period_start * 1000) : undefined,
+            currentPeriodEnd: sub0.current_period_end ? new Date(sub0.current_period_end * 1000) : undefined,
           },
         });
         break;
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
       // Subscription updated (upgrade, downgrade, renewal)
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
+        const subU = subscription as any;
         
         let status: 'active' | 'past_due' | 'canceled' | 'trialing' | 'paused' = 'active';
         if (subscription.status === 'trialing') status = 'trialing';
@@ -63,9 +65,9 @@ export async function POST(request: NextRequest) {
           where: { stripeSubscriptionId: subscription.id },
           data: {
             status,
-            // currentPeriodStart: new Date(subscription.current_period_start * 1000),
-            // currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-            // cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            currentPeriodStart: subU.current_period_start ? new Date(subU.current_period_start * 1000) : undefined,
+            currentPeriodEnd: subU.current_period_end ? new Date(subU.current_period_end * 1000) : undefined,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
           },
         });
         break;

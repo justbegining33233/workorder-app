@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load `prisma` and `bcrypt` in the handler
-import { generateAccessToken, generateTempToken } from '@/lib/auth';
+import { generateAccessToken, generateTempToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
@@ -70,6 +70,24 @@ export async function POST(request: NextRequest) {
     // Generate access token
     const accessToken = generateAccessToken({ id: shop.id, username: shop.username, role: 'shop' });
 
+    // Refresh token — httpOnly cookies for silent renewal
+    const refreshRaw = generateRandomToken(48);
+    const bcryptMod2 = await import('bcrypt');
+    const bcrypt2 = (bcryptMod2.default ?? bcryptMod2) as typeof import('bcrypt');
+    const refreshHash = await bcrypt2.hash(refreshRaw, 12);
+    const expiresAt = refreshExpiryDate();
+    const userIp = request.headers.get('x-forwarded-for') || '';
+    const userAgent = request.headers.get('user-agent') || '';
+    const csrf = (await import('@/lib/csrf')).generateCsrfToken();
+    const refresh = await prisma.refreshToken.create({
+      data: {
+        tokenHash: refreshHash,
+        adminId: null,
+        metadata: JSON.stringify({ shopId: shop.id, ip: userIp, agent: userAgent, csrfToken: csrf }),
+        expiresAt,
+      }
+    });
+
     const response = NextResponse.json({
       id: shop.id,
       username: shop.username,
@@ -80,6 +98,16 @@ export async function POST(request: NextRequest) {
       status: shop.status,
       accessToken,
     }, { status: 200 });
+
+    const cookieOpts = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
+    };
+    response.cookies.set('refresh_id', refresh.id, cookieOpts);
+    response.cookies.set('refresh_sig', refreshRaw, cookieOpts);
 
     return response;
     } catch (error: unknown) {
