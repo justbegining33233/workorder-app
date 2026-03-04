@@ -29,18 +29,17 @@ export default function MarketingShell({ children }: MarketingShellProps) {
       </div>
 
       <header className="relative z-10 border-b border-slate-800/70 bg-slate-950/60 backdrop-blur">
-        <div className="marketing-shift mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 py-5 text-center">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 via-indigo-500 to-pink-500 text-white shadow-lg shadow-cyan-500/30">
-              <span className="text-sm font-semibold">FT</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-indigo-500 to-pink-500 text-white shadow-lg shadow-cyan-500/30">
+              <span className="text-xs font-bold">FT</span>
             </div>
             <div>
-              <p className="text-lg font-semibold text-slate-100 tracking-wide">FixTray</p>
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Workflows</p>
+              <p className="text-base font-semibold text-slate-100 tracking-wide">FixTray</p>
             </div>
           </Link>
 
-          <nav className="flex flex-wrap items-center justify-center gap-5 text-sm text-slate-300">
+          <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
             {navLinks.map((item) => (
               <Link key={item.href} href={item.href} className="transition hover:text-white">
                 {item.label}
@@ -48,13 +47,13 @@ export default function MarketingShell({ children }: MarketingShellProps) {
             ))}
           </nav>
 
-          <div className="flex items-center justify-center gap-3 text-sm">
-            <Link href="/auth/login" className="text-slate-300 hover:text-white">
+          <div className="flex items-center gap-3 text-sm">
+            <Link href="/auth/login" className="text-slate-300 transition hover:text-white">
               Log in
             </Link>
             <Link
               href="/auth/login"
-              className="rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-pink-500 px-4 py-2 font-semibold text-white shadow-lg shadow-cyan-500/30"
+              className="rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/30 transition hover:opacity-90"
             >
               Get started
             </Link>
@@ -63,11 +62,11 @@ export default function MarketingShell({ children }: MarketingShellProps) {
       </header>
 
       <main className="relative z-10">
-        <div className="marketing-shift">{children}</div>
+        {children}
       </main>
 
       <footer className="relative z-10 border-t border-slate-800/70 bg-slate-950/70">
-        <div className="marketing-shift mx-auto grid max-w-6xl gap-8 px-6 py-12 text-center md:grid-cols-4">
+        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 text-center md:grid-cols-4 md:text-left">
           <div>
             <p className="text-lg font-semibold">FixTray</p>
             <p className="mt-3 text-sm text-slate-400">
