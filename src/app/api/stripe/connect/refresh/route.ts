@@ -9,7 +9,7 @@ import prisma from '@/lib/prisma';
  */
 export async function GET(request: NextRequest) {
   const shopId = new URL(request.url).searchParams.get('shopId');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
   const errorRedirect = `${appUrl}/shop/settings?stripe_connect=error&tab=billing`;
 
   if (!shopId) return NextResponse.redirect(errorRedirect);

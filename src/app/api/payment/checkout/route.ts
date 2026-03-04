@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Work order is not ready for payment' }, { status: 400 });
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: 'payment',

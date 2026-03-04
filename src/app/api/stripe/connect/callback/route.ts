@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const rawState = searchParams.get('state') ?? ''; // "shopId:origin"
   const [state, origin] = rawState.includes(':') ? rawState.split(':') : [rawState, 'settings'];
   const error = searchParams.get('error');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
 
   const successRedirect = origin === 'onboarding'
     ? `${appUrl}/shop/subscribe`

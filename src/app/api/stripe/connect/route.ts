@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Only shop accounts can connect Stripe' }, { status: 403 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
   const from = new URL(request.url).searchParams.get('from') || 'settings';
 
   const successRedirect = from === 'onboarding'

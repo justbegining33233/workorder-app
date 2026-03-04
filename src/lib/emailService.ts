@@ -345,7 +345,7 @@ export async function sendRecurringApprovalEmail(
   shopName: string,
   estimatedCost?: number | null
 ) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
   const reviewUrl = `${appUrl}/customer/recurring-approvals`;
   const subject = `Your ${serviceName} Is Due â€” Confirm or Skip`;
   const html = `
@@ -393,7 +393,7 @@ export async function sendRecurringReminderEmail(
   daysUntilDue: 14 | 7,
   estimatedCost?: number | null
 ) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://workorder-app-five.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
   const scheduleUrl = `${appUrl}/book/${shopId}`;
   const urgency = daysUntilDue === 7 ? 'coming up in ONE WEEK' : 'coming up in 2 weeks';
   const emoji = daysUntilDue === 7 ? 'âš¡' : 'ðŸ“…';
@@ -468,5 +468,39 @@ export async function sendPaymentConfirmationEmail(toEmail: string, workOrderId:
     to: toEmail,
     subject: `Payment Confirmation — $${amount.toFixed(2)}`,
     html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;border-radius:10px;overflow:hidden;"><div style="background:#e5332a;padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-size:28px;font-weight:900;">FixTray</h1></div><div style="padding:32px;"><h2 style="color:#22c55e;">✅ Payment Confirmed</h2><p style="color:#6b7280;">Payment of <strong>$${amount.toFixed(2)}</strong> received for work order <strong>#${workOrderId.slice(-8).toUpperCase()}</strong>.</p><a href="${url}" style="display:inline-block;background:#3b82f6;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;">View Invoice</a></div></div>`,
+  });
+}
+
+/**
+ * Send an email verification link to a newly registered customer.
+ * The raw token is embedded in the link; the DB stores only its SHA-256 hash.
+ */
+export async function sendVerificationEmail(toEmail: string, firstName: string, rawToken: string): Promise<boolean> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
+  const verifyUrl = `${appUrl}/api/auth/verify-email?token=${rawToken}`;
+  return sendEmail({
+    to: toEmail,
+    subject: 'Verify your FixTray email address',
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1a1a2e;color:#e5e7eb;border-radius:12px;overflow:hidden;">
+        <div style="background:linear-gradient(135deg,#e5332a,#c0392b);padding:32px;text-align:center;">
+          <div style="font-size:36px;font-weight:900;color:white;letter-spacing:-1px;">FixTray</div>
+          <div style="color:rgba(255,255,255,0.85);font-size:14px;margin-top:6px;">Email Verification</div>
+        </div>
+        <div style="padding:32px;">
+          <h2 style="color:#e5e7eb;margin:0 0 12px;">Hi ${firstName},</h2>
+          <p style="color:#9aa3b2;line-height:1.6;margin-bottom:24px;">
+            Thanks for signing up! Please verify your email address to get the most out of FixTray.
+            This link expires in <strong style="color:#e5e7eb;">24 hours</strong>.
+          </p>
+          <a href="${verifyUrl}" style="display:inline-block;background:#e5332a;color:white;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:700;font-size:15px;margin-bottom:24px;">
+            Verify Email Address
+          </a>
+          <p style="color:#6b7280;font-size:12px;margin-top:24px;line-height:1.6;">
+            If you didn't sign up for FixTray, you can safely ignore this email.
+          </p>
+        </div>
+      </div>
+    `,
   });
 }

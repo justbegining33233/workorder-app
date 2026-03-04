@@ -41,6 +41,10 @@ model Customer {
   documents           CustomerDocument[]
   messages            CustomerMessage[]
   recurringWorkOrders RecurringWorkOrder[]
+  rewardClaims        RewardClaim[]
+
+  emailVerified   Boolean   @default(true)
+  emailVerifiedAt DateTime?
 
   @@map("customers")
 }
@@ -56,6 +60,21 @@ model VerificationToken {
 
   @@index([userId])
   @@map("verification_tokens")
+}
+
+model RewardClaim {
+  id         String    @id @default(cuid())
+  customerId String
+  tierId     String    // 'tier-1', 'tier-2', 'tier-3', 'tier-4'
+  status     String    @default("pending") // pending, redeemed, expired
+  claimedAt  DateTime  @default(now())
+  redeemedAt DateTime?
+  expiresAt  DateTime
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
+  @@map("reward_claims")
 }
 
 // Shop model
@@ -87,6 +106,9 @@ model Shop {
   twoFactorSecret  String? // TOTP secret (base32 encoded, store encrypted in prod)
 
   status String @default("pending") // pending, approved, suspended
+
+  emailVerified   Boolean   @default(true)
+  emailVerifiedAt DateTime?
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

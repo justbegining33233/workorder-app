@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
       email: customer.email,
       role: 'customer',
       accessToken,
+      emailVerified: customer.emailVerified ?? true,
     }, { status: 200 });
     response.cookies.set('refresh_id', refresh.id, {
       httpOnly: true,

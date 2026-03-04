@@ -1,6 +1,7 @@
 ﻿// Notification store — backed by the Prisma `notifications` table.
 // Functions are async; falls back gracefully if Prisma is unavailable.
 import { Notification } from '@/types/customer';
+import { sendStatusUpdateSms } from '@/lib/smsService';
 
 function toDomainNotification(rec: any): Notification {
   return {
@@ -109,4 +110,18 @@ export async function notifyStatusChange(
     read: false,
     deliveryMethod: ['email', 'sms', 'push'],
   });
+
+  // Send SMS to customer if they have a phone number on file
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    const customer = await prisma.customer.findUnique({
+      where: { id: customerId },
+      select: { phone: true },
+    });
+    if (customer?.phone) {
+      sendStatusUpdateSms(customer.phone, workOrderId, newStatus).catch(() => {});
+    }
+  } catch {
+    // SMS failure must never break the notification flow
+  }
 }
