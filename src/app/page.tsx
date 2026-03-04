@@ -1,286 +1,396 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import MarketingShell from "@/components/MarketingShell";
 
+/* ─── SVG icon set ─────────────────────────────────────────────────── */
+const icons = {
+  dashboard: (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7}>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </svg>
+  ),
+  wrench: (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+    </svg>
+  ),
+  users: (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" /><path strokeLinecap="round" strokeLinejoin="round" d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  ),
+  chart: (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7}>
+      <polyline strokeLinecap="round" strokeLinejoin="round" points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </svg>
+  ),
+  shield: (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
+  phone: (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.7}>
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <line x1="12" y1="18" x2="12.01" y2="18" strokeLinecap="round" strokeWidth={2.5} />
+    </svg>
+  ),
+};
+
 const features = [
-  { icon: "📊", title: "Comprehensive Dashboards", description: "Real-time insights into revenue, jobs, team performance, and more for every role." },
-  { icon: "🔧", title: "Job Management", description: "Create, assign, and track work orders, inspections, and road calls efficiently." },
-  { icon: "👥", title: "Customer Engagement", description: "Messaging, live tracking, reviews, and loyalty programs to keep customers happy." },
-  { icon: "💼", title: "Inventory & Financials", description: "Manage parts, vendors, payroll, reports, and integrations seamlessly." },
-  { icon: "🛡️", title: "Security & Admin Tools", description: "Role-based access, audits, backups, and customizable settings for peace of mind." },
-  { icon: "📱", title: "Mobile-Friendly", description: "Techs and customers can access tools on-the-go with GPS, photos, and more." }
+  {
+    icon: icons.dashboard,
+    color: "from-cyan-400 to-blue-500",
+    glow: "group-hover:shadow-cyan-500/20",
+    title: "Real-Time Dashboards",
+    description: "Every role gets a purpose-built dashboard — live revenue, job queues, team status, and alerts, all in one view.",
+  },
+  {
+    icon: icons.wrench,
+    color: "from-indigo-400 to-violet-500",
+    glow: "group-hover:shadow-indigo-500/20",
+    title: "Work Order Engine",
+    description: "Create, dispatch, and close work orders in seconds. Bay assignment, road calls, and digital authorizations built in.",
+  },
+  {
+    icon: icons.users,
+    color: "from-pink-400 to-rose-500",
+    glow: "group-hover:shadow-pink-500/20",
+    title: "Customer Portal",
+    description: "Live tech tracking, two-way messaging, loyalty rewards, service history, and invoice payments — all customer-facing.",
+  },
+  {
+    icon: icons.chart,
+    color: "from-emerald-400 to-teal-500",
+    glow: "group-hover:shadow-emerald-500/20",
+    title: "Inventory & Financials",
+    description: "Parts catalog, purchase orders, payroll, AR aging, profit margins, and vendor management from one place.",
+  },
+  {
+    icon: icons.shield,
+    color: "from-amber-400 to-orange-500",
+    glow: "group-hover:shadow-amber-500/20",
+    title: "Security & Compliance",
+    description: "Role-based access control, full audit logs, session monitoring, 2FA enforcement, and one-click backup restore.",
+  },
+  {
+    icon: icons.phone,
+    color: "from-sky-400 to-cyan-500",
+    glow: "group-hover:shadow-sky-500/20",
+    title: "Mobile-First Field Tools",
+    description: "Techs share live GPS, upload photos, run diagnostics, pull OBD codes, and clock in — all from their phone.",
+  },
 ];
 
 const roles = [
-  { key: "admin", label: "Admin / Superadmin", description: "Oversee the entire platform with tools for user management, analytics, financial reports, and system settings. Manage shops, customers, and global configurations effortlessly." },
-  { key: "shop", label: "Shop Owner", description: "Run your shop with dashboards for stats, bays, teams, and customers. Handle inventory, payroll, reports, integrations, and more to optimize operations." },
-  { key: "manager", label: "Manager", description: "Focus on day-to-day ops with alerts, work orders, team performance, inventory requests, and financial summaries. Assign tasks and monitor schedules." },
-  { key: "tech", label: "Technician", description: "Access tools for job creation, diagnostics, inspections, inventory lookup, manuals, messaging, and time tracking. Share locations and upload photos on the go." },
-  { key: "customer", label: "Customer", description: "Book appointments, track techs live, chat, view history, manage payments, earn rewards, and access documents all in one place." }
+  {
+    key: "admin",
+    badge: "AD",
+    badgeColor: "from-rose-400 to-pink-600",
+    label: "Admin & Superadmin",
+    tagline: "Full platform command.",
+    bullets: [
+      "Approve & manage all shop accounts",
+      "Platform-wide analytics & financial reports",
+      "User, tenant & subscription management",
+      "Email templates, coupons & system config",
+      "Backup/restore, security settings & audit logs",
+    ],
+  },
+  {
+    key: "shop",
+    badge: "SH",
+    badgeColor: "from-cyan-400 to-indigo-500",
+    label: "Shop Owner",
+    tagline: "Total shop control.",
+    bullets: [
+      "Live ops dashboard with bay dispatch",
+      "Team management & payroll",
+      "Inventory, purchase orders & vendor portal",
+      "DVI, condition reports & work authorizations",
+      "Branding, integrations & multi-location support",
+    ],
+  },
+  {
+    key: "manager",
+    badge: "MG",
+    badgeColor: "from-violet-400 to-purple-600",
+    label: "Manager",
+    tagline: "Day-to-day oversight.",
+    bullets: [
+      "Assign and track all work orders",
+      "Team performance monitoring",
+      "Inventory requests with urgency tiers",
+      "Financial summary & schedule overview",
+      "Time clock and internal messaging",
+    ],
+  },
+  {
+    key: "tech",
+    badge: "TC",
+    badgeColor: "from-emerald-400 to-teal-600",
+    label: "Technician",
+    tagline: "Field-ready power tools.",
+    bullets: [
+      "Create roadside & in-shop jobs on the go",
+      "Live GPS sharing with customers",
+      "DVI, diagnostics & DTC lookup",
+      "Photo uploads & service manual library",
+      "Timesheet, messaging & parts inventory",
+    ],
+  },
+  {
+    key: "customer",
+    badge: "CX",
+    badgeColor: "from-amber-400 to-orange-500",
+    label: "Customer",
+    tagline: "Transparent, effortless service.",
+    bullets: [
+      "Book appointments & approve estimates",
+      "Live tech GPS tracking in real time",
+      "Two-way messaging with assigned tech",
+      "Full service history & document vault",
+      "Loyalty rewards, payments & recurring approvals",
+    ],
+  },
+];
+
+const stats = [
+  { value: "5", label: "User Roles" },
+  { value: "40+", label: "Shop Tools" },
+  { value: "100%", label: "Live Data" },
+  { value: "Real-Time", label: "Messaging" },
 ];
 
 export default function Home() {
-  const [openRole, setOpenRole] = useState<string>("admin");
+  const [openRole, setOpenRole] = useState<string>("shop");
 
   return (
     <MarketingShell>
-      {/* Hero */}
-      <section
-        className="py-24 text-center text-white"
-        style={{ background: "linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)" }}
-      >
-        <div className="mx-auto max-w-4xl px-6">
-          <h1 className="text-4xl font-bold leading-tight sm:text-5xl">Welcome to FixTray</h1>
-          <p className="mt-5 text-lg text-blue-100">
-            The all-in-one platform for auto repair shops: Manage operations, teams, customers, and more with ease.
+
+      {/* ── HERO ─────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden px-6 pb-28 pt-24 text-center">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-0 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-cyan-500/10 blur-[100px]" />
+          <div className="absolute right-[-8%] top-24 h-72 w-72 rounded-full bg-pink-500/10 blur-[80px]" />
+          <div className="absolute bottom-0 left-[-5%] h-72 w-72 rounded-full bg-indigo-500/10 blur-[80px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-4xl">
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-cyan-300">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400" />
+            Auto Repair Management Platform
+          </span>
+
+          <h1 className="mt-4 text-5xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            Run Your Shop.{" "}
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #818cf8, #f472b6)" }}
+            >
+              Own the Experience.
+            </span>
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-xl text-lg text-slate-400">
+            FixTray is the all-in-one operating system for auto repair shops — from bay dispatch and DVI to customer tracking and loyalty rewards.
           </p>
-          <Link
-            href="/auth/login"
-            className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-base font-semibold text-blue-600 shadow-lg transition hover:bg-blue-50"
-          >
-            Get Started Free
-          </Link>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href="/auth/login"
+              className="rounded-full px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-cyan-500/30 transition hover:scale-[1.03] hover:shadow-cyan-500/50"
+              style={{ backgroundImage: "linear-gradient(135deg, #22d3ee, #6366f1, #ec4899)" }}
+            >
+              Get Started Free
+            </Link>
+            <Link
+              href="#features"
+              className="rounded-full border border-slate-600 bg-slate-800/60 px-8 py-3.5 text-sm font-semibold text-slate-200 backdrop-blur transition hover:border-slate-400 hover:text-white"
+            >
+              See Features →
+            </Link>
+          </div>
+
+          <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {stats.map((s) => (
+              <div
+                key={s.label}
+                className="rounded-2xl border border-slate-700/60 bg-slate-800/50 px-4 py-5 backdrop-blur"
+              >
+                <p
+                  className="bg-clip-text text-2xl font-extrabold text-transparent"
+                  style={{ backgroundImage: "linear-gradient(135deg, #22d3ee, #818cf8)" }}
+                >
+                  {s.value}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="bg-slate-900 py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <h2 className="mb-12 text-center text-3xl font-bold text-white">Key Features</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* ── FEATURES ─────────────────────────────────────────────────── */}
+      <section id="features" className="relative px-6 py-24">
+        <div className="pointer-events-none absolute inset-0 bg-slate-900/40" />
+        <div className="relative mx-auto max-w-6xl">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400">Platform</p>
+          <h2 className="mt-2 text-center text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            Everything you need, nothing you don&apos;t.
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg text-center text-sm text-slate-400">
+            Built for shop owners who want to stop juggling tools and start running a tight operation.
+          </p>
+
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <div
                 key={f.title}
-                className="rounded-2xl border border-slate-700/60 bg-slate-800/70 p-6 shadow-lg transition hover:border-blue-500/40"
+                className={`group relative overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-800/50 p-6 backdrop-blur transition hover:-translate-y-1 hover:border-slate-500/60 hover:shadow-xl ${f.glow}`}
               >
-                <div className="mb-3 text-3xl">{f.icon}</div>
-                <h4 className="mb-2 text-lg font-semibold text-white">{f.title}</h4>
-                <p className="text-sm text-slate-300">{f.description}</p>
+                <div
+                  className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br text-white ${f.color}`}
+                >
+                  {f.icon}
+                </div>
+                <h4 className="mb-2 text-base font-bold text-white">{f.title}</h4>
+                <p className="text-sm leading-relaxed text-slate-400">{f.description}</p>
+                <div
+                  className={`pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-30 ${f.color}`}
+                />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Roles */}
-      <section id="roles" className="py-20">
-        <div className="mx-auto max-w-3xl px-6">
-          <h2 className="mb-12 text-center text-3xl font-bold text-white">Tailored for Every Role</h2>
-          <div className="divide-y divide-slate-700 overflow-hidden rounded-2xl border border-slate-700">
-            {roles.map((role) => {
-              const isOpen = openRole === role.key;
-              return (
-                <div key={role.key} className="bg-slate-800/60">
-                  <button
-                    type="button"
-                    onClick={() => setOpenRole(isOpen ? "" : role.key)}
-                    className="flex w-full items-center justify-between px-6 py-4 text-left text-base font-semibold text-white transition hover:bg-slate-700/50 focus:outline-none"
-                  >
-                    <span>{role.label}</span>
-                    <span className="ml-4 text-slate-400">{isOpen ? "▲" : "▼"}</span>
-                  </button>
-                  {isOpen && (
-                    <div className="border-t border-slate-700 px-6 py-4 text-sm text-slate-300">
-                      {role.description}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section
-        id="signup"
-        className="py-20 text-center text-white"
-        style={{ background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)" }}
-      >
-        <div className="mx-auto max-w-2xl px-6">
-          <h2 className="text-3xl font-bold">Ready to Transform Your Auto Repair Business?</h2>
-          <p className="mt-4 text-lg text-green-100">Sign up today and experience the power of FixTray.</p>
-          <Link
-            href="/auth/login"
-            className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-base font-semibold text-green-700 shadow-lg transition hover:bg-green-50"
-          >
-            Start Your Free Trial
-          </Link>
-        </div>
-      </section>
-    </MarketingShell>
-  );
-}
-  const glassCardStyle: React.CSSProperties = {
-    background: "linear-gradient(145deg, rgba(15,23,42,0.78) 0%, rgba(30,41,59,0.88) 100%)",
-    border: "1px solid rgba(148,163,184,0.2)",
-    borderRadius: 26,
-    boxShadow: "0 30px 70px rgba(15, 23, 42, 0.45)"
-  };
-  const neonBadgeStyle: React.CSSProperties = {
-    background: "linear-gradient(90deg, rgba(34,211,238,0.2) 0%, rgba(236,72,153,0.2) 100%)",
-    border: "1px solid rgba(236,72,153,0.35)",
-    color: "#F8FAFC"
-  };
-
-  return (
-    <MarketingShell>
-      <section className="mx-auto flex min-h-[70vh] max-w-6xl flex-col justify-center px-6 pt-24 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.4em]" style={neonBadgeStyle}>
-          <span className="h-2 w-2 rounded-full bg-cyan-400" />
-          FixTray Control Room
-        </div>
-        <h1 className="mt-8 text-4xl font-semibold leading-tight sm:text-6xl">
-          The command center for <span className="bg-gradient-to-r from-cyan-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent">modern work orders</span>.
-        </h1>
-        <p className="mt-5 text-lg text-slate-300">
-          Align operations, approvals, and customer updates with one cinematic workflow that feels fast, calm, and always connected.
-        </p>
-        <div className="mt-9 flex flex-wrap justify-center gap-4">
-          <Link href="/auth/login" className="rounded-full px-6 py-3 text-sm font-semibold shadow-sm" style={primaryButtonStyle}>
-            Start free
-          </Link>
-          <Link href="/auth/login" className="rounded-full px-6 py-3 text-sm font-semibold shadow-sm" style={ghostButtonStyle}>
-            Book a demo
-          </Link>
+      {/* ── ROLES ────────────────────────────────────────────────────── */}
+      <section id="roles" className="relative overflow-hidden px-6 py-24">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-indigo-600/8 blur-[100px]" />
+          <div className="absolute right-0 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full bg-pink-600/8 blur-[100px]" />
         </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-3">
-          {[
-            { label: "Faster approvals", value: "52%" },
-            { label: "Fewer follow-ups", value: "3.1x" },
-            { label: "Live visibility", value: "24/7" }
-          ].map((stat) => (
-            <div key={stat.label} className="rounded-2xl border border-slate-800/70 bg-slate-950/60 px-6 py-5">
-              <p className="text-2xl font-semibold text-white">{stat.value}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.3em] text-slate-400">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-6xl gap-10 px-6 pb-20 lg:grid-cols-2">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Operations, synchronized</p>
-          <h2 className="mt-4 text-3xl font-semibold text-white">Run every job like a mission.</h2>
-          <p className="mt-4 text-base text-slate-300">
-            FixTray stitches together your intake, dispatch, approvals, and completions with a live status ribbon that keeps every role in sync.
+        <div className="relative mx-auto max-w-5xl">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-pink-400">Roles</p>
+          <h2 className="mt-2 text-center text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            Tailored for every person on your team.
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg text-center text-sm text-slate-400">
+            One platform, five distinct role experiences — each purpose-built so nobody gets in everybody else&apos;s way.
           </p>
-          <div className="mt-6 space-y-4">
-            {[
-              "Auto-route work orders to the right tech",
-              "Instant approvals from any device",
-              "Customer-ready updates without the call volume"
-            ].map((item) => (
-              <div key={item} className="flex items-center gap-3 text-sm text-slate-200">
-                <span className="h-2 w-2 rounded-full bg-cyan-400" />
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="grid gap-4">
-          <div className="rounded-3xl p-6" style={glassCardStyle}>
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Status ribbon</p>
-            <p className="mt-4 text-lg font-semibold text-white">Every job, every handoff, in one view.</p>
-            <div className="mt-6 grid gap-3">
-              {[
-                { label: "Awaiting approval", value: "12" },
-                { label: "In progress", value: "38" },
-                { label: "Completed today", value: "26" }
-              ].map((row) => (
-                <div key={row.label} className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-950/60 px-4 py-3">
-                  <span className="text-sm text-slate-200">{row.label}</span>
-                  <span className="text-sm font-semibold text-white">{row.value}</span>
-                </div>
+          <div className="mt-12 flex flex-col gap-6 lg:flex-row">
+            <div className="flex flex-row gap-2 overflow-x-auto pb-1 lg:w-52 lg:flex-col lg:overflow-visible lg:pb-0">
+              {roles.map((r) => (
+                <button
+                  key={r.key}
+                  type="button"
+                  onClick={() => setOpenRole(r.key)}
+                  className={`flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition ${
+                    openRole === r.key
+                      ? "bg-slate-700/80 text-white shadow-inner"
+                      : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+                  }`}
+                >
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-xs font-bold text-white ${r.badgeColor}`}
+                  >
+                    {r.badge}
+                  </span>
+                  <span className="hidden sm:block lg:block">{r.label}</span>
+                </button>
               ))}
             </div>
-          </div>
-          <div className="rounded-3xl border border-slate-800/70 bg-slate-950/70 px-6 py-5">
-            <p className="text-sm text-slate-300">“We cut approval time in half and customers stopped calling for status updates.”</p>
-            <p className="mt-3 text-xs uppercase tracking-[0.3em] text-slate-500">Ops Director, Multi-shop fleet</p>
-          </div>
-        </div>
-      </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-20">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Features</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white">Built for relentless teams.</h2>
-          </div>
-          <Link href="/features" className="text-sm font-semibold text-cyan-300 hover:text-cyan-200">
-            Explore all features →
-          </Link>
-        </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[
-            { title: "Live dispatch", detail: "Real-time routing with SLA alerts and location context." },
-            { title: "Approval flows", detail: "Auto-send estimates with e-signature capture." },
-            { title: "Parts & inventory", detail: "Track parts usage, reorder points, and vendor SLAs." },
-            { title: "Technician pulse", detail: "Know where every tech is, and what they need next." },
-            { title: "Customer timeline", detail: "Share a branded status page for every job." },
-            { title: "Analytics board", detail: "Measure cycle time, margin, and repeat work." }
-          ].map((item) => (
-            <div key={item.title} className="rounded-3xl p-6" style={glassCardStyle}>
-              <p className="text-lg font-semibold text-white">{item.title}</p>
-              <p className="mt-3 text-sm text-slate-300">{item.detail}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+            {roles.filter((r) => r.key === openRole).map((r) => (
+              <div
+                key={r.key}
+                className="flex-1 rounded-2xl border border-slate-700/60 bg-slate-800/50 p-8 backdrop-blur"
+              >
+                <div className="flex items-center gap-4">
+                  <span
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br text-sm font-bold text-white shadow-lg ${r.badgeColor}`}
+                  >
+                    {r.badge}
+                  </span>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{r.label}</h3>
+                    <p className="text-sm text-slate-400">{r.tagline}</p>
+                  </div>
+                </div>
 
-      <section className="mx-auto max-w-6xl px-6 pb-20">
-        <div className="rounded-3xl border border-slate-800/70 bg-slate-950/70 px-8 py-10">
-          <div className="grid gap-8 lg:grid-cols-3">
-            {[
-              {
-                quote: "FixTray gave us a single source of truth. Dispatch runs like a studio control room now.",
-                name: "Lena Alvarez",
-                role: "Operations Lead"
-              },
-              {
-                quote: "We finally have approvals that don’t stall out. It’s our competitive edge.",
-                name: "Grant Hill",
-                role: "Service Manager"
-              },
-              {
-                quote: "Customers love the live timeline. It reduced call volume overnight.",
-                name: "Shay Patel",
-                role: "Customer Experience"
-              }
-            ].map((testimonial) => (
-              <div key={testimonial.name}>
-                <p className="text-sm text-slate-300">“{testimonial.quote}”</p>
-                <p className="mt-4 text-xs uppercase tracking-[0.3em] text-slate-500">{testimonial.name} · {testimonial.role}</p>
+                <ul className="mt-6 space-y-3">
+                  {r.bullets.map((b) => (
+                    <li key={b} className="flex items-start gap-3 text-sm text-slate-300">
+                      <svg
+                        className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href="/auth/login"
+                  className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-white shadow-md transition hover:scale-[1.03]"
+                  style={{ backgroundImage: "linear-gradient(135deg, #22d3ee, #6366f1)" }}
+                >
+                  Get started as {r.label} →
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="rounded-[32px] border border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 via-indigo-500/10 to-pink-500/10 px-8 py-10">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Ready to launch</p>
-              <h3 className="mt-3 text-2xl font-semibold text-white">Make every work order feel effortless.</h3>
-              <p className="mt-2 text-sm text-slate-300">Start in minutes or book a custom onboarding session.</p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/auth/login" className="rounded-full px-6 py-3 text-sm font-semibold shadow-sm" style={primaryButtonStyle}>
-                Start free
-              </Link>
-              <Link href="/contact" className="rounded-full px-6 py-3 text-sm font-semibold shadow-sm" style={ghostButtonStyle}>
-                Contact sales
-              </Link>
-            </div>
+      {/* ── CTA ──────────────────────────────────────────────────────── */}
+      <section id="signup" className="relative overflow-hidden px-6 py-28 text-center">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-indigo-500/10 to-pink-500/10" />
+          <div className="absolute left-1/2 top-1/2 h-[480px] w-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/10 blur-[120px]" />
+        </div>
+
+        <div className="relative mx-auto max-w-2xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-400">Ready?</p>
+          <h2 className="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+            Transform how your shop works.
+          </h2>
+          <p className="mx-auto mt-4 max-w-md text-base text-slate-400">
+            Join auto repair shops already running tighter operations, happier teams, and more loyal customers on FixTray.
+          </p>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href="/auth/login"
+              className="rounded-full px-10 py-4 text-sm font-bold text-white shadow-xl shadow-cyan-500/30 transition hover:scale-[1.04] hover:shadow-cyan-500/50"
+              style={{ backgroundImage: "linear-gradient(135deg, #22d3ee, #6366f1, #ec4899)" }}
+            >
+              Start Free Trial
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-full border border-slate-600 bg-slate-800/60 px-10 py-4 text-sm font-semibold text-slate-200 backdrop-blur transition hover:border-slate-400 hover:text-white"
+            >
+              View Pricing
+            </Link>
           </div>
+
+          <p className="mt-5 text-xs text-slate-500">No credit card required &nbsp;·&nbsp; Cancel any time</p>
         </div>
       </section>
+
     </MarketingShell>
   );
 }
