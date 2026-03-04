@@ -3,10 +3,8 @@ import prisma from '@/lib/prisma';
 import { requireRole } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
-  const auth = requireRole(req, ['admin']);
+  const auth = requireRole(req, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
-
-  // Enforce Neon-only DB: fail fast if DATABASE_URL is missing
   if (!process.env.DATABASE_URL) {
     console.error('DATABASE_URL not configured — set it to your Neon connection string');
     return NextResponse.json({ error: 'DATABASE_URL not configured' }, { status: 503 });

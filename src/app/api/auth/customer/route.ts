@@ -58,10 +58,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    // Block unverified accounts
+    if (customer.emailVerified === false) {
+      return NextResponse.json(
+        { error: 'Please verify your email address before logging in. Check your inbox for the verification link.' },
+        { status: 403 }
+      );
+    }
+
     // Successful login - reset rate limit
     resetRateLimit(rateLimitKey);
 
-    const accessToken = generateAccessToken({ id: customer.id, username: customer.email, role: 'customer' });
+    const accessToken = generateAccessToken({ id: customer.id, email: customer.email, role: 'customer' });
     const refreshRaw = generateRandomToken(48);
     const refreshHash = await bcrypt.hash(refreshRaw, 12);
     const expiresAt = refreshExpiryDate();

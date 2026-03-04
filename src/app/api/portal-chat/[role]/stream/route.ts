@@ -3,7 +3,6 @@ import { getPortalMessages } from '@/lib/portalChat';
 import { PortalRole } from '@/types/portalChat';
 import { requireRole } from '@/lib/auth';
 
-// Use nodejs runtime because portalChat persistence relies on fs
 export const runtime = 'nodejs';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ role: string }> }) {
@@ -18,14 +17,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ role
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
-    start(controller) {
-      const send = () => {
-        const messages = getPortalMessages(role as PortalRole, channelId);
+    async start(controller) {
+      const send = async () => {
+        const messages = await getPortalMessages(role as PortalRole, channelId);
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(messages)}\n\n`));
       };
 
-      send();
-      const interval = setInterval(send, 2000);
+      await send();
+      const interval = setInterval(() => { send().catch(console.error); }, 2000);
       controller.enqueue(encoder.encode(': ping\n\n'));
       return () => clearInterval(interval);
     },

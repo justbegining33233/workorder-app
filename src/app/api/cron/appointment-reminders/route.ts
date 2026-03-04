@@ -7,12 +7,15 @@ import prisma from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   // Protect with cron secret — refuse to run if secret is not configured
-  const cronSecret = request.headers.get('x-cron-secret') || request.nextUrl.searchParams.get('secret');
+  // Accept either x-cron-secret header, ?secret= query param,
+  // OR the standard Vercel cron Authorization: Bearer <secret> header.
   const expectedSecret = process.env.CRON_SECRET;
   if (!expectedSecret) {
     return NextResponse.json({ error: 'CRON_SECRET is not configured' }, { status: 500 });
   }
-  if (cronSecret !== expectedSecret) {
+  const cronHeader = request.headers.get('x-cron-secret') || request.nextUrl.searchParams.get('secret');
+  const authHeader = request.headers.get('authorization');
+  if (cronHeader !== expectedSecret && authHeader !== `Bearer ${expectedSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

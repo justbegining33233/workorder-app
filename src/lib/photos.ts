@@ -1,8 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-const PHOTOS_FILE = path.join(DATA_DIR, 'photos.json');
+import prisma from '@/lib/prisma';
 
 export type PhotoMeta = {
   id: string;
@@ -14,34 +10,43 @@ export type PhotoMeta = {
   createdAt: string;
 };
 
-export function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(PHOTOS_FILE)) fs.writeFileSync(PHOTOS_FILE, '[]', 'utf8');
-}
-
-export function loadPhotos(): PhotoMeta[] {
+export async function loadPhotos(): Promise<PhotoMeta[]> {
   try {
-    ensureDataDir();
-    const raw = fs.readFileSync(PHOTOS_FILE, 'utf8');
-    return JSON.parse(raw || '[]');
+    const rows = await prisma.photo.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return rows.map((r) => ({
+      id: r.id,
+      url: r.url,
+      filename: r.filename ?? undefined,
+      caption: r.caption ?? undefined,
+      workOrderId: r.workOrderId ?? null,
+      uploadedBy: r.uploadedBy ?? null,
+      createdAt: r.createdAt.toISOString(),
+    }));
   } catch (err) {
-    console.error('Failed to load photos.json', err);
+    console.error('[photos] loadPhotos failed', err);
     return [];
   }
 }
 
-export function savePhotos(list: PhotoMeta[]) {
-  try {
-    ensureDataDir();
-    fs.writeFileSync(PHOTOS_FILE, JSON.stringify(list, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Failed to save photos.json', err);
-  }
-}
-
-export function addPhoto(photo: PhotoMeta) {
-  const list = loadPhotos();
-  list.unshift(photo);
-  savePhotos(list);
-  return photo;
+export async function addPhoto(photo: Omit<PhotoMeta, 'id' | 'createdAt'>): Promise<PhotoMeta> {
+  const row = await prisma.photo.create({
+    data: {
+      url: photo.url,
+      filename: photo.filename ?? null,
+      caption: photo.caption ?? null,
+      workOrderId: photo.workOrderId ?? null,
+      uploadedBy: photo.uploadedBy ?? null,
+    },
+  });
+  return {
+    id: row.id,
+    url: row.url,
+    filename: row.filename ?? undefined,
+    caption: row.caption ?? undefined,
+    workOrderId: row.workOrderId ?? null,
+    uploadedBy: row.uploadedBy ?? null,
+    createdAt: row.createdAt.toISOString(),
+  };
 }

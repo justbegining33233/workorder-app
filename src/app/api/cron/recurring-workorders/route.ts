@@ -1,4 +1,4 @@
-/**
+﻿/**
  * POST /api/cron/recurring-workorders
  * GET  /api/cron/recurring-workorders  (Vercel Cron calls GET)
  *
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
             vehicleId: schedule.vehicleId || null,
             vehicleType: schedule.vehicleType,
             serviceLocation: schedule.serviceLocation,
-            issueDescription: `[Recurring] ${schedule.title} â€” ${schedule.issueDescription}`,
+            issueDescription: `[Recurring] ${schedule.title} — ${schedule.issueDescription}`,
             estimatedCost: schedule.estimatedCost || null,
             status: woStatus,
             paymentStatus: 'unpaid',
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
             vehicleId: schedule.vehicleId || null,
             vehicleType: schedule.vehicleType,
             serviceLocation: schedule.serviceLocation,
-            issueDescription: `[Recurring] ${schedule.title} â€” ${schedule.issueDescription}`,
+            issueDescription: `[Recurring] ${schedule.title} — ${schedule.issueDescription}`,
             estimatedCost: schedule.estimatedCost || null,
             status: woStatus,
             paymentStatus: 'unpaid',

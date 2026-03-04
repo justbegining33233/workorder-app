@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ role
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
     }
     const channelId = req.nextUrl.searchParams.get('channel') || 'global';
-    const messages = getPortalMessages(role as PortalRole, channelId);
+    const messages = await getPortalMessages(role as PortalRole, channelId);
     return NextResponse.json(messages);
   } catch (err) {
     console.error('Error fetching portal messages', err);
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ rol
       return NextResponse.json({ error: 'Message body required' }, { status: 400 });
     }
 
-    const msg = addPortalMessage(role as PortalRole, sender, body, channelId);
+    const msg = await addPortalMessage(role as PortalRole, sender, body, channelId);
     return NextResponse.json(msg, { status: 201 });
   } catch (err) {
     console.error('Error posting portal message', err);

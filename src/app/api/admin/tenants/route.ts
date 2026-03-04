@@ -3,7 +3,7 @@ import { requireRole } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
-  const auth = requireRole(request, ['admin']);
+  const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   try {

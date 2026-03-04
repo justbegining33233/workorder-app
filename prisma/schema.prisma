@@ -1788,3 +1788,34 @@ model ShopMonthlyReport {
   @@index([shopId])
   @@map("shop_monthly_reports")
 }
+
+// ─── Photo Gallery ────────────────────────────────────────────────────────────
+// Persists metadata for photos uploaded via /api/photos.
+// Actual image binary lives in Cloudinary; only the URL + metadata go here.
+model Photo {
+  id          String   @id @default(cuid())
+  url         String
+  filename    String?
+  caption     String?
+  workOrderId String?
+  uploadedBy  String?
+  createdAt   DateTime @default(now())
+
+  @@index([workOrderId])
+  @@map("photos")
+}
+
+// ─── Portal Chat ──────────────────────────────────────────────────────────────
+// Persists staff-facing (tech / manager) portal chat messages.
+// channelId = "global" for broadcast channels, "pair:<id1>:<id2>" for DMs.
+model PortalChatMessage {
+  id        String   @id @default(cuid())
+  role      String   // 'tech' | 'manager' | 'shared'
+  channelId String   @default("global")
+  sender    String
+  body      String
+  timestamp DateTime @default(now())
+
+  @@index([role, channelId])
+  @@map("portal_chat_messages")
+}

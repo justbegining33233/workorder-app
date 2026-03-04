@@ -54,6 +54,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    // Block unverified accounts
+    if (customer.emailVerified === false) {
+      return NextResponse.json(
+        { error: 'Please verify your email address before logging in. Check your inbox for the verification link.' },
+        { status: 403 }
+      );
+    }
+
     // Reset rate limit counter on successful login
     resetRateLimit(rateLimitKey);
     
