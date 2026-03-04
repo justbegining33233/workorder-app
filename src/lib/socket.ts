@@ -1,6 +1,39 @@
-﻿import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+﻿/**
+ * useSocket — polling-based real-time hook (Vercel-compatible, no Socket.io)
+ *
+ * Every 5 seconds it fetches work orders and messages from Neon via the
+ * existing API routes.  When changes are detected it fires the same
+ * window CustomEvents that the rest of the app already listens for:
+ *
+ *   work-order:updated   → triggered when any work order status/updatedAt changes
+ *   chat:new-message     → triggered when an unread conversation appears
+ *   chat:typing          → (stub — no real-time typing without persistent WS)
+ *   chat:stopped-typing  → (stub)
+ *   tech:location_updated→ (stub)
+ *   clock:status_changed → (stub — clock status polled independently in TopNavBar)
+ *
+ * The hook's `on` / `off` helpers translate socket event names into the above
+ * window event names so that components relying on on('new-message', cb) keep
+ * working without any changes.
+ *
+ * `emit` is a no-op stub; all actual mutations already go through REST endpoints.
+ */
 
+'use client';
+
+import { useEffect, useRef, useState, useCallback } from 'react';
+
+// ─── Socket → Window event name mapping ──────────────────────────────────────
+const EVENT_MAP: Record<string, string> = {
+  'work-order-updated':    'work-order:updated',
+  'new-message':           'chat:new-message',
+  'user-typing':           'chat:typing',
+  'user-stopped-typing':   'chat:stopped-typing',
+  'tech-location-updated': 'tech:location_updated',
+  'clock-status-changed':  'clock:status_changed',
+};
+
+// ─── Types (kept for compatibility) ──────────────────────────────────────────
 export interface ServerToClientEvents {
   'work-order-updated': (data: any) => void;
   'new-message': (data: any) => void;
@@ -19,129 +52,144 @@ export interface ClientToServerEvents {
   'clock-status-change': (data: any) => void;
 }
 
-let socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
+// ─── Helper: dispatch a window CustomEvent ───────────────────────────────────
+function dispatch(windowEvent: string, detail: unknown) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(windowEvent, { detail }));
+  }
+}
 
+// ─── Polling state (module-level singleton so multiple hook instances share it)
+let pollingInterval: ReturnType<typeof setInterval> | null = null;
+let prevWorkOrderSnapshot: Record<string, string> = {}; // id → updatedAt
+let prevMessageSnapshot: Record<string, string> = {};   // contactId → lastMessageAt
+
+async function poll() {
+  if (typeof window === 'undefined') return;
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  const headers = { Authorization: `Bearer ${token}` };
+
+  // ── Work orders ────────────────────────────────────────────────────────────
+  try {
+    const res = await fetch('/api/workorders', { headers, credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      const orders: any[] = data.workOrders ?? data ?? [];
+      const next: Record<string, string> = {};
+
+      for (const wo of orders) {
+        const stamp = wo.updatedAt ?? wo.createdAt ?? '';
+        next[wo.id] = stamp;
+        const prev = prevWorkOrderSnapshot[wo.id];
+        if (prev !== undefined && prev !== stamp) {
+          // Status changed — fire event
+          dispatch('work-order:updated', {
+            workOrderId: wo.id,
+            action: 'updated',
+            status: wo.status,
+            updatedBy: wo.assignedTo ?? 'system',
+            timestamp: stamp,
+          });
+        }
+      }
+      prevWorkOrderSnapshot = next;
+    }
+  } catch {
+    // network error — silently ignore
+  }
+
+  // ── Messages ───────────────────────────────────────────────────────────────
+  try {
+    const res = await fetch('/api/messages', { headers, credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      const conversations: any[] = data.conversations ?? [];
+      const next: Record<string, string> = {};
+
+      for (const conv of conversations) {
+        const key = conv.contactId ?? conv.id ?? '';
+        const stamp = conv.lastMessageAt ?? '';
+        next[key] = stamp;
+        const prev = prevMessageSnapshot[key];
+        if (prev !== undefined && prev !== stamp && conv.unreadCount > 0) {
+          dispatch('chat:new-message', {
+            from: conv.contactId,
+            fromName: conv.contactName,
+            content: conv.lastMessage,
+            timestamp: stamp,
+          });
+        }
+      }
+      prevMessageSnapshot = next;
+    }
+  } catch {
+    // network error — silently ignore
+  }
+}
+
+// ─── Hook ─────────────────────────────────────────────────────────────────────
 export const useSocket = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
+  const [isConnected] = useState(true); // polling is always "connected"
+  // Track window-event listeners so on/off work correctly
+  const listenersRef = useRef<Map<string, (e: Event) => void>>(new Map());
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const token = localStorage.getItem('token');
-    if (!token) return;
+    // Start the shared polling interval (once globally)
+    if (!pollingInterval) {
+      // Kick off first poll immediately, then every 5 s
+      poll();
+      pollingInterval = setInterval(poll, 5000);
+    }
 
-    try {
-      // Improved connection flow: try in-app '/api/socket' first, then fallback to external socket server.
-      const primaryUrl = typeof window !== 'undefined' ? `${window.location.origin}` : 'http://localhost:3000';
-      const externalSocketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
-      const fallbackUrl = externalSocketUrl || 'http://localhost:3001';
-      let attemptedFallback = false;
+    return () => {
+      // We intentionally leave the interval running — TopNavBar mounts/unmounts
+      // on every page navigation; stopping polling on unmount would break other
+      // components that still need live data.
+    };
+  }, []);
 
-      const createSocket = (url: string, path?: string) => {
-        const opts: any = {
-          auth: { token },
-          transports: ['websocket', 'polling'],
-          reconnectionAttempts: 5,
-          timeout: 5000,
-        };
-        if (path) opts.path = path;
+  const emit = useCallback((_event: keyof ClientToServerEvents, _data: any) => {
+    // No-op: all mutations are handled by dedicated REST endpoints.
+    // clock-status-change → already handled by /api/shop/team/clock
+    // send-message        → RealTimeMessaging uses its own API call
+  }, []);
 
-        const s = io(url, opts);
-        socketRef.current = s as any;
-        socket = s as any;
+  const on = useCallback((event: keyof ServerToClientEvents, callback: (data: any) => void) => {
+    const windowEvent = EVENT_MAP[event];
+    if (!windowEvent || typeof window === 'undefined') return;
+    const wrapper = (e: Event) => callback((e as CustomEvent).detail);
+    // Key: event name + callback ref to support clean removal
+    const key = `${event}:${callback.toString().slice(0, 40)}`;
+    listenersRef.current.set(key, wrapper);
+    window.addEventListener(windowEvent, wrapper);
+  }, []);
 
-        s.on('connect', () => {
-          setIsConnected(true);
-        });
+  const off = useCallback((event: keyof ServerToClientEvents, callback?: (data: any) => void) => {
+    const windowEvent = EVENT_MAP[event];
+    if (!windowEvent || typeof window === 'undefined') return;
 
-        s.on('disconnect', (reason) => {
-          setIsConnected(false);
-        });
-
-        s.on('connect_error', (err) => {
-          console.error('[socket] connect_error to', url, err && err.message ? err.message : err);
-          setIsConnected(false);
-
-          // Try fallback once when primary fails
-          if (!attemptedFallback && url === primaryUrl) {
-            attemptedFallback = true;
-            try { s.disconnect(); } catch (e) {}
-            // When NEXT_PUBLIC_SOCKET_URL points to the standalone socket-server.js,
-            // connect without a path (the standalone server listens at root).
-            // Fall back to /api/socket path only when using the self-hosted server.js.
-            if (externalSocketUrl) {
-              createSocket(fallbackUrl); // standalone server — no path
-            } else {
-              createSocket(fallbackUrl, '/api/socket'); // self-hosted server.js
-            }
-          }
-        });
-
-        // wire server events to global window events so components can listen
-        s.on('work-order-updated', (data) => { window.dispatchEvent(new CustomEvent('work-order:updated', { detail: data })); });
-        s.on('new-message', (data) => { window.dispatchEvent(new CustomEvent('chat:new-message', { detail: data })); });
-        s.on('user-typing', (data) => { window.dispatchEvent(new CustomEvent('chat:typing', { detail: data })); });
-        s.on('user-stopped-typing', (data) => { window.dispatchEvent(new CustomEvent('chat:stopped-typing', { detail: data })); });
-        s.on('tech-location-updated', (data) => { window.dispatchEvent(new CustomEvent('tech:location_updated', { detail: data })); });
-        s.on('clock-status-changed', (data) => { window.dispatchEvent(new CustomEvent('clock:status_changed', { detail: data })); });
-
-        return s;
-      };
-
-      // If a standalone socket server URL is configured (production/Vercel), connect directly.
-      // Otherwise try the in-app /api/socket path (local dev with server.js).
-      if (externalSocketUrl) {
-        createSocket(externalSocketUrl); // standalone socket-server.js — no path
-      } else {
-        createSocket(primaryUrl, '/api/socket');
+    if (callback) {
+      const key = `${event}:${callback.toString().slice(0, 40)}`;
+      const wrapper = listenersRef.current.get(key);
+      if (wrapper) {
+        window.removeEventListener(windowEvent, wrapper);
+        listenersRef.current.delete(key);
       }
-
-      return () => {
-        try {
-          if (socketRef.current) {
-            socketRef.current.disconnect();
-            socketRef.current = null;
-            socket = null;
-            setIsConnected(false);
-          }
-        } catch (e) {
-          // ignore
+    } else {
+      // Remove all listeners for this event
+      listenersRef.current.forEach((wrapper, key) => {
+        if (key.startsWith(`${event}:`)) {
+          window.removeEventListener(windowEvent, wrapper);
+          listenersRef.current.delete(key);
         }
-      };
-    } catch (error) {
-      console.error('Failed to initialize socket connection:', error);
-      return;
+      });
     }
   }, []);
 
-  const emit = (event: keyof ClientToServerEvents, data: any) => {
-    if (socketRef.current && socketRef.current.connected) {
-      socketRef.current.emit(event, data);
-    } else {
-    }
-  };
-
-  const on = (event: keyof ServerToClientEvents, callback: (data: any) => void) => {
-    if (socketRef.current) {
-      socketRef.current.on(event, callback);
-    }
-  };
-
-  const off = (event: keyof ServerToClientEvents, callback?: (data: any) => void) => {
-    if (socketRef.current) {
-      if (callback) {
-        socketRef.current.off(event, callback);
-      } else {
-        socketRef.current.off(event);
-      }
-    }
-  };
-
-  return {
-    isConnected,
-    emit,
-    on,
-    off,
-  };
+  return { isConnected, emit, on, off };
 };
+
