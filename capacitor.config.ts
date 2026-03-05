@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'out',
   // Load straight to login — skip the marketing landing page
   server: {
-    url: 'https://fixtray.app/login',
+    url: 'https://fixtray.app/auth/login',
     cleartext: false, // HTTPS only
   },
   android: {
