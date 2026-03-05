@@ -5,7 +5,9 @@ const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 
 const dev = process.env.NODE_ENV !== 'production';
-const hostname = 'localhost';
+// Use 0.0.0.0 so Railway (and other hosts) can route external traffic to us.
+// Next.js still serves as normal; 'localhost' would only accept loopback connections.
+const hostname = '0.0.0.0';
 const port = process.env.PORT || 3000;
 
 // Add global error handlers
@@ -28,6 +30,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
     try {
+      // Health check endpoint — used by Railway, Render, and load balancers.
+      if (req.url === '/health') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'ok', uptime: process.uptime() }));
+        return;
+      }
       const parsedUrl = parse(req.url, true);
       handle(req, res, parsedUrl);
     } catch (error) {
@@ -37,14 +45,24 @@ app.prepare().then(() => {
     }
   });
 
+  // Allowed CORS origins for Socket.IO — covers both bare and www domain.
+  const allowedOrigins = dev
+    ? true  // allow all in dev
+    : [
+        process.env.NEXT_PUBLIC_APP_URL,
+        'https://fixtray.app',
+        'https://www.fixtray.app',
+      ].filter(Boolean);
+
   // Initialize Socket.IO with error handling
   let io;
   try {
     io = new Server(httpServer, {
       path: '/api/socket',
       cors: {
-        origin: dev ? '*' : process.env.NEXT_PUBLIC_APP_URL,
+        origin: allowedOrigins,
         methods: ['GET', 'POST'],
+        credentials: true,
       },
     });
     console.log('Socket.IO server initialized successfully');
@@ -53,8 +71,8 @@ app.prepare().then(() => {
     // Continue without Socket.IO if it fails
   }
 
-  // Authentication middleware
-  io.use((socket, next) => {
+  // Authentication middleware — only attach if Socket.IO initialized successfully.
+  if (io) io.use((socket, next) => {
     try {
       const token = socket.handshake.auth.token;
       if (!token) {
@@ -75,7 +93,7 @@ app.prepare().then(() => {
   });
 
   // Socket connection handling
-  if (io) {
+  if (io) {  // eslint-disable-line — outer if(io) already checked above
     io.on('connection', (socket) => {
       try {
         console.log(`User ${socket.username} (${socket.role}) connected:`, socket.id);
