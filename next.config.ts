@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import withPWA from "next-pwa";
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const nextConfig: NextConfig = {
@@ -39,7 +40,14 @@ const nextConfig: NextConfig = {
   // Note: custom webpack function removed to avoid Turbopack/webpack detection
 };
 
-export default withSentryConfig(nextConfig, {
+const pwaConfig = withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+});
+
+export default withSentryConfig(withPWA(nextConfig, pwaConfig), {
   org: "fixtray",
   project: "javascript-nextjs",
   silent: !process.env.CI,
