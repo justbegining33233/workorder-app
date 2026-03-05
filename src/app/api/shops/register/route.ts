@@ -1,6 +1,7 @@
-﻿import { NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
+import { requireRole } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
@@ -117,7 +118,10 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['admin', 'superadmin']);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const allShops = await prisma.shop.findMany({
       where: {

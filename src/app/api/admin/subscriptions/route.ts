@@ -6,11 +6,6 @@ export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
-  // Only super admins can access subscription details
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-  }
-
   try {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);

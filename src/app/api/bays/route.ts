@@ -8,8 +8,13 @@ export async function GET(req: NextRequest) {
   const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
   if (!shopId) return NextResponse.json({ error: 'No shop context' }, { status: 400 });
 
-  const bays = await prisma.bay.findMany({ where: { shopId }, orderBy: { name: 'asc' } });
-  return NextResponse.json(bays);
+  try {
+    const bays = await prisma.bay.findMany({ where: { shopId }, orderBy: { name: 'asc' } });
+    return NextResponse.json(bays);
+  } catch (error) {
+    console.error('Error fetching bays:', error);
+    return NextResponse.json({ error: 'Failed to fetch bays' }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -18,9 +23,14 @@ export async function POST(req: NextRequest) {
   const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
   if (!shopId) return NextResponse.json({ error: 'No shop context' }, { status: 400 });
 
-  const body = await req.json();
-  const bay = await prisma.bay.create({
-    data: { shopId, name: body.name, type: body.type || 'general', status: 'empty' },
-  });
-  return NextResponse.json(bay, { status: 201 });
+  try {
+    const body = await req.json();
+    const bay = await prisma.bay.create({
+      data: { shopId, name: body.name, type: body.type || 'general', status: 'empty' },
+    });
+    return NextResponse.json(bay, { status: 201 });
+  } catch (error) {
+    console.error('Error creating bay:', error);
+    return NextResponse.json({ error: 'Failed to create bay' }, { status: 500 });
+  }
 }

@@ -7,8 +7,8 @@ import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Ensure status bar / nav bar sit ABOVE the WebView — do not overlap
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
         super.onCreate(savedInstanceState);
+        // After Capacitor initialises — push status/nav bars ABOVE the WebView
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
     }
 }

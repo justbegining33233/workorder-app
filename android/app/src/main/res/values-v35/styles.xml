@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Android 15+ (API 35) forces edge-to-edge — opt out so status bar doesn't overlap -->
+    <!-- Android 15 (API 35+): opt out of forced edge-to-edge so the status bar
+         sits ABOVE the WebView content, not overlapping it. -->
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -8,7 +9,6 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">#020608</item>
         <item name="android:navigationBarColor">#020608</item>
-        <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
 </resources>

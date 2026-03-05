@@ -7,11 +7,6 @@ export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
-  // Only super admins can access user management
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-  }
-
   try {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -431,10 +426,6 @@ export async function PUT(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-  }
-
   try {
     const { id, role, status, userType } = await request.json();
     
@@ -479,10 +470,6 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
-
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-  }
 
   try {
     const { id, userType } = await request.json();

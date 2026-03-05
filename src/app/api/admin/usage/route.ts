@@ -6,10 +6,6 @@ export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized — admin only' }, { status: 403 });
-  }
-
   try {
     const customerCount = await prisma.customer.count();
     const shopCount = await prisma.shop.count();

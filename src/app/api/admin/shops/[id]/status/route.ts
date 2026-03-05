@@ -9,10 +9,6 @@ export async function PATCH(
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-  }
-
   try {
     const { id } = await params;
     const { status } = await request.json();

@@ -7,11 +7,6 @@ export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
-  // Only super admins can access platform stats
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-  }
-
   try {
     // Get total shops (approved only)
     const totalShops = await prisma.shop.count({

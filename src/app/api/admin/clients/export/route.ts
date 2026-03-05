@@ -6,10 +6,6 @@ export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
-  if (auth.role !== 'admin') {
-    return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-  }
-
   try {
     // Get all shops with their subscriptions (these are your clients)
     const clients = await prisma.shop.findMany({

@@ -7,8 +7,13 @@ export async function GET(req: NextRequest) {
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
   if (!shopId) return NextResponse.json({ error: 'No shop' }, { status: 400 });
-  const rules = await prisma.automationRule.findMany({ where: { shopId }, include: { executions: { orderBy: { sentAt: 'desc' }, take: 5 } }, orderBy: { createdAt: 'desc' } });
-  return NextResponse.json(rules);
+  try {
+    const rules = await prisma.automationRule.findMany({ where: { shopId }, include: { executions: { orderBy: { sentAt: 'desc' }, take: 5 } }, orderBy: { createdAt: 'desc' } });
+    return NextResponse.json(rules);
+  } catch (error) {
+    console.error('Error fetching automations:', error);
+    return NextResponse.json({ error: 'Failed to fetch automations' }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -16,18 +21,23 @@ export async function POST(req: NextRequest) {
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
   if (!shopId) return NextResponse.json({ error: 'No shop' }, { status: 400 });
-  const body = await req.json();
-  const rule = await prisma.automationRule.create({
-    data: {
-      shopId,
-      name: body.name,
-      type: body.type,
-      trigger: body.trigger,
-      triggerValue: Number(body.triggerValue) || 0,
-      channel: body.channel || 'sms',
-      messageTemplate: body.messageTemplate,
-      active: body.active !== false,
-    },
-  });
-  return NextResponse.json(rule, { status: 201 });
+  try {
+    const body = await req.json();
+    const rule = await prisma.automationRule.create({
+      data: {
+        shopId,
+        name: body.name,
+        type: body.type,
+        trigger: body.trigger,
+        triggerValue: Number(body.triggerValue) || 0,
+        channel: body.channel || 'sms',
+        messageTemplate: body.messageTemplate,
+        active: body.active !== false,
+      },
+    });
+    return NextResponse.json(rule, { status: 201 });
+  } catch (error) {
+    console.error('Error creating automation:', error);
+    return NextResponse.json({ error: 'Failed to create automation' }, { status: 500 });
+  }
 }

@@ -6,18 +6,12 @@ import { getSettings, updateSettings, resetSettings } from '@/lib/platform-setti
 export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
-  if ((auth as AuthUser).role !== 'admin') {
-    return NextResponse.json({ error: 'Admin only' }, { status: 403 });
-  }
   return NextResponse.json({ settings: getSettings() });
 }
 
 export async function PUT(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
-  if ((auth as AuthUser).role !== 'admin') {
-    return NextResponse.json({ error: 'Admin only' }, { status: 403 });
-  }
   try {
     const body = await request.json();
     const settings = updateSettings(body);
@@ -30,9 +24,6 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
-  if ((auth as AuthUser).role !== 'admin') {
-    return NextResponse.json({ error: 'Admin only' }, { status: 403 });
-  }
   const settings = resetSettings();
   return NextResponse.json({ settings, message: 'Settings reset to defaults' });
 }
