@@ -1,6 +1,8 @@
 import "./globals.css";
 import { Metadata, Viewport } from "next";
 import ClientAuthProvider from '@/components/ClientAuthProvider';
+import OfflineBanner from '@/components/OfflineBanner';
+import FloatingSignOut from '@/components/FloatingSignOut';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +36,8 @@ export default function RootLayout({
       <body>
         <ClientAuthProvider>
           {children}
+          <OfflineBanner />
+          <FloatingSignOut />
         </ClientAuthProvider>
       </body>
     </html>

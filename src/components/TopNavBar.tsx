@@ -599,24 +599,6 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               </div>
             )}
           </div>
-
-          <button
-            onClick={handleSignOut}
-            style={{
-              padding: '6px 12px',
-              background: '#e5332a',
-              border: 'none',
-              color: 'white',
-              borderRadius: 7,
-              cursor: 'pointer',
-              fontSize: 11,
-              fontWeight: 700,
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Sign Out
-          </button>
         </div>
       </div>
       </div>
