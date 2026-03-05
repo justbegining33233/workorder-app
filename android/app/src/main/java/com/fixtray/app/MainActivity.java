@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.view.WindowCompat;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.WebViewListener;
@@ -32,6 +33,21 @@ public class MainActivity extends BridgeActivity {
             ws.setLoadWithOverviewMode(false);
         }
 
+        // -- Handle back button: go back in WebView history if possible --
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                WebView wv = getBridge().getWebView();
+                if (wv != null && wv.canGoBack()) {
+                    wv.goBack();
+                } else {
+                    // Let the system handle it (exit app)
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
+
         // -- Inject CSS on every page load via Capacitor's proper API --
         getBridge().addWebViewListener(new WebViewListener() {
             @Override
@@ -45,19 +61,20 @@ public class MainActivity extends BridgeActivity {
         // 1. Inject a <style> tag with broad CSS overrides
         String css =
             "*{box-sizing:border-box!important}" +
-            "html,body{width:100%!important;max-width:100vw!important;overflow-x:hidden!important;margin:0!important;padding:0!important}" +
-            "body{min-height:100dvh!important;overflow-y:auto!important}" +
+            "html,body{width:100%!important;max-width:100vw!important;overflow-x:hidden!important;margin:0!important}" +
+            "body{min-height:100dvh!important;overflow-y:auto!important;" +
+              "padding:env(safe-area-inset-top,28px) 0 0 0!important}" +
             // Login page
             ".sos-content{grid-template-columns:1fr!important}" +
             ".sos-pane+.sos-pane{border-left:none!important;border-top:1px solid rgba(255,255,255,0.08)!important}" +
             ".sos-card{width:100%!important;max-width:100%!important;border-radius:0!important}" +
-            ".sos-wrap{padding:0!important}" +
+            ".sos-wrap{padding:env(safe-area-inset-top,28px) 0 0 0!important}" +
             ".sos-header{padding:12px 16px!important}" +
             ".sos-pane{padding:16px!important}" +
             ".sos-title{font-size:18px!important}" +
             ".sos-tabs{width:100%!important}.sos-tab{flex:1!important;text-align:center!important}" +
             ".sos-footer{flex-direction:column!important;padding:16px!important}" +
-            // Nav
+            // Nav - push down below status bar
             "nav{max-width:100vw!important;overflow:hidden!important}" +
             // Media elements
             "img,video,canvas,iframe,table,pre,svg{max-width:100%!important}";

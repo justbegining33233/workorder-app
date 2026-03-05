@@ -23,7 +23,9 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
   const [navMsg, setNavMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const [notifications, setNotifications] = useState<Array<{ id: string; title: string; body: string; time: string; read?: boolean; type?: string }>>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [notificationSoundEnabled, setNotificationSoundEnabled] = useState(true);
   const [notificationPreferences, setNotificationPreferences] = useState<Record<string, boolean>>({});
@@ -138,6 +140,9 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
+      }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setShowProfileMenu(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -498,63 +503,102 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, overflow: 'hidden' }}>
-          {getRoleBadge()}
-
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, overflow: 'hidden' }}>
           <NotificationButton />
 
-          {userRole === 'tech' || userRole === 'manager' ? (
+          {/* Profile / Menu dropdown */}
+          <div style={{ position: 'relative' }} ref={profileMenuRef}>
             <button
-              onClick={handleClockToggle}
-              disabled={loading}
+              onClick={() => setShowProfileMenu(prev => !prev)}
               style={{
-                padding: '6px 14px',
-                background: isClockedIn ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)',
-                border: isClockedIn ? '1px solid rgba(239,68,68,0.30)' : '1px solid rgba(34,197,94,0.30)',
-                color: isClockedIn ? '#f87171' : '#4ade80',
-                borderRadius: 7,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                fontSize: 12,
-                fontWeight: 600,
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 display: 'flex',
                 alignItems: 'center',
-                gap: 5,
-                opacity: loading ? 0.55 : 1,
-                whiteSpace: 'nowrap',
+                gap: 6,
+                padding: '6px 10px',
+                background: showProfileMenu ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#e5e7eb',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
               }}
             >
-              <span style={{ fontSize: 10 }}>{isClockedIn ? '◼' : '▶'}</span>
-              {isClockedIn ? 'Clock Out' : 'Clock In'}
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
+              <span style={{ fontSize: 14 }}>▾</span>
             </button>
-          ) : null}
 
-          <div
-            title={liveIndicator ? 'Connected' : 'Disconnected'}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.05)' }}
-          >
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
-            <span style={{ fontSize: 11, color: liveIndicator ? '#4ade80' : '#475569', fontWeight: 600 }}>{liveIndicator ? 'Live' : 'Offline'}</span>
+            {showProfileMenu && (
+              <div style={{
+                position: 'absolute',
+                right: 0,
+                marginTop: 8,
+                width: 200,
+                background: '#0f172a',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.35)',
+                borderRadius: 12,
+                overflow: 'hidden',
+                zIndex: 2000,
+              }}>
+                {/* Role badge */}
+                <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {getRoleBadge()}
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, color: liveIndicator ? '#4ade80' : '#475569', fontWeight: 600 }}>{liveIndicator ? 'Live' : 'Offline'}</span>
+                </div>
+
+                {/* Clock In/Out for tech/manager */}
+                {(userRole === 'tech' || userRole === 'manager') && (
+                  <button
+                    onClick={() => { handleClockToggle(); setShowProfileMenu(false); }}
+                    disabled={loading}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: '1px solid rgba(255,255,255,0.06)',
+                      color: isClockedIn ? '#f87171' : '#4ade80',
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      opacity: loading ? 0.55 : 1,
+                    }}
+                  >
+                    <span style={{ fontSize: 11 }}>{isClockedIn ? '◼' : '▶'}</span>
+                    {isClockedIn ? 'Clock Out' : 'Clock In'}
+                  </button>
+                )}
+
+                {/* Sign Out */}
+                <button
+                  onClick={() => { handleSignOut(); setShowProfileMenu(false); }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#e5332a',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
+                >
+                  🚪 Sign Out
+                </button>
+              </div>
+            )}
           </div>
-
-          <button
-            onClick={handleSignOut}
-            style={{
-              padding: '6px 14px',
-              background: '#e5332a',
-              border: 'none',
-              color: 'white',
-              borderRadius: 7,
-              cursor: 'pointer',
-              fontSize: 12,
-              fontWeight: 700,
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              whiteSpace: 'nowrap',
-              letterSpacing: '0.01em',
-            }}
-          >
-            Sign Out
-          </button>
         </div>
       </div>
       </div>
