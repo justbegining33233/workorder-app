@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
   const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
   if (!shopId) return NextResponse.json({ error: 'No shop' }, { status: 400 });
 
+  try {
   const now = new Date();
   const unpaidOrders = await prisma.workOrder.findMany({
     where: {
@@ -49,4 +50,8 @@ export async function GET(req: NextRequest) {
       };
     }),
   });
+  } catch (err) {
+    console.error('ar-aging GET error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

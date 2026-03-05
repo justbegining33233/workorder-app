@@ -9,15 +9,20 @@ export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['shop']);
   if (auth instanceof NextResponse) return auth;
 
-  const prisma = (await import('@/lib/prisma')).default;
-  const shop = await prisma.shop.findUnique({
-    where: { id: auth.id },
-    select: { twoFactorEnabled: true },
-  });
+  try {
+    const prisma = (await import('@/lib/prisma')).default;
+    const shop = await prisma.shop.findUnique({
+      where: { id: auth.id },
+      select: { twoFactorEnabled: true },
+    });
 
-  return NextResponse.json({
-    enabled: shop?.twoFactorEnabled ?? false,
-    userId: auth.id,
-    role: auth.role,
-  });
+    return NextResponse.json({
+      enabled: shop?.twoFactorEnabled ?? false,
+      userId: auth.id,
+      role: auth.role,
+    });
+  } catch (err) {
+    console.error('2fa/status GET error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }
