@@ -1,13 +1,18 @@
 @echo off
-set JAVA_HOME=C:\Program Files\Android\Android Studio\jbr
-set PATH=%JAVA_HOME%\bin;%PATH%
+setlocal
+set "JAVA_HOME=C:\Program Files\Android\Android Studio\jbr"
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+set "ANDROID_HOME=%LOCALAPPDATA%\Android\Sdk"
+set "GRADLE_OPTS=-Dorg.gradle.daemon=false"
 echo Building FixTray APK...
-call gradlew.bat assembleDebug --no-daemon
-if %ERRORLEVEL% EQU 0 (
-    echo.
+cmd /c "%~dp0gradlew.bat assembleDebug --no-daemon --console=plain -Dorg.gradle.daemon=false"
+set BUILD_RESULT=%ERRORLEVEL%
+echo.
+if %BUILD_RESULT% EQU 0 (
     echo BUILD SUCCESSFUL
-    echo APK location: app\build\outputs\apk\debug\app-debug.apk
+    echo APK: %~dp0app\build\outputs\apk\debug\app-debug.apk
 ) else (
-    echo.
-    echo BUILD FAILED - check errors above
+    echo BUILD FAILED
 )
+endlocal
+exit /b %BUILD_RESULT%
