@@ -13,6 +13,11 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- Prevent WebView from rendering behind the status bar -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">#020608</item>
+        <item name="android:navigationBarColor">#020608</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
 
