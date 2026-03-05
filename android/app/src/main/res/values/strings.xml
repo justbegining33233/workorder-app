@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FixTray</string>
+    <string name="title_activity_main">FixTray</string>
+    <string name="package_name">com.fixtray.app</string>
+    <string name="custom_url_scheme">com.fixtray.app</string>
+</resources>

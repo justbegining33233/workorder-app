@@ -18,6 +18,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0",
+    "@capacitor/ios": "^8.1.0",
     "@prisma/client": "^5.22.0",
     "@sentry/nextjs": "^10.42.0",
     "@types/bcrypt": "^6.0.0",
