@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import OilSlickCanvas from "@/components/OilSlickCanvas";
 
 const navLinks = [
   { href: "#features", label: "Features" },
@@ -16,30 +17,39 @@ interface MarketingShellProps {
 
 export default function MarketingShell({ children }: MarketingShellProps) {
   const pageStyle: React.CSSProperties = {
-    background:
-      "radial-gradient(circle at 15% 10%, rgba(56,189,248,0.22), transparent 40%), radial-gradient(circle at 85% 5%, rgba(244,114,182,0.2), transparent 45%), radial-gradient(circle at 70% 90%, rgba(34,211,238,0.18), transparent 50%), linear-gradient(180deg, #070B14 0%, #0F172A 50%, #111827 100%)",
-    fontFamily: '"Sora", "Plus Jakarta Sans", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif'
+    background: "#020608",
+    fontFamily: '"Plus Jakarta Sans", "Inter", system-ui, sans-serif',
+    position: "relative",
   };
 
   return (
     <div className="min-h-screen text-slate-100" style={pageStyle}>
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute top-24 right-[-10%] h-96 w-96 rounded-full bg-fuchsia-500/10 blur-3xl" />
-      </div>
+      <OilSlickCanvas />
 
-      <header className="relative z-10 border-b border-slate-800/70 bg-slate-950/60 backdrop-blur">
+      <header
+        className="relative border-b backdrop-blur"
+        style={{
+          zIndex: 10,
+          borderColor: "rgba(255,255,255,0.07)",
+          background: "rgba(8, 13, 26, 0.82)",
+        }}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 via-indigo-500 to-pink-500 text-white shadow-lg shadow-cyan-500/30">
-              <span className="text-xs font-bold">FT</span>
-            </div>
-            <div>
-              <p className="text-base font-semibold text-slate-100 tracking-wide">FixTray</p>
-            </div>
+          <Link href="/" className="flex items-center gap-2">
+            <span
+              style={{
+                fontWeight: 800,
+                fontSize: 20,
+                letterSpacing: "-0.5px",
+                color: "#e5332a",
+                fontFamily: '"Plus Jakarta Sans", "Inter", system-ui, sans-serif',
+              }}
+            >
+              FixTray
+            </span>
           </Link>
 
-          <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
+          <nav className="hidden items-center gap-6 text-sm md:flex" style={{ color: "#94a3b8" }}>
             {navLinks.map((item) => (
               <Link key={item.href} href={item.href} className="transition hover:text-white">
                 {item.label}
@@ -48,12 +58,21 @@ export default function MarketingShell({ children }: MarketingShellProps) {
           </nav>
 
           <div className="flex items-center gap-3 text-sm">
-            <Link href="/auth/login" className="text-slate-300 transition hover:text-white">
+            <Link href="/auth/login" style={{ color: "#94a3b8" }} className="transition hover:text-white">
               Log in
             </Link>
             <Link
               href="/auth/login"
-              className="rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/30 transition hover:opacity-90"
+              className="transition"
+              style={{
+                background: "#e5332a",
+                color: "#fff",
+                borderRadius: 9,
+                padding: "8px 18px",
+                fontWeight: 700,
+                fontSize: 13,
+                boxShadow: "0 2px 10px rgba(229,51,42,0.35)",
+              }}
             >
               Get started
             </Link>
@@ -61,43 +80,50 @@ export default function MarketingShell({ children }: MarketingShellProps) {
         </div>
       </header>
 
-      <main className="relative z-10">
+      <main className="relative" style={{ zIndex: 1 }}>
         {children}
       </main>
 
-      <footer className="relative z-10 border-t border-slate-800/70 bg-slate-950/70">
+      <footer
+        className="relative border-t"
+        style={{
+          zIndex: 1,
+          borderColor: "rgba(255,255,255,0.07)",
+          background: "rgba(8, 13, 26, 0.82)",
+        }}
+      >
         <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 text-center md:grid-cols-4 md:text-left">
           <div>
-            <p className="text-lg font-semibold">FixTray</p>
-            <p className="mt-3 text-sm text-slate-400">
+            <p style={{ fontWeight: 800, color: "#e5332a", fontSize: 18 }}>FixTray</p>
+            <p className="mt-3 text-sm" style={{ color: "#94a3b8" }}>
               The command center for modern work orders, approvals, and customer-ready updates.
             </p>
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Product</p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-300">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Product</p>
+            <ul className="mt-4 space-y-2 text-sm" style={{ color: "#cbd5e1" }}>
               <li><Link href="/features" className="hover:text-white">Features</Link></li>
               <li><Link href="/pricing" className="hover:text-white">Pricing</Link></li>
               <li><Link href="/security" className="hover:text-white">Security</Link></li>
             </ul>
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Company</p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-300">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Company</p>
+            <ul className="mt-4 space-y-2 text-sm" style={{ color: "#cbd5e1" }}>
               <li><Link href="/about" className="hover:text-white">About</Link></li>
               <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
             </ul>
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Support</p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-300">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Support</p>
+            <ul className="mt-4 space-y-2 text-sm" style={{ color: "#cbd5e1" }}>
               <li><Link href="/auth/login" className="hover:text-white">Help Center</Link></li>
               <li><Link href="/auth/login" className="hover:text-white">Book a demo</Link></li>
             </ul>
           </div>
         </div>
-        <div className="border-t border-slate-800/70">
-          <div className="marketing-shift mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-4 px-6 py-6 text-center text-xs text-slate-500">
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-4 px-6 py-6 text-center text-xs" style={{ color: "#64748b" }}>
             <span>© 2026 FixTray. All rights reserved.</span>
             <span>Built for multi-shop operations and modern service teams.</span>
           </div>
