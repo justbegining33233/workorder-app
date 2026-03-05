@@ -15,11 +15,11 @@
 /* body/html background is handled globally via globals.css */
 
 .sos-wrap {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   /* Canvas renders the oil-on-water effect — just need a dark fallback */
   background: #020608;
   position: relative;
