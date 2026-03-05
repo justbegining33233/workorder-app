@@ -11,6 +11,7 @@ import RealTimeWorkOrders from '@/components/RealTimeWorkOrders';
 import ShopBaysCard from '@/components/ShopBaysCard';
 import MobileLayout from '@/components/MobileLayout';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface Job {
   id: string;
@@ -52,6 +53,7 @@ type QuickAction = {
 export default function ShopHome() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth(['shop']);
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState({
@@ -427,7 +429,7 @@ export default function ShopHome() {
         </div>
 
         {/* Shop Stats */}
-        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))', gap:16, marginBottom:32}}>
+        <div style={{display:'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(180px, 1fr))', gap: isMobile ? 10 : 16, marginBottom: isMobile ? 16 : 32}}>
           <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Open Jobs</div>
             <div style={{fontSize:32, fontWeight:700, color:'#3b82f6'}}>{shopStats.openJobs}</div>
@@ -454,7 +456,7 @@ export default function ShopHome() {
           </div>
         </div>
 
-        <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:24, alignItems:'start'}}>
+        <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: isMobile ? 16 : 24, alignItems:'start'}}>
           {/* Main Column */}
           <div>
             {/* Tall Insight Card above today's schedule */}

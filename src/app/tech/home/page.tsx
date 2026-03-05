@@ -11,10 +11,12 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import RealTimeWorkOrders from '@/components/RealTimeWorkOrders';
 import MobileLayout from '@/components/MobileLayout';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function TechHome() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth(['tech']);
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [todayJobs, setTodayJobs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('job-creation');
@@ -244,7 +246,7 @@ export default function TechHome() {
       }
     >
         {/* Shop Stats */}
-        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:16, marginBottom:32}}>
+        <div style={{display:'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: isMobile ? 10 : 16, marginBottom:24}}>
           <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>My Open Jobs</div>
             <div style={{fontSize:32, fontWeight:700, color:'#3b82f6'}}>{todayJobs.length}</div>
@@ -263,7 +265,7 @@ export default function TechHome() {
           </div>
         </div>
 
-        <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:24}}>
+        <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: isMobile ? 16 : 24}}>
           {/* Left Column - Today's Tasks */}
           <div>
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
@@ -664,7 +666,7 @@ export default function TechHome() {
 
               {/* Tool Cards - Job Creation */}
               {activeTab === 'job-creation' && (
-                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
+                <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {jobCreationTools.map(tool => (
                     <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
                       <div style={{
@@ -697,7 +699,7 @@ export default function TechHome() {
 
               {/* Tool Cards - Job Management */}
               {activeTab === 'job-management' && (
-                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
+                <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {jobManagementTools.map(tool => (
                     <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
                       <div style={{
@@ -730,7 +732,7 @@ export default function TechHome() {
 
               {/* Tool Cards - Field Tools */}
               {activeTab === 'field-tools' && (
-                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
+                <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {fieldTools.map(tool => (
                     <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
                       <div style={{
@@ -770,7 +772,7 @@ export default function TechHome() {
 
               {/* Tool Cards - Resources */}
               {activeTab === 'resources' && (
-                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
+                <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {resourceTools.map(tool => (
                     <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
                       <div style={{
@@ -803,7 +805,7 @@ export default function TechHome() {
 
               {/* Tool Cards - Technical Tools */}
               {activeTab === 'technical' && (
-                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
+                <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {technicalTools.map(tool => (
                     <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
                       <div style={{

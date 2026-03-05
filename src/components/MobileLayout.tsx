@@ -38,11 +38,12 @@ export default function MobileLayout({
   if (isMobile) {
     return (
       <div style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         background: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         paddingBottom: '80px', // Space for mobile nav
+        paddingTop: 'env(safe-area-inset-top)',
       }}>
         {/* Mobile Header */}
         {topNavContent && (

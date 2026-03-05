@@ -8,11 +8,13 @@ import MessagingCard from '@/components/MessagingCard';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ManagerHome() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth(['manager']);
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
@@ -269,7 +271,7 @@ export default function ManagerHome() {
             </div>
           ) : !user ? null : (
             <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
-              <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:24}}>
+              <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: isMobile ? 16 : 24}}>
                 {/* Left Column */}
                 <div style={{display:'grid', gap:24}}>
                   {/* Urgent Alerts */}
