@@ -166,6 +166,35 @@ export default function MobileNav({ role }: MobileNavProps) {
             );
           })}
         </div>
+
+        {/* Sign Out */}
+        <button
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('token');
+              localStorage.removeItem('userRole');
+              localStorage.removeItem('userName');
+              localStorage.removeItem('shopId');
+              localStorage.removeItem('userId');
+              window.location.href = '/auth/login';
+            }
+          }}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            width: '100%',
+            marginTop: 12,
+            padding: '12px 0',
+            background: 'rgba(229,51,42,0.10)',
+            border: '1px solid rgba(229,51,42,0.25)',
+            borderRadius: 12,
+            color: '#e5332a',
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          🚪 Sign Out
+        </button>
       </div>
 
       {/* Bottom nav bar */}
