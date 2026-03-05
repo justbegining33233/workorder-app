@@ -39,11 +39,13 @@ export default function MobileLayout({
     return (
       <div style={{
         minHeight: '100dvh',
+        height: '100dvh',
         background: 'transparent',
         display: 'flex',
         flexDirection: 'column',
-        paddingBottom: '80px', // Space for mobile nav
-        paddingTop: 'env(safe-area-inset-top)',
+        overflow: 'hidden',
+        width: '100%',
+        maxWidth: '100vw',
       }}>
         {/* Mobile Header */}
         {topNavContent && (
@@ -113,6 +115,9 @@ export default function MobileLayout({
           flex: 1,
           padding: '16px',
           overflowY: 'auto',
+          overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          paddingBottom: '80px',
         }}>
           {children}
         </div>

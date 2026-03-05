@@ -421,17 +421,19 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       position: 'sticky',
       top: 0,
       zIndex: 1000,
-      height: 52,
+      minHeight: 48,
       display: 'flex',
       alignItems: 'center',
       overflow: 'hidden',
       borderBottom: '1px solid rgba(255,255,255,0.07)',
+      width: '100%',
+      maxWidth: '100vw',
     }}>
       {/* Same oil-on-water canvas as the login page, clipped to nav height */}
       <OilSlickNavCanvas />
 
       {/* Nav content sits above the canvas */}
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', padding: '0 16px', display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', padding: '0 10px', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
       <div style={{
         maxWidth: 1400,
         margin: '0 auto',
@@ -439,7 +441,9 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 12,
+        gap: 8,
+        flexWrap: 'nowrap',
+        overflow: 'hidden',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {showMenuButton && (
@@ -475,7 +479,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
           </Link>
 
           {shopName && (
-            <div style={{
+            <div className="nav-shop-name" style={{
               padding: '3px 10px',
               background: 'rgba(255,255,255,0.05)',
               borderRadius: 6,
@@ -485,13 +489,16 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               border: '1px solid rgba(255,255,255,0.07)',
               whiteSpace: 'nowrap',
               letterSpacing: '0.02em',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: 120,
             }}>
               {shopName}
             </div>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, overflow: 'hidden' }}>
           {getRoleBadge()}
 
           <NotificationButton />

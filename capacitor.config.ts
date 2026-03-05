@@ -11,6 +11,7 @@ const config: CapacitorConfig = {
   },
   android: {
     allowMixedContent: false,
+    overrideUserAgent: 'FixTray-Android-App',
   },
   ios: {
     contentInset: 'automatic',
@@ -19,7 +20,7 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'dark',         // dark background = light icons in status bar
       backgroundColor: '#020608',
-      overlaysWebView: false, // keep status bar OUT of the web content area
+      overlaysWebView: false, // status bar sits ABOVE web content
     },
   },
 };
