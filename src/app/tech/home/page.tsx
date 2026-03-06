@@ -328,13 +328,13 @@ export default function TechHome() {
             </div>
 
             {/* Live Shop Location Map */}
-            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, marginTop:32, marginBottom:32, overflow:'hidden', minHeight:520, display:'flex', flexDirection:'column'}}>
+            <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, marginTop:32, marginBottom:32, overflow:'hidden', minHeight: isMobile ? 300 : 520, display:'flex', flexDirection:'column'}}>
               <h3 style={{color:'#e5e7eb', margin:'16px 0 0 16px', fontSize:16, fontWeight:700}}>📍 Shop Location</h3>
-              <div style={{flex:1, minHeight:260, display:'flex', flexDirection:'column'}}>
+              <div style={{flex:1, minHeight: isMobile ? 200 : 260, display:'flex', flexDirection:'column'}}>
                 {shopCoords ? (
-                  <div style={{display:'flex', flex:1}}>
+                  <div style={{display:'flex', flexDirection: isMobile ? 'column' : 'row', flex:1}}>
                     {/* Map area: 7/8 */}
-                    <div style={{flex:7, padding:16, display:'flex', flexDirection:'column'}}>
+                    <div style={{flex: isMobile ? 'none' : 7, padding: isMobile ? 8 : 16, display:'flex', flexDirection:'column', minHeight: isMobile ? 200 : 'auto'}}>
                       <div style={{flex:1, borderRadius:8, overflow:'hidden', display:'flex'}}>
                         <div style={{flex:1}}>
                           <TechLiveMap workOrderId="shop-location" initialLocation={shopCoords} techName={shopProfile?.shopName || 'Shop'} />
@@ -343,7 +343,7 @@ export default function TechHome() {
                     </div>
 
                     {/* Right-side menu: 1/8 - Road Call / Parts / User Location */}
-                    <div style={{flex:1, borderLeft:'1px solid rgba(255,255,255,0.05)', display:'flex', flexDirection:'column', padding:'12px 12px', gap:12}}>
+                    <div style={{flex: isMobile ? 'none' : 1, borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.05)', borderTop: isMobile ? '1px solid rgba(255,255,255,0.05)' : 'none', display:'flex', flexDirection:'column', padding:'12px', gap:12}}>
                       {/* Section 1: Road Call */}
                       <div style={{borderRadius:8, padding:12, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.03)'}}>
                         <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}>🚨 Road Call</div>
