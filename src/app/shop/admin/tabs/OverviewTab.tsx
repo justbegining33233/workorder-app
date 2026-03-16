@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { FaBox, FaUser, FaClipboardList, FaCog } from 'react-icons/fa';
 import MessagingCard from '@/components/MessagingCard';
 
 type TabName = 'overview' | 'settings' | 'payroll' | 'team' | 'inventory';
@@ -27,7 +28,7 @@ export default function OverviewTab({
   if (!shopStats) {
     return (
       <div style={{ textAlign: 'center', padding: 64, color: '#9aa3b2' }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>??</div>
+        <div style={{ fontSize: 48, marginBottom: 16 }}><FaCog /></div>
         <div style={{ fontSize: 18, marginBottom: 8 }}>Loading shop statistics...</div>
         <div style={{ fontSize: 14 }}>Please wait while we fetch your data</div>
       </div>
@@ -42,7 +43,7 @@ export default function OverviewTab({
           <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: 20, cursor: 'pointer' }}>
             <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Open Work Orders</div>
             <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6' }}>{shopStats.workOrders.open}</div>
-            <div style={{ fontSize: 11, color: '#3b82f6', marginTop: 4 }}>View All ?</div>
+            <div style={{ fontSize: 11, color: '#3b82f6', marginTop: 4 }}>View All <FaClipboardList style={{fontSize:13,verticalAlign:'middle'}}/></div>
           </div>
         </Link>
         <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20 }}>
@@ -84,7 +85,7 @@ export default function OverviewTab({
       <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24, marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ fontSize: 24 }}>??</div>
+            <div style={{ fontSize: 24 }}><FaBox /></div>
             <div>
               <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Current Inventory</h3>
               <div style={{ color: '#9aa3b2', fontSize: 13 }}>Parts and supplies in stock</div>
@@ -100,7 +101,7 @@ export default function OverviewTab({
 
         {inventoryStock.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>??</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }}><FaBox /></div>
             <div>No inventory items yet</div>
             <div style={{ fontSize: 13 }}>Click &quot;Add Inventory&quot; to start tracking parts and supplies</div>
           </div>
@@ -182,7 +183,7 @@ export default function OverviewTab({
                   onClick={() => setTab('inventory')}
                   style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 8, color: '#6366f1', fontSize: 13, cursor: 'pointer' }}
                 >
-                  View All {inventoryStock.length} Items ?
+                  View All {inventoryStock.length} Items <FaClipboardList style={{fontSize:13,verticalAlign:'middle'}}/>
                 </button>
               </div>
             )}

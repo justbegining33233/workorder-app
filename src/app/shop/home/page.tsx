@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { FaUser, FaBox, FaTools, FaCog, FaWrench, FaStore, FaClipboardList, FaChartBar, FaBoxes, FaIndustry, FaComments, FaBullhorn, FaGift, FaMapMarkerAlt, FaSyncAlt, FaLock, FaBuilding, FaListAlt, FaEdit, FaCalendarAlt, FaStar, FaCreditCard, FaPlug, FaPaintBrush, FaBolt, FaRoad, FaUserTie, FaReceipt, FaScroll, FaCodeBranch, FaDesktop, FaHeartbeat, FaShoppingCart } from 'react-icons/fa';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -145,7 +146,7 @@ export default function ShopHome() {
           setTeamMembers(members.map((m: any) => ({
             name: `${m.firstName} ${m.lastName}`,
             role: m.role,
-            avatar: '👤',
+            avatar: <FaUser />,
             status: m.available ? 'Active' : 'Offline',
             jobs: 0,
           })));
@@ -170,14 +171,14 @@ export default function ShopHome() {
     fetchDashboard();
   }, [user]);
   const quickActions: QuickAction[] = [
-    { label: '🧰 Parts', href: '/shop/parts-labor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' },
+    { label: <><FaBox style={{marginRight:6}}/>Parts</>, href: '/shop/parts-labor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' },
     {
       label:
         user?.role === 'manager'
-          ? '📊 Manager Panel'
+          ? <><FaChartBar style={{marginRight:6}}/>Manager Panel</>
           : user?.role === 'tech'
-          ? '🔧 Tech Panel'
-          : '⚙️ Shop Admin Panel',
+          ? <><FaWrench style={{marginRight:6}}/>Tech Panel</>
+          : <><FaCog style={{marginRight:6}}/>Shop Admin Panel</>,
       href:
         user?.role === 'manager'
           ? '/shop/manager'
@@ -206,14 +207,14 @@ export default function ShopHome() {
       requiresManagerOrAdmin: user?.role === 'manager',
       hideForAdmin: user?.role === 'tech',
     },
-    { label: '📦 Parts Orders', href: '/shop/purchase-orders', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
-    { label: '🛠️ Services', href: '/shop/services', tint: 'rgba(245,158,11,0.18)', color: '#f59e0b', border: 'rgba(245,158,11,0.28)' },
-    { label: '🏪 New In-Shop Job', href: '/shop/new-inshop-job', tint: 'rgba(229,51,42,0.18)', color: '#e5332a', border: 'rgba(229,51,42,0.28)' },
-    { label: '📋 WO Templates', href: '/shop/templates', tint: 'rgba(251,191,36,0.18)', color: '#fbbf24', border: 'rgba(251,191,36,0.28)' },
-    { label: '🏭 Vendors', href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
-    { label: '📍 Locations', href: '/shop/locations', tint: 'rgba(20,184,166,0.18)', color: '#14b8a6', border: 'rgba(20,184,166,0.28)' },
-    { label: '🔄 Recurring Orders', href: '/shop/recurring-workorders', tint: 'rgba(34,197,94,0.18)', color: '#22c55e', border: 'rgba(34,197,94,0.28)' },
-    { label: '🔐 Two-Factor Auth', href: '/shop/settings/two-factor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' }
+    { label: <><FaBox style={{marginRight:6}}/>Parts Orders</>, href: '/shop/purchase-orders', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
+    { label: <><FaTools style={{marginRight:6}}/>Services</>, href: '/shop/services', tint: 'rgba(245,158,11,0.18)', color: '#f59e0b', border: 'rgba(245,158,11,0.28)' },
+    { label: <><FaStore style={{marginRight:6}}/>New In-Shop Job</>, href: '/shop/new-inshop-job', tint: 'rgba(229,51,42,0.18)', color: '#e5332a', border: 'rgba(229,51,42,0.28)' },
+    { label: <><FaClipboardList style={{marginRight:6}}/>WO Templates</>, href: '/shop/templates', tint: 'rgba(251,191,36,0.18)', color: '#fbbf24', border: 'rgba(251,191,36,0.28)' },
+    { label: <><FaIndustry style={{marginRight:6}}/>Vendors</>, href: '/shop/vendors', tint: 'rgba(139,92,246,0.18)', color: '#8b5cf6', border: 'rgba(139,92,246,0.28)' },
+    { label: <><FaMapMarkerAlt style={{marginRight:6}}/>Locations</>, href: '/shop/locations', tint: 'rgba(20,184,166,0.18)', color: '#14b8a6', border: 'rgba(20,184,166,0.28)' },
+    { label: <><FaSyncAlt style={{marginRight:6}}/>Recurring Orders</>, href: '/shop/recurring-workorders', tint: 'rgba(34,197,94,0.18)', color: '#22c55e', border: 'rgba(34,197,94,0.28)' },
+    { label: <><FaLock style={{marginRight:6}}/>Two-Factor Auth</>, href: '/shop/settings/two-factor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' }
   ];
   const priorityStyles: Record<string, { bg: string; color: string }> = {
     High: { bg: 'rgba(229,51,42,0.2)', color: '#e5332a' },
