@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBook, FaCog, FaUniversity } from 'react-icons/fa';
 
 export default function TechManuals() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -26,7 +27,7 @@ export default function TechManuals() {
           <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Tools
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>📖 Service Manuals</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaBook style={{marginRight:4}} /> Service Manuals</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Access technical documentation, repair guides, and service procedures</p>
         </div>
       </div>
@@ -35,10 +36,10 @@ export default function TechManuals() {
         <h2 style={{fontSize:16, fontWeight:700, color:'#9aa3b2', marginBottom:12, textTransform:'uppercase', letterSpacing:1}}>Professional Services</h2>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:16, marginBottom:32}}>
           {[
-            { label: 'ALLDATA DIY', desc: 'Factory OEM repair info — wiring diagrams, torque specs, TSBs', icon: '📘', href: 'https://alldatadiy.com', badge: 'Most Complete' },
-            { label: 'Mitchell 1 ProDemand', desc: 'OEM + SureTrack real-fix repair procedures', icon: '🔵', href: 'https://mitchell1.com', badge: 'Industry Standard' },
-            { label: 'Identifix Direct-Hit', desc: 'Confirmed fixes, OEM recalls, and tech hotline', icon: '🎯', href: 'https://identifix.com', badge: 'Fixed-First-Time' },
-            { label: 'Autodata', desc: 'Timing, service intervals, labor times, wiring', icon: '⏱️', href: 'https://autodata-group.com', badge: '' },
+            { label: 'ALLDATA DIY', desc: 'Factory OEM repair info — wiring diagrams, torque specs, TSBs', icon: '<FaBook style={{marginRight:4}} />', href: 'https://alldatadiy.com', badge: 'Most Complete' },
+            { label: 'Mitchell 1 ProDemand', desc: 'OEM + SureTrack real-fix repair procedures', icon: '', href: 'https://mitchell1.com', badge: 'Industry Standard' },
+            { label: 'Identifix Direct-Hit', desc: 'Confirmed fixes, OEM recalls, and tech hotline', icon: '', href: 'https://identifix.com', badge: 'Fixed-First-Time' },
+            { label: 'Autodata', desc: 'Timing, service intervals, labor times, wiring', icon: '⏱', href: 'https://autodata-group.com', badge: '' },
           ].map(s => (
             <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
               style={{background:'rgba(0,0,0,0.35)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:20, textDecoration:'none', display:'block', position:'relative'}}>
@@ -54,12 +55,12 @@ export default function TechManuals() {
         <h2 style={{fontSize:16, fontWeight:700, color:'#9aa3b2', marginBottom:12, textTransform:'uppercase', letterSpacing:1}}>Free Resources</h2>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:16, marginBottom:32}}>
           {[
-            { label: 'NHTSA TSB Search', desc: 'Official Technical Service Bulletins by VIN or YMME', icon: '🏛️', href: 'https://www.nhtsa.gov/vehicle/latest/#/' },
-            { label: 'NHTSA Recall Search', desc: 'Check for open safety recalls by VIN', icon: '⚠️', href: 'https://www.nhtsa.gov/recalls' },
-            { label: 'iATN TechHelp', desc: 'Free peer-to-peer tech discussion forums', icon: '🤝', href: 'https://iatn.net' },
-            { label: 'YouTube – EricTheCarGuy', desc: 'Free visual repair walkthroughs', icon: '▶️', href: 'https://youtube.com/@EricTheCarGuy' },
-            { label: 'Gates Timing Guide', desc: 'Timing belt intervals & kits by vehicle', icon: '⚙️', href: 'https://www.gates.com/en-us/resources/tools-and-resources/timing-drive-component-kits' },
-            { label: 'FCA ServiceInfo (Mopar)', desc: 'Stellantis/Mopar factory service info', icon: '⭐', href: 'https://www.fcaserviceinfo.com' },
+            { label: 'NHTSA TSB Search', desc: 'Official Technical Service Bulletins by VIN or YMME', icon: '<FaUniversity style={{marginRight:4}} />', href: 'https://www.nhtsa.gov/vehicle/latest/#/' },
+            { label: 'NHTSA Recall Search', desc: 'Check for open safety recalls by VIN', icon: '', href: 'https://www.nhtsa.gov/recalls' },
+            { label: 'iATN TechHelp', desc: 'Free peer-to-peer tech discussion forums', icon: '', href: 'https://iatn.net' },
+            { label: 'YouTube – EricTheCarGuy', desc: 'Free visual repair walkthroughs', icon: '▶', href: 'https://youtube.com/@EricTheCarGuy' },
+            { label: 'Gates Timing Guide', desc: 'Timing belt intervals & kits by vehicle', icon: '', href: 'https://www.gates.com/en-us/resources/tools-and-resources/timing-drive-component-kits' },
+            { label: 'FCA ServiceInfo (Mopar)', desc: 'Stellantis/Mopar factory service info', icon: '', href: 'https://www.fcaserviceinfo.com' },
           ].map(r => (
             <a key={r.label} href={r.href} target="_blank" rel="noopener noreferrer"
               style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:20, textDecoration:'none', display:'block'}}>
@@ -73,7 +74,7 @@ export default function TechManuals() {
 
         {/* Torque spec quick ref */}
         <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-          <h2 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>🔩 Common Torque Specs Quick Reference</h2>
+          <h2 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaCog style={{marginRight:4}} /> Common Torque Specs Quick Reference</h2>
           <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:12}}>
             {[
               ['Lug Nuts (most passenger cars)', '80–100 ft-lb'],

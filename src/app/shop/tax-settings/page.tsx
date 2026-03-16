@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaBox, FaDollarSign, FaReceipt, FaWrench } from 'react-icons/fa';
 
 interface TaxRule {
   id: string;
@@ -81,7 +82,7 @@ export default function TaxSettingsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🧾 Tax Rules</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaReceipt style={{marginRight:4}} /> Tax Rules</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Configure tax rates for parts, labor, and fees</p>
         </div>
         <button onClick={() => setShowForm(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ Add Tax Rule</button>
@@ -91,7 +92,7 @@ export default function TaxSettingsPage() {
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           rules.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>🧾</div>
+              <div style={{ fontSize: 64 }}><FaReceipt style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No tax rules configured</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Add your local tax rates to automatically apply taxes to invoices</div>
               <button onClick={() => setShowForm(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Add First Tax Rule</button>
@@ -109,7 +110,7 @@ export default function TaxSettingsPage() {
                       </div>
                       <div style={{ fontSize: 13, color: '#9ca3af', marginTop: 4 }}>
                         {rule.state && `${rule.state}${rule.county ? ` · ${rule.county}` : ''} · `}
-                        {rule.appliesToParts && '📦 Parts '}{rule.appliesToLabor && '🔧 Labor '}{rule.appliesToFees && '💲 Fees'}
+                        {rule.appliesToParts && '<FaBox style={{marginRight:4}} /> Parts '}{rule.appliesToLabor && '<FaWrench style={{marginRight:4}} /> Labor '}{rule.appliesToFees && '<FaDollarSign style={{marginRight:4}} /> Fees'}
                       </div>
                     </div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: '#60a5fa' }}>{rule.rate}%</div>
@@ -157,7 +158,7 @@ export default function TaxSettingsPage() {
 
             <div style={{ marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
               <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 4 }}>Applies To</label>
-              {[['appliesToParts', '📦 Parts'], ['appliesToLabor', '🔧 Labor'], ['appliesToFees', '💲 Environmental Fees']].map(([k, label]) => (
+              {[['appliesToParts', ' Parts'], ['appliesToLabor', ' Labor'], ['appliesToFees', ' Environmental Fees']].map(([k, label]) => (
                 <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 14 }}>
                   <input type="checkbox" checked={(form as any)[k]} onChange={e => setForm(p => ({ ...p, [k]: e.target.checked }))} />
                   {label}
@@ -195,7 +196,7 @@ export default function TaxSettingsPage() {
               </div>
             </div>
             <div style={{ marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {[['appliesToParts', '📦 Parts'], ['appliesToLabor', '🔧 Labor'], ['appliesToFees', '💲 Environmental Fees']].map(([k, label]) => (
+              {[['appliesToParts', ' Parts'], ['appliesToLabor', ' Labor'], ['appliesToFees', ' Environmental Fees']].map(([k, label]) => (
                 <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 14 }}>
                   <input type="checkbox" checked={(editRule as any)[k]} onChange={e => setEditRule(p => p ? { ...p, [k]: e.target.checked } : p)} />
                   {label}

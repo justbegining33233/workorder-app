@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaBriefcase, FaCalendarAlt, FaCar, FaChartBar, FaCog, FaCreditCard, FaEnvelope, FaMobileAlt, FaPlug, FaWrench } from 'react-icons/fa';
 
 interface IntegrationConfig {
   id: string;
@@ -11,14 +12,14 @@ interface IntegrationConfig {
 }
 
 const PROVIDERS = [
-  { key: 'quickbooks', name: 'QuickBooks Online', icon: '📊', description: 'Sync invoices, payments, and customers bidirectionally', color: '#2CA01C', fields: [{ k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', type: 'password' }, { k: 'realmId', label: 'Realm ID' }] },
-  { key: 'xero', name: 'Xero', icon: '💼', description: 'Export invoices and contacts to Xero accounting', color: '#1AB4D7', fields: [{ k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', type: 'password' }] },
-  { key: 'google_calendar', name: 'Google Calendar', icon: '📅', description: 'Sync appointments with Google Calendar', color: '#4285F4', fields: [{ k: 'calendarId', label: 'Calendar ID' }, { k: 'serviceAccountJson', label: 'Service Account JSON', type: 'password' }] },
-  { key: 'stripe', name: 'Stripe', icon: '💳', description: 'Accept online payments via Stripe', color: '#635BFF', fields: [{ k: 'publishableKey', label: 'Publishable Key' }, { k: 'secretKey', label: 'Secret Key', type: 'password' }, { k: 'webhookSecret', label: 'Webhook Secret', type: 'password' }] },
-  { key: 'twilio', name: 'Twilio', icon: '📱', description: 'Send SMS notifications and reminders', color: '#F22F46', fields: [{ k: 'accountSid', label: 'Account SID' }, { k: 'authToken', label: 'Auth Token', type: 'password' }, { k: 'fromNumber', label: 'From Number' }] },
-  { key: 'sendgrid', name: 'SendGrid', icon: '📧', description: 'Send transactional emails and campaigns', color: '#1A82E2', fields: [{ k: 'apiKey', label: 'API Key', type: 'password' }, { k: 'fromEmail', label: 'From Email' }, { k: 'fromName', label: 'From Name' }] },
-  { key: 'carfax', name: 'CARFAX', icon: '🚗', description: 'Pull vehicle history reports automatically', color: '#E31837', fields: [{ k: 'dealerCode', label: 'Dealer Code' }, { k: 'username', label: 'Username' }, { k: 'password', label: 'Password', type: 'password' }] },
-  { key: 'alldata', name: 'ALLDATA', icon: '🔧', description: 'Access repair procedures and labor times', color: '#FF6600', fields: [{ k: 'username', label: 'Username' }, { k: 'password', label: 'Password', type: 'password' }] },
+  { key: 'quickbooks', name: 'QuickBooks Online', icon: '<FaChartBar style={{marginRight:4}} />', description: 'Sync invoices, payments, and customers bidirectionally', color: '#2CA01C', fields: [{ k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', type: 'password' }, { k: 'realmId', label: 'Realm ID' }] },
+  { key: 'xero', name: 'Xero', icon: '<FaBriefcase style={{marginRight:4}} />', description: 'Export invoices and contacts to Xero accounting', color: '#1AB4D7', fields: [{ k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', type: 'password' }] },
+  { key: 'google_calendar', name: 'Google Calendar', icon: '<FaCalendarAlt style={{marginRight:4}} />', description: 'Sync appointments with Google Calendar', color: '#4285F4', fields: [{ k: 'calendarId', label: 'Calendar ID' }, { k: 'serviceAccountJson', label: 'Service Account JSON', type: 'password' }] },
+  { key: 'stripe', name: 'Stripe', icon: '<FaCreditCard style={{marginRight:4}} />', description: 'Accept online payments via Stripe', color: '#635BFF', fields: [{ k: 'publishableKey', label: 'Publishable Key' }, { k: 'secretKey', label: 'Secret Key', type: 'password' }, { k: 'webhookSecret', label: 'Webhook Secret', type: 'password' }] },
+  { key: 'twilio', name: 'Twilio', icon: '<FaMobileAlt style={{marginRight:4}} />', description: 'Send SMS notifications and reminders', color: '#F22F46', fields: [{ k: 'accountSid', label: 'Account SID' }, { k: 'authToken', label: 'Auth Token', type: 'password' }, { k: 'fromNumber', label: 'From Number' }] },
+  { key: 'sendgrid', name: 'SendGrid', icon: '<FaEnvelope style={{marginRight:4}} />', description: 'Send transactional emails and campaigns', color: '#1A82E2', fields: [{ k: 'apiKey', label: 'API Key', type: 'password' }, { k: 'fromEmail', label: 'From Email' }, { k: 'fromName', label: 'From Name' }] },
+  { key: 'carfax', name: 'CARFAX', icon: '<FaCar style={{marginRight:4}} />', description: 'Pull vehicle history reports automatically', color: '#E31837', fields: [{ k: 'dealerCode', label: 'Dealer Code' }, { k: 'username', label: 'Username' }, { k: 'password', label: 'Password', type: 'password' }] },
+  { key: 'alldata', name: 'ALLDATA', icon: '<FaWrench style={{marginRight:4}} />', description: 'Access repair procedures and labor times', color: '#FF6600', fields: [{ k: 'username', label: 'Username' }, { k: 'password', label: 'Password', type: 'password' }] },
 ];
 
 export default function IntegrationsPage() {
@@ -79,7 +80,7 @@ export default function IntegrationsPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🔌 Integrations</h1>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaPlug style={{marginRight:4}} /> Integrations</h1>
         <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Connect your shop with accounting, payments, communications, and data services</p>
       </div>
 
@@ -125,7 +126,7 @@ export default function IntegrationsPage() {
                     </div>
                   ) : (
                     <button onClick={() => openEdit(prov.key)} style={{ width: '100%', background: 'rgba(255,255,255,0.06)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: '8px 0', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-                      {config ? '⚙️ Configure' : '+ Connect'}
+                      {config ? '<FaCog style={{marginRight:4}} /> Configure' : '+ Connect'}
                     </button>
                   )}
                 </div>

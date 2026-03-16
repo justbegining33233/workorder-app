@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheckCircle, FaLock } from 'react-icons/fa';
 
 export default function SecuritySettings() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -35,7 +36,7 @@ export default function SecuritySettings() {
           <Link href="/admin/admin-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Admin Tools
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🔒 Security Settings</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaLock style={{marginRight:4}} /> Security Settings</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Manage security policies and permissions</p>
         </div>
       </div>
@@ -114,7 +115,7 @@ export default function SecuritySettings() {
             <div style={{display:'grid', gap:12}}>
               <div style={{padding:16, background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8}}>
                 <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:8}}>
-                  <span style={{fontSize:20}}>✅</span>
+                  <span style={{fontSize:20}}><FaCheckCircle style={{marginRight:4}} /></span>
                   <span style={{fontSize:14, fontWeight:600, color:'#22c55e'}}>All Systems Secure</span>
                 </div>
                 <div style={{fontSize:12, color:'#9aa3b2'}}>No security threats detected</div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaCheck, FaStore } from 'react-icons/fa';
 
 interface Shop {
   id: string;
@@ -71,7 +72,7 @@ export default function ShopSwitcher() {
           borderRadius: 8, padding: '6px 12px', cursor: 'pointer', color: '#e5e7eb', fontSize: 13,
         }}
       >
-        <span>🏪</span>
+        <span><FaStore style={{marginRight:4}} /></span>
         <span style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {current?.businessName || 'Switch Shop'}
         </span>
@@ -99,7 +100,7 @@ export default function ShopSwitcher() {
                 borderBottom: '1px solid #1e293b',
               }}
             >
-              {shop.id === currentShopId && <span style={{ color: '#22c55e' }}>✓</span>}
+              {shop.id === currentShopId && <span style={{ color: '#22c55e' }}><FaCheck style={{marginRight:4}} /></span>}
               <div>
                 <div style={{ fontWeight: shop.id === currentShopId ? 600 : 400 }}>{shop.businessName}</div>
                 <div style={{ color: '#6b7280', fontSize: 11 }}>{shop.email}</div>

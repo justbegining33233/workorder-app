@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaEnvelope, FaUsers } from 'react-icons/fa';
 
 type User = {
   id: string;
@@ -120,7 +121,7 @@ export default function UserManagement() {
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>👥 User Management</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaUsers style={{marginRight:4}} /> User Management</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Manage all platform users and roles</p>
         </div>
       </div>
@@ -190,7 +191,7 @@ export default function UserManagement() {
           </div>
         ) : filteredUsers.length === 0 ? (
           <div style={{textAlign:'center', padding:60, color:'#9aa3b2'}}>
-            <div style={{fontSize:48, marginBottom:16}}>👥</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaUsers style={{marginRight:4}} /></div>
             <div>No users found</div>
           </div>
         ) : (
@@ -208,9 +209,9 @@ export default function UserManagement() {
                       {user.status.toUpperCase()}
                     </span>
                   </div>
-                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>✉️ {user.email}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}><FaEnvelope style={{marginRight:4}} /> {user.email}</div>
                   {user.organization && (
-                    <div style={{fontSize:13, color:'#6b7280'}}>🏢 {user.organization}</div>
+                    <div style={{fontSize:13, color:'#6b7280'}}><FaBuilding style={{marginRight:4}} /> {user.organization}</div>
                   )}
                   <div style={{fontSize:12, color:'#6b7280', marginTop:8}}>
                     Joined: {user.joinedDate.toLocaleDateString()} • Last login: {getTimeAgo(user.lastLogin)}

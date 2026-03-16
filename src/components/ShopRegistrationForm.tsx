@@ -16,6 +16,7 @@ import {
 } from '../types/shop';
 import { SUBSCRIPTION_PLANS } from '../lib/subscription';
 import '../styles/sos-theme.css';
+import { FaSmile } from 'react-icons/fa';
 
 const MAX_SERVICES = 5;
 
@@ -812,7 +813,7 @@ export default function ShopRegistrationForm() {
                 </div>
 
                 <div style={{marginTop:16, padding:16, backgroundColor:'#f8fafc', borderRadius:8, border:'1px solid #e2e8f0'}}>
-                  <div style={{fontSize:14, fontWeight:600, color:'#1e293b', marginBottom:8}}>🎉 Free 7-Day Trial</div>
+                  <div style={{fontSize:14, fontWeight:600, color:'#1e293b', marginBottom:8}}><FaSmile style={{marginRight:4}} /> Free 7-Day Trial</div>
                   <div style={{fontSize:13, color:'#64748b'}}>
                     Your selected plan includes a 7-day free trial. You'll only be charged after the trial period ends.
                     Cancel anytime during the trial with no charges.

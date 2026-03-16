@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaChartBar, FaCheck, FaClipboardList, FaCog, FaDollarSign, FaEnvelope, FaLock, FaSave, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 
 export default function AdminTools() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -55,19 +56,19 @@ export default function AdminTools() {
   }
 
   const tools = [
-    { name: 'Manage Customers', description: 'View and manage all paying customers (shop owners)', icon: '👥', href: '/admin/manage-customers', color: '#22c55e' },
-    { name: 'Manage Tenants', description: 'Manage all tenant organizations and subscriptions', icon: '🏢', href: '/admin/manage-tenants', color: '#3b82f6' },
-    { name: 'Manage Shops', description: 'Manage all auto repair shops in the network', icon: '🏪', href: '/admin/manage-shops', color: '#22c55e' },
-    { name: 'Financial Reports', description: 'Revenue, payouts, and financial analytics', icon: '💰', href: '/admin/financial-reports', color: '#f59e0b' },
-    { name: 'User Management', description: 'Manage all platform users and roles', icon: '🔧', href: '/admin/user-management', color: '#a855f7' },
-    { name: 'Approved Shops', description: 'View all verified and active shop partners', icon: '✓', href: '/admin/accepted-shops', color: '#22c55e' },
+    { name: 'Manage Customers', description: 'View and manage all paying customers (shop owners)', icon: '<FaUsers style={{marginRight:4}} />', href: '/admin/manage-customers', color: '#22c55e' },
+    { name: 'Manage Tenants', description: 'Manage all tenant organizations and subscriptions', icon: '<FaBuilding style={{marginRight:4}} />', href: '/admin/manage-tenants', color: '#3b82f6' },
+    { name: 'Manage Shops', description: 'Manage all auto repair shops in the network', icon: '<FaStore style={{marginRight:4}} />', href: '/admin/manage-shops', color: '#22c55e' },
+    { name: 'Financial Reports', description: 'Revenue, payouts, and financial analytics', icon: '<FaDollarSign style={{marginRight:4}} />', href: '/admin/financial-reports', color: '#f59e0b' },
+    { name: 'User Management', description: 'Manage all platform users and roles', icon: '<FaWrench style={{marginRight:4}} />', href: '/admin/user-management', color: '#a855f7' },
+    { name: 'Approved Shops', description: 'View all verified and active shop partners', icon: '<FaCheck style={{marginRight:4}} />', href: '/admin/accepted-shops', color: '#22c55e' },
     { name: 'Pending Shops', description: 'Review and approve new shop applications', icon: '⏳', href: '/admin/pending-shops', color: '#e5332a' },
-    { name: 'Activity Logs', description: 'Complete system activity history', icon: '📋', href: '/admin/activity-logs', color: '#3b82f6' },
-    { name: 'System Settings', description: 'Configure platform settings and preferences', icon: '⚙️', href: '/admin/system-settings', color: '#6b7280' },
-    { name: 'Email Templates', description: 'Manage email notifications and templates', icon: '✉️', href: '/admin/email-templates', color: '#8b5cf6' },
-    { name: 'Platform Analytics', description: 'Detailed analytics and performance metrics', icon: '📊', href: '/admin/platform-analytics', color: '#f59e0b' },
-    { name: 'Security Settings', description: 'Manage security policies and permissions', icon: '🔒', href: '/admin/security-settings', color: '#e5332a' },
-    { name: 'Backup & Restore', description: 'Database backup and restore operations', icon: '💾', href: '/admin/backup-restore', color: '#3b82f6' },
+    { name: 'Activity Logs', description: 'Complete system activity history', icon: '<FaClipboardList style={{marginRight:4}} />', href: '/admin/activity-logs', color: '#3b82f6' },
+    { name: 'System Settings', description: 'Configure platform settings and preferences', icon: '<FaCog style={{marginRight:4}} />', href: '/admin/system-settings', color: '#6b7280' },
+    { name: 'Email Templates', description: 'Manage email notifications and templates', icon: '<FaEnvelope style={{marginRight:4}} />', href: '/admin/email-templates', color: '#8b5cf6' },
+    { name: 'Platform Analytics', description: 'Detailed analytics and performance metrics', icon: '<FaChartBar style={{marginRight:4}} />', href: '/admin/platform-analytics', color: '#f59e0b' },
+    { name: 'Security Settings', description: 'Manage security policies and permissions', icon: '<FaLock style={{marginRight:4}} />', href: '/admin/security-settings', color: '#e5332a' },
+    { name: 'Backup & Restore', description: 'Database backup and restore operations', icon: '<FaSave style={{marginRight:4}} />', href: '/admin/backup-restore', color: '#3b82f6' },
   ];
 
   return (
@@ -77,7 +78,7 @@ export default function AdminTools() {
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>⚙️ All Admin Tools</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaCog style={{marginRight:4}} /> All Admin Tools</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Complete admin control center and management tools</p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaUserTie, FaUsers, FaWrench } from 'react-icons/fa';
 
 interface TeamMember {
   id: string;
@@ -255,7 +256,7 @@ export default function ManageTeamPage() {
           <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
             {/* Page Header */}
             <div style={{marginBottom:24}}>
-              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>👥 Manage Team</h1>
+              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaUsers style={{marginRight:4}} /> Manage Team</h1>
               <p style={{fontSize:14, color:'#9aa3b2'}}>Add and manage your shop team members</p>
               <button 
                 onClick={() => setShowAddModal(true)}
@@ -270,7 +271,7 @@ export default function ManageTeamPage() {
         <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
           {teamMembers.length === 0 ? (
             <div style={{textAlign:'center', padding:40}}>
-              <div style={{fontSize:48, marginBottom:16}}>👥</div>
+              <div style={{fontSize:48, marginBottom:16}}><FaUsers style={{marginRight:4}} /></div>
               <h3 style={{fontSize:20, fontWeight:600, color:'#e5e7eb', marginBottom:8}}>No Team Members Yet</h3>
               <p style={{color:'#9aa3b2', marginBottom:20}}>Add technicians and managers to your team</p>
               <button 
@@ -287,7 +288,7 @@ export default function ManageTeamPage() {
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                     <div style={{flex:1}}>
                       <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:12}}>
-                        <span style={{fontSize:32}}>{member.role === 'tech' ? '🔧' : '👔'}</span>
+                        <span style={{fontSize:32}}>{member.role === 'tech' ? '<FaWrench style={{marginRight:4}} />' : '<FaUserTie style={{marginRight:4}} />'}</span>
                         <div>
                           <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{member.name}</h3>
                           <div style={{display:'flex', gap:8}}>
@@ -354,11 +355,11 @@ export default function ManageTeamPage() {
               <label style={{display:'block', fontSize:13, color:'#9aa3b2', marginBottom:8}}>Role *</label>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                 <button type="button" onClick={() => setNewMember({...newMember, role: 'tech'})} style={{padding:16, background:newMember.role === 'tech' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${newMember.role === 'tech' ? '#22c55e' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>🔧</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaWrench style={{marginRight:4}} /></div>
                   Technician
                 </button>
                 <button type="button" onClick={() => setNewMember({...newMember, role: 'manager'})} style={{padding:16, background:newMember.role === 'manager' ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${newMember.role === 'manager' ? '#3b82f6' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>👔</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaUserTie style={{marginRight:4}} /></div>
                   Manager
                 </button>
               </div>
@@ -410,11 +411,11 @@ export default function ManageTeamPage() {
               <label style={{display:'block', fontSize:13, color:'#9aa3b2', marginBottom:8}}>Role *</label>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                 <button type="button" onClick={() => setEditingMember({...editingMember, role: 'tech'})} style={{padding:16, background:editingMember.role === 'tech' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${editingMember.role === 'tech' ? '#22c55e' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>🔧</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaWrench style={{marginRight:4}} /></div>
                   Technician
                 </button>
                 <button type="button" onClick={() => setEditingMember({...editingMember, role: 'manager'})} style={{padding:16, background:editingMember.role === 'manager' ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${editingMember.role === 'manager' ? '#3b82f6' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>👔</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaUserTie style={{marginRight:4}} /></div>
                   Manager
                 </button>
               </div>

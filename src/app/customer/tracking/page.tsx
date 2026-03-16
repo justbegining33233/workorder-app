@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaClock, FaComments, FaMapMarkerAlt, FaPhone, FaStore, FaUser, FaWrench } from 'react-icons/fa';
 
 interface TrackingOrder {
   workOrderId: string;
@@ -202,28 +203,28 @@ export default function LiveTracking() {
 
                   {order.tech && (
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                      👨‍🔧 {order.tech.name}
+                      <FaUser style={{marginRight:4}} />‍<FaWrench style={{marginRight:4}} /> {order.tech.name}
                     </div>
                   )}
 
                   <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                    🏪 {order.shop.shopName}
+                    <FaStore style={{marginRight:4}} /> {order.shop.shopName}
                   </div>
 
                   {order.isInShop || order.location?.shopAddress ? (
                     <div style={{display:'flex', flexDirection:'column', gap:6}}>
                       <div style={{fontSize:14, color:'#9aa3b2'}}>
-                        📍 {order.shop.address || order.location?.shopAddress}
+                        <FaMapMarkerAlt style={{marginRight:4}} /> {order.shop.address || order.location?.shopAddress}
                       </div>
                       <div style={{fontSize:14, color:'#f59e0b', fontWeight:600}}>
-                        🕒 Service Time: {order.serviceTime ? new Date(order.serviceTime).toLocaleString() : (order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleString() : '')}
+                        <FaClock style={{marginRight:4}} /> Service Time: {order.serviceTime ? new Date(order.serviceTime).toLocaleString() : (order.estimatedArrival ? new Date(order.estimatedArrival).toLocaleString() : '')}
                       </div>
                     </div>
                   ) : (
                     <div style={{display:'flex', flexDirection:'column', gap:6}}>
                       {order.location && order.location.latitude !== undefined && order.location.longitude !== undefined ? (
                         <div style={{display:'flex', gap:12, alignItems:'center'}}>
-                          <div style={{fontSize:14, color:'#e5e7eb'}}>📍 Current Location: {order.location.latitude!.toFixed(4)}, {order.location.longitude!.toFixed(4)}</div>
+                          <div style={{fontSize:14, color:'#e5e7eb'}}><FaMapMarkerAlt style={{marginRight:4}} /> Current Location: {order.location.latitude!.toFixed(4)}, {order.location.longitude!.toFixed(4)}</div>
                           {order.location.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>⏰ ETA: {new Date(order.location.estimatedArrival).toLocaleTimeString()}</div>}
                         </div>
                       ) : (
@@ -262,7 +263,7 @@ export default function LiveTracking() {
                         textDecoration:'none',
                         textAlign:'center'
                       }}>
-                        📞 Call
+                        <FaPhone style={{marginRight:4}} /> Call
                       </a>
                     )}
                     <button onClick={() => openMessageModal(order)} style={{
@@ -276,7 +277,7 @@ export default function LiveTracking() {
                       fontWeight:600,
                       cursor:'pointer'
                     }}>
-                      💬 Message
+                      <FaComments style={{marginRight:4}} /> Message
                     </button>
                   </div>
                 </div>

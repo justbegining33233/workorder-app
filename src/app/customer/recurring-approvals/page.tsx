@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBell, FaCar, FaCheckCircle, FaMapMarkerAlt, FaRoad, FaStore } from 'react-icons/fa';
 
 interface Approval {
   id: string;
@@ -89,7 +90,7 @@ export default function RecurringApprovals() {
 
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 8 }}>
-          🔔 Services Awaiting Your Approval
+          <FaBell style={{marginRight:4}} /> Services Awaiting Your Approval
         </h1>
         <p style={{ color: '#9aa3b2', fontSize: 14, marginBottom: 32, lineHeight: 1.6 }}>
           Your shop has scheduled recurring services for you. Review each one — <strong style={{ color: '#e5e7eb' }}>no bay is reserved until you confirm.</strong> Skip it if you don&apos;t need it this time.
@@ -99,7 +100,7 @@ export default function RecurringApprovals() {
           <div style={{ textAlign: 'center', padding: 60, color: '#9aa3b2' }}>Loading...</div>
         ) : pending.length === 0 && resolved.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 60, background: 'rgba(0,0,0,0.2)', borderRadius: 16 }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }}><FaCheckCircle style={{marginRight:4}} /></div>
             <div style={{ fontSize: 18, fontWeight: 600, color: '#e5e7eb', marginBottom: 8 }}>All caught up!</div>
             <div style={{ color: '#9aa3b2', fontSize: 14 }}>No pending service confirmations right now.</div>
           </div>
@@ -116,13 +117,13 @@ export default function RecurringApprovals() {
                         <div style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>
                           {approval.service.replace(/^\[Recurring\] /, '')}
                         </div>
-                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 2 }}>🏪 {approval.shopName}</div>
+                        <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 2 }}><FaStore style={{marginRight:4}} /> {approval.shopName}</div>
                         {approval.shopAddress && (
-                          <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 2 }}>📍 {approval.shopAddress}</div>
+                          <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 2 }}><FaMapMarkerAlt style={{marginRight:4}} /> {approval.shopAddress}</div>
                         )}
-                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 2 }}>🚗 {approval.vehicle}</div>
+                        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 2 }}><FaCar style={{marginRight:4}} /> {approval.vehicle}</div>
                         {approval.serviceLocation === 'roadside' && (
-                          <div style={{ fontSize: 12, color: '#f59e0b' }}>🛣️ Roadside service</div>
+                          <div style={{ fontSize: 12, color: '#f59e0b' }}><FaRoad style={{marginRight:4}} /> Roadside service</div>
                         )}
                         <div style={{ fontSize: 11, color: '#6b7280', marginTop: 6 }}>Requested {formatDate(approval.createdAt)}</div>
                       </div>
@@ -153,7 +154,7 @@ export default function RecurringApprovals() {
                           transition: 'all 0.2s',
                         }}
                       >
-                        {acting === approval.id ? 'Processing...' : '✅ Yes, Schedule Me In'}
+                        {acting === approval.id ? 'Processing...' : '<FaCheckCircle style={{marginRight:4}} /> Yes, Schedule Me In'}
                       </button>
                       <button
                         onClick={() => respond(approval.id, 'skip')}
@@ -199,7 +200,7 @@ export default function RecurringApprovals() {
                         fontSize: 12,
                         fontWeight: 600,
                       }}>
-                        {done[approval.id] === 'confirmed' ? '✅ Scheduled' : '⏭ Skipped'}
+                        {done[approval.id] === 'confirmed' ? '<FaCheckCircle style={{marginRight:4}} /> Scheduled' : '⏭ Skipped'}
                       </span>
                     </div>
                   ))}

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';

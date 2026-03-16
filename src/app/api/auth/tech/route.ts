@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 // `prisma` and `bcrypt` are lazy-imported inside the handler to avoid build-time
 // evaluation issues (native binaries / environment differences).
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';

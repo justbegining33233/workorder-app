@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { FaBuilding, FaClock, FaCreditCard, FaBell, FaCog, FaSignOutAlt, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
+import { FaArrowRight, FaBell, FaBox, FaBuilding, FaCalendarAlt, FaCar, FaCheck, FaCheckCircle, FaClipboardList, FaClock, FaCog, FaComments, FaCreditCard, FaExclamationCircle, FaExclamationTriangle, FaLink, FaSignOutAlt, FaStar, FaTimes, FaTimesCircle, FaTrash, FaTruck, FaWrench } from 'react-icons/fa';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -1113,7 +1113,7 @@ function ShopSettingsPageContent() {
                   <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>Loading services...</div>
                 ) : services.length === 0 ? (
                   <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>
-                    <div style={{fontSize:48, marginBottom:16}}>🔧</div>
+                    <div style={{fontSize:48, marginBottom:16}}><FaWrench style={{marginRight:4}} /></div>
                     <p style={{marginBottom:16}}>No services configured</p>
                     <button 
                       onClick={() => setShowAddServiceModal(true)}
@@ -1153,7 +1153,7 @@ function ShopSettingsPageContent() {
                               }}
                             >
                               <div style={{display:'flex', alignItems:'center', gap:8, flex:1}}>
-                                <span style={{color:'#f59e0b', fontSize:16}}>★</span>
+                                <span style={{color:'#f59e0b', fontSize:16}}><FaStar style={{marginRight:4}} /></span>
                                 <div>
                                   <div style={{color:'#e5e7eb', fontSize:14, fontWeight:600}}>{service.serviceName}</div>
                                   {(service.price || service.duration) && (
@@ -1215,7 +1215,7 @@ function ShopSettingsPageContent() {
                                 }}
                               >
                                 <div style={{display:'flex', alignItems:'center', gap:8, flex:1}}>
-                                  <span style={{color:cat.color, fontSize:16}}>✓</span>
+                                  <span style={{color:cat.color, fontSize:16}}><FaCheck style={{marginRight:4}} /></span>
                                   <div>
                                     <div style={{color:'#e5e7eb', fontSize:14, fontWeight:600}}>{service.serviceName}</div>
                                     {(service.price || service.duration) && (
@@ -1271,7 +1271,7 @@ function ShopSettingsPageContent() {
                     alignItems: 'center'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <span style={{ fontSize: 20 }}>{paymentMessage.type === 'success' ? '✅' : '❌'}</span>
+                      <span style={{ fontSize: 20 }}>{paymentMessage.type === 'success' ? '<FaCheckCircle style={{marginRight:4}} />' : '<FaTimesCircle style={{marginRight:4}} />'}</span>
                       <span style={{ color: paymentMessage.type === 'success' ? '#22c55e' : '#ef4444', fontWeight: 500 }}>
                         {paymentMessage.text}
                       </span>
@@ -1334,7 +1334,7 @@ function ShopSettingsPageContent() {
                       </div>
                       {subscription?.cancelAtPeriodEnd && (
                         <div style={{color:'#f59e0b', fontSize:13, marginTop:8, display:'flex', alignItems:'center', gap:6}}>
-                          ⚠️ Cancels at end of billing period
+                          <FaExclamationTriangle style={{marginRight:4}} /> Cancels at end of billing period
                         </div>
                       )}
                     </div>
@@ -1357,7 +1357,7 @@ function ShopSettingsPageContent() {
                           gap:8
                         }}
                       >
-                        {billingLoading ? '...' : '💳 Manage Billing'}
+                        {billingLoading ? '...' : '<FaCreditCard style={{marginRight:4}} /> Manage Billing'}
                       </button>
                       <button
                         onClick={cancelSubscription}
@@ -1398,7 +1398,7 @@ function ShopSettingsPageContent() {
                           alignItems:'center',
                           gap:6
                         }}>
-                          ✓ {feature}
+                          <FaCheck style={{marginRight:4}} /> {feature}
                         </span>
                       ))}
                     </div>
@@ -1461,7 +1461,7 @@ function ShopSettingsPageContent() {
                           <div style={{marginBottom:16}}>
                             {plan.features.slice(0, 3).map((f, i) => (
                               <div key={i} style={{color:'#9aa3b2', fontSize:13, marginBottom:4, display:'flex', alignItems:'center', gap:6}}>
-                                <span style={{color:plan.color}}>✓</span> {f}
+                                <span style={{color:plan.color}}><FaCheck style={{marginRight:4}} /></span> {f}
                               </div>
                             ))}
                             {plan.features.length > 3 && (
@@ -1523,7 +1523,7 @@ function ShopSettingsPageContent() {
                         whiteSpace:'nowrap',
                       }}
                     >
-                      {connectLoading ? 'Loading...' : '🔗 Connect Stripe'}
+                      {connectLoading ? 'Loading...' : '<FaLink style={{marginRight:4}} /> Connect Stripe'}
                     </button>
                   </div>
                 </div>
@@ -1649,7 +1649,7 @@ function ShopSettingsPageContent() {
                 {/* Parts Notifications */}
                 <div style={{marginBottom:32}}>
                   <h3 style={{fontSize:16, fontWeight:600, color:'#f59e0b', marginBottom:16, display:'flex', alignItems:'center', gap:8}}>
-                    <span>📦</span> Parts & Inventory
+                    <span><FaBox style={{marginRight:4}} /></span> Parts & Inventory
                   </h3>
                   <div style={{display:'grid', gap:12}}>
                     <label style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:16, background:'rgba(255,255,255,0.05)', borderRadius:8, cursor:'pointer'}}>
@@ -1679,7 +1679,7 @@ function ShopSettingsPageContent() {
                 {/* Customer Work Orders */}
                 <div style={{marginBottom:32}}>
                   <h3 style={{fontSize:16, fontWeight:600, color:'#e5332a', marginBottom:16, display:'flex', alignItems:'center', gap:8}}>
-                    <span>🚨</span> Customer Work Orders
+                    <span><FaExclamationCircle style={{marginRight:4}} /></span> Customer Work Orders
                   </h3>
                   <div style={{display:'grid', gap:12}}>
                     <label style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:16, background:'rgba(255,255,255,0.05)', borderRadius:8, cursor:'pointer'}}>
@@ -1695,7 +1695,7 @@ function ShopSettingsPageContent() {
                 {/* Payment Notifications */}
                 <div style={{marginBottom:32}}>
                   <h3 style={{fontSize:16, fontWeight:600, color:'#22c55e', marginBottom:16, display:'flex', alignItems:'center', gap:8}}>
-                    <span>💳</span> Payments
+                    <span><FaCreditCard style={{marginRight:4}} /></span> Payments
                   </h3>
                   <div style={{display:'grid', gap:12}}>
                     <label style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:16, background:'rgba(255,255,255,0.05)', borderRadius:8, cursor:'pointer'}}>
@@ -1711,7 +1711,7 @@ function ShopSettingsPageContent() {
                 {/* Message Notifications */}
                 <div style={{marginBottom:32}}>
                   <h3 style={{fontSize:16, fontWeight:600, color:'#60a5fa', marginBottom:16, display:'flex', alignItems:'center', gap:8}}>
-                    <span>💬</span> Messages
+                    <span><FaComments style={{marginRight:4}} /></span> Messages
                   </h3>
                   <div style={{display:'grid', gap:12}}>
                     <label style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:16, background:'rgba(255,255,255,0.05)', borderRadius:8, cursor:'pointer'}}>
@@ -1727,7 +1727,7 @@ function ShopSettingsPageContent() {
                 {/* Work Order Status Updates */}
                 <div style={{marginBottom:32}}>
                   <h3 style={{fontSize:16, fontWeight:600, color:'#3b82f6', marginBottom:16, display:'flex', alignItems:'center', gap:8}}>
-                    <span>📋</span> Work Order Status Updates
+                    <span><FaClipboardList style={{marginRight:4}} /></span> Work Order Status Updates
                   </h3>
                   <div style={{display:'grid', gap:12}}>
                     <label style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:16, background:'rgba(255,255,255,0.05)', borderRadius:8, cursor:'pointer'}}>
@@ -1941,7 +1941,7 @@ function ShopSettingsPageContent() {
                   fontSize:12, 
                   fontWeight:600
                 }}>
-                  {selectedService.category === 'diesel' ? '🚛 Diesel / Heavy-Duty' : '🚗 Gas / Automotive'}
+                  {selectedService.category === 'diesel' ? '<FaTruck style={{marginRight:4}} /> Diesel / Heavy-Duty' : '<FaCar style={{marginRight:4}} /> Gas / Automotive'}
                 </span>
               </div>
               <button onClick={() => setShowEditServiceModal(false)} style={{background:'transparent', border:'none', color:'#9aa3b2', fontSize:24, cursor:'pointer', padding:0}}>×</button>
@@ -2008,7 +2008,7 @@ function ShopSettingsPageContent() {
       {settingsMsg && (
         <div style={{ position: 'fixed', bottom: 24, right: 24, background: settingsMsg.type === 'success' ? '#dcfce7' : '#fde8e8', color: settingsMsg.type === 'success' ? '#166534' : '#991b1b', border: `1px solid ${settingsMsg.type === 'success' ? '#86efac' : '#fca5a5'}`, borderRadius: 10, padding: '12px 20px', zIndex: 9999, fontWeight: 600, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxWidth: 420 }}>
           {settingsMsg.text}
-          <button onClick={() => setSettingsMsg(null)} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, color: settingsMsg.type === 'success' ? '#166534' : '#991b1b' }}>✕</button>
+          <button onClick={() => setSettingsMsg(null)} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, color: settingsMsg.type === 'success' ? '#166534' : '#991b1b' }}><FaTimes style={{marginRight:4}} /></button>
         </div>
       )}
 
@@ -2016,7 +2016,7 @@ function ShopSettingsPageContent() {
       {cancelSubConfirm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
           <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 440, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>💳</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}><FaCreditCard style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 20, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Cancel Subscription?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>Your subscription will be cancelled at the end of the current billing period. You will retain access until then.</p>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -2031,7 +2031,7 @@ function ShopSettingsPageContent() {
       {removeServiceConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
           <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}><FaTrash style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Remove Service?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This service will be removed from your shop catalog.</p>
             <div style={{ display: 'flex', gap: 12 }}>

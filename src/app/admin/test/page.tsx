@@ -1,4 +1,5 @@
 'use client';
+import { FaBolt, FaSave } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -94,7 +95,7 @@ export default function AdminTestPage() {
   const systemModules: SystemModule[] = [
     {
       name: 'Shop Management',
-      icon: '🏪',
+      icon: '',
       description: 'Registration, approvals, profiles, settings, services, labor rates',
       route: '/admin/manage-shops',
       features: [
@@ -109,7 +110,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Work Orders',
-      icon: '📋',
+      icon: '',
       description: 'Create, track, photos, invoices, payments, history',
       route: '/admin/dashboard',
       features: [
@@ -123,7 +124,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Customer Portal',
-      icon: '👤',
+      icon: '',
       description: 'Profiles, vehicles, payments, documents, favorites',
       features: [
         { name: 'Customer Registration', status: 'operational' },
@@ -137,7 +138,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Team Management',
-      icon: '👥',
+      icon: '',
       description: 'Technicians, roles, assignments, performance',
       features: [
         { name: 'Add Technicians', status: 'operational' },
@@ -161,7 +162,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Inventory',
-      icon: '📦',
+      icon: '',
       description: 'Stock list, low alerts, requests, management',
       features: [
         { name: 'Inventory List', status: 'operational' },
@@ -173,7 +174,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Messaging',
-      icon: '💬',
+      icon: '',
       description: 'Shop & customer chat, real-time, push notifications',
       features: [
         { name: 'Shop Messaging', status: 'operational' },
@@ -185,7 +186,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Notifications',
-      icon: '🔔',
+      icon: '',
       description: 'In-app, push, email, SMS alerts',
       features: [
         { name: 'In-App Notifications', status: 'operational' },
@@ -196,7 +197,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Appointments',
-      icon: '📅',
+      icon: '',
       description: 'Booking, slots, reminders, calendar',
       features: [
         { name: 'Book Appointment', status: 'operational' },
@@ -207,7 +208,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Reviews',
-      icon: '⭐',
+      icon: '',
       description: 'Submit, moderate, analytics',
       features: [
         { name: 'Submit Reviews', status: 'operational' },
@@ -217,7 +218,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Analytics',
-      icon: '📊',
+      icon: '',
       description: 'Work orders, platform, financial, usage, export',
       route: '/admin/platform-analytics',
       features: [
@@ -231,7 +232,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Subscriptions',
-      icon: '💳',
+      icon: '',
       description: 'Plans, updates, Stripe, coupons',
       route: '/admin/subscriptions',
       features: [
@@ -244,7 +245,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'User Management',
-      icon: '🔑',
+      icon: '',
       description: 'Users list, roles, sessions, activity, audit',
       route: '/admin/user-management',
       features: [
@@ -257,7 +258,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Security',
-      icon: '🛡️',
+      icon: '',
       description: 'CSRF, rate limiting, JWT, audit logs',
       route: '/admin/security-settings',
       features: [
@@ -270,7 +271,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'System',
-      icon: '⚙️',
+      icon: '',
       description: 'Health check, uploads, multi-tenant, backup',
       route: '/admin/system-settings',
       features: [
@@ -564,9 +565,9 @@ export default function AdminTestPage() {
                 {/* Services */}
                 <div className="space-y-2">
                   {[
-                    { key: 'api', label: 'API Server', icon: '⚡' },
-                    { key: 'database', label: 'Database', icon: '💾' },
-                    { key: 'auth', label: 'Auth Service', icon: '🔐' },
+                    { key: 'api', label: 'API Server', icon: '<FaBolt style={{marginRight:4}} />' },
+                    { key: 'database', label: 'Database', icon: '<FaSave style={{marginRight:4}} />' },
+                    { key: 'auth', label: 'Auth Service', icon: '' },
                   ].map((item) => (
                     <div 
                       key={item.key}
@@ -599,13 +600,13 @@ export default function AdminTestPage() {
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { href: '/admin/pending-shops', icon: '⏳', label: 'Pending', count: stats.pendingShops },
-                    { href: '/admin/user-management', icon: '👥', label: 'Users' },
-                    { href: '/admin/subscriptions', icon: '💳', label: 'Billing' },
-                    { href: '/admin/platform-analytics', icon: '📊', label: 'Analytics' },
-                    { href: '/admin/activity-logs', icon: '📝', label: 'Logs' },
-                    { href: '/admin/security-settings', icon: '🛡️', label: 'Security' },
-                    { href: '/admin/system-settings', icon: '⚙️', label: 'Settings' },
-                    { href: '/admin/activity-logs', icon: '📋', label: 'Audit' },
+                    { href: '/admin/user-management', icon: '', label: 'Users' },
+                    { href: '/admin/subscriptions', icon: '', label: 'Billing' },
+                    { href: '/admin/platform-analytics', icon: '', label: 'Analytics' },
+                    { href: '/admin/activity-logs', icon: '', label: 'Logs' },
+                    { href: '/admin/security-settings', icon: '', label: 'Security' },
+                    { href: '/admin/system-settings', icon: '', label: 'Settings' },
+                    { href: '/admin/activity-logs', icon: '', label: 'Audit' },
                   ].map((link, i) => (
                     <Link
                       key={i}

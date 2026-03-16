@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBell } from 'react-icons/fa';
 
 interface Notification {
   id: string;
@@ -67,7 +68,7 @@ export default function CustomerNotificationsPage() {
           <div style={{ textAlign: 'center', padding: 60, color: '#9ca3af' }}>Loading notifications...</div>
         ) : notifications.length === 0 ? (
           <div style={{ background: '#1e293b', borderRadius: 12, padding: 40, textAlign: 'center', border: '1px solid #334155' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🔔</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}><FaBell style={{marginRight:4}} /></div>
             <div style={{ color: '#6b7280' }}>No notifications yet</div>
           </div>
         ) : (

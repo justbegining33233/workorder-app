@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FaHome } from 'react-icons/fa';
 
 export default function Breadcrumbs() {
   const pathname = usePathname() || '';
@@ -78,7 +79,7 @@ export default function Breadcrumbs() {
           onMouseEnter={(e) => e.currentTarget.style.color = '#e5e7eb'}
           onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
         >
-          🏠 Home
+          <FaHome style={{marginRight:4}} /> Home
         </Link>
         
         {breadcrumbs.map((crumb, index) => {

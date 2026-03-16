@@ -1,4 +1,5 @@
 'use client';
+import { FaCheck, FaStar } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -194,7 +195,7 @@ export default function ManageShops() {
                       <div style={{fontSize:11, color:'#9aa3b2'}}>Revenue</div>
                     </div>
                     <div style={{textAlign:'center'}}>
-                      <div style={{fontSize:20, fontWeight:700, color:'#f59e0b'}}>{shop.rating > 0 ? `${shop.rating}★` : 'N/A'}</div>
+                      <div style={{fontSize:20, fontWeight:700, color:'#f59e0b'}}>{shop.rating > 0 ? `${shop.rating}<FaStar style={{marginRight:4}} />` : 'N/A'}</div>
                       <div style={{fontSize:11, color:'#9aa3b2'}}>{shop.reviewCount} reviews</div>
                     </div>
                     <div style={{textAlign:'center'}}>
@@ -246,7 +247,7 @@ export default function ManageShops() {
                         <button onClick={() => handleStatusChange(shop.id, 'approved')} disabled={actionLoading === shop.id} style={{
                           padding:'10px 20px', background:'#22c55e', color:'white', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', opacity: actionLoading === shop.id ? 0.6 : 1,
                         }}>
-                          {actionLoading === shop.id ? 'Updating...' : '✓ Approve'}
+                          {actionLoading === shop.id ? 'Updating...' : '<FaCheck style={{marginRight:4}} /> Approve'}
                         </button>
                       )}
                       {shop.status !== 'suspended' && (

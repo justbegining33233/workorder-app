@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaChartBar, FaChartLine, FaExclamationTriangle } from 'react-icons/fa';
 
 interface MarginData {
   days: number;
@@ -65,7 +66,7 @@ export default function ProfitMarginsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>💹 Profit Margins</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaChartLine style={{marginRight:4}} /> Profit Margins</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Per-job profitability analysis — identify your most and least profitable work</p>
         </div>
         <select value={days} onChange={e => setDays(Number(e.target.value))}
@@ -79,7 +80,7 @@ export default function ProfitMarginsPage() {
 
       {loading ? <div style={{ padding: 48, color: '#6b7280', textAlign: 'center' }}>Loading...</div> : marginError ? (
         <div style={{ padding: 48, textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}><FaExclamationTriangle style={{marginRight:4}} /></div>
           <div style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 8 }}>Unable to Load Data</div>
           <div style={{ color: '#9ca3af', fontSize: 14, marginBottom: 24 }}>{marginError}</div>
           <button onClick={load} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Retry</button>
@@ -91,11 +92,11 @@ export default function ProfitMarginsPage() {
           {/* Summary Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>
             {[
-              { label: 'Total Revenue', value: `$${data.totalRevenue.toFixed(2)}`, icon: '💰', color: '#60a5fa' },
-              { label: 'Total Cost', value: `$${data.totalCost.toFixed(2)}`, icon: '📦', color: '#f59e0b' },
-              { label: 'Gross Profit', value: `$${data.totalProfit.toFixed(2)}`, icon: '📈', color: '#22c55e' },
-              { label: 'Avg Margin', value: `${avg.toFixed(1)}%`, icon: '🎯', color: marginColor },
-              { label: 'Jobs Analyzed', value: String(data.workOrders.length), icon: '🔧', color: '#a78bfa' },
+              { label: 'Total Revenue', value: `$${data.totalRevenue.toFixed(2)}`, icon: '', color: '#60a5fa' },
+              { label: 'Total Cost', value: `$${data.totalCost.toFixed(2)}`, icon: '', color: '#f59e0b' },
+              { label: 'Gross Profit', value: `$${data.totalProfit.toFixed(2)}`, icon: '', color: '#22c55e' },
+              { label: 'Avg Margin', value: `${avg.toFixed(1)}%`, icon: '', color: marginColor },
+              { label: 'Jobs Analyzed', value: String(data.workOrders.length), icon: '', color: '#a78bfa' },
             ].map(c => (
               <div key={c.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px 20px' }}>
                 <div style={{ fontSize: 22 }}>{c.icon}</div>
@@ -116,7 +117,7 @@ export default function ProfitMarginsPage() {
 
           {sorted.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>📊</div>
+              <div style={{ fontSize: 64 }}><FaChartBar style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No data for this period</div>
               <div style={{ color: '#9ca3af' }}>Complete work orders with invoices to see profit margins</div>
             </div>

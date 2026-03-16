@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBell, FaBolt, FaCalendarAlt, FaCar, FaDollarSign, FaSyncAlt, FaTrash, FaUser } from 'react-icons/fa';
 
 interface RecurringSchedule {
   id: string;
@@ -174,7 +175,7 @@ export default function RecurringWorkOrders() {
             >
               ← Back
             </button>
-            <h1 className="text-2xl font-semibold">🔄 Recurring Work Orders</h1>
+            <h1 className="text-2xl font-semibold"><FaSyncAlt style={{marginRight:4}} /> Recurring Work Orders</h1>
           </div>
           <button
             onClick={() => setShowForm(true)}
@@ -354,7 +355,7 @@ export default function RecurringWorkOrders() {
           <div className="text-center py-16 text-slate-400">Loading schedules...</div>
         ) : schedules.length === 0 ? (
           <div className="text-center py-16">
-            <div className="text-5xl mb-4">🔄</div>
+            <div className="text-5xl mb-4"><FaSyncAlt style={{marginRight:4}} /></div>
             <div className="text-slate-300 font-medium text-lg mb-2">No recurring schedules yet</div>
             <div className="text-slate-500 text-sm mb-6">
               Set up recurring work orders for repeat services like oil changes, inspections, or maintenance.
@@ -390,17 +391,17 @@ export default function RecurringWorkOrders() {
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         s.requiresApproval ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
                       }`}>
-                        {s.requiresApproval ? '🔔 Needs approval' : '⚡ Auto-create'}
+                        {s.requiresApproval ? '<FaBell style={{marginRight:4}} /> Needs approval' : '<FaBolt style={{marginRight:4}} /> Auto-create'}
                       </span>
                     </div>
                     <div className="text-sm text-slate-400 mb-2">{s.issueDescription}</div>
                     <div className="flex flex-wrap gap-4 text-xs text-slate-500">
-                      <span>👤 {s.customer.firstName} {s.customer.lastName}</span>
+                      <span><FaUser style={{marginRight:4}} /> {s.customer.firstName} {s.customer.lastName}</span>
                       {s.vehicle && (
-                        <span>🚗 {s.vehicle.year} {s.vehicle.make} {s.vehicle.model}</span>
+                        <span><FaCar style={{marginRight:4}} /> {s.vehicle.year} {s.vehicle.make} {s.vehicle.model}</span>
                       )}
-                      {s.estimatedCost && <span>💰 ~${s.estimatedCost.toFixed(2)}</span>}
-                      <span>📅 Next: {formatDate(s.nextRunAt)}</span>
+                      {s.estimatedCost && <span><FaDollarSign style={{marginRight:4}} /> ~${s.estimatedCost.toFixed(2)}</span>}
+                      <span><FaCalendarAlt style={{marginRight:4}} /> Next: {formatDate(s.nextRunAt)}</span>
                       {s.lastRunAt && <span>⏱ Last ran: {formatDate(s.lastRunAt)}</span>}
                     </div>
                   </div>
@@ -434,7 +435,7 @@ export default function RecurringWorkOrders() {
       {deleteConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 420, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}><FaTrash style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Recurring Schedule?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This will not affect existing work orders.</p>
             <div style={{ display: 'flex', gap: 12 }}>

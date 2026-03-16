@@ -1,4 +1,5 @@
 'use client';
+import { FaTimes } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -276,7 +277,7 @@ export default function ShopCalendar() {
                 {new Date(selectedDate + 'T12:00:00').toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                 <span style={{fontSize:14, color:'#9aa3b2', fontWeight:400, marginLeft:12}}>{selectedEvents.length} event{selectedEvents.length !== 1 ? 's' : ''}</span>
               </h3>
-              <button onClick={() => setSelectedDate(null)} style={{background:'none', border:'none', color:'#9aa3b2', fontSize:18, cursor:'pointer'}}>✕</button>
+              <button onClick={() => setSelectedDate(null)} style={{background:'none', border:'none', color:'#9aa3b2', fontSize:18, cursor:'pointer'}}><FaTimes style={{marginRight:4}} /></button>
             </div>
             <div style={{display:'grid', gap:12}}>
               {selectedEvents.map(ev => (

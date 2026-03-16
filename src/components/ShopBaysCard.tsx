@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FaStore } from 'react-icons/fa';
 
 interface WorkOrder {
   id: string;
@@ -172,7 +173,7 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
         alignItems: "center"
       }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "#e5e7eb", margin: 0 }}>
-          🏪 Shop Bays
+          <FaStore style={{marginRight:4}} /> Shop Bays
         </h2>
         <span style={{ color: "#9ca3af", fontSize: 12 }}>
           {bays.filter(b => b.isOccupied).length} bays occupied

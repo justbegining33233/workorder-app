@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaCheckCircle, FaClipboardList, FaWrench } from 'react-icons/fa';
 
 const INSPECTION_TEMPLATE = [
   { category: 'Engine', itemName: 'Engine Oil Level & Condition' },
@@ -43,7 +44,7 @@ interface InspectionItem {
   estimatedCost: string;
 }
 
-const conditionLabel: Record<Condition, string> = { green: '🟢 OK', yellow: '🟡 Advisory', red: '🔴 Urgent' };
+const conditionLabel: Record<Condition, string> = { green: ' OK', yellow: ' Advisory', red: ' Urgent' };
 const conditionStyle: Record<Condition, { bg: string; border: string }> = {
   green: { bg: 'rgba(34,197,94,0.12)', border: '#22c55e40' },
   yellow: { bg: 'rgba(245,158,11,0.12)', border: '#f59e0b40' },
@@ -106,14 +107,14 @@ export default function TechDVIPage() {
   if (saved) return (
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ textAlign: 'center', maxWidth: 480 }}>
-        <div style={{ fontSize: 72, marginBottom: 16 }}>✅</div>
+        <div style={{ fontSize: 72, marginBottom: 16 }}><FaCheckCircle style={{marginRight:4}} /></div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 8px' }}>DVI Submitted!</h2>
         <p style={{ color: '#9ca3af', marginBottom: 24 }}>The inspection has been saved. Share the link below with the customer so they can review and approve recommended services.</p>
         {inspectionLink && (
           <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 14, marginBottom: 20, wordBreak: 'break-all', fontSize: 13 }}>{inspectionLink}</div>
         )}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-          {inspectionLink && <button onClick={() => { navigator.clipboard.writeText(inspectionLink); }} style={{ background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>📋 Copy Link</button>}
+          {inspectionLink && <button onClick={() => { navigator.clipboard.writeText(inspectionLink); }} style={{ background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}><FaClipboardList style={{marginRight:4}} /> Copy Link</button>}
           <button onClick={() => { setSaved(false); setVehicleDesc(''); setMileage(''); setWorkOrderId(''); setItems(INSPECTION_TEMPLATE.map(t => ({ ...t, condition: 'green', notes: '', estimatedCost: '' }))); }} style={{ background: 'rgba(255,255,255,0.08)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 20px', fontSize: 14, cursor: 'pointer' }}>New Inspection</button>
           <Link href="/shop/dvi" style={{ background: '#e5332a', color: '#fff', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>View All DVIs</Link>
         </div>
@@ -130,7 +131,7 @@ export default function TechDVIPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '20px 28px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>🔧 Digital Vehicle Inspection</h1>
+        <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}><FaWrench style={{marginRight:4}} /> Digital Vehicle Inspection</h1>
         <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 13 }}>Rate each item green/yellow/red and add notes for any concerns</p>
       </div>
 
@@ -166,7 +167,7 @@ export default function TechDVIPage() {
           ))}
           {items.some(i => i.estimatedCost) && (
             <div style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid #f59e0b40', borderRadius: 10, padding: '10px 16px', fontSize: 14, fontWeight: 600, color: '#f59e0b' }}>
-              💰 ${items.reduce((s, i) => s + (i.estimatedCost ? Number(i.estimatedCost) : 0), 0).toFixed(2)} upsell
+               ${items.reduce((s, i) => s + (i.estimatedCost ? Number(i.estimatedCost) : 0), 0).toFixed(2)} upsell
             </div>
           )}
         </div>
@@ -180,7 +181,7 @@ export default function TechDVIPage() {
             return (
               <button key={cat} onClick={() => setActiveCategory(cat)}
                 style={{ background: activeCategory === cat ? '#e5332a' : 'rgba(255,255,255,0.06)', color: activeCategory === cat ? '#fff' : '#e5e7eb', border: `1px solid ${activeCategory === cat ? '#e5332a' : 'rgba(255,255,255,0.12)'}`, borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-                {cat} {hasRed ? '🔴' : hasYellow ? '🟡' : ''}
+                {cat} {hasRed ? '' : hasYellow ? '' : ''}
               </button>
             );
           })}
@@ -216,7 +217,7 @@ export default function TechDVIPage() {
         {dviError && <p style={{color:'#ef4444',fontSize:13,margin:'0 0 12px',fontWeight:600}}>{dviError}</p>}
         <button onClick={submit} disabled={saving}
           style={{ width: '100%', background: '#e5332a', color: '#fff', border: 'none', borderRadius: 10, padding: '14px 0', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}>
-          {saving ? 'Submitting...' : '✅ Submit Inspection'}
+          {saving ? 'Submitting...' : '<FaCheckCircle style={{marginRight:4}} /> Submit Inspection'}
         </button>
       </div>
     </div>

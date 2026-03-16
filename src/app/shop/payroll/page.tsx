@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaCheck, FaCheckCircle, FaClipboardList, FaClock, FaCog, FaDollarSign, FaExclamationTriangle, FaTimes, FaTimesCircle, FaTrash, FaUsers } from 'react-icons/fa';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Employee {
@@ -199,7 +200,7 @@ export default function PayrollPage() {
       const r = await fetch(`/api/payroll/pay-periods/${periodId}`, { method: 'PUT', headers, body: JSON.stringify({ action: 'run' }) });
       const d = await r.json();
       if (r.ok) {
-        setPayrollMsg(`✅ Payroll complete! ${d.summary.employeeCount} employees — Gross: ${fmt(d.summary.totalGross)}, Net: ${fmt(d.summary.totalNet)}`);
+        setPayrollMsg(` Payroll complete! ${d.summary.employeeCount} employees — Gross: ${fmt(d.summary.totalGross)}, Net: ${fmt(d.summary.totalNet)}`);
         setTimeout(() => setPayrollMsg(''), 6000);
         load();
       } else { setPayrollError('Error: ' + (d.error || 'Failed to run payroll')); }
@@ -271,21 +272,21 @@ export default function PayrollPage() {
       {/* Alerts section */}
       {(lateToday > 0 || absentToday > 0 || pendingLeave.length > 0) && (
         <div style={{ background: '#fefce8', border: '1px solid #fcd34d', borderRadius: 12, padding: 16, marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, marginBottom: 12, color: '#92400e' }}>⚠️ Alerts</div>
+          <div style={{ fontWeight: 700, marginBottom: 12, color: '#92400e' }}><FaExclamationTriangle style={{marginRight:4}} /> Alerts</div>
           {attendance.filter(a => a.status === 'late').map(a => (
             <div key={a.timeEntryId} style={{ padding: '6px 0', borderBottom: '1px solid #fde68a', fontSize: 14 }}>
-              🕐 <strong>{a.tech.firstName} {a.tech.lastName}</strong> arrived <strong>{a.lateMinutes} min late</strong>
+              <FaClock style={{marginRight:4}} /> <strong>{a.tech.firstName} {a.tech.lastName}</strong> arrived <strong>{a.lateMinutes} min late</strong>
               {a.scheduledStart && ` (scheduled ${a.scheduledStart}`})
             </div>
           ))}
           {attendance.filter(a => a.status === 'absent').map(a => (
             <div key={a.shiftId} style={{ padding: '6px 0', borderBottom: '1px solid #fde68a', fontSize: 14, color: '#991b1b' }}>
-              ❌ <strong>{a.tech.firstName} {a.tech.lastName}</strong> — no clock-in (scheduled {a.scheduledStart})
+              <FaTimesCircle style={{marginRight:4}} /> <strong>{a.tech.firstName} {a.tech.lastName}</strong> — no clock-in (scheduled {a.scheduledStart})
             </div>
           ))}
           {pendingLeave.slice(0, 3).map(l => (
             <div key={l.id} style={{ padding: '6px 0', fontSize: 14, color: '#7c3aed' }}>
-              📋 <strong>{l.tech.firstName} {l.tech.lastName}</strong> requested {l.leaveType.toUpperCase()} — {fmtDate(l.startDate)} to {fmtDate(l.endDate)}
+              <FaClipboardList style={{marginRight:4}} /> <strong>{l.tech.firstName} {l.tech.lastName}</strong> requested {l.leaveType.toUpperCase()} — {fmtDate(l.startDate)} to {fmtDate(l.endDate)}
             </div>
           ))}
         </div>
@@ -484,7 +485,7 @@ export default function PayrollPage() {
                 </td>
                 <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600 }}>{fmtHrs(a.hoursWorked)}</td>
                 <td style={{ padding: '10px 16px', textAlign: 'center' }}><BadgeStatus status={a.status} /></td>
-                <td style={{ padding: '10px 16px', textAlign: 'center', fontSize: 18 }}>{a.approved ? '✅' : '⬜'}</td>
+                <td style={{ padding: '10px 16px', textAlign: 'center', fontSize: 18 }}>{a.approved ? '<FaCheckCircle style={{marginRight:4}} />' : '⬜'}</td>
               </tr>
             ))}
           </tbody>
@@ -517,8 +518,8 @@ export default function PayrollPage() {
               </div>
               {user?.role === 'shop' && (
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => approveLeave(l.id, 'approved')} style={{ padding: '6px 16px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✓ Approve</button>
-                  <button onClick={() => setDenyModal({ id: l.id, reason: '' })} style={{ padding: '6px 16px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✗ Deny</button>
+                  <button onClick={() => approveLeave(l.id, 'approved')} style={{ padding: '6px 16px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}><FaCheck style={{marginRight:4}} /> Approve</button>
+                  <button onClick={() => setDenyModal({ id: l.id, reason: '' })} style={{ padding: '6px 16px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}><FaTimes style={{marginRight:4}} /> Deny</button>
                 </div>
               )}
             </div>
@@ -648,7 +649,7 @@ export default function PayrollPage() {
                 </button>
               )}
               {p.status === 'processing' && (
-                <button onClick={() => setMarkPaidConfirmId(p.id)} style={{ padding: '8px 18px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>✓ Mark as Paid</button>
+                <button onClick={() => setMarkPaidConfirmId(p.id)} style={{ padding: '8px 18px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}><FaCheck style={{marginRight:4}} /> Mark as Paid</button>
               )}
               <span style={{ display: 'inline-flex', alignItems: 'center', background: p.status === 'paid' ? '#dcfce7' : p.status === 'processing' ? '#dbeafe' : '#f3f4f6', color: p.status === 'paid' ? '#166534' : p.status === 'processing' ? '#1d4ed8' : '#374151', borderRadius: 8, padding: '8px 14px', fontWeight: 600, fontSize: 13 }}>
                 {p.status.toUpperCase()}
@@ -752,7 +753,7 @@ export default function PayrollPage() {
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
       {/* Overtime Rules */}
       <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 24 }}>
-        <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 20 }}>⚙️ Overtime Rules</div>
+        <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 20 }}><FaCog style={{marginRight:4}} /> Overtime Rules</div>
         {otRule && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
@@ -812,7 +813,7 @@ export default function PayrollPage() {
 
       {/* Employee pay settings */}
       <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 24 }}>
-        <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 20 }}>👥 Employee Pay Settings</div>
+        <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 20 }}><FaUsers style={{marginRight:4}} /> Employee Pay Settings</div>
         {activeEmps.map(emp => (
           <div key={emp.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f3f4f6' }}>
             <div>
@@ -870,19 +871,19 @@ export default function PayrollPage() {
     <div style={{ padding: '32px 40px', maxWidth: 1400, margin: '0 auto' }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 32, fontWeight: 800, margin: 0 }}>💰 Payroll Center</h1>
+        <h1 style={{ fontSize: 32, fontWeight: 800, margin: 0 }}><FaDollarSign style={{marginRight:4}} /> Payroll Center</h1>
         <p style={{ color: '#6b7280', marginTop: 6 }}>Scheduling · Time Tracking · Attendance · Pay Periods · Pay Stubs</p>
       </div>
 
       {/* Tab bar */}
       <div style={{ display: 'flex', gap: 4, background: '#f3f4f6', borderRadius: 12, padding: 4, marginBottom: 28, flexWrap: 'wrap' }}>
-        <TabBtn id="overview" label="📊 Overview" />
-        <TabBtn id="schedule" label="📅 Schedule" />
-        <TabBtn id="attendance" label="🕐 Attendance" badge={lateToday + absentToday || undefined} />
-        <TabBtn id="leave" label="🌴 Leave" badge={pendingLeave.length || undefined} />
-        <TabBtn id="periods" label="📋 Pay Periods" badge={openPeriods.length || undefined} />
-        <TabBtn id="stubs" label="🧾 Pay Stubs" />
-        <TabBtn id="settings" label="⚙️ Settings" />
+        <TabBtn id="overview" label=" Overview" />
+        <TabBtn id="schedule" label=" Schedule" />
+        <TabBtn id="attendance" label=" Attendance" badge={lateToday + absentToday || undefined} />
+        <TabBtn id="leave" label=" Leave" badge={pendingLeave.length || undefined} />
+        <TabBtn id="periods" label=" Pay Periods" badge={openPeriods.length || undefined} />
+        <TabBtn id="stubs" label=" Pay Stubs" />
+        <TabBtn id="settings" label=" Settings" />
       </div>
 
       {/* Loading indicator */}
@@ -901,7 +902,7 @@ export default function PayrollPage() {
       {payrollError && (
         <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#fde8e8', color: '#991b1b', border: '1px solid #fca5a5', borderRadius: 10, padding: '12px 20px', zIndex: 9999, fontWeight: 600, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', maxWidth: 400 }}>
           {payrollError}
-          <button onClick={() => setPayrollError('')} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, color: '#991b1b' }}>✕</button>
+          <button onClick={() => setPayrollError('')} style={{ marginLeft: 12, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, color: '#991b1b' }}><FaTimes style={{marginRight:4}} /></button>
         </div>
       )}
 
@@ -916,7 +917,7 @@ export default function PayrollPage() {
       {deleteConfirmShiftId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}><FaTrash style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Delete Shift?</h3>
             <p style={{ color: '#6b7280', marginBottom: 24 }}>This will permanently remove the shift from the schedule.</p>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -931,7 +932,7 @@ export default function PayrollPage() {
       {runPayrollConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 420, width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>💰</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}><FaDollarSign style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Run Payroll?</h3>
             <p style={{ color: '#6b7280', marginBottom: 24 }}>This will generate pay stubs for all active employees in this period.</p>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -946,7 +947,7 @@ export default function PayrollPage() {
       {markPaidConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>✅</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}><FaCheckCircle style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Mark Period as Paid?</h3>
             <p style={{ color: '#6b7280', marginBottom: 24 }}>This action is final and cannot be undone.</p>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -966,7 +967,7 @@ export default function PayrollPage() {
             <textarea value={denyModal.reason} onChange={e => setDenyModal(d => d ? { ...d, reason: e.target.value } : d)} rows={3} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 8, resize: 'vertical', fontFamily: 'inherit', fontSize: 14, boxSizing: 'border-box' }} placeholder="Enter reason…" />
             <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
               <button onClick={() => setDenyModal(null)} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-              <button onClick={() => { approveLeave(denyModal.id, 'denied', denyModal.reason); setDenyModal(null); }} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>✗ Deny</button>
+              <button onClick={() => { approveLeave(denyModal.id, 'denied', denyModal.reason); setDenyModal(null); }} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}><FaTimes style={{marginRight:4}} /> Deny</button>
             </div>
           </div>
         </div>

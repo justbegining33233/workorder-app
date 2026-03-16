@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaStar } from 'react-icons/fa';
 
 interface Review {
   id: string;
@@ -30,7 +31,7 @@ export default function Reviews() {
   };
 
   const renderStars = (rating: number) => {
-    return '⭐'.repeat(rating);
+    return '<FaStar style={{marginRight:4}} />'.repeat(rating);
   };
 
   return (

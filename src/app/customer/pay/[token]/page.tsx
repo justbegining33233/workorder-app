@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { FaCheckCircle, FaExclamationTriangle, FaLock, FaSmile, FaWrench } from 'react-icons/fa';
 
 interface PaymentLink {
   id: string;
@@ -67,7 +68,7 @@ export default function CustomerPayPage() {
   if (error) return (
     <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 64 }}>⚠️</div>
+        <div style={{ fontSize: 64 }}><FaExclamationTriangle style={{marginRight:4}} /></div>
         <h2 style={{ color: '#111827', margin: '16px 0 8px' }}>Payment Link Not Found</h2>
         <p style={{ color: '#6b7280' }}>{error}</p>
       </div>
@@ -77,7 +78,7 @@ export default function CustomerPayPage() {
   if (paid) return (
     <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center', padding: 32 }}>
-        <div style={{ fontSize: 80 }}>🎉</div>
+        <div style={{ fontSize: 80 }}><FaSmile style={{marginRight:4}} /></div>
         <h2 style={{ color: '#111827', margin: '16px 0 8px', fontSize: 26 }}>Payment Successful!</h2>
         <p style={{ color: '#6b7280', marginBottom: 8 }}>Thank you for your payment of <strong>${Number(link?.amount).toFixed(2)}</strong>.</p>
         <p style={{ color: '#6b7280' }}>A receipt has been sent to your email. Thank you for choosing us!</p>
@@ -92,19 +93,19 @@ export default function CustomerPayPage() {
     <div style={{ minHeight: "100vh", background: 'transparent', fontFamily: 'system-ui,sans-serif' }}>
       {/* Header */}
       <div style={{ background: '#1a1a2e', padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ width: 40, height: 40, background: '#e5332a', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🔧</div>
+        <div style={{ width: 40, height: 40, background: '#e5332a', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}><FaWrench style={{marginRight:4}} /></div>
         <div>
           <div style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>Secure Payment</div>
           <div style={{ color: '#9ca3af', fontSize: 12 }}>FixTray Auto Service</div>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
-          <span style={{ color: '#22c55e', fontSize: 13 }}>🔒 SSL Secured</span>
+          <span style={{ color: '#22c55e', fontSize: 13 }}><FaLock style={{marginRight:4}} /> SSL Secured</span>
         </div>
       </div>
 
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '32px 20px' }}>
         {isExpired && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 10, padding: 14, marginBottom: 20, color: '#dc2626', fontWeight: 600 }}>⏰ This payment link has expired. Please contact the shop.</div>}
-        {isAlreadyPaid && <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 10, padding: 14, marginBottom: 20, color: '#16a34a', fontWeight: 600 }}>✅ This invoice has already been paid. Thank you!</div>}
+        {isAlreadyPaid && <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 10, padding: 14, marginBottom: 20, color: '#16a34a', fontWeight: 600 }}><FaCheckCircle style={{marginRight:4}} /> This invoice has already been paid. Thank you!</div>}
 
         {/* Invoice Summary */}
         <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 14, padding: 24, marginBottom: 20 }}>
@@ -152,7 +153,7 @@ export default function CustomerPayPage() {
             </button>
 
             <p style={{ color: '#9ca3af', fontSize: 12, textAlign: 'center', marginTop: 12 }}>
-              🔒 Your payment is encrypted and secure. We never store your card details.
+              <FaLock style={{marginRight:4}} /> Your payment is encrypted and secure. We never store your card details.
             </p>
           </div>
         )}

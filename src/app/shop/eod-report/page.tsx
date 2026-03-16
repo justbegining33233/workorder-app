@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
+import { FaCheckCircle, FaClock, FaDollarSign, FaExclamationTriangle, FaPrint } from 'react-icons/fa';
 
 interface EODReport {
   date: string;
@@ -108,7 +109,7 @@ export default function EODReportPage() {
               className="no-print"
               style={{ padding: '8px 16px', background: '#6b7280', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600 }}
             >
-              🖨️ Print
+              <FaPrint style={{marginRight:4}} /> Print
             </button>
           </div>
         </div>
@@ -145,7 +146,7 @@ export default function EODReportPage() {
 
             {/* Payment Breakdown */}
             <div style={{ ...cardStyle, marginBottom: 24 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}>💰 Payment Breakdown</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}><FaDollarSign style={{marginRight:4}} /> Payment Breakdown</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
                 {(['cash', 'card', 'check', 'transfer', 'other'] as const).map(method => (
                   <div key={method} style={{ padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, textAlign: 'center' }}>
@@ -162,7 +163,7 @@ export default function EODReportPage() {
 
             {/* Completed Jobs Table */}
             <div style={{ ...cardStyle, marginBottom: 24 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}>✅ Completed Jobs</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}><FaCheckCircle style={{marginRight:4}} /> Completed Jobs</h2>
               {report.completedJobs.length === 0 ? (
                 <div style={{ color: '#9aa3b2', fontSize: 14, textAlign: 'center', padding: 20 }}>No jobs completed today</div>
               ) : (
@@ -196,7 +197,7 @@ export default function EODReportPage() {
             {/* Outstanding Balances */}
             {report.outstandingWOs.length > 0 && (
               <div style={{ ...cardStyle, marginBottom: 24 }}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}>⚠️ Outstanding Balances</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}><FaExclamationTriangle style={{marginRight:4}} /> Outstanding Balances</h2>
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
@@ -223,7 +224,7 @@ export default function EODReportPage() {
             {/* Tech Hours */}
             {report.techHours.length > 0 && (
               <div style={cardStyle}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}>🕐 Tech Hours</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 16 }}><FaClock style={{marginRight:4}} /> Tech Hours</h2>
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>

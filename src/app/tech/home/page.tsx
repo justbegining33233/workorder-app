@@ -12,6 +12,7 @@ import RealTimeWorkOrders from '@/components/RealTimeWorkOrders';
 import MobileLayout from '@/components/MobileLayout';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { FaBook, FaBox, FaCamera, FaCar, FaChartBar, FaCheckCircle, FaClipboardList, FaCog, FaComments, FaExclamationCircle, FaMapMarkerAlt, FaSearch, FaTools, FaUser, FaWrench } from 'react-icons/fa';
 
 export default function TechHome() {
   const router = useRouter();
@@ -207,30 +208,30 @@ export default function TechHome() {
   };
 
   const jobCreationTools = [
-    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: '🚗', link: '/workorders/new' },
-    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: '🔧', link: '/workorders/inshop' },
+    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: '<FaCar style={{marginRight:4}} />', link: '/workorders/new' },
+    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: '<FaWrench style={{marginRight:4}} />', link: '/workorders/inshop' },
   ];
 
   const jobManagementTools = [
-    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: '📋', link: '/workorders/list?status=in-progress' },
-    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: '📊', link: '/workorders/list?status=closed' },
+    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: '<FaClipboardList style={{marginRight:4}} />', link: '/workorders/list?status=in-progress' },
+    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: '<FaChartBar style={{marginRight:4}} />', link: '/workorders/list?status=closed' },
   ];
 
   const fieldTools = [
-    { title: 'Share Location', description: 'Share your real-time GPS location', icon: '📍', link: '/tech/share-location' },
-    { title: 'Messages', description: 'View and respond to messages', icon: '💬', link: '/tech/messages', badge: messageUnreadCount },
+    { title: 'Share Location', description: 'Share your real-time GPS location', icon: '<FaMapMarkerAlt style={{marginRight:4}} />', link: '/tech/share-location' },
+    { title: 'Messages', description: 'View and respond to messages', icon: '<FaComments style={{marginRight:4}} />', link: '/tech/messages', badge: messageUnreadCount },
   ];
 
   const resourceTools = [
-    { title: 'Parts Inventory', description: 'Check parts availability and track inventory', icon: '🔩', link: '/tech/inventory' },
-    { title: 'Service Manuals', description: 'Access technical documentation and guides', icon: '📖', link: '/tech/manuals' },
+    { title: 'Parts Inventory', description: 'Check parts availability and track inventory', icon: '<FaCog style={{marginRight:4}} />', link: '/tech/inventory' },
+    { title: 'Service Manuals', description: 'Access technical documentation and guides', icon: '<FaBook style={{marginRight:4}} />', link: '/tech/manuals' },
   ];
 
   const technicalTools = [
-    { title: 'Diagnostic Tools', description: 'Run vehicle diagnostics and read error codes', icon: '🔍', link: '/tech/diagnostics' },
-    { title: 'Photo Upload', description: 'Upload photos and documentation', icon: '📷', link: '/tech/photos' },
-    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: '⏱️', link: '/tech/timesheet' },
-    { title: 'Customer Portal', description: 'Access customer vehicle history', icon: '👤', link: '/tech/customers' },
+    { title: 'Diagnostic Tools', description: 'Run vehicle diagnostics and read error codes', icon: '<FaSearch style={{marginRight:4}} />', link: '/tech/diagnostics' },
+    { title: 'Photo Upload', description: 'Upload photos and documentation', icon: '<FaCamera style={{marginRight:4}} />', link: '/tech/photos' },
+    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: '⏱', link: '/tech/timesheet' },
+    { title: 'Customer Portal', description: 'Access customer vehicle history', icon: '<FaUser style={{marginRight:4}} />', link: '/tech/customers' },
   ];
 
   return (
@@ -270,13 +271,13 @@ export default function TechHome() {
           <div>
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
-                <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>🔧 My Tasks Today</h2>
+                <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}><FaWrench style={{marginRight:4}} /> My Tasks Today</h2>
                 <Link href="/workorders/list" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All →</Link>
               </div>
               
               {todayJobs.length === 0 ? (
                 <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
-                  <div style={{fontSize:48, marginBottom:16}}>✅</div>
+                  <div style={{fontSize:48, marginBottom:16}}><FaCheckCircle style={{marginRight:4}} /></div>
                   <div style={{fontSize:18, fontWeight:600, marginBottom:8}}>All caught up!</div>
                   <div style={{fontSize:14}}>No work orders assigned yet</div>
                 </div>
@@ -329,7 +330,7 @@ export default function TechHome() {
 
             {/* Live Shop Location Map */}
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, marginTop:32, marginBottom:32, overflow:'hidden', minHeight: isMobile ? 300 : 520, display:'flex', flexDirection:'column'}}>
-              <h3 style={{color:'#e5e7eb', margin:'16px 0 0 16px', fontSize:16, fontWeight:700}}>📍 Shop Location</h3>
+              <h3 style={{color:'#e5e7eb', margin:'16px 0 0 16px', fontSize:16, fontWeight:700}}><FaMapMarkerAlt style={{marginRight:4}} /> Shop Location</h3>
               <div style={{flex:1, minHeight: isMobile ? 200 : 260, display:'flex', flexDirection:'column'}}>
                 {shopCoords ? (
                   <div style={{display:'flex', flexDirection: isMobile ? 'column' : 'row', flex:1}}>
@@ -346,7 +347,7 @@ export default function TechHome() {
                     <div style={{flex: isMobile ? 'none' : 1, borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.05)', borderTop: isMobile ? '1px solid rgba(255,255,255,0.05)' : 'none', display:'flex', flexDirection:'column', padding:'12px', gap:12}}>
                       {/* Section 1: Road Call */}
                       <div style={{borderRadius:8, padding:12, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.03)'}}>
-                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}>🚨 Road Call</div>
+                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}><FaExclamationCircle style={{marginRight:4}} /> Road Call</div>
                         <div style={{height:2, background:'rgba(255,255,255,0.06)', margin:'8px 0'}} />
 
                         {/* compact WO list */}
@@ -395,7 +396,7 @@ export default function TechHome() {
 
                       {/* Section 2: Parts */}
                       <div style={{borderRadius:8, padding:12, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.03)'}}>
-                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}>🔩 Parts</div>
+                        <div style={{fontSize:15, fontWeight:800, color:'#e5e7eb'}}><FaCog style={{marginRight:4}} /> Parts</div>
                         <div style={{height:2, background:'rgba(255,255,255,0.06)', margin:'8px 0 12px'}} />
 
                         {/* Show vendor addresses from recent POs when available */}
@@ -508,7 +509,7 @@ export default function TechHome() {
 
                       {/* Section 3: User Location (share if permitted) */}
                       <div style={{borderRadius:8, padding:8, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.03)'}}>
-                        <div style={{fontSize:13, fontWeight:700, color:'#e5e7eb', marginBottom:6}}>📍 Your Location</div>
+                        <div style={{fontSize:13, fontWeight:700, color:'#e5e7eb', marginBottom:6}}><FaMapMarkerAlt style={{marginRight:4}} /> Your Location</div>
                         <div style={{fontSize:12, color:'#9aa3b2', marginBottom:8}}>Share your live location on the map (optional)</div>
                         <div style={{display:'flex', gap:8}}>
                           <button id="share-location-btn" onClick={async () => {
@@ -572,7 +573,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  🚗 Job Creation
+                  <FaCar style={{marginRight:4}} /> Job Creation
                 </button>
                 <button
                   onClick={() => setActiveTab('job-management')}
@@ -590,7 +591,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  📋 Job Management
+                  <FaClipboardList style={{marginRight:4}} /> Job Management
                 </button>
                 <button
                   onClick={() => setActiveTab('field-tools')}
@@ -611,7 +612,7 @@ export default function TechHome() {
                     gap:8
                   }}
                 >
-                  📍 Field Tools
+                   Field Tools
                   {messageUnreadCount > 0 && (
                     <span style={{
                       background:'#ef4444',
@@ -642,7 +643,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  📦 Resources
+                  <FaBox style={{marginRight:4}} /> Resources
                 </button>
                 <button
                   onClick={() => setActiveTab('technical')}
@@ -660,7 +661,7 @@ export default function TechHome() {
                     whiteSpace:'nowrap'
                   }}
                 >
-                  🔧 Technical Tools
+                  <FaWrench style={{marginRight:4}} /> Technical Tools
                 </button>
               </div>
 
@@ -844,7 +845,7 @@ export default function TechHome() {
             {techProfile && (
               <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20, marginBottom:24}}>
                 <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:16}}>
-                  <div style={{fontSize:32}}>👤</div>
+                  <div style={{fontSize:32}}><FaUser style={{marginRight:4}} /></div>
                   <div>
                     <div style={{fontSize:16, fontWeight:700, color:'#e5e7eb'}}>{techProfile.firstName} {techProfile.lastName}</div>
                     <div style={{fontSize:12, color:'#9aa3b2'}}>{techProfile.role === 'tech' ? 'Technician' : 'Manager'}</div>
@@ -883,29 +884,29 @@ export default function TechHome() {
 
             {/* Quick Tools */}
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginTop:24}}>
-              <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:16}}>🛠️ Quick Tools</h3>
+              <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:16}}><FaTools style={{marginRight:4}} /> Quick Tools</h3>
               <div style={{display:'grid', gap:8}}>
                 <Link href="/tech/diagnostics" style={{padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8, textDecoration:'none', color:'#3b82f6', fontSize:14, fontWeight:600}}>
-                  🔍 Diagnostics
+                  <FaSearch style={{marginRight:4}} /> Diagnostics
                 </Link>
                 <Link href="/tech/inventory" style={{padding:12, background:'rgba(34,197,94,0.1)', borderRadius:8, textDecoration:'none', color:'#22c55e', fontSize:14, fontWeight:600}}>
-                  📦 Inventory
+                  <FaBox style={{marginRight:4}} /> Inventory
                 </Link>
                 <Link href="/tech/manuals" style={{padding:12, background:'rgba(168,85,247,0.1)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:600}}>
-                  📖 Manuals
+                  <FaBook style={{marginRight:4}} /> Manuals
                 </Link>
                 <Link href="/tech/photos" style={{padding:12, background:'rgba(245,158,11,0.1)', borderRadius:8, textDecoration:'none', color:'#f59e0b', fontSize:14, fontWeight:600}}>
-                  📸 Photos
+                  <FaCamera style={{marginRight:4}} /> Photos
                 </Link>
                 <Link href="/tech/all-tools" style={{padding:12, background:'rgba(229,51,42,0.1)', borderRadius:8, textDecoration:'none', color:'#e5332a', fontSize:14, fontWeight:600}}>
-                  🛠️ All Tools
+                  <FaTools style={{marginRight:4}} /> All Tools
                 </Link>
               </div>
             </div>
 
             {/* View Center Control */}
             <div style={{background:'rgba(229,51,42,0.1)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:12, padding:20, marginTop:24, textAlign:'center'}}>
-              <div style={{fontSize:14, color:'#e5332a', fontWeight:600, marginBottom:8}}>📊 Shop Overview</div>
+              <div style={{fontSize:14, color:'#e5332a', fontWeight:600, marginBottom:8}}><FaChartBar style={{marginRight:4}} /> Shop Overview</div>
               <Link
                 href="/shop/home"
                 style={{

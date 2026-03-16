@@ -1,3 +1,4 @@
+import { FaCheck } from 'react-icons/fa';
 
 import Link from 'next/link';
 
@@ -64,9 +65,9 @@ export default function PendingApproval() {
             fontSize: '14px',
             lineHeight: '1.8'
           }}>
-            <li style={{marginBottom: '8px'}}>✓ Our admin team will review your application</li>
-            <li style={{marginBottom: '8px'}}>✓ You&apos;ll receive an email notification once approved</li>
-            <li style={{marginBottom: '8px'}}>✓ After approval, you can log in and start using the system</li>
+            <li style={{marginBottom: '8px'}}><FaCheck style={{marginRight:4}} /> Our admin team will review your application</li>
+            <li style={{marginBottom: '8px'}}><FaCheck style={{marginRight:4}} /> You&apos;ll receive an email notification once approved</li>
+            <li style={{marginBottom: '8px'}}><FaCheck style={{marginRight:4}} /> After approval, you can log in and start using the system</li>
           </ul>
         </div>
         

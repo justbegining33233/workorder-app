@@ -1,4 +1,4 @@
-﻿/**
+/**
  * useSocket — polling-based real-time hook (Vercel-compatible, no Socket.io)
  *
  * Every 5 seconds it fetches work orders and messages from Neon via the

@@ -1,3 +1,4 @@
+import { FaSatelliteDish } from 'react-icons/fa';
 'use client';
 
 export default function OfflinePage() {
@@ -14,7 +15,7 @@ export default function OfflinePage() {
       padding: '24px',
       textAlign: 'center',
     }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>📡</div>
+      <div style={{ fontSize: 48, marginBottom: 16 }}><FaSatelliteDish style={{marginRight:4}} /></div>
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>You&apos;re Offline</h1>
       <p style={{ fontSize: 14, color: '#94a3b8', maxWidth: 320, marginBottom: 24 }}>
         It looks like you&apos;ve lost your internet connection. Some features may be unavailable until you reconnect.

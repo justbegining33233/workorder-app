@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaArrowRight, FaChartBar, FaChartLine } from 'react-icons/fa';
 
 interface Insight {
   id: string;
@@ -43,9 +44,9 @@ export default function Insights() {
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend.includes('↑')) return '📈';
-    if (trend.includes('↓')) return '📉';
-    return '➡️';
+    if (trend.includes('↑')) return '<FaChartLine style={{marginRight:4}} />';
+    if (trend.includes('↓')) return '<FaChartLine style={{marginRight:4}} />';
+    return '<FaArrowRight style={{marginRight:4}} />';
   };
 
   return (
@@ -76,7 +77,7 @@ export default function Insights() {
 
         {!loading && insights.length === 0 && (
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:40, textAlign:'center', marginBottom:32}}>
-            <div style={{fontSize:48, marginBottom:16}}>📊</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaChartBar style={{marginRight:4}} /></div>
             <div style={{fontSize:18, color:'#e5e7eb', marginBottom:8}}>No insights yet</div>
             <div style={{fontSize:14, color:'#9aa3b2'}}>Complete a service to start generating insights.</div>
           </div>

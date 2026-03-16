@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheckCircle, FaLock, FaShieldAlt } from 'react-icons/fa';
 
 export default function TechTwoFactorPage() {
   const { user, isLoading } = useRequireAuth(['tech', 'manager']);
@@ -74,17 +75,17 @@ export default function TechTwoFactorPage() {
           ← Back
         </button>
         <div style={{ background: '#1e293b', borderRadius: 16, padding: 32, border: '1px solid #334155' }}>
-          <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, marginBottom: 8 }}>🔐 Two-Factor Authentication</h1>
+          <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, marginBottom: 8 }}><FaLock style={{marginRight:4}} /> Two-Factor Authentication</h1>
           <p style={{ color: '#9ca3af', fontSize: 14, marginBottom: 24 }}>
             Add an extra layer of security to your account using an authenticator app.
           </p>
 
           {error && <div style={{ background: '#450a0a', color: '#ef4444', border: '1px solid #7f1d1d', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 14 }}>{error}</div>}
-          {success && <div style={{ background: '#052e16', color: '#22c55e', border: '1px solid #16a34a', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 14 }}>✅ {success}</div>}
+          {success && <div style={{ background: '#052e16', color: '#22c55e', border: '1px solid #16a34a', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 14 }}><FaCheckCircle style={{marginRight:4}} /> {success}</div>}
 
           {enabled || success ? (
             <div style={{ textAlign: 'center', padding: 20 }}>
-              <div style={{ fontSize: 48, marginBottom: 12 }}>🛡️</div>
+              <div style={{ fontSize: 48, marginBottom: 12 }}><FaShieldAlt style={{marginRight:4}} /></div>
               <div style={{ color: '#22c55e', fontWeight: 600, fontSize: 16 }}>2FA is Enabled</div>
               <div style={{ color: '#6b7280', fontSize: 14, marginTop: 8 }}>Your account is secured with two-factor authentication.</div>
             </div>

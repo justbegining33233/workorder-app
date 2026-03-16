@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBox, FaCheck, FaEdit, FaTimes, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
 
 // ── FixTray Service Catalog ──────────────────────────────────────────────────
 const CATALOG: Record<string, string[]> = {
@@ -242,7 +243,7 @@ export default function ShopServicesPage() {
         <div style={{ marginBottom: 28 }}>
           <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
           <div style={{ marginTop: 6 }}>
-            <h1 style={{ color: '#f1f5f9', fontSize: 28, fontWeight: 700, margin: 0 }}>🛠️ Service Catalog</h1>
+            <h1 style={{ color: '#f1f5f9', fontSize: 28, fontWeight: 700, margin: 0 }}><FaTools style={{marginRight:4}} /> Service Catalog</h1>
             <p style={{ color: '#64748b', fontSize: 13, margin: '4px 0 0' }}>
               {services.length} service{services.length !== 1 ? 's' : ''} active · Shop type: <span style={{ color: '#94a3b8', fontWeight: 600 }}>{CATEGORY_LABELS[shopType] || shopType}</span>
             </p>
@@ -252,9 +253,9 @@ export default function ShopServicesPage() {
         {/* Tab Bar */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'rgba(0,0,0,0.3)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
           {([
-            { id: 'my' as TabId,      label: `📋 My Services (${services.length})` },
-            { id: 'catalog' as TabId, label: '📦 FixTray Catalog' },
-            { id: 'custom' as TabId,  label: '✏️ Add Custom' },
+            { id: 'my' as TabId,      label: ` My Services (${services.length})` },
+            { id: 'catalog' as TabId, label: ' FixTray Catalog' },
+            { id: 'custom' as TabId,  label: ' Add Custom' },
           ]).map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               style={{ padding: '9px 18px', borderRadius: 7, border: 'none', background: activeTab === tab.id ? '#e5332a' : 'transparent', color: activeTab === tab.id ? '#fff' : '#94a3b8', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
@@ -283,12 +284,12 @@ export default function ShopServicesPage() {
 
             {filteredServices.length === 0 ? (
               <div style={{ background: CARD_BG, border: CARD_BORDER, borderRadius: 14, padding: '60px 40px', textAlign: 'center' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🔧</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}><FaWrench style={{marginRight:4}} /></div>
                 <h3 style={{ color: '#e5e7eb', marginBottom: 8 }}>No services yet</h3>
                 <p style={{ color: '#64748b', marginBottom: 20 }}>Add services from the FixTray Catalog or create a custom one.</p>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <button onClick={() => setActiveTab('catalog')} style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#3b82f6', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>📦 Browse Catalog</button>
-                  <button onClick={() => setActiveTab('custom')} style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: 'rgba(255,255,255,0.1)', color: '#e5e7eb', fontWeight: 600, cursor: 'pointer' }}>✏️ Add Custom</button>
+                  <button onClick={() => setActiveTab('catalog')} style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#3b82f6', color: '#fff', fontWeight: 600, cursor: 'pointer' }}><FaBox style={{marginRight:4}} /> Browse Catalog</button>
+                  <button onClick={() => setActiveTab('custom')} style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: 'rgba(255,255,255,0.1)', color: '#e5e7eb', fontWeight: 600, cursor: 'pointer' }}><FaEdit style={{marginRight:4}} /> Add Custom</button>
                 </div>
               </div>
             ) : (
@@ -306,7 +307,7 @@ export default function ShopServicesPage() {
                         </div>
                         <div style={{ display: 'flex', gap: 6, marginLeft: 8 }}>
                           <button onClick={() => openEdit(svc)} style={{ background: 'rgba(59,130,246,0.2)', border: 'none', color: '#60a5fa', padding: '5px 11px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>Edit</button>
-                          <button onClick={() => setDeleteConfirmId(svc.id)} style={{ background: 'rgba(239,68,68,0.2)', border: 'none', color: '#f87171', padding: '5px 11px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>✕</button>
+                          <button onClick={() => setDeleteConfirmId(svc.id)} style={{ background: 'rgba(239,68,68,0.2)', border: 'none', color: '#f87171', padding: '5px 11px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}><FaTimes style={{marginRight:4}} /></button>
                         </div>
                       </div>
                       {svc.description && <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 10px' }}>{svc.description}</p>}
@@ -334,7 +335,7 @@ export default function ShopServicesPage() {
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
               <p style={{ color: '#94a3b8', fontSize: 13, margin: 0 }}>
-                Click <strong style={{ color: '#f1f5f9' }}>+ Add</strong> to instantly add a FixTray service to your catalog. Optionally set a price first. Services already added show ✓.
+                Click <strong style={{ color: '#f1f5f9' }}>+ Add</strong> to instantly add a FixTray service to your catalog. Optionally set a price first. Services already added show <FaCheck style={{marginRight:4}} />.
               </p>
               {catalogSuccess && (
                 <div style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 7, padding: '7px 14px', color: '#4ade80', fontSize: 13, fontWeight: 600 }}>{catalogSuccess}</div>
@@ -369,7 +370,7 @@ export default function ShopServicesPage() {
                       {CATEGORY_LABELS[cat]}
                     </span>
                     <span style={{ color: '#475569', fontSize: 12 }}>{added.length}/{catServices.length} added</span>
-                    {notAdded.length === 0 && <span style={{ color: '#4ade80', fontSize: 12, fontWeight: 600 }}>✓ All added</span>}
+                    {notAdded.length === 0 && <span style={{ color: '#4ade80', fontSize: 12, fontWeight: 600 }}><FaCheck style={{marginRight:4}} /> All added</span>}
                   </div>
 
                   {notAdded.length > 0 && (
@@ -402,12 +403,12 @@ export default function ShopServicesPage() {
                   {added.length > 0 && (
                     <details>
                       <summary style={{ color: '#475569', fontSize: 12, cursor: 'pointer', userSelect: 'none' }}>
-                        ✓ {added.length} already in your catalog
+                        <FaCheck style={{marginRight:4}} /> {added.length} already in your catalog
                       </summary>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
                         {added.map(svcName => (
                           <span key={svcName} style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80', padding: '4px 10px', borderRadius: 5, fontSize: 12 }}>
-                            ✓ {svcName}
+                            <FaCheck style={{marginRight:4}} /> {svcName}
                           </span>
                         ))}
                       </div>
@@ -529,7 +530,7 @@ export default function ShopServicesPage() {
       {deleteConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1e1e2e', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}><FaTrash style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Service?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This service will be removed from your catalog.</p>
             <div style={{ display: 'flex', gap: 12 }}>

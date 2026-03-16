@@ -1,6 +1,7 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { FaComments, FaExclamationTriangle, FaShieldAlt, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,7 @@ interface MessagingCardProps {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const ROLE_ICON: Record<string, string> = { customer: '👤', tech: '🔧', manager: '👔', shop: '🏪', admin: '🛡️' };
+const ROLE_ICON: Record<string, string> = { customer: '<FaUser style={{marginRight:4}} />', tech: '<FaWrench style={{marginRight:4}} />', manager: '<FaUserTie style={{marginRight:4}} />', shop: '<FaStore style={{marginRight:4}} />', admin: '<FaShieldAlt style={{marginRight:4}} />' };
 const ROLE_LABEL: Record<string, string> = { customer: 'Customer', tech: 'Tech', manager: 'Manager', shop: 'Shop', admin: 'Admin' };
 const ROLE_COLOR: Record<string, string> = { customer: '#3b82f6', tech: '#10b981', manager: '#8b5cf6', shop: '#f59e0b', admin: '#ef4444' };
 
@@ -239,7 +240,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       {/* Auth error */}
       {authError && (
         <div style={{ padding: 16, background: 'rgba(239,68,68,0.2)', borderBottom: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 22 }}>⚠️</span>
+          <span style={{ fontSize: 22 }}><FaExclamationTriangle style={{marginRight:4}} /></span>
           <div style={{ flex: 1 }}>
             <p style={{ color: '#fca5a5', fontWeight: 600, margin: 0, fontSize: 14 }}>Session Expired or Missing</p>
             <p style={{ color: '#f87171', margin: 0, fontSize: 12, marginTop: 2 }}>Please sign out and log back in.</p>
@@ -254,7 +255,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
       {/* Header */}
       <div style={{ padding: 20, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>💬 Messages</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', margin: 0 }}><FaComments style={{marginRight:4}} /> Messages</h2>
           <button
             onClick={() => { setShowCompose(true); setSelectedConversation(null); fetchAvailableContacts(); }}
             style={{ padding: '6px 14px', background: '#10b981', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
@@ -289,14 +290,14 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
         <div style={{ borderRight: '1px solid rgba(255,255,255,0.1)', overflowY: 'auto' }}>
           {filteredConversations.length === 0 ? (
             <div style={{ padding: 20, textAlign: 'center', color: '#6b7280', fontSize: 13 }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>💬</div>
+              <div style={{ fontSize: 28, marginBottom: 8 }}><FaComments style={{marginRight:4}} /></div>
               No conversations yet.
               <br />
               <span style={{ color: '#4b5563' }}>Click <strong style={{ color: '#10b981' }}>+ New</strong> to start one.</span>
             </div>
           ) : (
             filteredConversations.map((conv) => {
-              const icon = ROLE_ICON[conv.contactRole] ?? '👤';
+              const icon = ROLE_ICON[conv.contactRole] ?? '<FaUser style={{marginRight:4}} />';
               const color = ROLE_COLOR[conv.contactRole] ?? '#9ca3af';
               const isActive = selectedConversation?.contactId === conv.contactId && selectedConversation?.contactRole === conv.contactRole;
               return (
@@ -389,7 +390,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
             <>
               {/* Thread header */}
               <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,0,0,0.15)' }}>
-                <span style={{ fontSize: 18 }}>{ROLE_ICON[selectedConversation.contactRole] ?? '👤'}</span>
+                <span style={{ fontSize: 18 }}>{ROLE_ICON[selectedConversation.contactRole] ?? '<FaUser style={{marginRight:4}} />'}</span>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#e5e7eb' }}>{selectedConversation.contactName}</div>
                   <div style={{ fontSize: 11, color: ROLE_COLOR[selectedConversation.contactRole] ?? '#9ca3af', fontWeight: 600 }}>
@@ -448,7 +449,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
           ) : (
             /* Empty */
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#6b7280', gap: 8, padding: 24 }}>
-              <span style={{ fontSize: 36 }}>💬</span>
+              <span style={{ fontSize: 36 }}><FaComments style={{marginRight:4}} /></span>
               <div style={{ fontSize: 14, color: '#6b7280', textAlign: 'center' }}>
                 Select a conversation<br />or click <strong style={{ color: '#10b981' }}>+ New</strong> to compose.
               </div>

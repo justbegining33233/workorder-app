@@ -1,3 +1,4 @@
+import { FaTimes } from 'react-icons/fa';
 "use client";
 import { useState } from 'react';
 
@@ -72,7 +73,7 @@ export default function PasswordResetForm({ onClose }: Props) {
         <div className="sos-card h-full w-full p-4 overflow-auto">
           <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold">Reset Password</h3>
-          <button aria-label="Close" onClick={() => onClose && onClose()} className="text-gray-600 hover:text-gray-900">✕</button>
+          <button aria-label="Close" onClick={() => onClose && onClose()} className="text-gray-600 hover:text-gray-900"><FaTimes style={{marginRight:4}} /></button>
         </div>
       {step === 'request' && (
         <form onSubmit={requestToken}>

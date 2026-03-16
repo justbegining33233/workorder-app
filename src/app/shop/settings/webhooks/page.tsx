@@ -128,7 +128,7 @@ export default function WebhooksPage() {
                         background: selectedEvents.includes(event) ? '#1d4ed8' : '#0f172a',
                         color: selectedEvents.includes(event) ? '#fff' : '#9ca3af',
                       }}>
-                      {event === '*' ? '✱ All Events' : event}
+                      {event === '*' ? ' All Events' : event}
                     </button>
                   ))}
                 </div>

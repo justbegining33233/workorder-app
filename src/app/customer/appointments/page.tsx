@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCalendarAlt, FaComments, FaMapMarkerAlt } from 'react-icons/fa';
 
 interface Appointment {
   id: string;
@@ -208,7 +209,7 @@ export default function CustomerAppointmentsPage() {
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>📅 My Appointments</h1>
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}><FaCalendarAlt style={{marginRight:4}} /> My Appointments</h1>
               <p style={{ fontSize: 14, color: '#9aa3b2' }}>Book and manage your service appointments</p>
             </div>
             <button
@@ -226,7 +227,7 @@ export default function CustomerAppointmentsPage() {
         <div style={{ display: 'grid', gap: 16 }}>
           {appointments.length === 0 ? (
             <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 60, textAlign: 'center' }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>📅</div>
+              <div style={{ fontSize: 48, marginBottom: 16 }}><FaCalendarAlt style={{marginRight:4}} /></div>
               <h3 style={{ color: '#e5e7eb', fontSize: 20, marginBottom: 8 }}>No Appointments Yet</h3>
               <p style={{ color: '#9aa3b2', fontSize: 14, marginBottom: 20 }}>Book your first appointment to get started</p>
               <button
@@ -291,7 +292,7 @@ export default function CustomerAppointmentsPage() {
                 <div style={{ display: 'flex', gap: 8 }}>
                   {/* Track button - goes to shop page */}
                   <Link href={`/customer/shop/${apt.shop.id}`} style={{ flex: 1, padding: '10px', background: 'rgba(59,130,246,0.2)', color: '#3b82f6', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'inline-block' }}>
-                    📍 Track
+                    <FaMapMarkerAlt style={{marginRight:4}} /> Track
                   </Link>
 
                   {/* Message button - opens modal for this appointment */}
@@ -299,7 +300,7 @@ export default function CustomerAppointmentsPage() {
                     onClick={() => openMessageModal(apt)}
                     style={{ flex: 1, padding: '10px', background: 'rgba(168,85,247,0.1)', color: '#a855f7', border: '1px solid rgba(168,85,247,0.3)', borderRadius: 6, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
                   >
-                    💬 Message
+                    <FaComments style={{marginRight:4}} /> Message
                   </button>
                 </div>
               </div>

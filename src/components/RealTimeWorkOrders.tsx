@@ -56,7 +56,7 @@ export default function RealTimeWorkOrders({
         gap: 8,
         marginBottom: 8,
       }}>
-        <span style={{ fontSize: 12, color: '#22c55e' }}>🟢 Live Updates</span>
+        <span style={{ fontSize: 12, color: '#22c55e' }}> Live Updates</span>
         <span style={{ fontSize: 10, color: '#9aa3b2' }}>
           Connected to real-time work order updates
         </span>

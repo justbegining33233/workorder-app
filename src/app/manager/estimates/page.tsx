@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '../../../contexts/AuthContext';
+import { FaClipboardList } from 'react-icons/fa';
 
 interface EstimateLineItem {
   id: string;
@@ -179,7 +180,7 @@ function ManagerEstimatesContent() {
           <Link href="/manager/dashboard" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>📋 Estimate Builder</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}><FaClipboardList style={{marginRight:4}} /> Estimate Builder</h1>
           <p style={{ fontSize: 14, color: '#9aa3b2' }}>
             {workOrder ? `Creating estimate for Work Order #${workOrder.id}` : 'Create detailed work estimates'}
           </p>

@@ -1,3 +1,4 @@
+import { FaCheck } from 'react-icons/fa';
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -127,14 +128,14 @@ export default function ShopSubscribePage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {plan.features.map((f, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#cbd5e1' }}>
-                      <span style={{ color: plan.color, fontWeight: 700, fontSize: 16 }}>✓</span>
+                      <span style={{ color: plan.color, fontWeight: 700, fontSize: 16 }}><FaCheck style={{marginRight:4}} /></span>
                       {f}
                     </div>
                   ))}
                 </div>
                 {isSelected && (
                   <div style={{ marginTop: 20, background: plan.color, borderRadius: 8, padding: '8px 0', textAlign: 'center', fontSize: 13, fontWeight: 700, color: 'white' }}>
-                    Selected ✓
+                    Selected <FaCheck style={{marginRight:4}} />
                   </div>
                 )}
               </div>

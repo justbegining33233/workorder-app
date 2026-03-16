@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaLink } from 'react-icons/fa';
 
 interface PaymentLink {
   id: string;
@@ -99,7 +100,7 @@ export default function PaymentLinksPage() {
           {/* Just-Created Link */}
           {createdLink && (
             <div style={{ background: '#052e16', border: '1px solid #16a34a', borderRadius: 12, padding: 20, marginBottom: 24 }}>
-              <div style={{ color: '#22c55e', fontWeight: 600, marginBottom: 8 }}>🔗 Payment Link Created</div>
+              <div style={{ color: '#22c55e', fontWeight: 600, marginBottom: 8 }}><FaLink style={{marginRight:4}} /> Payment Link Created</div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <div style={{ flex: 1, color: '#e5e7eb', fontFamily: 'monospace', fontSize: 13, background: '#0f172a', padding: 10, borderRadius: 8, wordBreak: 'break-all' }}>
                   {createdLink}

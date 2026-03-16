@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaComments, FaRegStar, FaStar, FaStore } from 'react-icons/fa';
 
 interface Review {
   id: string;
@@ -122,7 +123,7 @@ export default function ShopReviewsPage() {
           <div>
             <Link href="/shop/home" style={{ color: '#e5332a', fontSize: 22, fontWeight: 900, textDecoration: 'none' }}>FixTray</Link>
           </div>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}>⭐ Customer Reviews</h1>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}><FaStar style={{marginRight:4}} /> Customer Reviews</h1>
         </div>
       </div>
 
@@ -131,14 +132,14 @@ export default function ShopReviewsPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, marginBottom: 24 }}>
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 24, textAlign: 'center' }}>
             <div style={{ fontSize: 56, fontWeight: 900, color: '#fbbf24', lineHeight: 1 }}>{avgRating}</div>
-            <div style={{ color: '#fbbf24', fontSize: 22, marginTop: 4 }}>{'★'.repeat(Math.round(Number(avgRating) || 0))}</div>
+            <div style={{ color: '#fbbf24', fontSize: 22, marginTop: 4 }}>{'<FaStar style={{marginRight:4}} />'.repeat(Math.round(Number(avgRating) || 0))}</div>
             <div style={{ color: '#9aa3b2', fontSize: 13, marginTop: 8 }}>{reviews.length} review{reviews.length !== 1 ? 's' : ''}</div>
           </div>
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 24 }}>
             <div style={{ fontSize: 14, fontWeight: 600, color: '#e5e7eb', marginBottom: 12 }}>Rating Breakdown</div>
             {[...ratingCounts].reverse().map(({ star, count }) => (
               <div key={star} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ color: '#fbbf24', fontSize: 13, width: 20 }}>{star}★</div>
+                <div style={{ color: '#fbbf24', fontSize: 13, width: 20 }}>{star}<FaStar style={{marginRight:4}} /></div>
                 <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
                   <div style={{ height: '100%', borderRadius: 4, background: '#fbbf24', width: reviews.length ? `${(count / reviews.length) * 100}%` : '0%', transition: 'width 0.3s' }} />
                 </div>
@@ -156,9 +157,9 @@ export default function ShopReviewsPage() {
             </button>
           ))}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-            <button onClick={() => setRatingFilter('all')} style={{ padding: '6px 12px', borderRadius: 8, border: 'none', fontSize: 12, cursor: 'pointer', background: ratingFilter === 'all' ? '#3b82f6' : 'rgba(255,255,255,0.08)', color: ratingFilter === 'all' ? '#fff' : '#9aa3b2' }}>All ★</button>
+            <button onClick={() => setRatingFilter('all')} style={{ padding: '6px 12px', borderRadius: 8, border: 'none', fontSize: 12, cursor: 'pointer', background: ratingFilter === 'all' ? '#3b82f6' : 'rgba(255,255,255,0.08)', color: ratingFilter === 'all' ? '#fff' : '#9aa3b2' }}>All <FaStar style={{marginRight:4}} /></button>
             {STARS.map(s => (
-              <button key={s} onClick={() => setRatingFilter(ratingFilter === s ? 'all' : s)} style={{ padding: '6px 12px', borderRadius: 8, border: 'none', fontSize: 12, cursor: 'pointer', background: ratingFilter === s ? '#fbbf24' : 'rgba(255,255,255,0.08)', color: ratingFilter === s ? '#000' : '#9aa3b2' }}>{s}★</button>
+              <button key={s} onClick={() => setRatingFilter(ratingFilter === s ? 'all' : s)} style={{ padding: '6px 12px', borderRadius: 8, border: 'none', fontSize: 12, cursor: 'pointer', background: ratingFilter === s ? '#fbbf24' : 'rgba(255,255,255,0.08)', color: ratingFilter === s ? '#000' : '#9aa3b2' }}>{s}<FaStar style={{marginRight:4}} /></button>
             ))}
           </div>
         </div>
@@ -168,7 +169,7 @@ export default function ShopReviewsPage() {
           <div style={{ textAlign: 'center', color: '#9aa3b2', padding: 40 }}>Loading reviews...</div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#9aa3b2', padding: 60 }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>⭐</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }}><FaStar style={{marginRight:4}} /></div>
             <div>{reviews.length === 0 ? 'No reviews yet' : 'No reviews match this filter'}</div>
           </div>
         ) : (
@@ -186,7 +187,7 @@ export default function ShopReviewsPage() {
                     </div>
                   </div>
                   <div style={{ fontSize: 20, color: '#fbbf24' }}>
-                    {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                    {'<FaStar style={{marginRight:4}} />'.repeat(review.rating)}{'<FaRegStar style={{marginRight:4}} />'.repeat(5 - review.rating)}
                   </div>
                 </div>
 
@@ -201,7 +202,7 @@ export default function ShopReviewsPage() {
                 {review.shopResponse ? (
                   <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, padding: 14, marginBottom: 10 }}>
                     <div style={{ fontSize: 12, fontWeight: 600, color: '#22c55e', marginBottom: 6 }}>
-                      🏪 Your Response — {review.shopResponseAt ? new Date(review.shopResponseAt).toLocaleDateString() : ''}
+                      <FaStore style={{marginRight:4}} /> Your Response — {review.shopResponseAt ? new Date(review.shopResponseAt).toLocaleDateString() : ''}
                     </div>
                     <div style={{ color: '#d1d5db', fontSize: 14, lineHeight: 1.5 }}>
                       {responding === review.id ? null : review.shopResponse}
@@ -238,7 +239,7 @@ export default function ShopReviewsPage() {
                   </div>
                 ) : !review.shopResponse ? (
                   <button onClick={() => { setResponding(review.id); setResponseText(''); }} style={{ fontSize: 13, color: '#3b82f6', background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontWeight: 600 }}>
-                    💬 Reply to this review
+                    <FaComments style={{marginRight:4}} /> Reply to this review
                   </button>
                 ) : null}
               </div>
@@ -251,7 +252,7 @@ export default function ShopReviewsPage() {
       {deleteResponseConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>💬</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}><FaComments style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Remove Response?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This will remove your shop response from the review.</p>
             <div style={{ display: 'flex', gap: 12 }}>

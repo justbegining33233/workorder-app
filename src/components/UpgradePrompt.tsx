@@ -1,4 +1,5 @@
 'use client';
+import { FaCheck } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';
@@ -136,9 +137,9 @@ export default function UpgradePrompt({
                         <ul className="text-sm text-gray-600 mt-3 space-y-1">
                           <li>Up to {planDetails.maxUsers === -1 ? 'unlimited' : planDetails.maxUsers} users</li>
                           <li>Up to {planDetails.maxShops === -1 ? 'unlimited' : planDetails.maxShops} shops</li>
-                          {planDetails.features.inventory && <li>✓ Inventory Management</li>}
-                          {planDetails.features.payroll && <li>✓ Payroll Automation</li>}
-                          {planDetails.features.advancedReporting && <li>✓ Advanced Reporting</li>}
+                          {planDetails.features.inventory && <li><FaCheck style={{marginRight:4}} /> Inventory Management</li>}
+                          {planDetails.features.payroll && <li><FaCheck style={{marginRight:4}} /> Payroll Automation</li>}
+                          {planDetails.features.advancedReporting && <li><FaCheck style={{marginRight:4}} /> Advanced Reporting</li>}
                         </ul>
                       </div>
                     </div>

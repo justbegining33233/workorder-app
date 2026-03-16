@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaArrowDown, FaArrowUp, FaCar, FaExclamationTriangle, FaTrash } from 'react-icons/fa';
 
 interface Loaner {
   id: string;
@@ -124,7 +125,7 @@ export default function LoanersPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🚗 Loaner Vehicles</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaCar style={{marginRight:4}} /> Loaner Vehicles</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>{available} available · {out} checked out</p>
         </div>
         <button onClick={() => { setShowAdd(true); setForm({}); }} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ Add Loaner</button>
@@ -134,7 +135,7 @@ export default function LoanersPage() {
         {loading ? <div style={{ textAlign: 'center', color: '#6b7280', padding: 64 }}>Loading...</div> :
           loaners.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>🚗</div>
+              <div style={{ fontSize: 64 }}><FaCar style={{marginRight:4}} /></div>
               <div style={{ fontSize: 20, fontWeight: 600, margin: '16px 0 8px' }}>No loaner vehicles</div>
               <button onClick={() => { setShowAdd(true); setForm({}); }} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer', marginTop: 8 }}>+ Add First Loaner</button>
             </div>
@@ -160,7 +161,7 @@ export default function LoanersPage() {
                   )}
                   {loaner.damageNotes && (
                     <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '8px 12px', fontSize: 13, color: '#fbbf24', marginBottom: 12 }}>
-                      ⚠️ {loaner.damageNotes}
+                      <FaExclamationTriangle style={{marginRight:4}} /> {loaner.damageNotes}
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -170,7 +171,7 @@ export default function LoanersPage() {
                     {loaner.status === 'out' && (
                       <button onClick={() => openCheckin(loaner)} style={{ flex: 1, background: 'rgba(34,197,94,0.2)', color: '#22c55e', border: '1px solid #22c55e', borderRadius: 6, padding: '8px 0', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Check In</button>
                     )}
-                    <button onClick={() => deleteLoaner(loaner.id)} style={{ background: 'transparent', color: '#6b7280', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '8px 12px', fontSize: 13, cursor: 'pointer' }}>🗑</button>
+                    <button onClick={() => deleteLoaner(loaner.id)} style={{ background: 'transparent', color: '#6b7280', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '8px 12px', fontSize: 13, cursor: 'pointer' }}><FaTrash style={{marginRight:4}} /></button>
                   </div>
                 </div>
               ))}
@@ -199,7 +200,7 @@ export default function LoanersPage() {
       {modalLoaner && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
           <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 440, maxWidth: '90%' }}>
-            <h3 style={{ margin: '0 0 6px', fontSize: 18 }}>{modalMode === 'checkout' ? '⬆️ Check Out' : '⬇️ Check In'}: {modalLoaner.year} {modalLoaner.make} {modalLoaner.model}</h3>
+            <h3 style={{ margin: '0 0 6px', fontSize: 18 }}>{modalMode === 'checkout' ? '<FaArrowUp style={{marginRight:4}} /> Check Out' : '<FaArrowDown style={{marginRight:4}} /> Check In'}: {modalLoaner.year} {modalLoaner.make} {modalLoaner.model}</h3>
             <p style={{ color: '#9ca3af', fontSize: 13, marginTop: 0, marginBottom: 20 }}>Record condition before {modalMode === 'checkout' ? 'lending' : 'returning'}</p>
 
             {modalMode === 'checkout' ? (

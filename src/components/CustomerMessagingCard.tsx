@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { FaComments, FaExclamationTriangle, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -47,7 +48,7 @@ interface CustomerMessagingCardProps {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const ROLE_ICON: Record<string, string> = { shop: "🏪", manager: "👔", tech: "🔧" };
+const ROLE_ICON: Record<string, string> = { shop: "<FaStore style={{marginRight:4}} />", manager: "<FaUserTie style={{marginRight:4}} />", tech: "<FaWrench style={{marginRight:4}} />" };
 const ROLE_LABEL: Record<string, string> = { shop: "Shop", manager: "Manager", tech: "Tech" };
 const ROLE_COLOR: Record<string, string> = { shop: "#f59e0b", manager: "#8b5cf6", tech: "#10b981" };
 
@@ -307,14 +308,14 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
         <div style={{ borderRight: "1px solid rgba(255,255,255,0.06)", overflowY: "auto", maxHeight: 480 }}>
           {filteredConversations.length === 0 ? (
             <div style={{ padding: "24px 16px", color: "#6b7280", fontSize: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>💬</div>
+              <div style={{ fontSize: 28, marginBottom: 8 }}><FaComments style={{marginRight:4}} /></div>
               No conversations yet.
               <br />
               <span style={{ color: "#4b5563" }}>Click <strong style={{ color: "#e5332a" }}>+ New</strong> to start one.</span>
             </div>
           ) : (
             filteredConversations.map((conv) => {
-              const icon = ROLE_ICON[conv.contactRole] ?? "👤";
+              const icon = ROLE_ICON[conv.contactRole] ?? "<FaUser style={{marginRight:4}} />";
               const color = ROLE_COLOR[conv.contactRole] ?? "#9ca3af";
               const isActive = selected?.contactId === conv.contactId && selected?.contactRole === conv.contactRole;
               return (
@@ -359,7 +360,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
                   <div style={{ color: "#6b7280", fontSize: 12 }}>Loading contacts…</div>
                 ) : noContacts ? (
                   <div style={{ color: "#f59e0b", fontSize: 13, padding: "10px 12px", background: "rgba(245,158,11,0.08)", borderRadius: 8 }}>
-                    ⚠️ No messageable contacts found.
+                    <FaExclamationTriangle style={{marginRight:4}} /> No messageable contacts found.
                     <br />
                     <span style={{ fontSize: 11, color: "#9ca3af" }}>
                       You can message shops, managers, and techs only when you have an open work order, a road call request, or a booked appointment.
@@ -412,7 +413,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
             <>
               {/* Thread header */}
               <div style={{ padding: "10px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 8, background: "rgba(0,0,0,0.2)" }}>
-                <span style={{ fontSize: 18 }}>{ROLE_ICON[selected.contactRole] ?? "👤"}</span>
+                <span style={{ fontSize: 18 }}>{ROLE_ICON[selected.contactRole] ?? "<FaUser style={{marginRight:4}} />"}</span>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#e5e7eb" }}>{selected.contactName}</div>
                   <div style={{ fontSize: 11, color: ROLE_COLOR[selected.contactRole] ?? "#9ca3af", fontWeight: 600 }}>
@@ -471,7 +472,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
           ) : (
             /* Empty state */
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#4b5563", gap: 8, padding: 24 }}>
-              <span style={{ fontSize: 36 }}>💬</span>
+              <span style={{ fontSize: 36 }}><FaComments style={{marginRight:4}} /></span>
               <div style={{ fontSize: 14, color: "#6b7280", textAlign: "center" }}>
                 Select a conversation on the left<br />or click <strong style={{ color: "#e5332a" }}>+ New</strong> to start one.
               </div>

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaCheckCircle, FaLink, FaSearch, FaTimes, FaUpload } from 'react-icons/fa';
 
 interface DVIInspection {
   id: string;
@@ -123,7 +124,7 @@ export default function DVIPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🔍 Digital Vehicle Inspections</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaSearch style={{marginRight:4}} /> Digital Vehicle Inspections</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Multi-point inspections sent to customers for approval — average 35% upsell lift</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ New DVI</button>
@@ -135,7 +136,7 @@ export default function DVIPage() {
           {loading ? <div style={{ color: '#6b7280', padding: 32 }}>Loading...</div> :
             inspections.length === 0 ? (
               <div style={{ textAlign: 'center', padding: 80 }}>
-                <div style={{ fontSize: 64 }}>🔍</div>
+                <div style={{ fontSize: 64 }}><FaSearch style={{marginRight:4}} /></div>
                 <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No inspections yet</div>
                 <div style={{ color: '#9ca3af', marginBottom: 24 }}>Create your first DVI to start upselling approved work</div>
                 <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Start First DVI</button>
@@ -160,9 +161,9 @@ export default function DVIPage() {
                       }}>{insp.status}</span>
                     </div>
                     <div style={{ display: 'flex', gap: 12, fontSize: 12 }}>
-                      {reds > 0 && <span style={{ color: '#e5332a' }}>🔴 {reds} urgent</span>}
-                      {yellows > 0 && <span style={{ color: '#f59e0b' }}>🟡 {yellows} advisory</span>}
-                      {insp.customerApproved && <span style={{ color: '#22c55e' }}>✅ Approved</span>}
+                      {reds > 0 && <span style={{ color: '#e5332a' }}> {reds} urgent</span>}
+                      {yellows > 0 && <span style={{ color: '#f59e0b' }}> {yellows} advisory</span>}
+                      {insp.customerApproved && <span style={{ color: '#22c55e' }}><FaCheckCircle style={{marginRight:4}} /> Approved</span>}
                     </div>
                   </div>
                 );
@@ -178,20 +179,20 @@ export default function DVIPage() {
                 <h3 style={{ margin: 0, fontSize: 18 }}>{selected.vehicleDesc || 'Vehicle Inspection'}</h3>
                 <div style={{ fontSize: 13, color: '#9ca3af' }}>{selected.mileage ? `${selected.mileage.toLocaleString()} miles` : ''} · {new Date(selected.createdAt).toLocaleDateString()}</div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ background: 'transparent', color: '#6b7280', border: 'none', cursor: 'pointer', fontSize: 18 }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'transparent', color: '#6b7280', border: 'none', cursor: 'pointer', fontSize: 18 }}><FaTimes style={{marginRight:4}} /></button>
             </div>
 
             {/* Send / Copy Link */}
             {selected.status === 'in-progress' && (
               <button onClick={() => sendToCustomer(selected.id)}
                 style={{ width: '100%', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}>
-                📤 Send to Customer for Approval
+                <FaUpload style={{marginRight:4}} /> Send to Customer for Approval
               </button>
             )}
             {selected.approvalToken && (
               <button onClick={() => copyLink(selected.approvalToken)}
                 style={{ width: '100%', background: 'rgba(59,130,246,0.2)', color: '#60a5fa', border: '1px solid #3b82f6', borderRadius: 8, padding: '10px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}>
-                {copied === selected.approvalToken ? '✅ Link Copied!' : '🔗 Copy Customer Review Link'}
+                {copied === selected.approvalToken ? '<FaCheckCircle style={{marginRight:4}} /> Link Copied!' : '<FaLink style={{marginRight:4}} /> Copy Customer Review Link'}
               </button>
             )}
 
@@ -221,9 +222,9 @@ export default function DVIPage() {
             <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: 14, marginTop: 8 }}>
               <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Inspection Summary</div>
               <div style={{ display: 'flex', gap: 16, fontSize: 13 }}>
-                <span style={{ color: '#22c55e' }}>🟢 {selected.items.filter(i => i.condition === 'green').length} Good</span>
-                <span style={{ color: '#f59e0b' }}>🟡 {selected.items.filter(i => i.condition === 'yellow').length} Advisory</span>
-                <span style={{ color: '#e5332a' }}>🔴 {selected.items.filter(i => i.condition === 'red').length} Urgent</span>
+                <span style={{ color: '#22c55e' }}> {selected.items.filter(i => i.condition === 'green').length} Good</span>
+                <span style={{ color: '#f59e0b' }}> {selected.items.filter(i => i.condition === 'yellow').length} Advisory</span>
+                <span style={{ color: '#e5332a' }}> {selected.items.filter(i => i.condition === 'red').length} Urgent</span>
               </div>
               {selected.items.some(i => i.estimatedCost) && (
                 <div style={{ marginTop: 8, fontSize: 14, fontWeight: 700, color: '#f59e0b' }}>
@@ -240,7 +241,7 @@ export default function DVIPage() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
           <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 420, maxWidth: '90%' }}>
             <h3 style={{ margin: '0 0 20px', fontSize: 18 }}>Start New DVI</h3>
-            <p style={{ color: '#9ca3af', fontSize: 13, marginTop: 0, marginBottom: 20 }}>A 19-point inspection template will be created. You can adjust each item&apos;s condition (🟢🟡🔴) after creation.</p>
+            <p style={{ color: '#9ca3af', fontSize: 13, marginTop: 0, marginBottom: 20 }}>A 19-point inspection template will be created. You can adjust each item&apos;s condition () after creation.</p>
             {[['vehicleDesc', 'Vehicle (Year/Make/Model)'], ['mileage', 'Current Mileage'], ['workOrderId', 'Work Order ID (optional)'], ['notes', 'Notes (optional)']].map(([k, label]) => (
               <div key={k} style={{ marginBottom: 14 }}>
                 <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>{label}</label>

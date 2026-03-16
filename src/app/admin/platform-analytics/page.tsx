@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaChartBar, FaChartLine } from 'react-icons/fa';
 
 export default function PlatformAnalytics() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -35,7 +36,7 @@ export default function PlatformAnalytics() {
           <Link href="/admin/admin-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Admin Tools
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>📊 Platform Analytics</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaChartBar style={{marginRight:4}} /> Platform Analytics</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Detailed analytics and performance metrics</p>
         </div>
       </div>
@@ -71,7 +72,7 @@ export default function PlatformAnalytics() {
             <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>Revenue Trends</h2>
             <div style={{height:300, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.03)', borderRadius:8}}>
               <div style={{textAlign:'center', color:'#9aa3b2'}}>
-                <div style={{fontSize:48, marginBottom:12}}>📈</div>
+                <div style={{fontSize:48, marginBottom:12}}><FaChartLine style={{marginRight:4}} /></div>
                 <div>Chart visualization would go here</div>
               </div>
             </div>
@@ -96,7 +97,7 @@ export default function PlatformAnalytics() {
           <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>User Activity</h2>
           <div style={{height:250, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.03)', borderRadius:8}}>
             <div style={{textAlign:'center', color:'#9aa3b2'}}>
-              <div style={{fontSize:48, marginBottom:12}}>📊</div>
+              <div style={{fontSize:48, marginBottom:12}}><FaChartBar style={{marginRight:4}} /></div>
               <div>Activity chart would go here</div>
             </div>
           </div>

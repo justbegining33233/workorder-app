@@ -1,4 +1,5 @@
 'use client';
+import { FaBox, FaCalendarAlt, FaChartBar, FaClipboardList, FaDollarSign, FaExclamationCircle, FaUsers } from 'react-icons/fa';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -277,7 +278,7 @@ export default function ManagerHome() {
                   {/* Urgent Alerts */}
                   {urgentAlerts.length > 0 && (
                     <div style={{background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.3)', borderRadius:12, padding:24}}>
-                      <h2 style={{fontSize:20, fontWeight:700, color:'#ef4444', marginBottom:16}}>🚨 Urgent Alerts</h2>
+                      <h2 style={{fontSize:20, fontWeight:700, color:'#ef4444', marginBottom:16}}><FaExclamationCircle style={{marginRight:4}} /> Urgent Alerts</h2>
                       <div style={{display:'grid', gap:12}}>
                         {urgentAlerts.map((alert, index) => (
                           <div key={index} style={{background:'rgba(239,68,68,0.1)', borderRadius:8, padding:16, border:'1px solid rgba(239,68,68,0.2)'}}>
@@ -292,7 +293,7 @@ export default function ManagerHome() {
 
                   {/* Work Order Dashboard */}
                   <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-                    <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>📋 Work Orders Overview</h2>
+                    <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}><FaClipboardList style={{marginRight:4}} /> Work Orders Overview</h2>
                     <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:16}}>
                       <div style={{textAlign:'center'}}>
                         <div style={{fontSize:28, fontWeight:700, color:'#3b82f6'}}>{workOrderStats.activeJobs}</div>
@@ -323,7 +324,7 @@ export default function ManagerHome() {
 
                   {/* Team Performance */}
                   <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-                    <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>👥 Team Performance</h2>
+                    <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:20}}><FaUsers style={{marginRight:4}} /> Team Performance</h2>
                     <div style={{display:'grid', gap:12}}>
                       {teamPerformance.length === 0 ? (
                         <div style={{textAlign:'center', padding:32, color:'#9aa3b2'}}>
@@ -335,7 +336,7 @@ export default function ManagerHome() {
                             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
                               <div style={{color:'#e5e7eb', fontWeight:600}}>{member.name}</div>
                               <div style={{color: member.isActive ? '#22c55e' : '#6b7280', fontSize:12}}>
-                                {member.isActive ? '🟢 Active' : '⚫ Away'}
+                                {member.isActive ? ' Active' : ' Away'}
                               </div>
                             </div>
                             <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, fontSize:13}}>
@@ -354,7 +355,7 @@ export default function ManagerHome() {
                   {/* Inventory Requests */}
                   <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
-                      <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>📦 Inventory Requests</h2>
+                      <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}><FaBox style={{marginRight:4}} /> Inventory Requests</h2>
                       <button
                         onClick={() => setShowRequestForm(!showRequestForm)}
                         style={{
@@ -468,7 +469,7 @@ export default function ManagerHome() {
                 <div style={{display:'grid', gap:24}}>
                   {/* Financial Summary */}
                   <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-                    <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:18}}>💰 Financial Summary</h3>
+                    <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:18}}><FaDollarSign style={{marginRight:4}} /> Financial Summary</h3>
                     <div style={{display:'grid', gap:12}}>
                       <div style={{background:'rgba(34,197,94,0.1)', borderRadius:8, padding:12}}>
                         <div style={{color:'#22c55e', fontSize:12, marginBottom:4}}>Today's Revenue</div>
@@ -494,7 +495,7 @@ export default function ManagerHome() {
 
                   {/* Team Schedule */}
                   <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-                    <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:18}}>📅 Team Schedule</h3>
+                    <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:18}}><FaCalendarAlt style={{marginRight:4}} /> Team Schedule</h3>
                     <div style={{display:'grid', gap:8}}>
                       {teamSchedule.length === 0 ? (
                         <div style={{textAlign:'center', padding:16, color:'#9aa3b2', fontSize:14}}>
@@ -517,7 +518,7 @@ export default function ManagerHome() {
 
                   {/* Recent Activity */}
                   <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-                    <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:18}}>📝 Recent Activity</h3>
+                    <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:18}}><FaClipboardList style={{marginRight:4}} /> Recent Activity</h3>
                     <div style={{display:'grid', gap:8, maxHeight:200, overflowY:'auto'}}>
                       {recentActivity.length === 0 ? (
                         <div style={{textAlign:'center', padding:16, color:'#9aa3b2', fontSize:14}}>
@@ -540,25 +541,25 @@ export default function ManagerHome() {
                     <h3 style={{color:'#e5e7eb', marginBottom:16, fontSize:16}}>Quick Actions</h3>
                     <div style={{display:'grid', gap:8}}>
                       <Link href="/manager/dashboard" style={{padding:12, background:'rgba(168,85,247,0.2)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:700, border:'1px solid rgba(168,85,247,0.3)'}}>
-                        📊 Manager Dashboard
+                        <FaChartBar style={{marginRight:4}} /> Manager Dashboard
                       </Link>
                       <Link href="/manager/assignments" style={{padding:12, background:'rgba(168,85,247,0.2)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:700, border:'1px solid rgba(168,85,247,0.3)'}}>
-                        👥 Assign Work Orders
+                        <FaUsers style={{marginRight:4}} /> Assign Work Orders
                       </Link>
                       <Link href="/manager/estimates" style={{padding:12, background:'rgba(34,197,94,0.2)', borderRadius:8, textDecoration:'none', color:'#22c55e', fontSize:14, fontWeight:700, border:'1px solid rgba(34,197,94,0.3)'}}>
-                        💰 Create Estimates
+                        <FaDollarSign style={{marginRight:4}} /> Create Estimates
                       </Link>
                       <Link href="/shop/home" style={{padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8, textDecoration:'none', color:'#3b82f6', fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                        📊 View Center Control
+                        <FaChartBar style={{marginRight:4}} /> View Center Control
                       </Link>
                       <Link href="/shop/manage-team" style={{padding:12, background:'rgba(168,85,247,0.1)', borderRadius:8, textDecoration:'none', color:'#a855f7', fontSize:14, fontWeight:600}}>
-                        👥 Manage Team
+                        <FaUsers style={{marginRight:4}} /> Manage Team
                       </Link>
                       <button 
                         onClick={() => window.location.href = 'tel:911'}
                         style={{padding:12, background:'rgba(239,68,68,0.2)', borderRadius:8, border:'1px solid rgba(239,68,68,0.3)', color:'#ef4444', fontSize:14, fontWeight:700, cursor:'pointer'}}
                       >
-                        🚨 Emergency Call
+                        <FaExclamationCircle style={{marginRight:4}} /> Emergency Call
                       </button>
                     </div>
                   </div>

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import '@/styles/sos-theme.css';
 import { getAllWorkOrdersClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaCar, FaClipboardList } from 'react-icons/fa';
 
 interface WorkOrder {
   id: string;
@@ -161,7 +162,7 @@ function WorkOrderListPageContent() {
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px'
                     }}>
-                      {serviceType === 'roadside' ? '🚗 Roadside' : '🏢 In-Shop'}
+                      {serviceType === 'roadside' ? '<FaCar style={{marginRight:4}} /> Roadside' : '<FaBuilding style={{marginRight:4}} /> In-Shop'}
                     </span>
                   </div>
                   <div>
@@ -198,7 +199,7 @@ function WorkOrderListPageContent() {
 
           {filteredOrders.length === 0 && (
             <div style={{ textAlign: 'center', padding: 60, color: '#9aa3b2' }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
+              <div style={{ fontSize: 48, marginBottom: 16 }}><FaClipboardList style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>No Work Orders Found</div>
               <div style={{ fontSize: 14 }}>
                 {status ? `No ${getStatusLabel(status).toLowerCase()} work orders at this time.` : 'Create a new work order to get started.'}

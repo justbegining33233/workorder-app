@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBox, FaWrench } from 'react-icons/fa';
 
 // Category color palettes
 const CATEGORY_COLORS: Record<string, { accent: string; bandBg: string; rowBg: string }> = {
@@ -353,7 +354,7 @@ export default function PartsAndLabor() {
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
-              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🔧 Parts and Set Labor</h1>
+              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaWrench style={{marginRight:4}} /> Parts and Set Labor</h1>
               <p style={{fontSize:14, color:'#9aa3b2'}}>Manage inventory parts pricing and labor rates</p>
             </div>
             <div style={{display:'flex', gap:12}}>
@@ -375,13 +376,13 @@ export default function PartsAndLabor() {
             onClick={() => setActiveTab('parts')}
             style={{flex:1, padding:'16px', background:activeTab === 'parts' ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.05)', color:activeTab === 'parts' ? '#3b82f6' : '#9aa3b2', border:`1px solid ${activeTab === 'parts' ? 'rgba(59,130,246,0.3)' : 'rgba(255,255,255,0.1)'}`, borderRadius:12, fontSize:16, fontWeight:700, cursor:'pointer'}}
           >
-            📦 Parts Inventory ({parts.length})
+            <FaBox style={{marginRight:4}} /> Parts Inventory ({parts.length})
           </button>
           <button 
             onClick={() => setActiveTab('labor')}
             style={{flex:1, padding:'16px', background:activeTab === 'labor' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)', color:activeTab === 'labor' ? '#22c55e' : '#9aa3b2', border:`1px solid ${activeTab === 'labor' ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`, borderRadius:12, fontSize:16, fontWeight:700, cursor:'pointer'}}
           >
-            ⏱️ Labor Rates ({laborRates.length})
+            ⏱ Labor Rates ({laborRates.length})
           </button>
         </div>
 

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaCheckCircle, FaLightbulb, FaLink, FaPencilAlt } from 'react-icons/fa';
 
 interface WorkAuthorization {
   id: string;
@@ -80,7 +81,7 @@ export default function WorkAuthorizationsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>✍️ Work Authorizations</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaPencilAlt style={{marginRight:4}} /> Work Authorizations</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Digital e-signatures for customer work approvals — legally binding with timestamp</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ New Authorization</button>
@@ -88,7 +89,7 @@ export default function WorkAuthorizationsPage() {
 
       {/* Stats */}
       <div style={{ padding: '24px 32px 0', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {[{ label: 'Total', value: auths.length, icon: '📋' }, { label: 'Signed', value: signed, icon: '✅' }, { label: 'Pending', value: pending, icon: '⏳' }].map(s => (
+        {[{ label: 'Total', value: auths.length, icon: '' }, { label: 'Signed', value: signed, icon: '' }, { label: 'Pending', value: pending, icon: '⏳' }].map(s => (
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px 24px', minWidth: 120 }}>
             <div style={{ fontSize: 24 }}>{s.icon}</div>
             <div style={{ fontSize: 28, fontWeight: 800, margin: '4px 0' }}>{s.value}</div>
@@ -101,7 +102,7 @@ export default function WorkAuthorizationsPage() {
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           auths.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>✍️</div>
+              <div style={{ fontSize: 64 }}><FaPencilAlt style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No authorizations yet</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Create a work authorization to get a digital e-signature link to send to customers</div>
               <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Create First Authorization</button>
@@ -128,7 +129,7 @@ export default function WorkAuthorizationsPage() {
                         <span style={{ background: s.bg, color: s.color, border: `1px solid ${s.color}`, borderRadius: 20, padding: '3px 12px', fontSize: 12, fontWeight: 700 }}>{s.text}</span>
                         {st === 'pending' && (
                           <button onClick={() => copyLink(a.token)} style={{ background: 'rgba(59,130,246,0.15)', color: '#60a5fa', border: '1px solid #3b82f6', borderRadius: 8, padding: '6px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-                            {copied === a.token ? '✅ Copied!' : '🔗 Copy Link'}
+                            {copied === a.token ? '<FaCheckCircle style={{marginRight:4}} /> Copied!' : '<FaLink style={{marginRight:4}} /> Copy Link'}
                           </button>
                         )}
                       </div>
@@ -163,7 +164,7 @@ export default function WorkAuthorizationsPage() {
             </div>
 
             <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: 13, color: '#93c5fd' }}>
-              💡 After creating, copy the link and send it to the customer via text or email. The link expires in 7 days and creates a legally binding digital record.
+              <FaLightbulb style={{marginRight:4}} /> After creating, copy the link and send it to the customer via text or email. The link expires in 7 days and creates a legally binding digital record.
             </div>
 
             {formError && (

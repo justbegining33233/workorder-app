@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaCar, FaCheckCircle, FaExclamationTriangle, FaTag, FaTimesCircle } from 'react-icons/fa';
 
 interface StateInspection {
   id: string;
@@ -18,9 +19,9 @@ interface StateInspection {
 }
 
 const RESULT_STYLE: Record<string, { bg: string; color: string; icon: string }> = {
-  pass:    { bg: 'rgba(34,197,94,0.15)',  color: '#22c55e', icon: '✅' },
-  fail:    { bg: 'rgba(229,51,42,0.15)',  color: '#e5332a', icon: '❌' },
-  waiver:  { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', icon: '⚠️' },
+  pass:    { bg: 'rgba(34,197,94,0.15)',  color: '#22c55e', icon: '<FaCheckCircle style={{marginRight:4}} />' },
+  fail:    { bg: 'rgba(229,51,42,0.15)',  color: '#e5332a', icon: '<FaTimesCircle style={{marginRight:4}} />' },
+  waiver:  { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', icon: '<FaExclamationTriangle style={{marginRight:4}} />' },
   pending: { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', icon: '⏳' },
 };
 
@@ -63,14 +64,14 @@ export default function StateInspectionsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🚗 State Inspections</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaCar style={{marginRight:4}} /> State Inspections</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Safety & emissions inspection records — track sticker numbers and expiry dates</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ Record Inspection</button>
       </div>
 
       <div style={{ padding: '24px 32px 0', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {[{ label: 'Total', value: inspections.length, icon: '📋' }, { label: 'Passed', value: inspections.filter(i => i.result === 'pass').length, icon: '✅' }, { label: 'Failed', value: inspections.filter(i => i.result === 'fail').length, icon: '❌' }, { label: 'Pass Rate', value: `${passRate}%`, icon: '📊' }].map(s => (
+        {[{ label: 'Total', value: inspections.length, icon: '' }, { label: 'Passed', value: inspections.filter(i => i.result === 'pass').length, icon: '' }, { label: 'Failed', value: inspections.filter(i => i.result === 'fail').length, icon: '' }, { label: 'Pass Rate', value: `${passRate}%`, icon: '' }].map(s => (
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 20px', minWidth: 110 }}>
             <div style={{ fontSize: 22 }}>{s.icon}</div>
             <div style={{ fontSize: 26, fontWeight: 800, margin: '4px 0 2px' }}>{s.value}</div>
@@ -83,7 +84,7 @@ export default function StateInspectionsPage() {
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           inspections.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>🚗</div>
+              <div style={{ fontSize: 64 }}><FaCar style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No inspections recorded</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Start recording state safety and emissions inspections</div>
               <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Record First Inspection</button>
@@ -101,7 +102,7 @@ export default function StateInspectionsPage() {
                       </div>
                       <span style={{ fontSize: 20 }}>{rs.icon}</span>
                     </div>
-                    {insp.stickerId && <div style={{ fontSize: 13, marginBottom: 4 }}>🏷️ Sticker #{insp.stickerId}</div>}
+                    {insp.stickerId && <div style={{ fontSize: 13, marginBottom: 4 }}><FaTag style={{marginRight:4}} /> Sticker #{insp.stickerId}</div>}
                     {insp.expiryDate && <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 4 }}>Expires: {new Date(insp.expiryDate).toLocaleDateString()}</div>}
                     {insp.fee && <div style={{ fontSize: 13, color: '#22c55e' }}>Fee charged: ${insp.fee}</div>}
                     {insp.notes && <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>{insp.notes}</div>}
@@ -131,9 +132,9 @@ export default function StateInspectionsPage() {
                 <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Result</label>
                 <select value={form.result} onChange={e => setForm(p => ({ ...p, result: e.target.value }))}
                   style={{ width: '100%', background: '#374151', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 12px', color: '#e5e7eb', fontSize: 14 }}>
-                  <option value="pass">✅ Pass</option>
-                  <option value="fail">❌ Fail</option>
-                  <option value="waiver">⚠️ Waiver</option>
+                  <option value="pass"><FaCheckCircle style={{marginRight:4}} /> Pass</option>
+                  <option value="fail"><FaTimesCircle style={{marginRight:4}} /> Fail</option>
+                  <option value="waiver"><FaExclamationTriangle style={{marginRight:4}} /> Waiver</option>
                   <option value="pending">⏳ Pending</option>
                 </select>
               </div>

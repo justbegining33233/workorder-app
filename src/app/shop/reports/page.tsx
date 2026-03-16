@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaChartBar, FaDownload } from 'react-icons/fa';
 
 interface MonthData { month: string; revenue: number; jobs: number; }
 interface ServiceData { service: string; jobs: number; revenue: number; }
@@ -123,7 +124,7 @@ export default function ShopReportsPage() {
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 8 }}>📊 Reports & Analytics</h1>
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 8 }}><FaChartBar style={{marginRight:4}} /> Reports & Analytics</h1>
               <p style={{ fontSize: 14, color: '#9aa3b2' }}>Live data from your shop's work orders and payments</p>
             </div>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -134,7 +135,7 @@ export default function ShopReportsPage() {
                 {MONTH_NAMES.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
               </select>
               <button onClick={handleExport} disabled={!report} style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: report ? 'pointer' : 'not-allowed', opacity: report ? 1 : 0.5 }}>
-                📥 Export CSV
+                <FaDownload style={{marginRight:4}} /> Export CSV
               </button>
             </div>
           </div>

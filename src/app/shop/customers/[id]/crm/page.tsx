@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
+import { FaCar, FaClipboardList, FaRegStar, FaStar, FaTag } from 'react-icons/fa';
 
 interface CRMData {
   customer: {
@@ -171,7 +172,7 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
               {/* Notes */}
               <div style={cardStyle}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}>📝 Internal Notes</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}><FaClipboardList style={{marginRight:4}} /> Internal Notes</h2>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -190,7 +191,7 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
 
               {/* Tags */}
               <div style={cardStyle}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}>🏷️ Tags</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}><FaTag style={{marginRight:4}} /> Tags</h2>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
                   {tags.map(tag => (
                     <span key={tag} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 999, fontSize: 12, color: '#3b82f6' }}>
@@ -216,7 +217,7 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
             {/* Vehicles */}
             {data.vehicles.length > 0 && (
               <div style={{ ...cardStyle, marginBottom: 24 }}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}>🚗 Vehicles</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}><FaCar style={{marginRight:4}} /> Vehicles</h2>
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                   {data.vehicles.map(v => (
                     <div key={v.id} style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -230,7 +231,7 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
 
             {/* Work Order History */}
             <div style={{ ...cardStyle, marginBottom: 24 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}>📋 Work Order History</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}><FaClipboardList style={{marginRight:4}} /> Work Order History</h2>
               {data.workOrders.length === 0 ? (
                 <div style={{ color: '#9aa3b2', fontSize: 14, textAlign: 'center', padding: 20 }}>No work orders yet</div>
               ) : (
@@ -268,11 +269,11 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
             {/* Reviews */}
             {data.reviews.length > 0 && (
               <div style={cardStyle}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}>⭐ Reviews</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}><FaStar style={{marginRight:4}} /> Reviews</h2>
                 {data.reviews.map(r => (
                   <div key={r.id} style={{ padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, marginBottom: 8 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ color: '#f59e0b' }}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+                      <span style={{ color: '#f59e0b' }}>{'<FaStar style={{marginRight:4}} />'.repeat(r.rating)}{'<FaRegStar style={{marginRight:4}} />'.repeat(5 - r.rating)}</span>
                       <span style={{ fontSize: 12, color: '#9aa3b2' }}>{new Date(r.createdAt).toLocaleDateString()}</span>
                     </div>
                     {r.comment && <div style={{ fontSize: 13, color: '#e5e7eb' }}>{r.comment}</div>}

@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TechLiveMap from '@/components/TechLiveMap';
+import { FaCheckCircle, FaClock, FaLock, FaMapMarkerAlt, FaStore } from 'react-icons/fa';
 
 interface WorkOrderDetails {
   id: string;
@@ -260,10 +261,10 @@ export default function WorkOrderDetailsPage() {
               {workOrder.serviceLocation && workOrder.serviceLocation.toLowerCase() !== 'roadside' ? (
                 // IN-SHOP: Always show shop address and appointment time (do not show GPS)
                 <div style={{display:'flex', flexDirection:'column', gap:8}}>
-                  <div style={{fontSize:14, color:'#e5e7eb'}}>🏬 Shop: <strong>{workOrder.shop.shopName}</strong></div>
+                  <div style={{fontSize:14, color:'#e5e7eb'}}><FaStore style={{marginRight:4}} /> Shop: <strong>{workOrder.shop.shopName}</strong></div>
                   <div style={{fontSize:14, color:'#9aa3b2'}}>{workOrder.shop.address}</div>
-                  {workOrder.scheduledDate && <div style={{fontSize:14, color:'#f59e0b'}}>🕒 Appointment: {new Date(workOrder.scheduledDate).toLocaleString()}</div>}
-                  {workOrder.dueDate && <div style={{fontSize:14, color:'#f59e0b'}}>🕒 Due: {new Date(workOrder.dueDate).toLocaleString()}</div>}
+                  {workOrder.scheduledDate && <div style={{fontSize:14, color:'#f59e0b'}}><FaClock style={{marginRight:4}} /> Appointment: {new Date(workOrder.scheduledDate).toLocaleString()}</div>}
+                  {workOrder.dueDate && <div style={{fontSize:14, color:'#f59e0b'}}><FaClock style={{marginRight:4}} /> Due: {new Date(workOrder.dueDate).toLocaleString()}</div>}
                 </div>
               ) : (
                 // ROADSIDE: show live map and latest tracking data when available
@@ -274,7 +275,7 @@ export default function WorkOrderDetailsPage() {
 
                   {workOrder.tracking ? (
                     <div style={{display:'flex', gap:16, alignItems:'center'}}>
-                      <div style={{fontSize:14, color:'#e5e7eb'}}>📍 Current Location: {workOrder.tracking.latitude.toFixed(4)}, {workOrder.tracking.longitude.toFixed(4)}</div>
+                      <div style={{fontSize:14, color:'#e5e7eb'}}><FaMapMarkerAlt style={{marginRight:4}} /> Current Location: {workOrder.tracking.latitude.toFixed(4)}, {workOrder.tracking.longitude.toFixed(4)}</div>
                       {workOrder.tracking.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>⏰ ETA: {new Date(workOrder.tracking.estimatedArrival).toLocaleTimeString()}</div>}
                     </div>
                   ) : (
@@ -329,7 +330,7 @@ export default function WorkOrderDetailsPage() {
                   {paying ? 'Redirecting to Stripe...' : `Pay $${workOrder.estimate.totalDue.toFixed(2)} Securely`}
                 </button>
                 <div style={{textAlign:'center', marginTop:10, fontSize:12, color:'#6b7280'}}>
-                  🔒 Powered by Stripe · Apple Pay &amp; Google Pay accepted
+                  <FaLock style={{marginRight:4}} /> Powered by Stripe · Apple Pay &amp; Google Pay accepted
                 </div>
               </div>
             )}
@@ -343,7 +344,7 @@ export default function WorkOrderDetailsPage() {
                 borderRadius:12,
                 textAlign:'center',
               }}>
-                <div style={{fontSize:24, marginBottom:8}}>✅</div>
+                <div style={{fontSize:24, marginBottom:8}}><FaCheckCircle style={{marginRight:4}} /></div>
                 <div style={{color:'#22c55e', fontWeight:700, fontSize:16}}>Payment Complete — Thank You!</div>
                 <div style={{color:'#9aa3b2', fontSize:13, marginTop:4}}>Your work order is closed. A receipt was sent to your email.</div>
               </div>

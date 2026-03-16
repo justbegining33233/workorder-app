@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBookmark, FaBox, FaClipboardList, FaCreditCard, FaEnvelope, FaIndustry, FaPhone, FaRegStar, FaStar, FaTimes, FaTrash, FaUser } from 'react-icons/fa';
 
 type TabId = 'vendors' | 'orders';
 
@@ -23,7 +24,7 @@ const TERMS = ['Net 30', 'Net 15', 'Net 60', 'COD', 'Prepaid', 'Credit Card'];
 const BLANK_V = { name: '', contactName: '', phone: '', email: '', website: '', category: 'parts', accountNumber: '', paymentTerms: 'Net 30', rating: '5', notes: '', isActive: true };
 const BLANK_ITEM: OrderItem = { itemName: '', sku: '', quantity: '1', unitCost: '' };
 
-const ratingStars = (r: number) => '★'.repeat(Math.round(r)) + '☆'.repeat(5 - Math.round(r));
+const ratingStars = (r: number) => '<FaStar style={{marginRight:4}} />'.repeat(Math.round(r)) + '<FaRegStar style={{marginRight:4}} />'.repeat(5 - Math.round(r));
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   ordered:   { bg: 'rgba(59,130,246,0.2)',  text: '#60a5fa' },
   shipped:   { bg: 'rgba(245,158,11,0.2)',  text: '#fbbf24' },
@@ -169,15 +170,15 @@ export default function VendorManagementPage() {
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
           <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
-          <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 2px' }}>🏭 Vendors & Parts Orders</h1>
+          <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 2px' }}><FaIndustry style={{marginRight:4}} /> Vendors & Parts Orders</h1>
           <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Manage suppliers and track parts orders</p>
         </div>
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 28, background: 'rgba(0,0,0,0.3)', borderRadius: 10, padding: 4, width: 'fit-content' }}>
           {([
-            { id: 'vendors' as TabId, label: `🏭 Vendors (${vendors.length})` },
-            { id: 'orders' as TabId,  label: `📦 Parts Orders (${orders.filter(o => o.status !== 'cancelled').length})` },
+            { id: 'vendors' as TabId, label: `<FaIndustry style={{marginRight:4}} /> Vendors (${vendors.length})` },
+            { id: 'orders' as TabId,  label: ` Parts Orders (${orders.filter(o => o.status !== 'cancelled').length})` },
           ]).map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               style={{ padding: '9px 20px', borderRadius: 7, border: 'none', background: activeTab === tab.id ? '#3b82f6' : 'transparent', color: activeTab === tab.id ? '#fff' : '#94a3b8', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
@@ -220,7 +221,7 @@ export default function VendorManagementPage() {
 
             {displayed.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🏭</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}><FaIndustry style={{marginRight:4}} /></div>
                 <p style={{ fontSize: 16 }}>{vendors.length === 0 ? 'No vendors yet — add your first parts supplier' : 'No vendors in this category'}</p>
               </div>
             ) : (
@@ -238,20 +239,20 @@ export default function VendorManagementPage() {
                       <span style={{ color: '#fbbf24', fontSize: 14 }}>{ratingStars(v.rating)}</span>
                     </div>
                     <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.7 }}>
-                      {v.contactName && <div>👤 {v.contactName}</div>}
-                      {v.phone      && <div>📞 {v.phone}</div>}
-                      {v.email      && <div>✉️ {v.email}</div>}
-                      {v.accountNumber && <div>🔖 Acct: {v.accountNumber}</div>}
-                      {v.paymentTerms  && <div>💳 {v.paymentTerms}</div>}
+                      {v.contactName && <div><FaUser style={{marginRight:4}} /> {v.contactName}</div>}
+                      {v.phone      && <div><FaPhone style={{marginRight:4}} /> {v.phone}</div>}
+                      {v.email      && <div><FaEnvelope style={{marginRight:4}} /> {v.email}</div>}
+                      {v.accountNumber && <div><FaBookmark style={{marginRight:4}} /> Acct: {v.accountNumber}</div>}
+                      {v.paymentTerms  && <div><FaCreditCard style={{marginRight:4}} /> {v.paymentTerms}</div>}
                     </div>
                     {v.notes && <p style={{ color: '#64748b', fontSize: 12, marginTop: 10, fontStyle: 'italic' }}>{v.notes}</p>}
                     <div style={{ display: 'flex', gap: 8, marginTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
                       <button onClick={() => openEdit(v)} style={{ flex: 1, padding: '7px', borderRadius: 7, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: 13 }}>Edit</button>
                       <button onClick={() => { setOrderVendor(v.name); setActiveTab('orders'); setShowOrderForm(true); }}
                         style={{ flex: 1, padding: '7px', borderRadius: 7, border: '1px solid rgba(59,130,246,0.4)', background: 'rgba(59,130,246,0.1)', color: '#60a5fa', cursor: 'pointer', fontSize: 13 }}>
-                        📦 Order Parts
+                        <FaBox style={{marginRight:4}} /> Order Parts
                       </button>
-                      <button onClick={() => setDeleteVendorConfirm({ id: v.id, name: v.name })} style={{ padding: '7px 12px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 13 }}>✕</button>
+                      <button onClick={() => setDeleteVendorConfirm({ id: v.id, name: v.name })} style={{ padding: '7px 12px', borderRadius: 7, border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#fca5a5', cursor: 'pointer', fontSize: 13 }}><FaTimes style={{marginRight:4}} /></button>
                     </div>
                   </div>
                 ))}
@@ -304,7 +305,7 @@ export default function VendorManagementPage() {
               <div style={{ textAlign: 'center', padding: 40, color: '#475569' }}>Loading orders…</div>
             ) : displayedOrders.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>📦</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}><FaBox style={{marginRight:4}} /></div>
                 <p style={{ fontSize: 16 }}>{orders.length === 0 ? 'No parts orders yet' : 'No orders with this status'}</p>
                 <button onClick={() => setShowOrderForm(true)} style={{ marginTop: 12, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#e5332a', color: 'white', fontWeight: 600, cursor: 'pointer' }}>+ New Order</button>
               </div>
@@ -352,13 +353,13 @@ export default function VendorManagementPage() {
                           )}
                           <button onClick={() => setDeleteOrderConfirmId(order.id)}
                             style={{ padding: '5px 10px', borderRadius: 6, border: 'none', background: 'transparent', color: '#475569', cursor: 'pointer', fontSize: 12 }}>
-                            ✕
+                            <FaTimes style={{marginRight:4}} />
                           </button>
                         </div>
                       </div>
                       {expanded && (
                         <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '12px 20px', background: 'rgba(0,0,0,0.15)' }}>
-                          {order.notes && <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 10px', fontStyle: 'italic' }}>📝 {order.notes}</p>}
+                          {order.notes && <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 10px', fontStyle: 'italic' }}><FaClipboardList style={{marginRight:4}} /> {order.notes}</p>}
                           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                             <thead>
                               <tr style={{ color: '#475569' }}>
@@ -463,7 +464,7 @@ export default function VendorManagementPage() {
           onClick={() => setShowOrderForm(false)}>
           <div style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: 28, width: '100%', maxWidth: 640, maxHeight: '92vh', overflowY: 'auto' }}
             onClick={e => e.stopPropagation()}>
-            <h2 style={{ color: '#f1f5f9', fontSize: 20, fontWeight: 700, margin: '0 0 20px' }}>📦 New Parts Order</h2>
+            <h2 style={{ color: '#f1f5f9', fontSize: 20, fontWeight: 700, margin: '0 0 20px' }}><FaBox style={{marginRight:4}} /> New Parts Order</h2>
 
             <div style={{ marginBottom: 16 }}>
               <label style={{ color: '#94a3b8', fontSize: 13, display: 'block', marginBottom: 4 }}>Vendor *</label>
@@ -509,7 +510,7 @@ export default function VendorManagementPage() {
                     <input type="number" min="1" value={item.quantity} onChange={e => updateItem(i, 'quantity', e.target.value)} style={{ ...inp, padding: '6px 8px', fontSize: 13 }} />
                     <input type="number" step="0.01" min="0" value={item.unitCost} onChange={e => updateItem(i, 'unitCost', e.target.value)} placeholder="0.00" style={{ ...inp, padding: '6px 8px', fontSize: 13 }} />
                     <button onClick={() => removeItem(i)} disabled={orderItems.length === 1}
-                      style={{ background: 'none', border: 'none', color: orderItems.length === 1 ? '#374151' : '#f87171', cursor: orderItems.length === 1 ? 'default' : 'pointer', fontSize: 16, padding: 0 }}>✕</button>
+                      style={{ background: 'none', border: 'none', color: orderItems.length === 1 ? '#374151' : '#f87171', cursor: orderItems.length === 1 ? 'default' : 'pointer', fontSize: 16, padding: 0 }}><FaTimes style={{marginRight:4}} /></button>
                   </div>
                 ))}
                 <div style={{ padding: '8px 10px', borderTop: '1px solid rgba(255,255,255,0.06)', textAlign: 'right', color: '#f1f5f9', fontSize: 14, fontWeight: 700 }}>
@@ -538,7 +539,7 @@ export default function VendorManagementPage() {
       {deleteVendorConfirm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}><FaTrash style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Remove Vendor?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>Remove "{deleteVendorConfirm.name}" from your vendor list?</p>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -553,7 +554,7 @@ export default function VendorManagementPage() {
       {deleteOrderConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}><FaTrash style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Order?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>This purchase order will be permanently deleted.</p>
             <div style={{ display: 'flex', gap: 12 }}>

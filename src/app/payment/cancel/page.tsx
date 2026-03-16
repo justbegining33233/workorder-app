@@ -25,7 +25,7 @@ function CancelContent() {
         width: '100%',
         margin: '0 16px',
       }}>
-        <div style={{fontSize: 64, marginBottom: 16}}>↩️</div>
+        <div style={{fontSize: 64, marginBottom: 16}}>↩</div>
         <h1 style={{fontSize: 28, fontWeight: 700, color: '#f59e0b', marginBottom: 8}}>
           Payment Cancelled
         </h1>

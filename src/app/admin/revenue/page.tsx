@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBolt, FaBullseye, FaChartBar, FaChartLine, FaCheckCircle, FaCreditCard, FaDollarSign, FaSyncAlt, FaTimesCircle, FaUniversity, FaWrench } from 'react-icons/fa';
 
 interface RevenueData {
   mrr: number;
@@ -199,7 +200,7 @@ export default function AdminRevenuePage() {
             >
               ← Back to Dashboard
             </Link>
-            <h1 className="text-2xl font-semibold text-slate-100">💰 Revenue & Payouts</h1>
+            <h1 className="text-2xl font-semibold text-slate-100"><FaDollarSign style={{marginRight:4}} /> Revenue & Payouts</h1>
           </div>
           <a
             href={stripeLinks?.dashboard || 'https://dashboard.stripe.com'}
@@ -318,7 +319,7 @@ export default function AdminRevenuePage() {
                   <div className="text-2xl font-bold text-green-400">{liveMetrics.newSubsThisMonth}</div>
                 </div>
                 <div className="w-10 h-10 bg-green-500/15 rounded-lg flex items-center justify-center">
-                  <span className="text-xl">📈</span>
+                  <span className="text-xl"><FaChartLine style={{marginRight:4}} /></span>
                 </div>
               </div>
             </div>
@@ -340,7 +341,7 @@ export default function AdminRevenuePage() {
                   <div className="text-2xl font-bold text-blue-400">{liveMetrics.activeSubscriptions}</div>
                 </div>
                 <div className="w-10 h-10 bg-blue-500/15 rounded-lg flex items-center justify-center">
-                  <span className="text-xl">✅</span>
+                  <span className="text-xl"><FaCheckCircle style={{marginRight:4}} /></span>
                 </div>
               </div>
             </div>
@@ -351,7 +352,7 @@ export default function AdminRevenuePage() {
                   <div className="text-2xl font-bold text-red-400">{liveMetrics.canceledSubscriptions}</div>
                 </div>
                 <div className="w-10 h-10 bg-red-500/15 rounded-lg flex items-center justify-center">
-                  <span className="text-xl">❌</span>
+                  <span className="text-xl"><FaTimesCircle style={{marginRight:4}} /></span>
                 </div>
               </div>
             </div>
@@ -362,7 +363,7 @@ export default function AdminRevenuePage() {
         {liveMetrics && (
           <div className="bg-[#0f172a] border border-[#1f2937] rounded-2xl p-6 mb-8 shadow-lg shadow-black/30">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="text-green-400">📊</span> Revenue by Period (Work Orders)
+              <span className="text-green-400"><FaChartBar style={{marginRight:4}} /></span> Revenue by Period (Work Orders)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center p-4 bg-[#111827]/70 border border-[#1f2937] rounded-xl">
@@ -384,7 +385,7 @@ export default function AdminRevenuePage() {
         {/* Stripe Quick Links */}
         <div className="bg-[#0f172a] border border-[#1f2937] rounded-2xl p-6 mb-8 shadow-lg shadow-black/30">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <span className="text-[#635BFF]">💳</span> Stripe Quick Actions
+            <span className="text-[#635BFF]"><FaCreditCard style={{marginRight:4}} /></span> Stripe Quick Actions
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a
@@ -393,7 +394,7 @@ export default function AdminRevenuePage() {
               rel="noopener noreferrer"
               className="bg-[#111827] hover:bg-[#0f172a] border border-[#1f2937] rounded-xl p-4 text-center transition-colors"
             >
-              <div className="text-2xl mb-2">🏦</div>
+              <div className="text-2xl mb-2"><FaUniversity style={{marginRight:4}} /></div>
               <div className="font-medium">Payouts</div>
               <div className="text-slate-400 text-sm">View bank transfers</div>
             </a>
@@ -403,7 +404,7 @@ export default function AdminRevenuePage() {
               rel="noopener noreferrer"
               className="bg-[#111827] hover:bg-[#0f172a] border border-[#1f2937] rounded-xl p-4 text-center transition-colors"
             >
-              <div className="text-2xl mb-2">💵</div>
+              <div className="text-2xl mb-2"><FaDollarSign style={{marginRight:4}} /></div>
               <div className="font-medium">Balance</div>
               <div className="text-slate-400 text-sm">Available funds</div>
             </a>
@@ -413,7 +414,7 @@ export default function AdminRevenuePage() {
               rel="noopener noreferrer"
               className="bg-[#111827] hover:bg-[#0f172a] border border-[#1f2937] rounded-xl p-4 text-center transition-colors"
             >
-              <div className="text-2xl mb-2">💳</div>
+              <div className="text-2xl mb-2"><FaCreditCard style={{marginRight:4}} /></div>
               <div className="font-medium">Payments</div>
               <div className="text-slate-400 text-sm">Transaction history</div>
             </a>
@@ -423,7 +424,7 @@ export default function AdminRevenuePage() {
               rel="noopener noreferrer"
               className="bg-[#111827] hover:bg-[#0f172a] border border-[#1f2937] rounded-xl p-4 text-center transition-colors"
             >
-              <div className="text-2xl mb-2">🔄</div>
+              <div className="text-2xl mb-2"><FaSyncAlt style={{marginRight:4}} /></div>
               <div className="font-medium">Subscriptions</div>
               <div className="text-slate-400 text-sm">Manage recurring</div>
             </a>
@@ -433,7 +434,7 @@ export default function AdminRevenuePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Plan Breakdown */}
           <div className="bg-[#0f172a] border border-[#1f2937] rounded-2xl p-6 shadow-lg shadow-black/30">
-            <h2 className="text-lg font-semibold mb-4">📊 Revenue by Plan</h2>
+            <h2 className="text-lg font-semibold mb-4"><FaChartBar style={{marginRight:4}} /> Revenue by Plan</h2>
             {revenue?.planBreakdown && Object.keys(revenue.planBreakdown).length > 0 ? (
               <div className="space-y-4">
                 {Object.entries(revenue.planBreakdown).map(([plan, data]) => (
@@ -460,7 +461,7 @@ export default function AdminRevenuePage() {
 
           {/* Recent Payments */}
           <div className="bg-[#0f172a] border border-[#1f2937] rounded-2xl p-6 shadow-lg shadow-black/30">
-            <h2 className="text-lg font-semibold mb-4">💸 Recent Payments</h2>
+            <h2 className="text-lg font-semibold mb-4"><FaDollarSign style={{marginRight:4}} /> Recent Payments</h2>
             {revenue?.recentPayments && revenue.recentPayments.length > 0 ? (
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {revenue.recentPayments.map((payment) => (
@@ -495,7 +496,7 @@ export default function AdminRevenuePage() {
         {/* FixTray Work Order Fees */}
         {workOrderFees && (
           <div className="bg-gradient-to-br from-slate-900/70 to-slate-900 border border-[#1f2937] rounded-2xl p-6 mt-8 shadow-lg shadow-black/30">
-            <h2 className="text-lg font-semibold mb-2">🔧 FixTray Work Order Fees</h2>
+            <h2 className="text-lg font-semibold mb-2"><FaWrench style={{marginRight:4}} /> FixTray Work Order Fees</h2>
             <p className="text-slate-400 text-sm mb-6">$5.00 collected per completed work order payment</p>
 
             {/* Fee Summary Cards */}
@@ -565,32 +566,32 @@ export default function AdminRevenuePage() {
 
         {/* How It Works */}
         <div className="bg-gradient-to-br from-slate-900/70 via-[#0f172a] to-[#0b1220] border border-[#1f2937] rounded-2xl p-6 mt-8 shadow-lg shadow-black/30">
-          <h2 className="text-lg font-semibold mb-4">🎯 How You Get Paid</h2>
+          <h2 className="text-lg font-semibold mb-4"><FaBullseye style={{marginRight:4}} /> How You Get Paid</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="w-12 h-12 bg-slate-800/70 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">1️⃣</span>
+                <span className="text-2xl">1⃣</span>
               </div>
               <div className="font-medium">Shop Subscribes</div>
               <div className="text-slate-400 text-sm">Shops choose a plan</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-slate-800/70 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">2️⃣</span>
+                <span className="text-2xl">2⃣</span>
               </div>
               <div className="font-medium">Stripe Collects</div>
               <div className="text-slate-400 text-sm">Secure payment processing</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-slate-800/70 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">3️⃣</span>
+                <span className="text-2xl">3⃣</span>
               </div>
               <div className="font-medium">Fees Deducted</div>
               <div className="text-slate-400 text-sm">~2.9% + $0.30 per txn</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">4️⃣</span>
+                <span className="text-2xl">4⃣</span>
               </div>
               <div className="font-medium">You Get Paid</div>
               <div className="text-slate-400 text-sm">Deposited to your bank</div>
@@ -598,7 +599,7 @@ export default function AdminRevenuePage() {
           </div>
           <div className="mt-4 p-4 bg-[#111827]/60 border border-[#1f2937] rounded-xl">
             <p className="text-slate-300 text-sm">
-              <strong>⚡ Setup Required:</strong> Go to <a href="https://dashboard.stripe.com/settings/payouts" target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Stripe Dashboard → Settings → Payouts</a> to connect your bank account and set your payout schedule (daily, weekly, or monthly).
+              <strong><FaBolt style={{marginRight:4}} /> Setup Required:</strong> Go to <a href="https://dashboard.stripe.com/settings/payouts" target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Stripe Dashboard → Settings → Payouts</a> to connect your bank account and set your payout schedule (daily, weekly, or monthly).
             </p>
           </div>
         </div>

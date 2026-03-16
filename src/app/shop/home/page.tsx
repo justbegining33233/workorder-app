@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaUser, FaBox, FaTools, FaCog, FaWrench, FaStore, FaClipboardList, FaChartBar, FaBoxes, FaIndustry, FaComments, FaBullhorn, FaGift, FaMapMarkerAlt, FaSyncAlt, FaLock, FaBuilding, FaListAlt, FaEdit, FaCalendarAlt, FaStar, FaCreditCard, FaPlug, FaPaintBrush, FaBolt, FaRoad, FaUserTie, FaReceipt, FaScroll, FaCodeBranch, FaDesktop, FaHeartbeat, FaShoppingCart } from 'react-icons/fa';
+import { FaBolt, FaBox, FaBoxes, FaBuilding, FaBullhorn, FaCalendarAlt, FaChartBar, FaClipboardList, FaCodeBranch, FaCog, FaComments, FaCreditCard, FaDesktop, FaEdit, FaGift, FaHeartbeat, FaIndustry, FaListAlt, FaLock, FaMapMarkerAlt, FaPaintBrush, FaPlug, FaReceipt, FaRoad, FaScroll, FaShoppingCart, FaStar, FaStore, FaSyncAlt, FaTools, FaTruck, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -487,7 +487,7 @@ export default function ShopHome() {
                     )}
                     {pendingWorkOrders.map(order => {
                       const style = priorityStyles[order.priority] || priorityStyles.Medium;
-                      const destinationOptions = [...bays.map(b => ({ id: b.id, label: b.name })), { id: 'roadcall', label: '🚚 Roadcall' }];
+                      const destinationOptions = [...bays.map(b => ({ id: b.id, label: b.name })), { id: 'roadcall', label: '<FaTruck style={{marginRight:4}} /> Roadcall' }];
                       const selected = selectedDestinations[order.id] || destinationOptions[0]?.id || 'roadcall';
                       return (
                         <div key={order.id} style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:8}}>
@@ -555,7 +555,7 @@ export default function ShopHome() {
                             ● {member.status}
                           </span>
                           <span style={{padding:'2px 8px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', borderRadius:8, fontSize:10, fontWeight:600}}>
-                            {member.role === 'tech' ? '🔧 Tech' : '👔 Manager'}
+                            {member.role === 'tech' ? '<FaWrench style={{marginRight:4}} /> Tech' : '<FaUserTie style={{marginRight:4}} /> Manager'}
                           </span>
                         </div>
                       </div>
@@ -598,11 +598,11 @@ export default function ShopHome() {
               <label style={{display:'block', fontSize:13, color:'#9aa3b2', marginBottom:8}}>Role *</label>
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                 <button type="button" onClick={() => setNewMember({...newMember, role: 'tech'})} style={{padding:16, background:newMember.role === 'tech' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${newMember.role === 'tech' ? '#22c55e' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>🔧</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaWrench style={{marginRight:4}} /></div>
                   Technician
                 </button>
                 <button type="button" onClick={() => setNewMember({...newMember, role: 'manager'})} style={{padding:16, background:newMember.role === 'manager' ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.05)', border:`2px solid ${newMember.role === 'manager' ? '#3b82f6' : 'rgba(255,255,255,0.1)'}`, borderRadius:8, cursor:'pointer', color:'#e5e7eb', fontSize:14, fontWeight:600}}>
-                  <div style={{fontSize:24, marginBottom:8}}>👔</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaUserTie style={{marginRight:4}} /></div>
                   Manager
                 </button>
               </div>

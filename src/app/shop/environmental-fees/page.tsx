@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaBatteryFull, FaLightbulb, FaOilCan, FaRecycle, FaSnowflake, FaSyncAlt, FaTint } from 'react-icons/fa';
 
 interface EnvFee {
   id: string;
@@ -12,7 +13,7 @@ interface EnvFee {
   unit?: string;
 }
 
-const FEE_ICONS: Record<string, string> = { oil: '🛢️', tire: '🔄', refrigerant: '❄️', battery: '🔋', coolant: '💧', other: '♻️' };
+const FEE_ICONS: Record<string, string> = { oil: '<FaOilCan style={{marginRight:4}} />', tire: '<FaSyncAlt style={{marginRight:4}} />', refrigerant: '<FaSnowflake style={{marginRight:4}} />', battery: '<FaBatteryFull style={{marginRight:4}} />', coolant: '<FaTint style={{marginRight:4}} />', other: '<FaRecycle style={{marginRight:4}} />' };
 
 export default function EnvironmentalFeesPage() {
   const { user, isLoading } = useRequireAuth(['shop']);
@@ -75,7 +76,7 @@ export default function EnvironmentalFeesPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>♻️ Environmental Fees</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaRecycle style={{marginRight:4}} /> Environmental Fees</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Configure disposal fees for oil, tires, batteries, and refrigerants</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ Add Fee</button>
@@ -83,13 +84,13 @@ export default function EnvironmentalFeesPage() {
 
       <div style={{ padding: 32 }}>
         <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 10, padding: '12px 16px', marginBottom: 24, fontSize: 13, color: '#86efac' }}>
-          💡 Environmental fees are added to invoices as separate line items when you service certain vehicle components. They help cover your disposal costs and keep you compliant.
+          <FaLightbulb style={{marginRight:4}} /> Environmental fees are added to invoices as separate line items when you service certain vehicle components. They help cover your disposal costs and keep you compliant.
         </div>
 
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           fees.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>♻️</div>
+              <div style={{ fontSize: 64 }}><FaRecycle style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No fees configured</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Set up environmental disposal fees to automatically add them to relevant invoices</div>
               <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Add First Fee</button>
@@ -99,7 +100,7 @@ export default function EnvironmentalFeesPage() {
               {fees.map(fee => (
                 <div key={fee.id} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${fee.isActive ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.08)'}`, borderRadius: 12, padding: 18 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                    <div style={{ fontSize: 28 }}>{FEE_ICONS[fee.feeType] || '♻️'}</div>
+                    <div style={{ fontSize: 28 }}>{FEE_ICONS[fee.feeType] || '<FaRecycle style={{marginRight:4}} />'}</div>
                     <span style={{ background: fee.isActive ? 'rgba(34,197,94,0.2)' : 'rgba(107,114,128,0.2)', color: fee.isActive ? '#22c55e' : '#9ca3af', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>{fee.isActive ? 'Active' : 'Disabled'}</span>
                   </div>
                   <div style={{ fontWeight: 700, fontSize: 15 }}>{fee.name}</div>

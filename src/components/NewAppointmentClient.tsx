@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCalendarAlt, FaCamera, FaCheck, FaFrown, FaMapMarkerAlt, FaSearch, FaStar, FaTag } from 'react-icons/fa';
 
 interface Shop {
   id: string;
@@ -289,7 +290,7 @@ export default function NewAppointmentClient() {
           <Link href="/customer/appointments" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
             ← Back to Appointments
           </Link>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>📅 Book New Appointment</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}><FaCalendarAlt style={{marginRight:4}} /> Book New Appointment</h1>
           <p style={{ fontSize: 14, color: '#9aa3b2' }}>Schedule a service at your preferred auto shop</p>
         </div>
       </div>
@@ -311,7 +312,7 @@ export default function NewAppointmentClient() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 14, fontWeight: 700
                 }}>
-                  {step > s.num ? '✓' : s.num}
+                  {step > s.num ? '<FaCheck style={{marginRight:4}} />' : s.num}
                 </div>
                 <span style={{ color: step >= s.num ? '#e5e7eb' : '#6b7280', fontSize: 13, fontWeight: 600 }}>{s.label}</span>
               </div>
@@ -349,7 +350,7 @@ export default function NewAppointmentClient() {
                     fontSize: 15, fontWeight: 700, cursor: searchTerm.trim() ? 'pointer' : 'not-allowed'
                   }}
                 >
-                  {loading ? '...' : '🔍 Search'}
+                  {loading ? '...' : '<FaSearch style={{marginRight:4}} /> Search'}
                 </button>
               </div>
               <div style={{ marginTop: 8, fontSize: 13, color: '#6b7280' }}>
@@ -359,7 +360,7 @@ export default function NewAppointmentClient() {
 
             {!hasSearched ? (
               <div style={{ textAlign: 'center', padding: 60, color: '#9aa3b2' }}>
-                <div style={{ fontSize: 64, marginBottom: 20 }}>🔍</div>
+                <div style={{ fontSize: 64, marginBottom: 20 }}><FaSearch style={{marginRight:4}} /></div>
                 <div style={{ fontSize: 20, fontWeight: 600, color: '#e5e7eb', marginBottom: 8 }}>Find a Shop</div>
                 <div style={{ fontSize: 14 }}>Enter a zip code or shop name above to search for auto shops in your area</div>
               </div>
@@ -367,7 +368,7 @@ export default function NewAppointmentClient() {
               <div style={{ textAlign: 'center', padding: 40, color: '#9aa3b2' }}>Searching shops...</div>
             ) : shops.length === 0 ? (
               <div style={{ textAlign: 'center', padding: 40, color: '#9aa3b2' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>😕</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}><FaFrown style={{marginRight:4}} /></div>
                 <div style={{ fontSize: 16, marginBottom: 8 }}>No shops found for "{searchTerm}"</div>
                 <div style={{ fontSize: 13 }}>Try a different zip code or shop name</div>
               </div>
@@ -394,14 +395,14 @@ export default function NewAppointmentClient() {
                       <h3 style={{ fontSize: 18, fontWeight: 700, color: '#e5e7eb' }}>{shop.name}</h3>
                       {shop.rating > 0 && (
                         <span style={{ padding: '4px 8px', background: 'rgba(245,158,11,0.2)', color: '#f59e0b', borderRadius: 6, fontSize: 12, fontWeight: 700 }}>
-                          ⭐ {shop.rating.toFixed(1)}
+                          <FaStar style={{marginRight:4}} /> {shop.rating.toFixed(1)}
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>📍 {shop.address}</div>
-                    {shop.zipCode && <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>🏷️ {shop.zipCode}</div>}
+                    <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}><FaMapMarkerAlt style={{marginRight:4}} /> {shop.address}</div>
+                    {shop.zipCode && <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}><FaTag style={{marginRight:4}} /> {shop.zipCode}</div>}
                     {shop.completedJobs > 0 && (
-                      <div style={{ fontSize: 12, color: '#22c55e' }}>✓ {shop.completedJobs} jobs completed</div>
+                      <div style={{ fontSize: 12, color: '#22c55e' }}><FaCheck style={{marginRight:4}} /> {shop.completedJobs} jobs completed</div>
                     )}
                   </div>
                 ))}
@@ -412,10 +413,10 @@ export default function NewAppointmentClient() {
         {/* Pre-Visit Photo Upload */}
         {step >= 3 && (
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 20, marginTop: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}>📸 Pre-Visit Photos (Optional)</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}><FaCamera style={{marginRight:4}} /> Pre-Visit Photos (Optional)</h3>
             <p style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 12 }}>Upload photos of your vehicle issue to help the shop prepare</p>
             <label style={{ display: 'inline-block', padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600, opacity: uploadingPhoto ? 0.6 : 1 }}>
-              {uploadingPhoto ? 'Uploading...' : '📷 Add Photos'}
+              {uploadingPhoto ? 'Uploading...' : '<FaCamera style={{marginRight:4}} /> Add Photos'}
               <input
                 type="file"
                 accept="image/*"

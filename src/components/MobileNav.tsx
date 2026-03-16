@@ -1,4 +1,5 @@
 'use client';
+import { FaTimes } from 'react-icons/fa';
 
 import { useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -271,7 +272,7 @@ export default function MobileNav({ role }: MobileNavProps) {
             transition: 'color 0.15s',
           }}
         >
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{drawerOpen ? <span style={{ fontSize: 18, lineHeight: 1 }}>✕</span> : <IconGrid size={20} />}</span>
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{drawerOpen ? <span style={{ fontSize: 18, lineHeight: 1 }}><FaTimes style={{marginRight:4}} /></span> : <IconGrid size={20} />}</span>
           <span style={{ fontSize: 10, fontWeight: 400 }}>More</span>
         </button>
       </div>

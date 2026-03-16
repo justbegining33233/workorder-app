@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaCar, FaSearch, FaUser, FaWrench } from 'react-icons/fa';
 
 interface SearchResults {
   customers: Array<{ id: string; firstName: string; lastName: string; email: string; phone: string | null }>;
@@ -79,7 +80,7 @@ export default function GlobalSearch() {
           color: '#9aa3b2', fontSize: 13, cursor: 'pointer',
         }}
       >
-        🔍 Search
+        <FaSearch style={{marginRight:4}} /> Search
         <kbd style={{ padding: '1px 5px', background: 'rgba(255,255,255,0.08)', borderRadius: 4, fontSize: 11, color: '#6b7280' }}>Ctrl+K</kbd>
       </button>
     );
@@ -127,7 +128,7 @@ export default function GlobalSearch() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  <span style={{ color: '#e5e7eb', fontSize: 14 }}>👤 {c.firstName} {c.lastName}</span>
+                  <span style={{ color: '#e5e7eb', fontSize: 14 }}><FaUser style={{marginRight:4}} /> {c.firstName} {c.lastName}</span>
                   <span style={{ color: '#9aa3b2', fontSize: 12 }}>{c.email}</span>
                 </div>
               ))}
@@ -145,7 +146,7 @@ export default function GlobalSearch() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  <span style={{ color: '#e5e7eb', fontSize: 14 }}>🔧 {wo.id.slice(0, 8)} — {wo.customer.firstName} {wo.customer.lastName}</span>
+                  <span style={{ color: '#e5e7eb', fontSize: 14 }}><FaWrench style={{marginRight:4}} /> {wo.id.slice(0, 8)} — {wo.customer.firstName} {wo.customer.lastName}</span>
                   <span style={{ color: '#9aa3b2', fontSize: 12 }}>{wo.status}</span>
                 </div>
               ))}
@@ -163,7 +164,7 @@ export default function GlobalSearch() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  <span style={{ color: '#e5e7eb', fontSize: 14 }}>🚗 {v.year} {v.make} {v.model}</span>
+                  <span style={{ color: '#e5e7eb', fontSize: 14 }}><FaCar style={{marginRight:4}} /> {v.year} {v.make} {v.model}</span>
                   <span style={{ color: '#9aa3b2', fontSize: 12 }}>{v.licensePlate} — {v.customer.firstName} {v.customer.lastName}</span>
                 </div>
               ))}

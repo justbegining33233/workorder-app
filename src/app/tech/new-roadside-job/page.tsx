@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCar } from 'react-icons/fa';
 
 export default function NewRoadsideJob() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function NewRoadsideJob() {
           <Link href="/tech/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🚗 New Roadside Job</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaCar style={{marginRight:4}} /> New Roadside Job</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Create a new roadside assistance work order</p>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaChartBar, FaCreditCard, FaHeart, FaMapMarkerAlt, FaStar, FaStore, FaTimes, FaUser, FaUsers } from 'react-icons/fa';
 
 type Customer = {
   id: string;
@@ -220,7 +221,7 @@ export default function ManageCustomers() {
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>👥 Manage Customers</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaUsers style={{marginRight:4}} /> Manage Customers</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>View and manage all paying customers (shop owners)</p>
         </div>
       </div>
@@ -288,7 +289,7 @@ export default function ManageCustomers() {
             {/* Plan & Health Distribution */}
             <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:24}}>
               <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
-                <h3 style={{fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>📊 Plan Distribution</h3>
+                <h3 style={{fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:16}}><FaChartBar style={{marginRight:4}} /> Plan Distribution</h3>
                 <div style={{display:'flex', gap:12, flexWrap:'wrap'}}>
                   {Object.entries(liveMetrics.planDistribution).map(([plan, count]) => (
                     <div key={plan} style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:'8px 16px', textAlign:'center'}}>
@@ -300,7 +301,7 @@ export default function ManageCustomers() {
               </div>
               
               <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20}}>
-                <h3 style={{fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>❤️ Health Distribution</h3>
+                <h3 style={{fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:16}}><FaHeart style={{marginRight:4}} /> Health Distribution</h3>
                 <div style={{display:'flex', gap:12}}>
                   <div style={{background:'rgba(34,197,94,0.1)', borderRadius:8, padding:'8px 16px', textAlign:'center', flex:1}}>
                     <div style={{fontSize:18, fontWeight:700, color:'#22c55e'}}>{liveMetrics.healthDistribution.excellent}</div>
@@ -369,7 +370,7 @@ export default function ManageCustomers() {
           </div>
         ) : filteredCustomers.length === 0 ? (
           <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
-            <div style={{fontSize:32, marginBottom:16}}>👥</div>
+            <div style={{fontSize:32, marginBottom:16}}><FaUsers style={{marginRight:4}} /></div>
             <div>No customers found</div>
           </div>
         ) : (
@@ -397,7 +398,7 @@ export default function ManageCustomers() {
                       </span>
                     </div>
                     <div style={{fontSize:14, color:'#9aa3b2'}}>
-                      📍 {customer.location} • Owner: {customer.ownerName} • {customer.lifetimeMonths} months
+                      <FaMapMarkerAlt style={{marginRight:4}} /> {customer.location} • Owner: {customer.ownerName} • {customer.lifetimeMonths} months
                     </div>
                   </div>
                 </div>
@@ -425,7 +426,7 @@ export default function ManageCustomers() {
                   {customer.rating > 0 && (
                     <div>
                       <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Rating</div>
-                      <div style={{fontSize:18, color:'#fbbf24', fontWeight:700}}>⭐ {customer.rating}</div>
+                      <div style={{fontSize:18, color:'#fbbf24', fontWeight:700}}><FaStar style={{marginRight:4}} /> {customer.rating}</div>
                       <div style={{fontSize:10, color:'#6b7280'}}>{customer.reviewCount} reviews</div>
                     </div>
                   )}
@@ -465,16 +466,16 @@ export default function ManageCustomers() {
         <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.8)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000, padding:32}}>
           <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'2px solid rgba(59,130,246,0.3)', borderRadius:16, padding:32, maxWidth:700, width:'100%', maxHeight:'90vh', overflow:'auto'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
-              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>👤 Customer Details</h2>
+              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}><FaUser style={{marginRight:4}} /> Customer Details</h2>
               <button onClick={() => setShowDetails(false)} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                ✕ Close
+                <FaTimes style={{marginRight:4}} /> Close
               </button>
             </div>
 
             <div style={{display:'grid', gap:16}}>
               {/* Business Info */}
               <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
-                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>🏪 Business Info</h3>
+                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}><FaStore style={{marginRight:4}} /> Business Info</h3>
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                   <div><span style={{color:'#6b7280'}}>Shop Name:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedCustomer.name}</span></div>
                   <div><span style={{color:'#6b7280'}}>Owner:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedCustomer.ownerName}</span></div>
@@ -487,7 +488,7 @@ export default function ManageCustomers() {
 
               {/* Performance Metrics */}
               <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
-                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>📊 Performance</h3>
+                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}><FaChartBar style={{marginRight:4}} /> Performance</h3>
                 <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:12}}>
                   <div style={{textAlign:'center', padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8}}>
                     <div style={{fontSize:24, fontWeight:700, color:'#3b82f6'}}>{selectedCustomer.completedJobs}</div>
@@ -511,7 +512,7 @@ export default function ManageCustomers() {
               {/* Subscription */}
               {selectedCustomer.subscription && (
                 <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
-                  <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>💳 Subscription</h3>
+                  <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}><FaCreditCard style={{marginRight:4}} /> Subscription</h3>
                   <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                     <div><span style={{color:'#6b7280'}}>Plan:</span> <span style={{color:getPlanColor(selectedCustomer.subscription.plan), fontWeight:600}}>{selectedCustomer.subscription.plan}</span></div>
                     <div><span style={{color:'#6b7280'}}>Status:</span> <span style={{color: selectedCustomer.subscription.isActive ? '#22c55e' : '#f59e0b', fontWeight:600}}>{selectedCustomer.subscription.status}</span></div>

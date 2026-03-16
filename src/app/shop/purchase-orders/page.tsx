@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaClipboardList, FaExclamationTriangle, FaIndustry, FaShoppingCart, FaTimes } from 'react-icons/fa';
 
 interface PurchaseOrder {
   id: string;
@@ -123,7 +124,7 @@ export default function PurchaseOrdersPage() {
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <button onClick={() => router.back()} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 13, marginBottom: 6, padding: 0 }}>← Back</button>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🛒 Purchase Orders</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaShoppingCart style={{marginRight:4}} /> Purchase Orders</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Manage vendor purchase orders and parts procurement</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
@@ -148,7 +149,7 @@ export default function PurchaseOrdersPage() {
         {/* Error */}
         {error && (
           <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 10, padding: '14px 20px', marginBottom: 24, display: 'flex', gap: 12, alignItems: 'center' }}>
-            <span>⚠️</span>
+            <span><FaExclamationTriangle style={{marginRight:4}} /></span>
             <span style={{ color: '#fca5a5', fontSize: 14 }}>{error}</span>
             <button onClick={load} style={{ marginLeft: 'auto', background: '#e5332a', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>Retry</button>
           </div>
@@ -160,7 +161,7 @@ export default function PurchaseOrdersPage() {
         {/* Empty state */}
         {!loading && !error && filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 0', background: 'rgba(255,255,255,0.03)', borderRadius: 14, border: '1px dashed rgba(255,255,255,0.12)' }}>
-            <div style={{ fontSize: 52, marginBottom: 16 }}>🛒</div>
+            <div style={{ fontSize: 52, marginBottom: 16 }}><FaShoppingCart style={{marginRight:4}} /></div>
             <div style={{ fontSize: 18, fontWeight: 600, color: '#e5e7eb', marginBottom: 8 }}>
               {statusFilter === 'all' ? 'No purchase orders yet' : `No ${statusFilter} orders`}
             </div>
@@ -184,7 +185,7 @@ export default function PurchaseOrdersPage() {
                 <div key={order.id} onClick={() => setSelected(order)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 12, padding: '18px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: 200 }}>
                     <div style={{ fontWeight: 700, fontSize: 15 }}>{order.poNumber}</div>
-                    <div style={{ color: '#9ca3af', fontSize: 13, marginTop: 2 }}>🏭 {order.vendor}</div>
+                    <div style={{ color: '#9ca3af', fontSize: 13, marginTop: 2 }}><FaIndustry style={{marginRight:4}} /> {order.vendor}</div>
                   </div>
                   <div style={{ color: '#6b7280', fontSize: 13 }}>
                     {order.items?.length ?? 0} item{(order.items?.length ?? 0) !== 1 ? 's' : ''}
@@ -207,7 +208,7 @@ export default function PurchaseOrdersPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
               <div>
                 <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{selected.poNumber}</h2>
-                <div style={{ color: '#9ca3af', fontSize: 13, marginTop: 4 }}>🏭 {selected.vendor}</div>
+                <div style={{ color: '#9ca3af', fontSize: 13, marginTop: 4 }}><FaIndustry style={{marginRight:4}} /> {selected.vendor}</div>
               </div>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 22 }}>×</button>
             </div>
@@ -244,7 +245,7 @@ export default function PurchaseOrdersPage() {
                 Total: ${(selected.total ?? 0).toFixed(2)}
               </div>
             </div>
-            {selected.notes && <div style={{ color: '#9ca3af', fontSize: 13 }}>📝 {selected.notes}</div>}
+            {selected.notes && <div style={{ color: '#9ca3af', fontSize: 13 }}><FaClipboardList style={{marginRight:4}} /> {selected.notes}</div>}
           </div>
         </div>
       )}
@@ -288,7 +289,7 @@ export default function PurchaseOrdersPage() {
                   <input type="number" value={item.unitCost} min={0} step={0.01} onChange={e => updateItem(i, 'unitCost', Number(e.target.value))} placeholder="Unit $"
                     style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 6, padding: '8px 12px', color: '#e5e7eb', fontSize: 13 }} />
                   <button onClick={() => removeItem(i)} disabled={form.items.length === 1}
-                    style={{ background: 'rgba(229,51,42,0.15)', color: '#e5332a', border: 'none', borderRadius: 6, padding: '8px 10px', cursor: 'pointer', fontSize: 14 }}>✕</button>
+                    style={{ background: 'rgba(229,51,42,0.15)', color: '#e5332a', border: 'none', borderRadius: 6, padding: '8px 10px', cursor: 'pointer', fontSize: 14 }}><FaTimes style={{marginRight:4}} /></button>
                 </div>
               ))}
               <div style={{ textAlign: 'right', fontSize: 15, fontWeight: 700, color: '#22c55e', marginTop: 8 }}>Total: ${total(form.items).toFixed(2)}</div>

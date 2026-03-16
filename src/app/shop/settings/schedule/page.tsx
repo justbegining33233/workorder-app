@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaBan, FaCalendarAlt, FaClock, FaSave, FaWrench } from 'react-icons/fa';
 
 interface Schedule {
   id?: string;
@@ -167,7 +168,7 @@ export default function ScheduleSettingsPage() {
             ← Back
           </button>
           <div>
-            <h1 style={{ color: 'white', fontSize: 28, fontWeight: 700, margin: 0 }}>📅 Schedule Settings</h1>
+            <h1 style={{ color: 'white', fontSize: 28, fontWeight: 700, margin: 0 }}><FaCalendarAlt style={{marginRight:4}} /> Schedule Settings</h1>
             <p style={{ color: '#9aa3b2', fontSize: 14, margin: '4px 0 0' }}>Manage your business hours, capacity, and blocked dates</p>
           </div>
         </div>
@@ -189,7 +190,7 @@ export default function ScheduleSettingsPage() {
           background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
           borderRadius: 12, padding: 24, marginBottom: 24
         }}>
-          <h2 style={{ color: 'white', fontSize: 20, fontWeight: 600, marginBottom: 20 }}>🔧 Capacity Settings</h2>
+          <h2 style={{ color: 'white', fontSize: 20, fontWeight: 600, marginBottom: 20 }}><FaWrench style={{marginRight:4}} /> Capacity Settings</h2>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
             <div>
@@ -245,7 +246,7 @@ export default function ScheduleSettingsPage() {
           background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
           borderRadius: 12, padding: 24, marginBottom: 24
         }}>
-          <h2 style={{ color: 'white', fontSize: 20, fontWeight: 600, marginBottom: 20 }}>🕒 Business Hours</h2>
+          <h2 style={{ color: 'white', fontSize: 20, fontWeight: 600, marginBottom: 20 }}><FaClock style={{marginRight:4}} /> Business Hours</h2>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {schedules.map(schedule => (
@@ -320,7 +321,7 @@ export default function ScheduleSettingsPage() {
               width: '100%'
             }}
           >
-            {saving ? 'Saving...' : '💾 Save Schedule Settings'}
+            {saving ? 'Saving...' : '<FaSave style={{marginRight:4}} /> Save Schedule Settings'}
           </button>
         </div>
 
@@ -329,7 +330,7 @@ export default function ScheduleSettingsPage() {
           background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
           borderRadius: 12, padding: 24
         }}>
-          <h2 style={{ color: 'white', fontSize: 20, fontWeight: 600, marginBottom: 20 }}>🚫 Blocked Dates</h2>
+          <h2 style={{ color: 'white', fontSize: 20, fontWeight: 600, marginBottom: 20 }}><FaBan style={{marginRight:4}} /> Blocked Dates</h2>
           <p style={{ color: '#9aa3b2', fontSize: 14, marginBottom: 20 }}>
             Add dates when your shop will be closed (holidays, vacations, maintenance, etc.)
           </p>

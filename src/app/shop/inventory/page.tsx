@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBox, FaExclamationTriangle } from 'react-icons/fa';
 
 export default function ShopInventoryPage() {
   useRequireAuth(['shop']);
@@ -203,7 +204,7 @@ export default function ShopInventoryPage() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: 24 }}>⚠️</span>
+              <span style={{ fontSize: 24 }}><FaExclamationTriangle style={{marginRight:4}} /></span>
               <div>
                 <h3 style={{ color: '#ef4444', margin: 0, fontSize: 18 }}>Low Stock Alert</h3>
                 <p style={{ color: '#9aa3b2', margin: '4px 0 0 0' }}>
@@ -241,7 +242,7 @@ export default function ShopInventoryPage() {
         {/* Inventory Table */}
         {inventory.length === 0 ? (
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 60, textAlign: 'center' }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>📦</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}><FaBox style={{marginRight:4}} /></div>
             <h3 style={{ color: '#e5e7eb', marginBottom: 8 }}>No inventory items</h3>
             <p style={{ color: '#9aa3b2' }}>Add your first item to get started</p>
           </div>
@@ -272,7 +273,7 @@ export default function ShopInventoryPage() {
                       <td style={{ padding: 16, color: '#e5e7eb' }}>{item.type}</td>
                       <td style={{ padding: 16, textAlign: 'right' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
-                          {isLowStock && <span style={{ color: '#ef4444' }}>⚠️</span>}
+                          {isLowStock && <span style={{ color: '#ef4444' }}><FaExclamationTriangle style={{marginRight:4}} /></span>}
                           <span style={{ color: isLowStock ? '#ef4444' : '#e5e7eb', fontWeight: 600 }}>
                             {item.quantity}
                           </span>

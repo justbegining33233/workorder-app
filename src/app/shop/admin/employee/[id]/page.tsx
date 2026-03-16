@@ -1,4 +1,5 @@
 'use client';
+import { FaCheck, FaEdit, FaEnvelope, FaMobileAlt, FaSave, FaUserTie, FaWrench } from 'react-icons/fa';
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -180,7 +181,7 @@ export default function EmployeeProfile() {
                   fontSize: 48,
                   margin: '0 auto 16px',
                 }}>
-                  {employee.role === 'manager' ? '👔' : '🔧'}
+                  {employee.role === 'manager' ? '<FaUserTie style={{marginRight:4}} />' : '<FaWrench style={{marginRight:4}} />'}
                 </div>
                 <div style={{ color: '#e5e7eb', fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
                   {employee.firstName} {employee.lastName}
@@ -203,7 +204,7 @@ export default function EmployeeProfile() {
                     fontSize: 12,
                     fontWeight: 600,
                   }}>
-                    {employee.available ? '✓ Available' : '○ Unavailable'}
+                    {employee.available ? '<FaCheck style={{marginRight:4}} /> Available' : '○ Unavailable'}
                   </div>
                 </div>
 
@@ -249,7 +250,7 @@ export default function EmployeeProfile() {
                       fontSize: 13,
                     }}
                   >
-                    ✏️ Edit
+                    <FaEdit style={{marginRight:4}} /> Edit
                   </button>
                 )}
               </div>
@@ -339,7 +340,7 @@ export default function EmployeeProfile() {
                         fontWeight: 600,
                       }}
                     >
-                      {loading ? 'Saving...' : '💾 Save Changes'}
+                      {loading ? 'Saving...' : '<FaSave style={{marginRight:4}} /> Save Changes'}
                     </button>
                     <button
                       onClick={() => {
@@ -371,7 +372,7 @@ export default function EmployeeProfile() {
               ) : (
                 <div style={{ display: 'grid', gap: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontSize: 18 }}>✉️</span>
+                    <span style={{ fontSize: 18 }}><FaEnvelope style={{marginRight:4}} /></span>
                     <div>
                       <div style={{ color: '#9aa3b2', fontSize: 11 }}>Email</div>
                       <div style={{ color: '#e5e7eb', fontSize: 14 }}>{employee.email}</div>
@@ -379,7 +380,7 @@ export default function EmployeeProfile() {
                   </div>
                   {employee.phone && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <span style={{ fontSize: 18 }}>📱</span>
+                      <span style={{ fontSize: 18 }}><FaMobileAlt style={{marginRight:4}} /></span>
                       <div>
                         <div style={{ color: '#9aa3b2', fontSize: 11 }}>Phone</div>
                         <div style={{ color: '#e5e7eb', fontSize: 14 }}>{employee.phone}</div>
@@ -459,7 +460,7 @@ export default function EmployeeProfile() {
                   <div>
                     <div style={{ color: '#9aa3b2', fontSize: 11, textTransform: 'uppercase', marginBottom: 4 }}>Position</div>
                     <div style={{ color: '#e5e7eb', fontSize: 16 }}>
-                      {employee.role === 'manager' ? '👔 Manager' : '🔧 Technician'}
+                      {employee.role === 'manager' ? '<FaUserTie style={{marginRight:4}} /> Manager' : '<FaWrench style={{marginRight:4}} /> Technician'}
                     </div>
                   </div>
                 </div>

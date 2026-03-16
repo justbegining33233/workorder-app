@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaBolt, FaCalendarAlt, FaCog, FaDollarSign, FaEnvelope, FaMobileAlt, FaStar, FaSyncAlt } from 'react-icons/fa';
 
 interface AutomationRule {
   id: string;
@@ -16,11 +17,11 @@ interface AutomationRule {
 }
 
 const TYPE_LABELS: Record<string, string> = {
-  appointment_reminder: '📅 Appointment Reminder',
-  follow_up: '🔄 Follow-Up',
-  review_request: '⭐ Review Request',
-  overdue_invoice: '💰 Overdue Invoice',
-  custom: '⚙️ Custom',
+  appointment_reminder: '<FaCalendarAlt style={{marginRight:4}} /> Appointment Reminder',
+  follow_up: '<FaSyncAlt style={{marginRight:4}} /> Follow-Up',
+  review_request: '<FaStar style={{marginRight:4}} /> Review Request',
+  overdue_invoice: '<FaDollarSign style={{marginRight:4}} /> Overdue Invoice',
+  custom: '<FaCog style={{marginRight:4}} /> Custom',
 };
 
 const TRIGGER_OPTIONS = [
@@ -102,7 +103,7 @@ export default function AutomationsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>⚡ Automations</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaBolt style={{marginRight:4}} /> Automations</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Automated SMS/email reminders for appointments, follow-ups, and review requests</p>
         </div>
         <button onClick={() => { setEditing(null); setForm({ name: '', type: 'appointment_reminder', trigger: 'days_before_appointment', triggerValue: '1', channel: 'sms', messageTemplate: '', isActive: true }); setShowForm(true); }}
@@ -113,7 +114,7 @@ export default function AutomationsPage() {
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           rules.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>⚡</div>
+              <div style={{ fontSize: 64 }}><FaBolt style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No automation rules yet</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Set up automated reminders and follow-ups to save time and increase repeat business</div>
               <button onClick={() => setShowForm(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Create First Automation</button>
@@ -135,7 +136,7 @@ export default function AutomationsPage() {
                     &ldquo;{rule.messageTemplate.slice(0, 100)}{rule.messageTemplate.length > 100 ? '...' : ''}&rdquo;
                   </div>
                   <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 10 }}>
-                    📱 {rule.channel.toUpperCase()} · Trigger: {TRIGGER_OPTIONS.find(t => t.value === rule.trigger)?.label || rule.trigger} {rule.triggerValue ? `(${rule.triggerValue})` : ''}
+                     {rule.channel.toUpperCase()} · Trigger: {TRIGGER_OPTIONS.find(t => t.value === rule.trigger)?.label || rule.trigger} {rule.triggerValue ? `(${rule.triggerValue})` : ''}
                     {rule._count && <span style={{ marginLeft: 12 }}>· {rule._count.executions} sent</span>}
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
@@ -173,9 +174,9 @@ export default function AutomationsPage() {
                 <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Channel</label>
                 <select value={form.channel} onChange={e => setForm(p => ({ ...p, channel: e.target.value }))}
                   style={{ width: '100%', background: '#374151', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 12px', color: '#e5e7eb', fontSize: 14 }}>
-                  <option value="sms">📱 SMS</option>
-                  <option value="email">📧 Email</option>
-                  <option value="both">📱📧 Both</option>
+                  <option value="sms"><FaMobileAlt style={{marginRight:4}} /> SMS</option>
+                  <option value="email"><FaEnvelope style={{marginRight:4}} /> Email</option>
+                  <option value="both"><FaMobileAlt style={{marginRight:4}} /><FaEnvelope style={{marginRight:4}} /> Both</option>
                 </select>
               </div>
             </div>

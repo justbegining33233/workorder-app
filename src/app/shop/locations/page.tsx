@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaEnvelope, FaExclamationTriangle, FaMapMarkerAlt, FaPhone, FaStar } from 'react-icons/fa';
 
 interface ShopLocation {
   id: string;
@@ -100,7 +101,7 @@ export default function ShopLocationsPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
           <div>
             <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
-            <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 4px' }}>📍 Shop Locations</h1>
+            <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 4px' }}><FaMapMarkerAlt style={{marginRight:4}} /> Shop Locations</h1>
             <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Manage multiple shop branches and service locations</p>
           </div>
           <button onClick={openCreate} style={{ padding: '10px 20px', borderRadius: 10, border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>+ Add Location</button>
@@ -124,7 +125,7 @@ export default function ShopLocationsPage() {
 
         {locations.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>📍</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}><FaMapMarkerAlt style={{marginRight:4}} /></div>
             <p style={{ fontSize: 16 }}>No locations added yet</p>
             <p style={{ fontSize: 14 }}>Add your first shop location to get started</p>
           </div>
@@ -134,17 +135,17 @@ export default function ShopLocationsPage() {
               <div key={l.id} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 20, border: `1px solid ${l.isMain ? 'rgba(251,191,36,0.4)' : 'rgba(255,255,255,0.08)'}`, position: 'relative' }}>
                 {l.isMain && (
                   <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(251,191,36,0.2)', color: '#fbbf24', fontSize: 11, padding: '3px 8px', borderRadius: 10, fontWeight: 600 }}>
-                    ★ MAIN
+                    <FaStar style={{marginRight:4}} /> MAIN
                   </div>
                 )}
                 <h3 style={{ color: '#f1f5f9', fontWeight: 700, margin: '0 0 8px', fontSize: 17 }}>{l.name}</h3>
                 <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.8 }}>
-                  <div>📍 {l.address}</div>
+                  <div><FaMapMarkerAlt style={{marginRight:4}} /> {l.address}</div>
                   <div>{l.city}, {l.state} {l.zip}</div>
-                  {l.phone && <div>📞 {l.phone}</div>}
-                  {l.email && <div>✉️ {l.email}</div>}
+                  {l.phone && <div><FaPhone style={{marginRight:4}} /> {l.phone}</div>}
+                  {l.email && <div><FaEnvelope style={{marginRight:4}} /> {l.email}</div>}
                 </div>
-                {l.status === 'inactive' && <div style={{ marginTop: 8, fontSize: 12, color: '#f87171' }}>⚠️ Inactive</div>}
+                {l.status === 'inactive' && <div style={{ marginTop: 8, fontSize: 12, color: '#f87171' }}><FaExclamationTriangle style={{marginRight:4}} /> Inactive</div>}
                 {l.notes && <p style={{ color: '#64748b', fontSize: 12, marginTop: 8, fontStyle: 'italic' }}>{l.notes}</p>}
                 <div style={{ display: 'flex', gap: 8, marginTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12, flexWrap: 'wrap' }}>
                   {!l.isMain && (

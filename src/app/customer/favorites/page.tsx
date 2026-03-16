@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 
 export default function Favorites() {
   useRequireAuth(['customer']);
@@ -48,8 +49,8 @@ export default function Favorites() {
                 <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{shop.name}</h3>
                 <div style={{fontSize:14, color:'#3b82f6', fontWeight:600, marginBottom:8}}>{shop.type}</div>
                 <div style={{display:'flex', alignItems:'center', gap:16, marginBottom:12}}>
-                  <span style={{fontSize:14, color:'#9aa3b2'}}>⭐ {shop.rating}</span>
-                  <span style={{fontSize:14, color:'#9aa3b2'}}>📍 {shop.distance}</span>
+                  <span style={{fontSize:14, color:'#9aa3b2'}}><FaStar style={{marginRight:4}} /> {shop.rating}</span>
+                  <span style={{fontSize:14, color:'#9aa3b2'}}><FaMapMarkerAlt style={{marginRight:4}} /> {shop.distance}</span>
                 </div>
                 <div style={{fontSize:14, color:'#9aa3b2', marginBottom:12}}>{shop.address}</div>
                 <div style={{display:'flex', flexWrap:'wrap', gap:8, marginBottom:16}}>

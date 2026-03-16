@@ -1,4 +1,5 @@
 'use client';
+import { FaBook, FaSave, FaSlidersH, FaStar, FaStethoscope, FaTicketAlt } from 'react-icons/fa';
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -127,27 +128,27 @@ function AdminHomeContent() {
   ];
 
   const quickLinks = [
-    { href: '/admin/command-center', label: '🎛️ Command Center', icon: 'command', highlight: true },
-    { href: '/admin/messages', label: '💬 Messages', icon: 'messages' },
-    { href: '/admin/revenue', label: '💰 Revenue & Payouts', icon: 'money' },
+    { href: '/admin/command-center', label: '<FaSlidersH style={{marginRight:4}} /> Command Center', icon: 'command', highlight: true },
+    { href: '/admin/messages', label: ' Messages', icon: 'messages' },
+    { href: '/admin/revenue', label: ' Revenue & Payouts', icon: 'money' },
     { href: '/admin/pending-shops', label: 'Pending Approvals', badge: pendingShops.length, icon: 'clock' },
-    { href: '/admin/accepted-shops', label: '🏪 Accepted Shops', icon: 'shops' },
-    { href: '/admin/manage-shops', label: '🏢 Manage Shops', icon: 'shops' },
-    { href: '/admin/manage-customers', label: '👥 Manage Customers', icon: 'users' },
-    { href: '/admin/user-management', label: '🔐 User Management', icon: 'users' },
-    { href: '/admin/manage-tenants', label: '🏗️ Manage Tenants', icon: 'tenants' },
-    { href: '/admin/platform-analytics', label: '📊 Platform Analytics', icon: 'analytics' },
-    { href: '/admin/financial-reports', label: '📈 Financial Reports', icon: 'finance' },
-    { href: '/admin/email-templates', label: '✉️ Email Templates', icon: 'email' },
-    { href: '/admin/coupons', label: '🎟️ Coupons', icon: 'coupons' },
-    { href: '/admin/sessions', label: '🖥️ Active Sessions', icon: 'sessions' },
-    { href: '/admin/security-settings', label: '🛡️ Security Settings', icon: 'security' },
-    { href: '/admin/system-settings', label: '⚙️ System Settings', icon: 'settings' },
-    { href: '/admin/backup-restore', label: '💾 Backup & Restore', icon: 'backup' },
-    { href: '/admin/admin-tools', label: '🔧 Admin Tools', icon: 'tools' },
-    { href: '/admin/enhanced', label: '✨ Enhanced Dashboard', icon: 'enhanced' },
-    { href: '/admin/guide', label: '📖 Documentation', icon: 'book' },
-    { href: '/admin/test', label: '🩺 Health Check', icon: 'health' },
+    { href: '/admin/accepted-shops', label: ' Accepted Shops', icon: 'shops' },
+    { href: '/admin/manage-shops', label: ' Manage Shops', icon: 'shops' },
+    { href: '/admin/manage-customers', label: ' Manage Customers', icon: 'users' },
+    { href: '/admin/user-management', label: ' User Management', icon: 'users' },
+    { href: '/admin/manage-tenants', label: ' Manage Tenants', icon: 'tenants' },
+    { href: '/admin/platform-analytics', label: ' Platform Analytics', icon: 'analytics' },
+    { href: '/admin/financial-reports', label: ' Financial Reports', icon: 'finance' },
+    { href: '/admin/email-templates', label: ' Email Templates', icon: 'email' },
+    { href: '/admin/coupons', label: '<FaTicketAlt style={{marginRight:4}} /> Coupons', icon: 'coupons' },
+    { href: '/admin/sessions', label: ' Active Sessions', icon: 'sessions' },
+    { href: '/admin/security-settings', label: ' Security Settings', icon: 'security' },
+    { href: '/admin/system-settings', label: ' System Settings', icon: 'settings' },
+    { href: '/admin/backup-restore', label: '<FaSave style={{marginRight:4}} /> Backup & Restore', icon: 'backup' },
+    { href: '/admin/admin-tools', label: ' Admin Tools', icon: 'tools' },
+    { href: '/admin/enhanced', label: '<FaStar style={{marginRight:4}} /> Enhanced Dashboard', icon: 'enhanced' },
+    { href: '/admin/guide', label: '<FaBook style={{marginRight:4}} /> Documentation', icon: 'book' },
+    { href: '/admin/test', label: '<FaStethoscope style={{marginRight:4}} /> Health Check', icon: 'health' },
   ];
 
   const _signalItems = [

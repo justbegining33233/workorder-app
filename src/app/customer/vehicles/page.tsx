@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaCar, FaTruck } from 'react-icons/fa';
 
 interface Vehicle {
   id: string;
@@ -195,7 +196,7 @@ export default function CustomerVehiclesPage() {
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>🚛 My Vehicles</h1>
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}><FaTruck style={{marginRight:4}} /> My Vehicles</h1>
               <p style={{ fontSize: 14, color: '#9aa3b2' }}>Manage your fleet and vehicle information</p>
             </div>
             <button
@@ -213,7 +214,7 @@ export default function CustomerVehiclesPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: 20 }}>
           {vehicles.length === 0 ? (
             <div style={{ gridColumn: '1 / -1', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 60, textAlign: 'center' }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>🚛</div>
+              <div style={{ fontSize: 48, marginBottom: 16 }}><FaTruck style={{marginRight:4}} /></div>
               <h3 style={{ color: '#e5e7eb', fontSize: 20, marginBottom: 8 }}>No Vehicles Yet</h3>
               <p style={{ color: '#9aa3b2', fontSize: 14, marginBottom: 20 }}>Add your first vehicle to get started</p>
               <button
@@ -227,7 +228,7 @@ export default function CustomerVehiclesPage() {
             vehicles.map((vehicle) => (
               <div key={vehicle.id} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
                 <div style={{ fontSize: 40, marginBottom: 16, textAlign: 'center' }}>
-                  {vehicle.vehicleType === 'semi-truck' ? '🚛' : vehicle.vehicleType === 'trailer' ? '🚚' : vehicle.vehicleType === 'equipment' ? '🏗️' : '🚗'}
+                  {vehicle.vehicleType === 'semi-truck' ? '<FaTruck style={{marginRight:4}} />' : vehicle.vehicleType === 'trailer' ? '<FaTruck style={{marginRight:4}} />' : vehicle.vehicleType === 'equipment' ? '<FaBuilding style={{marginRight:4}} />' : '<FaCar style={{marginRight:4}} />'}
                 </div>
                 
                 <h3 style={{ color: '#e5e7eb', fontSize: 20, fontWeight: 700, marginBottom: 4, textAlign: 'center' }}>

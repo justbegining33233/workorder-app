@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { FaBatteryFull, FaCheckCircle, FaExclamationTriangle, FaFlagCheckered, FaMobileAlt, FaOilCan, FaStar, FaWrench } from 'react-icons/fa';
 
 interface WaitingRoomEntry {
   id: string;
@@ -21,17 +22,17 @@ interface WaitingRoomData {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   pending:     { label: 'Waiting', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', icon: '⏳' },
-  in_progress: { label: 'In Progress', color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', icon: '🔧' },
-  completed:   { label: 'Ready!', color: '#22c55e', bg: 'rgba(34,197,94,0.2)', icon: '✅' },
-  on_hold:     { label: 'On Hold', color: '#f97316', bg: 'rgba(249,115,22,0.15)', icon: '⚠️' },
+  in_progress: { label: 'In Progress', color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', icon: '<FaWrench style={{marginRight:4}} />' },
+  completed:   { label: 'Ready!', color: '#22c55e', bg: 'rgba(34,197,94,0.2)', icon: '<FaCheckCircle style={{marginRight:4}} />' },
+  on_hold:     { label: 'On Hold', color: '#f97316', bg: 'rgba(249,115,22,0.15)', icon: '<FaExclamationTriangle style={{marginRight:4}} />' },
 };
 
 const PROMOS = [
-  '🔧 Summer Tire Special — $15 off any set of 4 tires this month!',
-  '🛢️ Oil change + tire rotation package — only $59.99!',
-  '⭐ Refer a friend and get $25 off your next service',
-  '📱 Text us your VIN for an instant maintenance report',
-  '🔋 Free battery test with any service this week',
+  ' Summer Tire Special — $15 off any set of 4 tires this month!',
+  '<FaOilCan style={{marginRight:4}} /> Oil change + tire rotation package — only $59.99!',
+  '<FaStar style={{marginRight:4}} /> Refer a friend and get $25 off your next service',
+  '<FaMobileAlt style={{marginRight:4}} /> Text us your VIN for an instant maintenance report',
+  '<FaBatteryFull style={{marginRight:4}} /> Free battery test with any service this week',
 ];
 
 function WaitingRoomContent() {
@@ -68,7 +69,7 @@ function WaitingRoomContent() {
       {/* Header */}
       <div style={{ background: 'rgba(229,51,42,0.9)', padding: '16px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ fontSize: 32 }}>🔧</div>
+          <div style={{ fontSize: 32 }}><FaWrench style={{marginRight:4}} /></div>
           <div>
             <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.5px' }}>{data?.shopName || 'Service Status'}</div>
             <div style={{ fontSize: 14, opacity: 0.85 }}>Live Vehicle Status Board</div>
@@ -88,14 +89,14 @@ function WaitingRoomContent() {
         <div>
           {data?.orders.length === 0 && (
             <div style={{ textAlign: 'center', padding: '80px 0', opacity: 0.5 }}>
-              <div style={{ fontSize: 60 }}>🏁</div>
+              <div style={{ fontSize: 60 }}><FaFlagCheckered style={{marginRight:4}} /></div>
               <div style={{ fontSize: 20, marginTop: 16 }}>All vehicles up to date</div>
             </div>
           )}
 
           {inProgress.length > 0 && (
             <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>🔧 Currently Working On</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}><FaWrench style={{marginRight:4}} /> Currently Working On</div>
               {inProgress.map(o => <StatusCard key={o.id} order={o} />)}
             </div>
           )}
@@ -111,11 +112,11 @@ function WaitingRoomContent() {
         {/* Ready / Completed column */}
         {completed.length > 0 && (
           <div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: '#22c55e', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>✅ Ready for Pickup!</div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#22c55e', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}><FaCheckCircle style={{marginRight:4}} /> Ready for Pickup!</div>
             {completed.map(o => (
               <div key={o.id} className="animate-pulse" style={{ background: 'rgba(34,197,94,0.15)', border: '2px solid #22c55e', borderRadius: 14, padding: '16px 20px', marginBottom: 10 }}>
                 <div style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{o.vehicle}</div>
-                <div style={{ fontSize: 28, marginTop: 8 }}>✅ <span style={{ color: '#22c55e', fontWeight: 800 }}>READY!</span></div>
+                <div style={{ fontSize: 28, marginTop: 8 }}><FaCheckCircle style={{marginRight:4}} /> <span style={{ color: '#22c55e', fontWeight: 800 }}>READY!</span></div>
                 {o.message && <div style={{ fontSize: 13, color: '#86efac', marginTop: 8 }}>{o.message}</div>}
               </div>
             ))}

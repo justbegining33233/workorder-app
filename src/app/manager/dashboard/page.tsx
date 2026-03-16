@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBolt, FaChartBar, FaExclamationTriangle, FaTimesCircle } from 'react-icons/fa';
 
 interface ManagerDashboardData {
   stats: {
@@ -66,10 +67,10 @@ export default function ManagerDashboard() {
         setData(dashboardData);
       } else {
         const errorData = await response.json();
-        console.error('❌ Failed to fetch dashboard data:', response.status, errorData);
+        console.error('<FaTimesCircle style={{marginRight:4}} /> Failed to fetch dashboard data:', response.status, errorData);
       }
     } catch (error) {
-      console.error('💥 Error fetching dashboard:', error);
+      console.error('<FaBolt style={{marginRight:4}} /> Error fetching dashboard:', error);
     } finally {
       setLoading(false);
     }
@@ -99,7 +100,7 @@ export default function ManagerDashboard() {
           <Link href="/manager/home" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
             ← Back to Manager Home
           </Link>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>📊 Manager Dashboard</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}><FaChartBar style={{marginRight:4}} /> Manager Dashboard</h1>
           <p style={{ fontSize: 14, color: '#9aa3b2' }}>Team overview and work order management</p>
         </div>
       </div>
@@ -199,7 +200,7 @@ export default function ManagerDashboard() {
             {/* Inventory Requests */}
             {data.stats.pendingInventoryRequests > 0 && (
               <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 12, padding: 20 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5332a', marginBottom: 8 }}>⚠️ Pending Inventory</h3>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5332a', marginBottom: 8 }}><FaExclamationTriangle style={{marginRight:4}} /> Pending Inventory</h3>
                 <p style={{ fontSize: 14, color: '#e5e7eb' }}>
                   {data.stats.pendingInventoryRequests} items need approval
                 </p>

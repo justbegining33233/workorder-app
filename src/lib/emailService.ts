@@ -1,3 +1,4 @@
+import { FaCheckCircle } from 'react-icons/fa';
 // Email service for notifications
 // Configure with Resend or SendGrid API key in environment variables
 
@@ -467,7 +468,7 @@ export async function sendPaymentConfirmationEmail(toEmail: string, workOrderId:
   return sendEmail({
     to: toEmail,
     subject: `Payment Confirmation — $${amount.toFixed(2)}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;border-radius:10px;overflow:hidden;"><div style="background:#e5332a;padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-size:28px;font-weight:900;">FixTray</h1></div><div style="padding:32px;"><h2 style="color:#22c55e;">✅ Payment Confirmed</h2><p style="color:#6b7280;">Payment of <strong>$${amount.toFixed(2)}</strong> received for work order <strong>#${workOrderId.slice(-8).toUpperCase()}</strong>.</p><a href="${url}" style="display:inline-block;background:#3b82f6;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;">View Invoice</a></div></div>`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fafb;border-radius:10px;overflow:hidden;"><div style="background:#e5332a;padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-size:28px;font-weight:900;">FixTray</h1></div><div style="padding:32px;"><h2 style="color:#22c55e;"><FaCheckCircle style={{marginRight:4}} /> Payment Confirmed</h2><p style="color:#6b7280;">Payment of <strong>$${amount.toFixed(2)}</strong> received for work order <strong>#${workOrderId.slice(-8).toUpperCase()}</strong>.</p><a href="${url}" style="display:inline-block;background:#3b82f6;color:white;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:700;">View Invoice</a></div></div>`,
   });
 }
 

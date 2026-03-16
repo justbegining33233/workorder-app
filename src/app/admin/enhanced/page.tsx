@@ -7,6 +7,7 @@ import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
 import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
+import { FaBuilding, FaChartBar, FaCheck, FaCog, FaDollarSign, FaFileAlt, FaSatelliteDish, FaStar, FaStore } from 'react-icons/fa';
 
 function AdminPortalEnhancedContent() {
   const { user, isLoading: authLoading } = useRequireAuth(['admin', 'superadmin']);
@@ -52,14 +53,14 @@ function AdminPortalEnhancedContent() {
   }, [user, authLoading]);
 
   const features = [
-    { id: 'overview', icon: '🏢', name: 'System Overview' },
-    { id: 'tenants', icon: '🏪', name: 'Tenant Management' },
-    { id: 'monitoring', icon: '📡', name: 'Live Monitoring' },
-    { id: 'financials', icon: '💰', name: 'Financials' },
-    { id: 'analytics', icon: '📊', name: 'Analytics' },
-    { id: 'reviews', icon: '⭐', name: 'Reviews' },
-    { id: 'documents', icon: '📄', name: 'Documents' },
-    { id: 'settings', icon: '⚙️', name: 'Settings' },
+    { id: 'overview', icon: '<FaBuilding style={{marginRight:4}} />', name: 'System Overview' },
+    { id: 'tenants', icon: '<FaStore style={{marginRight:4}} />', name: 'Tenant Management' },
+    { id: 'monitoring', icon: '<FaSatelliteDish style={{marginRight:4}} />', name: 'Live Monitoring' },
+    { id: 'financials', icon: '<FaDollarSign style={{marginRight:4}} />', name: 'Financials' },
+    { id: 'analytics', icon: '<FaChartBar style={{marginRight:4}} />', name: 'Analytics' },
+    { id: 'reviews', icon: '<FaStar style={{marginRight:4}} />', name: 'Reviews' },
+    { id: 'documents', icon: '<FaFileAlt style={{marginRight:4}} />', name: 'Documents' },
+    { id: 'settings', icon: '<FaCog style={{marginRight:4}} />', name: 'Settings' },
   ];
 
   if (authLoading) {
@@ -281,7 +282,7 @@ function MonitoringTab() {
       <div style={{marginTop:32}}>
         <div style={{fontSize:14, fontWeight:700, marginBottom:12}}>System Alerts</div>
         <div className="sos-list">
-          <div style={{textAlign:'center', padding:40, color:'#4ade80'}}>✓ No critical alerts</div>
+          <div style={{textAlign:'center', padding:40, color:'#4ade80'}}><FaCheck style={{marginRight:4}} /> No critical alerts</div>
         </div>
       </div>
     </div>
@@ -404,7 +405,7 @@ function ReviewsTab() {
       <div style={{marginTop:24}}>
         <div className="sos-item" style={{padding:24, flexDirection:'column', alignItems:'center'}}>
           <div style={{fontSize:48, fontWeight:800, marginBottom:8}}>4.7</div>
-          <div style={{fontSize:16, marginBottom:4}}>⭐⭐⭐⭐⭐</div>
+          <div style={{fontSize:16, marginBottom:4}}><FaStar style={{marginRight:4}} /></div>
           <div style={{fontSize:12, color:'#9aa3b2'}}>Based on 1,847 platform reviews</div>
         </div>
       </div>
@@ -418,7 +419,7 @@ function ReviewsTab() {
             { rating: 5, text: 'Fast and reliable service.', tenant: 'Quick Fix', customer: 'Bob' },
           ].map((review, i) => (
             <div key={i} className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
-              <div style={{marginBottom:8}}>{'⭐'.repeat(review.rating)}</div>
+              <div style={{marginBottom:8}}>{'<FaStar style={{marginRight:4}} />'.repeat(review.rating)}</div>
               <div style={{fontSize:13, marginBottom:4}}>"{review.text}"</div>
               <div style={{fontSize:11, color:'#9aa3b2'}}>{review.customer} • {review.tenant}</div>
             </div>

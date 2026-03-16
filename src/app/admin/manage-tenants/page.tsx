@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaChartBar, FaClipboardList, FaCreditCard, FaMapMarkerAlt, FaStore, FaTimes } from 'react-icons/fa';
 
 type Tenant = {
   id: string;
@@ -260,7 +261,7 @@ export default function ManageTenants() {
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🏢 Manage Tenants</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaBuilding style={{marginRight:4}} /> Manage Tenants</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Manage all tenant organizations and subscriptions</p>
         </div>
       </div>
@@ -323,7 +324,7 @@ export default function ManageTenants() {
         {/* Plan Distribution */}
         {liveMetrics && (
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:20, marginBottom:24}}>
-            <h3 style={{fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>📊 Plan Distribution</h3>
+            <h3 style={{fontSize:14, fontWeight:600, color:'#e5e7eb', marginBottom:16}}><FaChartBar style={{marginRight:4}} /> Plan Distribution</h3>
             <div style={{display:'flex', gap:12, flexWrap:'wrap'}}>
               {Object.entries(liveMetrics.planDistribution).map(([plan, count]) => (
                 <div key={plan} style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:'12px 20px', textAlign:'center', minWidth:80}}>
@@ -342,7 +343,7 @@ export default function ManageTenants() {
           </div>
         ) : tenants.length === 0 ? (
           <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
-            <div style={{fontSize:32, marginBottom:16}}>🏢</div>
+            <div style={{fontSize:32, marginBottom:16}}><FaBuilding style={{marginRight:4}} /></div>
             <div>No tenants found</div>
           </div>
         ) : (
@@ -369,7 +370,7 @@ export default function ManageTenants() {
                       Health: {tenant.healthScore}
                     </span>
                   </div>
-                  <div style={{fontSize:14, color:'#9aa3b2'}}>📍 {tenant.location} • Owner: {tenant.ownerName}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2'}}><FaMapMarkerAlt style={{marginRight:4}} /> {tenant.location} • Owner: {tenant.ownerName}</div>
                 </div>
               </div>
 
@@ -428,9 +429,9 @@ export default function ManageTenants() {
         <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.8)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000, padding:32}}>
           <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'2px solid rgba(59,130,246,0.3)', borderRadius:16, padding:32, maxWidth:800, width:'100%', maxHeight:'90vh', overflow:'auto'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
-              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>💳 Subscription Management</h2>
+              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}><FaCreditCard style={{marginRight:4}} /> Subscription Management</h2>
               <button onClick={() => setShowSubscription(false)} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                ✕ Close
+                <FaTimes style={{marginRight:4}} /> Close
               </button>
             </div>
 
@@ -441,7 +442,7 @@ export default function ManageTenants() {
 
             {/* Current Plan */}
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:24, marginBottom:24}}>
-              <h4 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>📋 Current Plan</h4>
+              <h4 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:16}}><FaClipboardList style={{marginRight:4}} /> Current Plan</h4>
               <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap:16}}>
                 <div>
                   <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Plan</div>
@@ -483,7 +484,7 @@ export default function ManageTenants() {
 
             {/* Usage Statistics */}
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:24, marginBottom:24}}>
-              <h4 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:16}}>📊 Current Usage</h4>
+              <h4 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:16}}><FaChartBar style={{marginRight:4}} /> Current Usage</h4>
               <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:16}}>
                 <div>
                   <div style={{fontSize:12, color:'#6b7280', marginBottom:4}}>Jobs Completed</div>
@@ -555,16 +556,16 @@ export default function ManageTenants() {
         <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.8)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000, padding:32}}>
           <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'2px solid rgba(59,130,246,0.3)', borderRadius:16, padding:32, maxWidth:700, width:'100%', maxHeight:'90vh', overflow:'auto'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
-              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}>🏢 Tenant Details</h2>
+              <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb'}}><FaBuilding style={{marginRight:4}} /> Tenant Details</h2>
               <button onClick={() => setShowDetails(false)} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                ✕ Close
+                <FaTimes style={{marginRight:4}} /> Close
               </button>
             </div>
 
             <div style={{display:'grid', gap:16}}>
               {/* Business Info */}
               <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
-                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>🏪 Business Info</h3>
+                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}><FaStore style={{marginRight:4}} /> Business Info</h3>
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                   <div><span style={{color:'#6b7280'}}>Shop Name:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.name}</span></div>
                   <div><span style={{color:'#6b7280'}}>Owner:</span> <span style={{color:'#e5e7eb', fontWeight:600}}>{selectedTenant.ownerName}</span></div>
@@ -577,7 +578,7 @@ export default function ManageTenants() {
 
               {/* Performance Metrics */}
               <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
-                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>📊 Performance</h3>
+                <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}><FaChartBar style={{marginRight:4}} /> Performance</h3>
                 <div style={{display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:12}}>
                   <div style={{textAlign:'center', padding:12, background:'rgba(59,130,246,0.1)', borderRadius:8}}>
                     <div style={{fontSize:24, fontWeight:700, color:'#3b82f6'}}>{selectedTenant.completedJobs}</div>
@@ -601,7 +602,7 @@ export default function ManageTenants() {
               {/* Subscription */}
               {selectedTenant.subscription && (
                 <div style={{background:'rgba(0,0,0,0.3)', borderRadius:12, padding:20}}>
-                  <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}>💳 Subscription</h3>
+                  <h3 style={{fontSize:16, fontWeight:600, color:'#e5e7eb', marginBottom:12}}><FaCreditCard style={{marginRight:4}} /> Subscription</h3>
                   <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                     <div><span style={{color:'#6b7280'}}>Plan:</span> <span style={{color:getPlanColor(selectedTenant.subscription.plan), fontWeight:600}}>{selectedTenant.subscription.plan}</span></div>
                     <div><span style={{color:'#6b7280'}}>Status:</span> <span style={{color: selectedTenant.subscription.isActive ? '#22c55e' : '#f59e0b', fontWeight:600}}>{selectedTenant.subscription.status}</span></div>

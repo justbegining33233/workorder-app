@@ -5,6 +5,7 @@ import TopNavBar from '../../../components/TopNavBar';
 import RealTimeWorkOrders from '../../../components/RealTimeWorkOrders';
 import { useRequireAuth, useAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
+import { FaBolt, FaChartBar, FaHeart, FaSearch, FaSyncAlt, FaUser } from 'react-icons/fa';
 
 export default function CustomerDashboard() {
   useRequireAuth(['customer']);
@@ -215,7 +216,7 @@ export default function CustomerDashboard() {
   const discoverFeatures = [
     { 
       id: 'findshops', 
-      icon: '🔍', 
+      icon: '', 
       name: 'Find Shops', 
       desc: 'Discover service centers near you', 
       detail: 'Search by location and compare ratings', 
@@ -226,7 +227,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'appointments', 
-      icon: '📅', 
+      icon: '', 
       name: 'Appointments', 
       desc: 'Book and manage service appointments', 
       detail: `${stats.upcomingAppointments} upcoming • ${stats.appointmentCount} total`, 
@@ -237,7 +238,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'quotes', 
-      icon: '💰', 
+      icon: '', 
       name: 'MY ESTIMATES', 
       desc: 'View and manage your service estimates', 
       detail: 'Get estimates before service', 
@@ -251,7 +252,7 @@ export default function CustomerDashboard() {
   const activeFeatures = [
     { 
       id: 'tracking', 
-      icon: '📍', 
+      icon: '', 
       name: 'Live Tracking', 
       desc: 'Track your tech in real-time', 
       detail: 'View real-time location updates', 
@@ -262,7 +263,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'messages', 
-      icon: '💬', 
+      icon: '', 
       name: 'Messages', 
       desc: 'Chat with your technician', 
       detail: stats.unreadMessages > 0 ? `${stats.unreadMessages} unread message${stats.unreadMessages !== 1 ? 's' : ''}` : 'Direct communication channel', 
@@ -273,7 +274,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'vehicles', 
-      icon: '🚛', 
+      icon: '', 
       name: 'My Vehicles', 
       desc: 'Manage your fleet information', 
       detail: `${stats.vehicleCount} vehicle${stats.vehicleCount !== 1 ? 's' : ''} registered`, 
@@ -287,7 +288,7 @@ export default function CustomerDashboard() {
   const accountFeatures = [
     { 
       id: 'reviews', 
-      icon: '⭐', 
+      icon: '', 
       name: 'Reviews', 
       desc: 'Share your service experiences', 
       detail: `${stats.reviewCount} review${stats.reviewCount !== 1 ? 's' : ''} written`, 
@@ -298,7 +299,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'favorites', 
-      icon: '❤️', 
+      icon: '<FaHeart style={{marginRight:4}} />', 
       name: 'Favorite Shops', 
       desc: 'Quick access to preferred shops', 
       detail: `${stats.favoriteCount} saved favorite${stats.favoriteCount !== 1 ? 's' : ''}`, 
@@ -309,7 +310,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'rewards', 
-      icon: '🎁', 
+      icon: '', 
       name: 'Rewards', 
       desc: 'Earn points and unlock perks', 
       detail: `${loyaltyPoints} points • ${tier} tier`, 
@@ -320,7 +321,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'payments', 
-      icon: '💳', 
+      icon: '', 
       name: 'Payments', 
       desc: 'Manage payment methods', 
       detail: `${stats.paymentMethods} saved payment method${stats.paymentMethods !== 1 ? 's' : ''}`, 
@@ -331,7 +332,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'recurring-approvals', 
-      icon: '🔁', 
+      icon: '<FaSyncAlt style={{marginRight:4}} />', 
       name: 'Recurring Approvals', 
       desc: 'Confirm or skip scheduled recurring services', 
       detail: 'Review pending recurring service requests', 
@@ -342,7 +343,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'overview', 
-      icon: '🏠', 
+      icon: '', 
       name: 'Account Overview', 
       desc: 'Summary of your account activity', 
       detail: 'Quick stats and recent activity', 
@@ -356,7 +357,7 @@ export default function CustomerDashboard() {
   const recordsFeatures = [
     { 
       id: 'history', 
-      icon: '📋', 
+      icon: '', 
       name: 'Service History', 
       desc: 'View past service records', 
       detail: `${stats.historyCount} completed service${stats.historyCount !== 1 ? 's' : ''}`, 
@@ -367,7 +368,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'documents', 
-      icon: '📄', 
+      icon: '', 
       name: 'Documents', 
       desc: 'Access invoices and receipts', 
       detail: `${stats.documentCount} document${stats.documentCount !== 1 ? 's' : ''} available`, 
@@ -378,7 +379,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'insights', 
-      icon: '📈', 
+      icon: '', 
       name: 'Insights', 
       desc: 'Track spending and trends', 
       detail: 'Analytics and reports', 
@@ -444,7 +445,7 @@ export default function CustomerDashboard() {
                 whiteSpace:'nowrap'
               }}
             >
-              🔍 Discover
+              <FaSearch style={{marginRight:4}} /> Discover
             </button>
             <button
               onClick={() => setActiveTab('active')}
@@ -462,7 +463,7 @@ export default function CustomerDashboard() {
                 whiteSpace:'nowrap'
               }}
             >
-              ⚡ Active Services
+              <FaBolt style={{marginRight:4}} /> Active Services
             </button>
             <button
               onClick={() => setActiveTab('account')}
@@ -480,7 +481,7 @@ export default function CustomerDashboard() {
                 whiteSpace:'nowrap'
               }}
             >
-              👤 Account
+              <FaUser style={{marginRight:4}} /> Account
             </button>
             <button
               onClick={() => setActiveTab('records')}
@@ -498,7 +499,7 @@ export default function CustomerDashboard() {
                 whiteSpace:'nowrap'
               }}
             >
-              📊 Records
+              <FaChartBar style={{marginRight:4}} /> Records
             </button>
           </div>
         </div>
@@ -506,7 +507,7 @@ export default function CustomerDashboard() {
         {/* Feature Cards Grid - Conditional Rendering Based on Active Tab */}
         {activeTab === 'discover' && (
           <div style={{marginBottom:32}}>
-            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>🔍 Discover</h2>
+            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaSearch style={{marginRight:4}} /> Discover</h2>
             <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
               {discoverFeatures.map(feature => {
                 const recentItems = feature.getData();
@@ -571,7 +572,7 @@ export default function CustomerDashboard() {
 
         {activeTab === 'active' && (
         <div style={{marginBottom:32}}>
-          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>⚡ Active Services</h2>
+          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaBolt style={{marginRight:4}} /> Active Services</h2>
           <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
             {activeFeatures.map(feature => {
               const recentItems = feature.getData();
@@ -635,7 +636,7 @@ export default function CustomerDashboard() {
 
         {activeTab === 'account' && (
         <div style={{marginBottom:32}}>
-          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>👤 Account</h2>
+          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaUser style={{marginRight:4}} /> Account</h2>
           <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
             {accountFeatures.map(feature => {
               const recentItems = feature.getData();
@@ -699,7 +700,7 @@ export default function CustomerDashboard() {
 
         {activeTab === 'records' && (
         <div>
-          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>📊 Records</h2>
+          <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaChartBar style={{marginRight:4}} /> Records</h2>
           <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:20}}>
             {recordsFeatures.map(feature => {
               const recentItems = feature.getData();

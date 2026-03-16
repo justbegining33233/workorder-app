@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaCheckCircle, FaGift } from 'react-icons/fa';
 
 interface Referral {
   id: string;
@@ -81,14 +82,14 @@ export default function ReferralsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🎁 Referral Program</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaGift style={{marginRight:4}} /> Referral Program</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Track customer referrals and reward them for bringing in new business</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ New Referral</button>
       </div>
 
       <div style={{ padding: '24px 32px 0', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {[{ label: 'Total Referrals', value: stats.total, icon: '📊' }, { label: 'Converted', value: stats.converted, icon: '✅' }, { label: 'Pending', value: stats.pending, icon: '⏳' }, { label: 'Rewards Issued', value: `$${stats.value}`, icon: '💰' }].map(s => (
+        {[{ label: 'Total Referrals', value: stats.total, icon: '' }, { label: 'Converted', value: stats.converted, icon: '' }, { label: 'Pending', value: stats.pending, icon: '⏳' }, { label: 'Rewards Issued', value: `$${stats.value}`, icon: '' }].map(s => (
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 20px', minWidth: 130 }}>
             <div style={{ fontSize: 22 }}>{s.icon}</div>
             <div style={{ fontSize: 26, fontWeight: 800, margin: '4px 0 2px' }}>{s.value}</div>
@@ -101,7 +102,7 @@ export default function ReferralsPage() {
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           referrals.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>🎁</div>
+              <div style={{ fontSize: 64 }}><FaGift style={{marginRight:4}} /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No referrals yet</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Start tracking customer referrals and rewarding loyal customers who bring in new business</div>
               <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Create First Referral</button>
@@ -124,7 +125,7 @@ export default function ReferralsPage() {
                       <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.color}`, borderRadius: 20, padding: '3px 12px', fontSize: 12, fontWeight: 700, textTransform: 'capitalize' }}>{ref.status}</span>
                       <button onClick={() => copyCode(ref.referralCode)}
                         style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa', border: '1px solid #3b82f6', borderRadius: 7, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
-                        {copied === ref.referralCode ? '✅' : ref.referralCode}
+                        {copied === ref.referralCode ? '<FaCheckCircle style={{marginRight:4}} />' : ref.referralCode}
                       </button>
                     </div>
                   </div>

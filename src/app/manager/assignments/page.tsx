@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheck, FaHandPointLeft, FaUsers } from 'react-icons/fa';
 
 interface WorkOrder {
   id: string;
@@ -142,7 +143,7 @@ export default function AssignmentsPage() {
           <Link href="/manager/dashboard" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>👥 Assign Work Orders</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}><FaUsers style={{marginRight:4}} /> Assign Work Orders</h1>
           <p style={{ fontSize: 14, color: '#9aa3b2' }}>Distribute work to available technicians</p>
         </div>
       </div>
@@ -189,14 +190,14 @@ export default function AssignmentsPage() {
                   </div>
                   {wo.assignedTo && (
                     <div style={{ fontSize: 13, color: '#10b981', fontWeight: 600 }}>
-                      ✓ Assigned to: {wo.assignedTo.firstName} {wo.assignedTo.lastName}
+                      <FaCheck style={{marginRight:4}} /> Assigned to: {wo.assignedTo.firstName} {wo.assignedTo.lastName}
                     </div>
                   )}
                 </div>
               ))}
               {workOrders.length === 0 && (
                 <div style={{ textAlign: 'center', padding: 40, color: '#9aa3b2' }}>
-                  <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
+                  <div style={{ fontSize: 48, marginBottom: 16 }}><FaCheck style={{marginRight:4}} /></div>
                   <p>All work orders are assigned!</p>
                 </div>
               )}
@@ -306,7 +307,7 @@ export default function AssignmentsPage() {
               </div>
             ) : (
               <div style={{ textAlign: 'center', padding: 40, color: '#9aa3b2' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>👈</div>
+                <div style={{ fontSize: 48, marginBottom: 16 }}><FaHandPointLeft style={{marginRight:4}} /></div>
                 <p style={{ fontSize: 14 }}>Select a work order and a technician to assign</p>
               </div>
             )}

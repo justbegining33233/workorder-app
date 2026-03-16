@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheckCircle, FaDollarSign, FaExclamationTriangle, FaUsers } from 'react-icons/fa';
 import {
   LineChart,
   Line,
@@ -73,7 +74,7 @@ export default function AnalyticsPage() {
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', padding: '40px 20px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', textAlign: 'center', paddingTop: 80 }}>
-          <div style={{ fontSize: 52, marginBottom: 16 }}>⚠️</div>
+          <div style={{ fontSize: 52, marginBottom: 16 }}><FaExclamationTriangle style={{marginRight:4}} /></div>
           <div style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', marginBottom: 8 }}>Unable to Load Analytics</div>
           <div style={{ color: '#9ca3af', fontSize: 14, marginBottom: 24 }}>{analyticsError}</div>
           <button onClick={() => { setAnalyticsError(''); fetchAnalytics(shopId); }}
@@ -149,7 +150,7 @@ export default function AnalyticsPage() {
         {analytics?.summary && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 20, marginBottom: 32 }}>
             <div style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>💰</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaDollarSign style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Total Revenue</div>
               <div style={{ color: '#22c55e', fontSize: 28, fontWeight: 700 }}>
                 ${analytics.summary.totalRevenue.toFixed(2)}
@@ -157,7 +158,7 @@ export default function AnalyticsPage() {
             </div>
 
             <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>✅</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaCheckCircle style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Completed Jobs</div>
               <div style={{ color: '#3b82f6', fontSize: 28, fontWeight: 700 }}>
                 {analytics.summary.completedJobs}
@@ -165,7 +166,7 @@ export default function AnalyticsPage() {
             </div>
 
             <div style={{ background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>⏱️</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>⏱</div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Avg Completion Time</div>
               <div style={{ color: '#a855f7', fontSize: 28, fontWeight: 700 }}>
                 {analytics.summary.avgCompletionTime}h
@@ -173,7 +174,7 @@ export default function AnalyticsPage() {
             </div>
 
             <div style={{ background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>👥</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaUsers style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Unique Customers</div>
               <div style={{ color: '#eab308', fontSize: 28, fontWeight: 700 }}>
                 {analytics.summary.uniqueCustomers}

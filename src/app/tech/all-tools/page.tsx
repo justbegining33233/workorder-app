@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBook, FaTools } from 'react-icons/fa';
 
 export default function AllTechTools() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -25,84 +26,84 @@ export default function AllTechTools() {
     {
       title: 'New Roadside Job',
       description: 'Create emergency roadside assistance work orders for towing, jumpstart, tire changes, and more',
-      icon: '🚗',
+      icon: '',
       link: '/workorders/new',
       category: 'Job Creation'
     },
     {
       title: 'New In-Shop Job',
       description: 'Schedule in-shop service appointments with vehicle diagnostics and service selection',
-      icon: '🔧',
+      icon: '',
       link: '/workorders/inshop',
       category: 'Job Creation'
     },
     {
       title: 'Share Location',
       description: 'Share your real-time GPS location with dispatch and customers for roadside calls',
-      icon: '📍',
+      icon: '',
       link: '/tech/share-location',
       category: 'Field Tools'
     },
     {
       title: 'Messages',
       description: 'View and respond to messages from dispatch, customers, and shop team',
-      icon: '💬',
+      icon: '',
       link: '/tech/messages',
       category: 'Communication'
     },
     {
       title: 'Active Jobs',
       description: 'View all your currently assigned work orders and update their status',
-      icon: '📋',
+      icon: '',
       link: '/workorders/list?status=in-progress',
       category: 'Job Management'
     },
     {
       title: 'Job History',
       description: 'Browse completed work orders, customer feedback, and service history',
-      icon: '📊',
+      icon: '',
       link: '/workorders/list?status=closed',
       category: 'Job Management'
     },
     {
       title: 'Parts Inventory',
       description: 'Check parts availability, request orders, and track inventory levels',
-      icon: '🔩',
+      icon: '',
       link: '/tech/inventory',
       category: 'Resources'
     },
     {
       title: 'Service Manuals',
       description: 'Access technical documentation, repair guides, and service procedures',
-      icon: '📖',
+      icon: '<FaBook style={{marginRight:4}} />',
       link: '/tech/manuals',
       category: 'Resources'
     },
     {
       title: 'Time Tracking',
       description: 'Clock in/out, track billable hours, and submit timesheets',
-      icon: '⏱️',
+      icon: '⏱',
       link: '/tech/timesheet',
       category: 'Time Management'
     },
     {
       title: 'Customer Portal',
       description: 'Access customer vehicle history, previous services, and maintenance records',
-      icon: '👤',
+      icon: '',
       link: '/tech/customers',
       category: 'Customer Service'
     },
     {
       title: 'Diagnostic Tools',
       description: 'Run vehicle diagnostics, read error codes, and generate inspection reports',
-      icon: '🔍',
+      icon: '',
       link: '/tech/diagnostics',
       category: 'Technical Tools'
     },
     {
       title: 'Photo Upload',
       description: 'Upload before/after photos, damage documentation, and service evidence',
-      icon: '📷',
+      icon: '',
       link: '/tech/photos',
       category: 'Documentation'
     },
@@ -121,7 +122,7 @@ export default function AllTechTools() {
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
-              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🛠️ All Tech Tools</h1>
+              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaTools style={{marginRight:4}} /> All Tech Tools</h1>
               <p style={{fontSize:14, color:'#9aa3b2'}}>Complete suite of technician productivity tools and resources</p>
             </div>
             <div style={{padding:'12px 20px', background:'rgba(59,130,246,0.2)', borderRadius:8, border:'1px solid rgba(59,130,246,0.3)'}}>

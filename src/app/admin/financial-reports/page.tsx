@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaChartBar, FaDollarSign, FaStore } from 'react-icons/fa';
 
 type FinancialStats = {
   totalRevenue: string;
@@ -108,7 +109,7 @@ export default function FinancialReports() {
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>💰 Financial Reports</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaDollarSign style={{marginRight:4}} /> Financial Reports</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Revenue, payouts, and financial analytics</p>
         </div>
       </div>
@@ -152,7 +153,7 @@ export default function FinancialReports() {
             <div style={{display:'flex', flexDirection:'column', gap:12}}>
               {monthlyData.length === 0 ? (
                 <div style={{textAlign:'center', padding:32, color:'#9aa3b2'}}>
-                  <div style={{fontSize:24, marginBottom:8}}>📊</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaChartBar style={{marginRight:4}} /></div>
                   <div>No monthly data available</div>
                 </div>
               ) : (
@@ -178,7 +179,7 @@ export default function FinancialReports() {
             <div style={{display:'flex', flexDirection:'column', gap:12}}>
               {topEarningShops.length === 0 ? (
                 <div style={{textAlign:'center', padding:32, color:'#9aa3b2'}}>
-                  <div style={{fontSize:24, marginBottom:8}}>🏪</div>
+                  <div style={{fontSize:24, marginBottom:8}}><FaStore style={{marginRight:4}} /></div>
                   <div>No shop data available</div>
                 </div>
               ) : (

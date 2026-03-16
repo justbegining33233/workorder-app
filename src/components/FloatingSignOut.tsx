@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { FaSignOutAlt } from 'react-icons/fa';
 
 export default function FloatingSignOut() {
   const pathname = usePathname();
@@ -68,7 +69,7 @@ export default function FloatingSignOut() {
       }}
       title="Sign Out"
     >
-      🚪
+      <FaSignOutAlt style={{marginRight:4}} />
     </button>
   );
 }

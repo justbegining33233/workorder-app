@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCrown, FaUserTie, FaWrench } from 'react-icons/fa';
 
 interface SubscriptionData {
   id: string;
@@ -418,7 +419,7 @@ export default function AdminSubscriptionsPage() {
                           fontSize: 14,
                           fontWeight: 600,
                         }}>
-                          👑 {subscription.shop.ownerName} ({subscription.shop.email})
+                          <FaCrown style={{marginRight:4}} /> {subscription.shop.ownerName} ({subscription.shop.email})
                         </div>
                       </div>
 
@@ -435,7 +436,7 @@ export default function AdminSubscriptionsPage() {
                                 borderRadius: 6,
                                 fontSize: 14,
                               }}>
-                                {tech.role === 'manager' ? '👔' : '🔧'} {tech.firstName} {tech.lastName} ({tech.role})
+                                {tech.role === 'manager' ? '<FaUserTie style={{marginRight:4}} />' : '<FaWrench style={{marginRight:4}} />'} {tech.firstName} {tech.lastName} ({tech.role})
                               </div>
                             ))}
                           </div>

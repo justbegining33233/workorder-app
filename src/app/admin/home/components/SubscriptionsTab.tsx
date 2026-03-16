@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { FaStar } from 'react-icons/fa';
 
 interface SubscriptionData {
   id: string;
@@ -290,7 +291,7 @@ export function SubscriptionsTab({ subscriptions, liveMetrics, threeMonthAverage
             </div>
             <div>
               <p className="text-[10px] text-[#52525B]">Avg Rating</p>
-              <p className="text-sm font-medium text-[#A1A1AA]">{liveMetrics?.avgRating || '0.0'} ⭐</p>
+              <p className="text-sm font-medium text-[#A1A1AA]">{liveMetrics?.avgRating || '0.0'} <FaStar style={{marginRight:4}} /></p>
             </div>
           </div>
         </div>

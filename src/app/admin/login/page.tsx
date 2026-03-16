@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaLock } from 'react-icons/fa';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -79,7 +80,7 @@ export default function AdminLoginPage() {
       >
         {/* Logo/Header */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}><FaLock style={{marginRight:4}} /></div>
           <h1 style={{ color: '#fff', fontSize: 28, margin: 0, marginBottom: 8 }}>Admin Access</h1>
           <p style={{ color: '#9aa3b2', margin: 0, fontSize: 14 }}>FixTray Management Portal</p>
         </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { WorkOrderFormData, VehicleType, RepairType, MaintenanceType, TireServiceType } from '@/types/workorder';
+import { FaCheck, FaMapMarkerAlt } from 'react-icons/fa';
 
 interface WorkOrderFormProps {
   initialData?: Partial<WorkOrderFormData> & { id?: string };
@@ -299,7 +300,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
           </div>
           {availableServices.length > 0 && (
             <div style={{fontSize:12, color:'#60a5fa', marginTop:8}}>
-              ✓ Only services offered by this shop are shown below
+              <FaCheck style={{marginRight:4}} /> Only services offered by this shop are shown below
             </div>
           )}
         </div>
@@ -578,7 +579,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
               onClick={handleGetGeolocation}
               style={{padding:'12px 24px', background:'#3b82f6', color:'white', border:'none', borderRadius:8, cursor:'pointer', fontSize:14, fontWeight:600, marginRight:16}}
             >
-              📍 Use Current Location
+              <FaMapMarkerAlt style={{marginRight:4}} /> Use Current Location
             </button>
             <button
               type="button"
@@ -597,7 +598,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
 
           {latitude && longitude && (
             <div style={{padding:16, background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:8, marginBottom:16}}>
-              <div style={{fontSize:14, color:'#22c55e', fontWeight:600, marginBottom:4}}>✓ Location captured</div>
+              <div style={{fontSize:14, color:'#22c55e', fontWeight:600, marginBottom:4}}><FaCheck style={{marginRight:4}} /> Location captured</div>
               <div style={{fontSize:12, color:'#9aa3b2'}}>Lat: {latitude.toFixed(6)}, Lng: {longitude.toFixed(6)}</div>
             </div>
           )}
@@ -670,7 +671,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
             />
             {vinPhoto && (
               <div style={{marginTop:12, padding:12, background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.2)', borderRadius:8}}>
-                <div style={{fontSize:14, color:'#22c55e', fontWeight:600}}>✓ Photo uploaded: {vinPhoto.name}</div>
+                <div style={{fontSize:14, color:'#22c55e', fontWeight:600}}><FaCheck style={{marginRight:4}} /> Photo uploaded: {vinPhoto.name}</div>
               </div>
             )}
           </div>

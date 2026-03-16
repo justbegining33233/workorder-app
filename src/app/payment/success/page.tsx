@@ -2,6 +2,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { FaCheckCircle } from 'react-icons/fa';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -41,7 +42,7 @@ function SuccessContent() {
         width: '100%',
         margin: '0 16px',
       }}>
-        <div style={{fontSize: 64, marginBottom: 16}}>✅</div>
+        <div style={{fontSize: 64, marginBottom: 16}}><FaCheckCircle style={{marginRight:4}} /></div>
         <h1 style={{fontSize: 28, fontWeight: 700, color: '#22c55e', marginBottom: 8}}>
           Payment Successful!
         </h1>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaCheck } from 'react-icons/fa';
 
 export default function ShopNewInShopJob() {
   const router = useRouter();
@@ -121,7 +122,7 @@ export default function ShopNewInShopJob() {
           <Link href="/shop/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🏢 New In-Shop Job</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaBuilding style={{marginRight:4}} /> New In-Shop Job</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Create a new in-shop service work order</p>
         </div>
       </div>
@@ -250,7 +251,7 @@ export default function ShopNewInShopJob() {
                       textAlign:'left'
                     }}
                   >
-                    {formData.services.includes(option.value) ? '✓ ' : ''}{option.label}
+                    {formData.services.includes(option.value) ? '<FaCheck style={{marginRight:4}} /> ' : ''}{option.label}
                   </button>
                 ))}
               </div>

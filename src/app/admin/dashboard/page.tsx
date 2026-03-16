@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaChartBar, FaChartLine, FaClipboardList, FaCog, FaCreditCard, FaDollarSign, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 
 export default function AdminDashboardPage() {
   const { user, isLoading: authLoading } = useRequireAuth(['admin']);
@@ -158,7 +159,7 @@ export default function AdminDashboardPage() {
         {stats && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 20, marginBottom: 40 }}>
             <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>🏪</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaStore style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Total Shops</div>
               <div style={{ color: '#3b82f6', fontSize: 32, fontWeight: 700 }}>{stats.totalShops}</div>
               {stats.pendingShops > 0 && (
@@ -169,25 +170,25 @@ export default function AdminDashboardPage() {
             </div>
 
             <div style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>👥</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaUsers style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Total Customers</div>
               <div style={{ color: '#22c55e', fontSize: 32, fontWeight: 700 }}>{stats.totalCustomers}</div>
             </div>
 
             <div style={{ background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>🔧</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaWrench style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Total Technicians</div>
               <div style={{ color: '#a855f7', fontSize: 32, fontWeight: 700 }}>{stats.totalTechs}</div>
             </div>
 
             <div style={{ background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaClipboardList style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Total Work Orders</div>
               <div style={{ color: '#eab308', fontSize: 32, fontWeight: 700 }}>{stats.totalJobs}</div>
             </div>
 
             <div style={{ background: 'rgba(229, 51, 42, 0.1)', border: '1px solid rgba(229, 51, 42, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>💰</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaDollarSign style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Platform Revenue (30d)</div>
               <div style={{ color: '#e5332a', fontSize: 32, fontWeight: 700 }}>
                 ${stats.totalRevenue.toFixed(2)}
@@ -196,7 +197,7 @@ export default function AdminDashboardPage() {
 
             {/* Subscription Stats */}
             <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaChartBar style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Total Subscriptions</div>
               <div style={{ color: '#10b981', fontSize: 32, fontWeight: 700 }}>{stats.totalSubscriptions || 0}</div>
               <div style={{ color: '#6ee7b7', fontSize: 12, marginTop: 8 }}>
@@ -205,7 +206,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>💳</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaCreditCard style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Monthly Recurring Revenue</div>
               <div style={{ color: '#f59e0b', fontSize: 32, fontWeight: 700 }}>{stats.monthlyRecurringRevenue || '$0.00'}</div>
               <div style={{ color: '#fcd34d', fontSize: 12, marginTop: 8 }}>
@@ -214,7 +215,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div style={{ background: 'rgba(139, 92, 246, 0.1)', border: '1px solid rgba(139, 92, 246, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>📈</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaChartLine style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Plan Distribution</div>
               <div style={{ color: '#8b5cf6', fontSize: 16, fontWeight: 700, marginTop: 8 }}>
                 {stats.planDistribution && Object.entries(stats.planDistribution).map(([plan, count]) => (
@@ -304,7 +305,7 @@ export default function AdminDashboardPage() {
                 transition: 'all 0.2s',
               }}
             >
-              <div style={{ fontSize: 32, marginBottom: 12 }}>🏪</div>
+              <div style={{ fontSize: 32, marginBottom: 12 }}><FaStore style={{marginRight:4}} /></div>
               <div style={{ color: '#e5e7eb', fontSize: 15, fontWeight: 600 }}>Manage Shops</div>
             </Link>
 
@@ -320,7 +321,7 @@ export default function AdminDashboardPage() {
                 transition: 'all 0.2s',
               }}
             >
-              <div style={{ fontSize: 32, marginBottom: 12 }}>👥</div>
+              <div style={{ fontSize: 32, marginBottom: 12 }}><FaUsers style={{marginRight:4}} /></div>
               <div style={{ color: '#e5e7eb', fontSize: 15, fontWeight: 600 }}>Manage Users</div>
             </Link>
 
@@ -336,7 +337,7 @@ export default function AdminDashboardPage() {
                 transition: 'all 0.2s',
               }}
             >
-              <div style={{ fontSize: 32, marginBottom: 12 }}>📊</div>
+              <div style={{ fontSize: 32, marginBottom: 12 }}><FaChartBar style={{marginRight:4}} /></div>
               <div style={{ color: '#e5e7eb', fontSize: 15, fontWeight: 600 }}>View Logs</div>
             </Link>
 
@@ -352,7 +353,7 @@ export default function AdminDashboardPage() {
                 transition: 'all 0.2s',
               }}
             >
-              <div style={{ fontSize: 32, marginBottom: 12 }}>⚙️</div>
+              <div style={{ fontSize: 32, marginBottom: 12 }}><FaCog style={{marginRight:4}} /></div>
               <div style={{ color: '#e5e7eb', fontSize: 15, fontWeight: 600 }}>Settings</div>
             </Link>
           </div>

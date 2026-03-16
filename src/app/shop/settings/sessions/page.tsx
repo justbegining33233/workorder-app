@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaDesktop } from 'react-icons/fa';
 
 interface Session {
   id: string;
@@ -104,7 +105,7 @@ export default function SessionsPage() {
                 }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 20 }}>🖥️</span>
+                      <span style={{ fontSize: 20 }}><FaDesktop style={{marginRight:4}} /></span>
                       <span style={{ color: '#e5e7eb', fontWeight: 600 }}>
                         {session.isCurrent ? 'This Device (Current)' : 'Active Session'}
                       </span>

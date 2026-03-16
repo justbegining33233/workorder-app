@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { FaCheckCircle, FaExclamationTriangle, FaSearch } from 'react-icons/fa';
 
 interface DVIItem {
   id: string;
@@ -36,9 +37,9 @@ const conditionBg: Record<string, string> = {
   red: 'rgba(229,51,42,0.1)',
 };
 const conditionLabel: Record<string, string> = {
-  green: '✅ Good',
-  yellow: '⚠️ Attention',
-  red: '🔴 Urgent',
+  green: '<FaCheckCircle style={{marginRight:4}} /> Good',
+  yellow: '<FaExclamationTriangle style={{marginRight:4}} /> Attention',
+  red: ' Urgent',
 };
 
 export default function CustomerDVIPage() {
@@ -85,7 +86,7 @@ export default function CustomerDVIPage() {
 
   if (error || !inspection) return (
     <div style={{ minHeight: '100vh', background: '#111827', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb', textAlign: 'center', padding: 32 }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
+      <div style={{ fontSize: 48, marginBottom: 16 }}><FaSearch style={{marginRight:4}} /></div>
       <h2 style={{ margin: '0 0 8px', fontSize: 22 }}>Inspection Not Found</h2>
       <p style={{ color: '#9ca3af' }}>{error || 'This inspection link may have expired or is invalid.'}</p>
     </div>
@@ -100,7 +101,7 @@ export default function CustomerDVIPage() {
     <div style={{ minHeight: '100vh', background: '#111827', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif' }}>
       {/* Header */}
       <div style={{ background: '#1f2937', borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '20px 24px' }}>
-        <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>🔍 Vehicle Inspection Report</h1>
+        <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}><FaSearch style={{marginRight:4}} /> Vehicle Inspection Report</h1>
         {inspection.vehicleDesc && (
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>{inspection.vehicleDesc}{inspection.mileage ? ` · ${inspection.mileage.toLocaleString()} miles` : ''}</p>
         )}
@@ -159,13 +160,13 @@ export default function CustomerDVIPage() {
             <p style={{ color: '#9ca3af', fontSize: 14, margin: '0 0 16px' }}>By approving, you authorize the shop to proceed with the recommended repairs.</p>
             <button onClick={handleApprove} disabled={approving}
               style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 32px', fontSize: 15, fontWeight: 700, cursor: approving ? 'not-allowed' : 'pointer' }}>
-              {approving ? 'Approving...' : '✅ Approve Services'}
+              {approving ? 'Approving...' : '<FaCheckCircle style={{marginRight:4}} /> Approve Services'}
             </button>
             {error && <div style={{ color: '#ef4444', fontSize: 13, marginTop: 10 }}>{error}</div>}
           </div>
         ) : (
           <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 12, padding: 20, marginTop: 24, textAlign: 'center' }}>
-            <div style={{ fontSize: 40 }}>✅</div>
+            <div style={{ fontSize: 40 }}><FaCheckCircle style={{marginRight:4}} /></div>
             <h3 style={{ margin: '8px 0 4px', fontSize: 16 }}>Services Approved</h3>
             <p style={{ color: '#9ca3af', fontSize: 14, margin: 0 }}>Your shop has been notified. They will proceed with the approved repairs.</p>
           </div>

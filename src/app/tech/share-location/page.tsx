@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaCheck, FaClipboardList, FaComments, FaMap, FaMapMarkerAlt, FaSyncAlt } from 'react-icons/fa';
 
 export default function ShareLocation() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -67,7 +68,7 @@ export default function ShareLocation() {
           <Link href="/tech/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Dashboard
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>📍 Share Location</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaMapMarkerAlt style={{marginRight:4}} /> Share Location</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Share your current location with customers or dispatch</p>
         </div>
       </div>
@@ -79,7 +80,7 @@ export default function ShareLocation() {
           
           {!location ? (
             <div style={{textAlign:'center', padding:40}}>
-              <div style={{fontSize:64, marginBottom:16}}>📍</div>
+              <div style={{fontSize:64, marginBottom:16}}><FaMapMarkerAlt style={{marginRight:4}} /></div>
               <p style={{fontSize:16, color:'#9aa3b2', marginBottom:24}}>Get your current GPS coordinates</p>
               <button onClick={getCurrentLocation} style={{padding:'14px 32px', background:'#3b82f6', color:'white', border:'none', borderRadius:8, fontSize:15, fontWeight:600, cursor:'pointer'}}>
                 Get Current Location
@@ -104,7 +105,7 @@ export default function ShareLocation() {
               </div>
 
               <button onClick={getCurrentLocation} style={{width:'100%', marginTop:16, padding:'12px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                🔄 Refresh Location
+                <FaSyncAlt style={{marginRight:4}} /> Refresh Location
               </button>
             </div>
           )}
@@ -122,7 +123,7 @@ export default function ShareLocation() {
             ) : (
               <div>
                 <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, padding:20, marginBottom:16}}>
-                  <div style={{fontSize:14, color:'#22c55e', marginBottom:8, fontWeight:600}}>✓ Location Sharing Active</div>
+                  <div style={{fontSize:14, color:'#22c55e', marginBottom:8, fontWeight:600}}><FaCheck style={{marginRight:4}} /> Location Sharing Active</div>
                   <div style={{fontSize:13, color:'#9aa3b2', marginBottom:12}}>Share this link:</div>
                   <div style={{background:'rgba(0,0,0,0.3)', padding:12, borderRadius:6, fontSize:13, color:'#3b82f6', wordBreak:'break-all', fontFamily:'monospace'}}>
                     {shareLink}
@@ -131,11 +132,11 @@ export default function ShareLocation() {
 
                 <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
                   <button onClick={copyLink} style={{padding:'14px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                    📋 Copy Link
+                    <FaClipboardList style={{marginRight:4}} /> Copy Link
                   </button>
                   <a href={shareLink} target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
                     <button style={{width:'100%', padding:'14px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                      🗺️ Open in Maps
+                      <FaMap style={{marginRight:4}} /> Open in Maps
                     </button>
                   </a>
                 </div>
@@ -153,10 +154,10 @@ export default function ShareLocation() {
           <h3 style={{fontSize:16, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>Quick Send To</h3>
           <div style={{display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:12}}>
             <button disabled={!location} style={{padding:'12px', background:'rgba(245,158,11,0.2)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:location ? 'pointer' : 'not-allowed', opacity:location ? 1 : 0.5}}>
-              💬 Send to Customer
+              <FaComments style={{marginRight:4}} /> Send to Customer
             </button>
             <button disabled={!location} style={{padding:'12px', background:'rgba(139,92,246,0.2)', color:'#8b5cf6', border:'1px solid rgba(139,92,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:location ? 'pointer' : 'not-allowed', opacity:location ? 1 : 0.5}}>
-              🏢 Send to Dispatch
+              <FaBuilding style={{marginRight:4}} /> Send to Dispatch
             </button>
           </div>
         </div>

@@ -5,6 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaEnvelope, FaFolder, FaPhone, FaUsers } from 'react-icons/fa';
 
 interface TeamMember {
   id: string;
@@ -125,7 +126,7 @@ export default function ManagerTeamPage() {
             <p style={{ color: '#94a3b8' }}>Loading team…</p>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '12px' }}>👥</div>
+              <div style={{ fontSize: '3rem', marginBottom: '12px' }}><FaUsers style={{marginRight:4}} /></div>
               <p style={{ fontSize: '1.1rem' }}>No team members found.</p>
             </div>
           ) : (
@@ -170,7 +171,7 @@ export default function ManagerTeamPage() {
                       ● {member.status}
                     </span>
                     <span style={{ fontSize: '0.78rem', padding: '3px 10px', borderRadius: '9999px', background: 'rgba(59,130,246,0.15)', color: '#60a5fa' }}>
-                      🗂 {member.assignedJobs} job{member.assignedJobs !== 1 ? 's' : ''}
+                      <FaFolder style={{marginRight:4}} /> {member.assignedJobs} job{member.assignedJobs !== 1 ? 's' : ''}
                     </span>
                   </div>
 
@@ -178,12 +179,12 @@ export default function ManagerTeamPage() {
                   <div style={{ borderTop: '1px solid #334155', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {member.email && (
                       <p style={{ margin: 0, fontSize: '0.82rem', color: '#94a3b8' }}>
-                        ✉️ {member.email}
+                        <FaEnvelope style={{marginRight:4}} /> {member.email}
                       </p>
                     )}
                     {member.phone && (
                       <p style={{ margin: 0, fontSize: '0.82rem', color: '#94a3b8' }}>
-                        📞 {member.phone}
+                        <FaPhone style={{marginRight:4}} /> {member.phone}
                       </p>
                     )}
                     <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>

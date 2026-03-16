@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { FaCheckCircle } from 'react-icons/fa';
 
 type Step = 'request' | 'confirm' | 'done';
 
@@ -59,7 +60,7 @@ export default function ResetPasswordPage() {
       <div style={{ background: 'white', borderRadius: 12, padding: 40, width: '100%', maxWidth: 420, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
         {step === 'done' ? (
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}><FaCheckCircle style={{marginRight:4}} /></div>
             <h2 style={{ marginBottom: 8, color: '#111827' }}>Password Updated</h2>
             <p style={{ color: '#6b7280', marginBottom: 24 }}>Your password has been reset successfully.</p>
             <Link href="/auth/login" style={{ display: 'inline-block', background: '#3b82f6', color: 'white', padding: '12px 32px', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaBuilding, FaCheckCircle, FaTrash } from 'react-icons/fa';
 
 interface Bay {
   id: string;
@@ -127,7 +128,7 @@ export default function BaysPage() {
       {/* Header */}
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🏗️ Bay & Lift Board</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaBuilding style={{marginRight:4}} /> Bay & Lift Board</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Real-time view of all bays and lifts</p>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -152,7 +153,7 @@ export default function BaysPage() {
           <div style={{ textAlign: 'center', color: '#6b7280', padding: 64, fontSize: 18 }}>Loading bays...</div>
         ) : bays.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 80 }}>
-            <div style={{ fontSize: 64 }}>🏗️</div>
+            <div style={{ fontSize: 64 }}><FaBuilding style={{marginRight:4}} /></div>
             <div style={{ fontSize: 20, fontWeight: 600, margin: '16px 0 8px' }}>No bays configured</div>
             <div style={{ color: '#9ca3af', marginBottom: 24 }}>Add your bays and lifts to start tracking vehicle locations</div>
             <button onClick={() => setShowAdd(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Add First Bay</button>
@@ -195,7 +196,7 @@ export default function BaysPage() {
                 {/* Content */}
                 {bay.status === 'empty' ? (
                   <div style={{ textAlign: 'center', padding: '16px 0', color: '#9ca3af', fontSize: 14 }}>
-                    <div style={{ fontSize: 28, marginBottom: 4 }}>✅</div>
+                    <div style={{ fontSize: 28, marginBottom: 4 }}><FaCheckCircle style={{marginRight:4}} /></div>
                     Available
                   </div>
                 ) : (
@@ -229,7 +230,7 @@ export default function BaysPage() {
                   )}
                   <button onClick={() => setDeleteConfirmId(bay.id)}
                     style={{ background: 'transparent', color: '#6b7280', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '7px 10px', fontSize: 12, cursor: 'pointer' }}>
-                    🗑
+                    <FaTrash style={{marginRight:4}} />
                   </button>
                 </div>
               </div>

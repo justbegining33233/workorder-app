@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheck, FaMapMarkerAlt, FaPhone, FaRegStar, FaSearch, FaStar } from 'react-icons/fa';
 
 interface Shop {
   id: string;
@@ -224,17 +225,17 @@ export default function FindShops() {
         {/* Favorite Shops - Show by default when not searching */}
         {!loading && !searchTerm && favorites.length > 0 && (
           <div style={{marginBottom:32}}>
-            <h2 style={{fontSize:22, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>⭐ Your Favorite Shops</h2>
+            <h2 style={{fontSize:22, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaStar style={{marginRight:4}} /> Your Favorite Shops</h2>
             <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(350px, 1fr))', gap:24}}>
               {favorites.map(fav => fav.shop && (
                 <div key={fav.shop.id} style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,215,0,0.3)', borderRadius:12, padding:24}}>
                   <div style={{marginBottom:16}}>
                     <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>{fav.shop.shopName}</h3>
-                    <span style={{fontSize:13, color:'#9aa3b2'}}>📍 {fav.shop.zipCode}</span>
+                    <span style={{fontSize:13, color:'#9aa3b2'}}><FaMapMarkerAlt style={{marginRight:4}} /> {fav.shop.zipCode}</span>
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{fav.shop.address}</div>
                     {fav.shop.phone && (
                       <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>
-                        📞 {fav.shop.phone}
+                        <FaPhone style={{marginRight:4}} /> {fav.shop.phone}
                       </div>
                     )}
                     {fav.shop.services && fav.shop.services.length > 0 && (
@@ -327,7 +328,7 @@ export default function FindShops() {
                             }
                           }}
                         >
-                          {togglingFavorites.has(shop.id) ? '⏳' : (isFavorite ? '⭐' : '☆')}
+                          {togglingFavorites.has(shop.id) ? '⏳' : (isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
                         </span>
                         <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>
                           {shop.name}
@@ -335,7 +336,7 @@ export default function FindShops() {
                       </div>
                       {shop.rating > 0 && (
                         <span style={{padding:'4px 8px', background:'rgba(245,158,11,0.2)', color:'#f59e0b', borderRadius:6, fontSize:12, fontWeight:700}}>
-                          ⭐ {shop.rating.toFixed(1)}
+                          <FaStar style={{marginRight:4}} /> {shop.rating.toFixed(1)}
                         </span>
                       )}
                     </div>
@@ -349,19 +350,19 @@ export default function FindShops() {
                           padding: searchType === 'zip' && searchTerm && shop.zipCode.startsWith(searchTerm) ? '2px 8px' : 0,
                           borderRadius:4
                         }}>
-                          📍 {shop.zipCode}
+                          <FaMapMarkerAlt style={{marginRight:4}} /> {shop.zipCode}
                         </span>
                       )}
                       {shop.completedJobs !== undefined && (
                         <span style={{fontSize:13, color:'#22c55e', fontWeight:600}}>
-                          ✓ {shop.completedJobs} jobs completed
+                          <FaCheck style={{marginRight:4}} /> {shop.completedJobs} jobs completed
                         </span>
                       )}
                     </div>
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{shop.address}</div>
                     {shop.phone && (
                       <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>
-                        📞 {shop.phone}
+                        <FaPhone style={{marginRight:4}} /> {shop.phone}
                       </div>
                     )}
                     {shop.services && shop.services.length > 0 && (
@@ -416,7 +417,7 @@ export default function FindShops() {
         {/* No Favorites - Show when not searching and no favorites */}
         {!loading && !searchTerm && favorites.length === 0 && (
           <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>
-            <div style={{fontSize:48, marginBottom:16}}>⭐</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaStar style={{marginRight:4}} /></div>
             <div style={{fontSize:18, marginBottom:8}}>No favorite shops yet</div>
             <div style={{fontSize:14}}>
               Search for shops and mark them as favorites to see them here.
@@ -427,7 +428,7 @@ export default function FindShops() {
         {/* No Results - Only show when searching and no matches */}
         {!loading && searchTerm && filteredShops.length === 0 && (
           <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>
-            <div style={{fontSize:48, marginBottom:16}}>🔍</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaSearch style={{marginRight:4}} /></div>
             <div style={{fontSize:18, marginBottom:8}}>No shops found</div>
             <div style={{fontSize:14}}>
               {searchType === 'zip'

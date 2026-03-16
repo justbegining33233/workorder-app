@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheck, FaEnvelope, FaMapMarkerAlt, FaMedal, FaPhone, FaStar, FaStore, FaTimes } from 'react-icons/fa';
 
 export const dynamic = 'force-dynamic';
 
@@ -164,7 +165,7 @@ export default function AcceptedShops() {
           <div style={{textAlign:'center', padding:80, color:'#9aa3b2', fontSize:16}}>Loading...</div>
         ) : acceptedShops.length === 0 ? (
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:80, textAlign:'center'}}>
-            <div style={{fontSize:48, marginBottom:16}}>🏪</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaStore style={{marginRight:4}} /></div>
             <div style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>No Accepted Shops</div>
             <div style={{fontSize:14, color:'#9aa3b2'}}>No shops have been approved yet</div>
           </div>
@@ -175,7 +176,7 @@ export default function AcceptedShops() {
                 {/* Rank Badge */}
                 {index < 3 && (
                   <div style={{position:'absolute', top:16, right:16, padding:'6px 12px', background:index === 0 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : index === 1 ? 'linear-gradient(135deg, #9ca3af, #6b7280)' : 'linear-gradient(135deg, #cd7f32, #b87333)', color:'white', borderRadius:8, fontSize:12, fontWeight:700}}>
-                  {index === 0 ? '🥇 #1' : index === 1 ? '🥈 #2' : '🥉 #3'}
+                  {index === 0 ? '<FaMedal style={{marginRight:4}} /> #1' : index === 1 ? '<FaMedal style={{marginRight:4}} /> #2' : '<FaMedal style={{marginRight:4}} /> #3'}
                 </div>
                 )}
 
@@ -184,11 +185,11 @@ export default function AcceptedShops() {
                     <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:8}}>
                       <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>{shop.name}</h2>
                       <span style={{padding:'4px 12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', borderRadius:8, fontSize:11, fontWeight:600}}>
-                        ✓ VERIFIED
+                        <FaCheck style={{marginRight:4}} /> VERIFIED
                       </span>
                     </div>
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>
-                      📍 {shop.location}
+                      <FaMapMarkerAlt style={{marginRight:4}} /> {shop.location}
                     </div>
                     <div style={{fontSize:13, color:'#6b7280'}}>
                       Active for {getTimeActive(shop.joinedDate)} • {shop.services} services
@@ -208,7 +209,7 @@ export default function AcceptedShops() {
                   </div>
                   <div>
                     <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Rating</div>
-                    <div style={{fontSize:18, color:'#fbbf24', fontWeight:700}}>⭐ {shop.rating}</div>
+                    <div style={{fontSize:18, color:'#fbbf24', fontWeight:700}}><FaStar style={{marginRight:4}} /> {shop.rating}</div>
                   </div>
                   <div>
                     <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Completion Rate</div>
@@ -251,7 +252,7 @@ export default function AcceptedShops() {
                 onClick={() => setShowDetails(false)}
                 style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
               >
-                ✕ Close
+                <FaTimes style={{marginRight:4}} /> Close
               </button>
             </div>
 
@@ -271,7 +272,7 @@ export default function AcceptedShops() {
                     </div>
                     <div>
                       <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Customer Rating</div>
-                      <div style={{fontSize:20, color:'#fbbf24', fontWeight:700}}>⭐ {selectedShop.rating}</div>
+                      <div style={{fontSize:20, color:'#fbbf24', fontWeight:700}}><FaStar style={{marginRight:4}} /> {selectedShop.rating}</div>
                     </div>
                     <div>
                       <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Completion Rate</div>
@@ -358,7 +359,7 @@ export default function AcceptedShops() {
                 onClick={() => setShowContactModal(false)}
                 style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
               >
-                ✕ Close
+                <FaTimes style={{marginRight:4}} /> Close
               </button>
             </div>
 
@@ -378,7 +379,7 @@ export default function AcceptedShops() {
               <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8, fontWeight:600}}>Phone Number</div>
               <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, padding:16}}>
                 <div style={{display:'flex', alignItems:'center', gap:12}}>
-                  <span style={{fontSize:20}}>📞</span>
+                  <span style={{fontSize:20}}><FaPhone style={{marginRight:4}} /></span>
                   <a 
                     href={`tel:${contactShop.phone}`}
                     style={{fontSize:18, fontWeight:600, color:'#3b82f6', textDecoration:'none'}}
@@ -394,7 +395,7 @@ export default function AcceptedShops() {
               <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8, fontWeight:600}}>Address</div>
               <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, padding:16}}>
                 <div style={{display:'flex', alignItems:'start', gap:12}}>
-                  <span style={{fontSize:20}}>📍</span>
+                  <span style={{fontSize:20}}><FaMapMarkerAlt style={{marginRight:4}} /></span>
                   <div>
                     <div style={{fontSize:16, color:'#e5e7eb', fontWeight:600, marginBottom:4}}>
                       {contactShop.address || contactShop.location}
@@ -417,7 +418,7 @@ export default function AcceptedShops() {
               <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8, fontWeight:600}}>Email</div>
               <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, padding:16}}>
                 <div style={{display:'flex', alignItems:'center', gap:12}}>
-                  <span style={{fontSize:20}}>📧</span>
+                  <span style={{fontSize:20}}><FaEnvelope style={{marginRight:4}} /></span>
                   <a 
                     href={`mailto:${contactShop.email}`}
                     style={{fontSize:16, fontWeight:600, color:'#3b82f6', textDecoration:'none'}}
@@ -434,13 +435,13 @@ export default function AcceptedShops() {
                 href={`tel:${contactShop.phone}`}
                 style={{padding:'12px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:14, fontWeight:600, textAlign:'center', textDecoration:'none', display:'block'}}
               >
-                📞 Call Now
+                <FaPhone style={{marginRight:4}} /> Call Now
               </a>
               <a 
                 href={`mailto:${contactShop.email}`}
                 style={{padding:'12px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:14, fontWeight:600, textAlign:'center', textDecoration:'none', display:'block'}}
               >
-                📧 Send Email
+                <FaEnvelope style={{marginRight:4}} /> Send Email
               </a>
             </div>
           </div>

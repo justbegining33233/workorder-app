@@ -1,4 +1,4 @@
-﻿// Notification store — backed by the Prisma `notifications` table.
+// Notification store — backed by the Prisma `notifications` table.
 // Functions are async; falls back gracefully if Prisma is unavailable.
 import { Notification } from '@/types/customer';
 import { sendStatusUpdateSms } from '@/lib/smsService';

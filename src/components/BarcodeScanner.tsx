@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { FaCamera, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 
 interface BarcodeScannerProps {
   onScan: (value: string) => void;
@@ -96,13 +97,13 @@ export default function BarcodeScanner({ onScan, onClose, label = 'Scan a Barcod
       <div style={{ background: '#1e293b', borderRadius: 16, padding: 24, width: '100%', maxWidth: 480, border: '1px solid rgba(255,255,255,0.1)' }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, margin: 0 }}>📷 {label}</h2>
+          <h2 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, margin: 0 }}><FaCamera style={{marginRight:4}} /> {label}</h2>
           <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
         </div>
 
         {supported === false && (
           <div style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 10, padding: 16, marginBottom: 16 }}>
-            <p style={{ color: '#fbbf24', fontSize: 14, margin: '0 0 8px', fontWeight: 600 }}>⚠️ Barcode scanning not supported in this browser</p>
+            <p style={{ color: '#fbbf24', fontSize: 14, margin: '0 0 8px', fontWeight: 600 }}><FaExclamationTriangle style={{marginRight:4}} /> Barcode scanning not supported in this browser</p>
             <p style={{ color: '#d4a017', fontSize: 13, margin: 0 }}>
               The BarcodeDetector API requires Chrome 83+, Edge 83+, or Chrome for Android. 
               Please enter the barcode manually below, or use a barcode scanner device.
@@ -138,7 +139,7 @@ export default function BarcodeScanner({ onScan, onClose, label = 'Scan a Barcod
             )}
             {lastResult && (
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
-                <div style={{ fontSize: 40 }}>✅</div>
+                <div style={{ fontSize: 40 }}><FaCheckCircle style={{marginRight:4}} /></div>
                 <div style={{ color: '#34d399', fontSize: 16, fontWeight: 700, marginTop: 8 }}>Scanned!</div>
                 <div style={{ color: '#86efac', fontFamily: 'monospace', fontSize: 14, marginTop: 4 }}>{lastResult}</div>
               </div>

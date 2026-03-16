@@ -1,4 +1,5 @@
 'use client';
+import { FaCrown } from 'react-icons/fa';
 
 import React from 'react';
 
@@ -170,11 +171,11 @@ function ActivityHeatmap({ data }: { data: number[][] }) {
 }
 
 const ROLE_CONFIG: Record<string, { name: string; icon: string; color: string; bgColor: string }> = {
-  admin: { name: 'Admin', icon: '👑', color: '#EF4444', bgColor: 'bg-[#EF4444]/10' },
-  shop: { name: 'Shop Owner', icon: '🏪', color: '#3B82F6', bgColor: 'bg-[#3B82F6]/10' },
-  tech: { name: 'Technician', icon: '🔧', color: '#22C55E', bgColor: 'bg-[#22C55E]/10' },
-  manager: { name: 'Manager', icon: '📋', color: '#F97316', bgColor: 'bg-[#F97316]/10' },
-  customer: { name: 'Customer', icon: '👤', color: '#8B5CF6', bgColor: 'bg-[#8B5CF6]/10' }
+  admin: { name: 'Admin', icon: '<FaCrown style={{marginRight:4}} />', color: '#EF4444', bgColor: 'bg-[#EF4444]/10' },
+  shop: { name: 'Shop Owner', icon: '', color: '#3B82F6', bgColor: 'bg-[#3B82F6]/10' },
+  tech: { name: 'Technician', icon: '', color: '#22C55E', bgColor: 'bg-[#22C55E]/10' },
+  manager: { name: 'Manager', icon: '', color: '#F97316', bgColor: 'bg-[#F97316]/10' },
+  customer: { name: 'Customer', icon: '', color: '#8B5CF6', bgColor: 'bg-[#8B5CF6]/10' }
 };
 
 export function UsersTab({ users, liveMetrics }: UsersTabProps) {

@@ -125,7 +125,7 @@ export default function RealTimeMessaging({
         fontWeight: 600,
         borderBottom: '1px solid rgba(255,255,255,0.1)',
       }}>
-        {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
+        {isConnected ? ' Connected' : ' Disconnected'}
       </div>
 
       {/* Messages */}

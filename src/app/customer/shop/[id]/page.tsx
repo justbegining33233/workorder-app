@@ -1,4 +1,5 @@
 'use client';
+import { FaBuilding, FaCalendarAlt, FaCheck, FaComments, FaDollarSign, FaEnvelope, FaMapMarkerAlt, FaPhone, FaRegStar, FaStar, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -179,7 +180,7 @@ export default function ShopDetailsPage({ params }: Props) {
                 <h1 style={{fontSize:32, fontWeight:700, color:'#e5e7eb'}}>{shop.shopName}</h1>
                 {shop.averageRating > 0 && (
                   <span style={{padding:'6px 12px', background:'rgba(245,158,11,0.2)', color:'#f59e0b', borderRadius:8, fontSize:14, fontWeight:700}}>
-                    ⭐ {shop.averageRating.toFixed(1)} ({shop.totalReviews} reviews)
+                    <FaStar style={{marginRight:4}} /> {shop.averageRating.toFixed(1)} ({shop.totalReviews} reviews)
                   </span>
                 )}
               </div>
@@ -188,16 +189,16 @@ export default function ShopDetailsPage({ params }: Props) {
               )}
               <div style={{display:'flex', alignItems:'center', gap:16, flexWrap:'wrap'}}>
                 <span style={{fontSize:14, color:'#22c55e', fontWeight:600}}>
-                  ✓ {shop.completedJobs} jobs completed
+                  <FaCheck style={{marginRight:4}} /> {shop.completedJobs} jobs completed
                 </span>
                 {shop.shopType && (
                   <span style={{fontSize:14, color:'#9aa3b2'}}>
-                    🏪 {shop.shopType}
+                    <FaStore style={{marginRight:4}} /> {shop.shopType}
                   </span>
                 )}
                 {shop.capacity && (
                   <span style={{fontSize:14, color:'#9aa3b2'}}>
-                    👥 Capacity: {shop.capacity} vehicles
+                    <FaUsers style={{marginRight:4}} /> Capacity: {shop.capacity} vehicles
                   </span>
                 )}
               </div>
@@ -222,7 +223,7 @@ export default function ShopDetailsPage({ params }: Props) {
                 gap:8
               }}
             >
-              {togglingFavorite ? '⏳' : (shop.isFavorite ? '⭐' : '☆')}
+              {togglingFavorite ? '⏳' : (shop.isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
               {shop.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
           </div>
@@ -242,7 +243,7 @@ export default function ShopDetailsPage({ params }: Props) {
               textDecoration:'none',
               textAlign:'center'
             }}>
-              📅 Book Appointment
+              <FaCalendarAlt style={{marginRight:4}} /> Book Appointment
             </Link>
             <Link href={`/customer/messages?shopId=${shop.id}`} style={{
               flex:1,
@@ -257,7 +258,7 @@ export default function ShopDetailsPage({ params }: Props) {
               textDecoration:'none',
               textAlign:'center'
             }}>
-              💬 Contact Shop
+              <FaComments style={{marginRight:4}} /> Contact Shop
             </Link>
           </div>
         </div>
@@ -265,7 +266,7 @@ export default function ShopDetailsPage({ params }: Props) {
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap:32}}>
           {/* Contact Information */}
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>📍 Contact Information</h2>
+            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:20}}><FaMapMarkerAlt style={{marginRight:4}} /> Contact Information</h2>
             <div style={{display:'flex', flexDirection:'column', gap:16}}>
               <div>
                 <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Address</div>
@@ -279,13 +280,13 @@ export default function ShopDetailsPage({ params }: Props) {
               <div>
                 <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Phone</div>
                 <div style={{fontSize:16, color:'#e5e7eb'}}>
-                  📞 {shop.phone}
+                  <FaPhone style={{marginRight:4}} /> {shop.phone}
                 </div>
               </div>
               <div>
                 <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Email</div>
                 <div style={{fontSize:16, color:'#e5e7eb'}}>
-                  ✉️ {shop.email}
+                  <FaEnvelope style={{marginRight:4}} /> {shop.email}
                 </div>
               </div>
             </div>
@@ -293,7 +294,7 @@ export default function ShopDetailsPage({ params }: Props) {
 
           {/* Services Offered */}
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>🔧 Services Offered</h2>
+            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:20}}><FaWrench style={{marginRight:4}} /> Services Offered</h2>
             {shop.services && shop.services.length > 0 ? (
               <div style={{display:'flex', flexDirection:'column', gap:12}}>
                 {shop.services.map(service => (
@@ -314,10 +315,10 @@ export default function ShopDetailsPage({ params }: Props) {
                     )}
                     <div style={{display:'flex', gap:16, fontSize:14, color:'#e5e7eb'}}>
                       {service.price && (
-                        <span>💰 ${service.price}</span>
+                        <span><FaDollarSign style={{marginRight:4}} /> ${service.price}</span>
                       )}
                       {service.duration && (
-                        <span>⏱️ {service.duration} min</span>
+                        <span>⏱ {service.duration} min</span>
                       )}
                     </div>
                   </div>
@@ -332,7 +333,7 @@ export default function ShopDetailsPage({ params }: Props) {
         {/* Business Information */}
         {shop.slotDuration && (
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, marginTop:32}}>
-            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:20}}>🏢 Business Information</h2>
+            <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:20}}><FaBuilding style={{marginRight:4}} /> Business Information</h2>
             <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:16}}>
               <div>
                 <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Appointment Duration</div>

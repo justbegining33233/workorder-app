@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheckCircle } from 'react-icons/fa';
 
 interface TechPermissions {
   techId: string;
@@ -79,7 +80,7 @@ export default function PermissionsPage() {
 
           {toast && (
             <div style={{ position: 'fixed', top: 80, right: 24, background: '#052e16', color: '#22c55e', padding: '12px 20px', borderRadius: 8, border: '1px solid #16a34a', zIndex: 50, fontSize: 14 }}>
-              ✅ {toast}
+              <FaCheckCircle style={{marginRight:4}} /> {toast}
             </div>
           )}
 

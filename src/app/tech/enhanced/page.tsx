@@ -7,6 +7,7 @@ import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
 import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
+import { FaCamera, FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 
 function TechPortalEnhancedContent() {
   const { user } = useRequireAuth(['tech']);
@@ -44,13 +45,13 @@ function TechPortalEnhancedContent() {
   }, []);
 
   const features = [
-    { id: 'assignments', icon: '📋', name: 'Assignments' },
-    { id: 'location', icon: '📍', name: 'My Location' },
-    { id: 'messages', icon: '💬', name: 'Messages' },
-    { id: 'photos', icon: '📸', name: 'Work Photos' },
-    { id: 'documents', icon: '📄', name: 'Documents' },
-    { id: 'schedule', icon: '📅', name: 'Schedule' },
-    { id: 'performance', icon: '📊', name: 'Performance' },
+    { id: 'assignments', icon: '', name: 'Assignments' },
+    { id: 'location', icon: '', name: 'My Location' },
+    { id: 'messages', icon: '', name: 'Messages' },
+    { id: 'photos', icon: '', name: 'Work Photos' },
+    { id: 'documents', icon: '', name: 'Documents' },
+    { id: 'schedule', icon: '', name: 'Schedule' },
+    { id: 'performance', icon: '', name: 'Performance' },
   ];
 
   // Work orders are already scoped to this tech's shop via the API;
@@ -188,7 +189,7 @@ function LocationTab({ location, techName }: { location: { lat: number, lng: num
       <p className="sos-desc">Your location is shared with customers for ETA tracking</p>
       
       <div className="sos-item" style={{marginTop:24, padding:24, flexDirection:'column', alignItems:'center'}}>
-        <div style={{fontSize:48, marginBottom:16}}>📍</div>
+        <div style={{fontSize:48, marginBottom:16}}><FaMapMarkerAlt style={{marginRight:4}} /></div>
         <div style={{fontSize:16, fontWeight:700, marginBottom:8}}>{techName}</div>
         <div style={{fontSize:13, color:'#b8beca', marginBottom:16}}>Location Sharing: Active</div>
         <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, width:'100%'}}>
@@ -287,7 +288,7 @@ function PhotosTab() {
       
       <div style={{marginTop:24}}>
         <div className="sos-item" style={{padding:40, flexDirection:'column', border:'2px dashed #5a5a5a'}}>
-          <div style={{fontSize:48, marginBottom:12}}>📸</div>
+          <div style={{fontSize:48, marginBottom:12}}><FaCamera style={{marginRight:4}} /></div>
           <div style={{fontSize:14, color:'#b8beca', marginBottom:16}}>Click to upload or drag and drop</div>
           <button className="btn-primary">Choose Files</button>
         </div>
@@ -384,7 +385,7 @@ function PerformanceTab() {
         <div style={{fontSize:14, fontWeight:700, marginBottom:12}}>Recent Reviews</div>
         <div className="sos-list">
           <div className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
-            <div style={{marginBottom:8}}>⭐⭐⭐⭐⭐</div>
+            <div style={{marginBottom:8}}><FaStar style={{marginRight:4}} /></div>
             <div style={{fontSize:13, marginBottom:4}}>"Excellent work! Very professional."</div>
             <div style={{fontSize:11, color:'#9aa3b2'}}>John Doe • 12/10/2025</div>
           </div>

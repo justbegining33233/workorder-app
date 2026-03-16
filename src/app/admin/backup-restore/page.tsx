@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaArrowDown, FaBox, FaCheck, FaCheckCircle, FaExclamationTriangle, FaSave } from 'react-icons/fa';
 
 export default function BackupRestore() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -55,14 +56,14 @@ export default function BackupRestore() {
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(229,51,42,0.3)', padding: '16px 32px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/admin/home" style={{ color: '#e5332a', fontSize: 22, fontWeight: 900, textDecoration: 'none' }}>FixTray Admin</Link>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}>💾 Backup & Restore</h1>
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}><FaSave style={{marginRight:4}} /> Backup & Restore</h1>
           <Link href="/admin/system-settings" style={{ color: '#9aa3b2', fontSize: 13, textDecoration: 'none' }}>← System Settings</Link>
         </div>
       </div>
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px' }}>
         <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 10, padding: '16px 20px', marginBottom: 28, display: 'flex', gap: 12 }}>
-          <div style={{ fontSize: 20 }}>ℹ️</div>
+          <div style={{ fontSize: 20 }}>ℹ</div>
           <div style={{ fontSize: 13, color: '#9aa3b2', lineHeight: 1.6 }}>
             Backups export a JSON snapshot of all platform data. Sensitive fields (passwords, payment tokens) are excluded. Store backups securely.
           </div>
@@ -74,17 +75,17 @@ export default function BackupRestore() {
               <div style={{ fontWeight: 700, color: '#e5e7eb', fontSize: 16 }}>Download Full Backup</div>
               <div style={{ fontSize: 13, color: '#9aa3b2', marginTop: 3 }}>Exports platform data as a JSON file</div>
             </div>
-            <div style={{ fontSize: 28 }}>📦</div>
+            <div style={{ fontSize: 28 }}><FaBox style={{marginRight:4}} /></div>
           </div>
           <div style={{ padding: '24px' }}>
             {lastBackup && (
               <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, padding: '10px 16px', marginBottom: 20, fontSize: 13, color: '#86efac' }}>
-                ✅ Last backup: {lastBackup}
+                <FaCheckCircle style={{marginRight:4}} /> Last backup: {lastBackup}
               </div>
             )}
             <button onClick={handleDownload} disabled={downloading}
               style={{ background: downloading ? '#444' : '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: downloading ? 'not-allowed' : 'pointer' }}>
-              {downloading ? '⏳ Preparing…' : '⬇️ Download Backup (JSON)'}
+              {downloading ? '⏳ Preparing…' : '<FaArrowDown style={{marginRight:4}} /> Download Backup (JSON)'}
             </button>
           </div>
         </div>
@@ -94,14 +95,14 @@ export default function BackupRestore() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
             {['Shops', 'Customers', 'Technicians', 'Work Orders', 'Appointments', 'Reviews', 'Subscriptions', 'Invoices', 'Notifications'].map(item => (
               <div key={item} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#d1d5db', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ color: '#22c55e' }}>✓</span> {item}
+                <span style={{ color: '#22c55e' }}><FaCheck style={{marginRight:4}} /></span> {item}
               </div>
             ))}
           </div>
         </div>
 
         <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 10, padding: '16px 20px', display: 'flex', gap: 12 }}>
-          <div style={{ fontSize: 20 }}>⚠️</div>
+          <div style={{ fontSize: 20 }}><FaExclamationTriangle style={{marginRight:4}} /></div>
           <div>
             <div style={{ fontWeight: 700, color: '#fbbf24', marginBottom: 4 }}>Restore Process</div>
             <div style={{ fontSize: 13, color: '#9aa3b2', lineHeight: 1.6 }}>

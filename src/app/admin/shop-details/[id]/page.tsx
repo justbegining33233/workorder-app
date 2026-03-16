@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBuilding, FaCalendarAlt, FaCheck, FaCreditCard, FaExclamationTriangle, FaPhone, FaStar, FaTimesCircle } from 'react-icons/fa';
 
 type ShopDetails = {
   id: string;
@@ -148,7 +149,7 @@ export default function ShopDetailsPage() {
     return (
       <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>❌</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}><FaTimesCircle style={{marginRight:4}} /></div>
           <div style={{ fontSize: 20, marginBottom: 16 }}>{error || 'Shop not found'}</div>
           <Link href="/admin/manage-customers" style={{ color: '#3b82f6', textDecoration: 'none' }}>
             ← Back to Manage Customers
@@ -244,7 +245,7 @@ export default function ShopDetailsPage() {
           </div>
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 12, padding: 20 }}>
             <div style={{ fontSize: 12, color: '#9aa3b2', marginBottom: 8 }}>Avg Rating</div>
-            <div style={{ fontSize: 28, fontWeight: 700, color: '#fbbf24' }}>⭐ {shop.stats.avgRating.toFixed(1)}</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: '#fbbf24' }}><FaStar style={{marginRight:4}} /> {shop.stats.avgRating.toFixed(1)}</div>
           </div>
         </div>
 
@@ -253,7 +254,7 @@ export default function ShopDetailsPage() {
           {/* Contact Information */}
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
             <h3 style={{ fontSize: 16, fontWeight: 600, color: '#e5e7eb', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
-              📞 Contact Information
+              <FaPhone style={{marginRight:4}} /> Contact Information
             </h3>
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
@@ -277,7 +278,7 @@ export default function ShopDetailsPage() {
           {/* Business Information */}
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
             <h3 style={{ fontSize: 16, fontWeight: 600, color: '#e5e7eb', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
-              🏢 Business Information
+              <FaBuilding style={{marginRight:4}} /> Business Information
             </h3>
             <div style={{ display: 'grid', gap: 16 }}>
               <div>
@@ -295,7 +296,7 @@ export default function ShopDetailsPage() {
               <div>
                 <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 4, textTransform: 'uppercase' }}>Profile Complete</div>
                 <div style={{ fontSize: 14, color: shop.profileComplete ? '#22c55e' : '#f59e0b' }}>
-                  {shop.profileComplete ? '✓ Complete' : '⚠ Incomplete'}
+                  {shop.profileComplete ? '<FaCheck style={{marginRight:4}} /> Complete' : '<FaExclamationTriangle style={{marginRight:4}} /> Incomplete'}
                 </div>
               </div>
             </div>
@@ -304,7 +305,7 @@ export default function ShopDetailsPage() {
           {/* Subscription Information */}
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
             <h3 style={{ fontSize: 16, fontWeight: 600, color: '#e5e7eb', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
-              💳 Subscription
+              <FaCreditCard style={{marginRight:4}} /> Subscription
             </h3>
             {shop.subscription ? (
               <div style={{ display: 'grid', gap: 16 }}>
@@ -331,7 +332,7 @@ export default function ShopDetailsPage() {
           {/* Account Dates */}
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
             <h3 style={{ fontSize: 16, fontWeight: 600, color: '#e5e7eb', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
-              📅 Account Timeline
+              <FaCalendarAlt style={{marginRight:4}} /> Account Timeline
             </h3>
             <div style={{ display: 'grid', gap: 16 }}>
               <div>

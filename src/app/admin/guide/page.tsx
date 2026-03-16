@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBell, FaCar, FaCloud, FaCreditCard, FaCrown, FaEnvelope, FaHardHat, FaMicroscope, FaMobileAlt, FaPencilAlt, FaUserTie, FaWrench } from 'react-icons/fa';
 
 interface Feature {
   name: string;
@@ -31,7 +32,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Authentication & Security',
-      icon: '🔐',
+      icon: '',
       description: 'User login, registration, and security features — all roles',
       features: [
         { name: 'User Login', description: 'Email/password authentication for all user types', status: 'ready', route: '/login', apiEndpoint: '/api/auth/login' },
@@ -48,7 +49,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Admin Panel - Core',
-      icon: '👑',
+      icon: '<FaCrown style={{marginRight:4}} />',
       description: 'Platform administration and management',
       features: [
         { name: 'Admin Dashboard', description: 'Overview of platform stats', status: 'ready', route: '/admin/home' },
@@ -65,7 +66,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Admin Panel - Advanced',
-      icon: '⚙️',
+      icon: '',
       description: 'Advanced admin tools and management',
       features: [
         { name: 'Command Center', description: 'Real-time platform monitoring', status: 'ready', route: '/admin/command-center', apiEndpoint: '/api/admin/command-center' },
@@ -83,7 +84,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Shop Admin Control Center',
-      icon: '🏢',
+      icon: '',
       description: 'Full-featured shop admin panel — payroll, budget, team, employee profiles',
       features: [
         { name: 'Shop Admin Dashboard', description: 'Central control center with payroll budget, team clock status, and business overview', status: 'ready', route: '/shop/admin' },
@@ -98,7 +99,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Shop Management - Core',
-      icon: '🏪',
+      icon: '',
       description: 'Shop owner features and settings',
       features: [
         { name: 'Shop Dashboard', description: 'Shop overview and stats', status: 'ready', route: '/shop/home' },
@@ -116,7 +117,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Shop Management - Business',
-      icon: '💼',
+      icon: '',
       description: 'Business operations and management',
       features: [
         { name: 'Shop Analytics', description: 'Business performance metrics', status: 'ready', route: '/shop/analytics', apiEndpoint: '/api/shop/stats' },
@@ -131,7 +132,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Shop Management - Operations',
-      icon: '🔧',
+      icon: '',
       description: 'Day-to-day shop operations',
       features: [
         { name: 'Inventory Management', description: 'Parts and supplies tracking', status: 'ready', route: '/shop/inventory', apiEndpoint: '/api/inventory' },
@@ -146,7 +147,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Shop Management - Specialized',
-      icon: '🔬',
+      icon: '<FaMicroscope style={{marginRight:4}} />',
       description: 'Specialized shop services and features',
       features: [
         { name: 'AR Aging Reports', description: 'Accounts receivable aging', status: 'ready', route: '/shop/ar-aging', apiEndpoint: '/api/ar-aging' },
@@ -163,7 +164,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Shop Management - Integrations',
-      icon: '🔗',
+      icon: '',
       description: 'Third-party integrations and automations',
       features: [
         { name: 'Automations', description: 'Workflow automation rules', status: 'ready', route: '/shop/automations', apiEndpoint: '/api/automations' },
@@ -176,7 +177,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Work Orders - Core',
-      icon: '📋',
+      icon: '',
       description: 'Create and manage repair orders',
       features: [
         { name: 'Create Work Order', description: 'New work order with customer/vehicle', status: 'ready', route: '/workorders/new', apiEndpoint: '/api/workorders' },
@@ -194,7 +195,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Technician Tools - Core',
-      icon: '🔧',
+      icon: '',
       description: 'Field technician tools and features',
       features: [
         { name: 'Tech Dashboard', description: 'Technician overview and assignments', status: 'ready', route: '/tech/home' },
@@ -209,7 +210,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Technician Tools - Advanced',
-      icon: '🛠️',
+      icon: '',
       description: 'Advanced technician diagnostic and service tools',
       features: [
         { name: 'All Tools Dashboard', description: 'Complete technician toolkit', status: 'ready', route: '/tech/all-tools' },
@@ -224,7 +225,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Customer Portal - Core',
-      icon: '👤',
+      icon: '',
       description: 'Customer account and service management',
       features: [
         { name: 'Customer Dashboard', description: 'Overview of orders and vehicles', status: 'ready', route: '/customer/dashboard' },
@@ -240,7 +241,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Customer Portal - Services',
-      icon: '🚗',
+      icon: '',
       description: 'Customer service requests and management',
       features: [
         { name: 'Online Booking', description: 'Schedule appointments online', status: 'ready', route: '/customer/appointments', apiEndpoint: '/api/appointments' },
@@ -255,7 +256,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Customer Portal - Insights',
-      icon: '📊',
+      icon: '',
       description: 'Customer analytics and insights',
       features: [
         { name: 'Service Insights', description: 'Personal service analytics', status: 'ready', route: '/customer/insights' },
@@ -267,7 +268,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Manager Dashboard',
-      icon: '👔',
+      icon: '<FaUserTie style={{marginRight:4}} />',
       description: 'Team management and oversight features',
       features: [
         { name: 'Manager Home', description: 'Manager landing page with quick actions', status: 'ready', route: '/manager/home' },
@@ -293,7 +294,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Inventory Management',
-      icon: '📦',
+      icon: '',
       description: 'Parts and inventory tracking',
       features: [
         { name: 'Inventory List', description: 'View all inventory items', status: 'ready', route: '/shop/inventory', apiEndpoint: '/api/inventory' },
@@ -308,7 +309,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Messaging & Notifications',
-      icon: '💬',
+      icon: '',
       description: 'Communication features',
       features: [
         { name: 'In-App Messaging', description: 'Shop-to-customer messaging', status: 'ready', apiEndpoint: '/api/messages' },
@@ -322,7 +323,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Appointments & Scheduling',
-      icon: '📅',
+      icon: '',
       description: 'Booking and calendar features',
       features: [
         { name: 'Appointment Booking', description: 'Schedule appointments', status: 'ready', apiEndpoint: '/api/appointments' },
@@ -334,7 +335,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Reviews & Ratings',
-      icon: '⭐',
+      icon: '',
       description: 'Customer feedback system',
       features: [
         { name: 'Submit Reviews', description: 'Customers leave reviews', status: 'ready', apiEndpoint: '/api/reviews' },
@@ -346,7 +347,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Payments & Billing',
-      icon: '💳',
+      icon: '',
       description: 'Payment processing and subscriptions',
       features: [
         { name: 'Stripe Integration', description: 'Credit card payments', status: 'setup-required', apiEndpoint: '/api/payment/create-intent', notes: 'Requires Stripe API keys' },
@@ -359,7 +360,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Reports & Analytics',
-      icon: '📊',
+      icon: '',
       description: 'Business intelligence features',
       features: [
         { name: 'Work Order Analytics', description: 'Job completion metrics', status: 'ready', apiEndpoint: '/api/analytics' },
@@ -372,7 +373,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'File Uploads & Storage',
-      icon: '📁',
+      icon: '',
       description: 'File management features',
       features: [
         { name: 'Image Uploads', description: 'Upload photos to work orders', status: 'ready', apiEndpoint: '/api/upload' },
@@ -383,7 +384,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'System & Infrastructure',
-      icon: '⚙️',
+      icon: '',
       description: 'Technical system features',
       features: [
         { name: 'Health Check Endpoint', description: 'API health monitoring', status: 'ready', apiEndpoint: '/api/health' },
@@ -400,7 +401,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Admin — Data & Export',
-      icon: '📤',
+      icon: '',
       description: 'Admin-level data exports, performance, and usage reporting',
       features: [
         { name: 'Platform Stats', description: 'High-level platform-wide stats (users, shops, revenue)', status: 'ready', apiEndpoint: '/api/admin/stats' },
@@ -417,7 +418,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Shop Schedule & Availability',
-      icon: '🗓️',
+      icon: '',
       description: 'Configure shop schedule, blocked dates, and customer-facing availability',
       features: [
         { name: 'Shop Schedule Config', description: 'Set working hours and days per shop', status: 'ready', route: '/shop/settings/schedule', apiEndpoint: '/api/shop/schedule' },
@@ -432,7 +433,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Tech Management (Shop/Admin)',
-      icon: '👷',
+      icon: '<FaHardHat style={{marginRight:4}} />',
       description: 'Manage technician profiles, assignments, and tracking from shop or admin level',
       features: [
         { name: 'List Technicians', description: 'View all technicians across a shop', status: 'ready', apiEndpoint: '/api/techs' },
@@ -448,7 +449,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Payroll System — Advanced',
-      icon: '💵',
+      icon: '',
       description: 'Full enterprise payroll: pay periods, paystubs, leave, overtime, and scheduling',
       features: [
         { name: 'Pay Periods', description: 'Define weekly/biweekly/monthly pay periods', status: 'ready', apiEndpoint: '/api/payroll/pay-periods' },
@@ -469,7 +470,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Subscription Management',
-      icon: '🔄',
+      icon: '',
       description: 'Shop subscription plans, upgrades, cancellations, and suggestions',
       features: [
         { name: 'Update Subscription Plan', description: 'Upgrade or downgrade shop plan', status: 'ready', apiEndpoint: '/api/subscriptions/[shopId]/update-plan' },
@@ -485,7 +486,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Stripe Connect & Advanced Payments',
-      icon: '💳',
+      icon: '',
       description: 'Stripe Connect onboarding, customer portal, payment links, and webhooks',
       features: [
         { name: 'Stripe Connect Onboarding', description: 'Onboard shops to accept payments via Stripe Connect', status: 'setup-required', apiEndpoint: '/api/stripe/connect', notes: 'Requires STRIPE_SECRET_KEY in Vercel env vars (already set)' },
@@ -504,7 +505,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Real-time, Push & Cron',
-      icon: '🔔',
+      icon: '',
       description: 'Push notifications, browser alerts, and scheduled background jobs',
       features: [
         { name: 'Push Notification Subscribe', description: 'Subscribe browser to push notifications', status: 'setup-required', apiEndpoint: '/api/push/subscribe', notes: 'Requires VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY in Vercel env vars' },
@@ -522,7 +523,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Portal Chat',
-      icon: '💬',
+      icon: '',
       description: 'Real-time streaming chat between customers, shops, and techs via the portal',
       features: [
         { name: 'Portal Chat by Role', description: 'Role-scoped chat endpoint (customer/shop/tech)', status: 'ready', apiEndpoint: '/api/portal-chat/[role]' },
@@ -536,7 +537,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Customer Vehicles',
-      icon: '🚙',
+      icon: '<FaCar style={{marginRight:4}} />',
       description: 'Full vehicle management for customer accounts',
       features: [
         { name: 'Vehicle List', description: 'View all vehicles on customer account', status: 'ready', route: '/customer/vehicles', apiEndpoint: '/api/customers/vehicles' },
@@ -552,7 +553,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'Work Authorizations & Recurring',
-      icon: '✍️',
+      icon: '<FaPencilAlt style={{marginRight:4}} />',
       description: 'Customer-signed work authorizations and recurring job approvals',
       features: [
         { name: 'Create Work Authorization', description: 'Generate authorization for customer to sign', status: 'ready', route: '/shop/work-authorizations', apiEndpoint: '/api/work-authorizations' },
@@ -568,7 +569,7 @@ export default function AppGuidePage() {
     // ─────────────────────────────────────────────
     {
       name: 'FindShops Marketplace',
-      icon: '🗺️',
+      icon: '',
       description: 'Customer-facing shop discovery, ratings, booking, and tracking — the public marketplace side of FixTray',
       features: [
         { name: 'Shop Search / Browse', description: 'Search shops by location, type, and services', status: 'ready', route: '/customer/findshops', apiEndpoint: '/api/customers/shops' },
@@ -742,7 +743,7 @@ export default function AppGuidePage() {
                               </div>
                               <p className="text-gray-400 text-sm ml-5">{feature.description}</p>
                               {feature.notes && (
-                                <p className="text-gray-500 text-xs ml-5 mt-1">ℹ️ {feature.notes}</p>
+                                <p className="text-gray-500 text-xs ml-5 mt-1">ℹ {feature.notes}</p>
                               )}
                               {feature.apiEndpoint && (
                                 <p className="text-gray-600 text-xs ml-5 mt-1 font-mono">API: {feature.apiEndpoint}</p>
@@ -769,36 +770,36 @@ export default function AppGuidePage() {
 
         {/* Setup Required Section */}
         <div className="mt-8 bg-blue-500/10 rounded-xl p-6 border border-blue-500/30">
-          <h2 className="text-xl font-bold text-blue-400 mb-4">🔧 Features That Need Setup</h2>
+          <h2 className="text-xl font-bold text-blue-400 mb-4"><FaWrench style={{marginRight:4}} /> Features That Need Setup</h2>
           <p className="text-gray-300 mb-4">These features are built but require external service configuration:</p>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="bg-black/20 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-2">💳 Stripe Payments</h3>
+              <h3 className="text-white font-semibold mb-2"><FaCreditCard style={{marginRight:4}} /> Stripe Payments</h3>
               <p className="text-gray-400 text-sm mb-2">For online payment processing</p>
               <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY</code>
             </div>
             <div className="bg-black/20 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-2">📧 Email Service</h3>
+              <h3 className="text-white font-semibold mb-2"><FaEnvelope style={{marginRight:4}} /> Email Service</h3>
               <p className="text-gray-400 text-sm mb-2">For email notifications (SendGrid, Resend, etc.)</p>
               <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">EMAIL_API_KEY, EMAIL_FROM</code>
             </div>
             <div className="bg-black/20 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-2">📱 SMS (Twilio)</h3>
+              <h3 className="text-white font-semibold mb-2"><FaMobileAlt style={{marginRight:4}} /> SMS (Twilio)</h3>
               <p className="text-gray-400 text-sm mb-2">For text message notifications</p>
               <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN</code>
             </div>
             <div className="bg-black/20 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-2">🔔 Push Notifications</h3>
+              <h3 className="text-white font-semibold mb-2"><FaBell style={{marginRight:4}} /> Push Notifications</h3>
               <p className="text-gray-400 text-sm mb-2">For browser push notifications</p>
               <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY</code>
             </div>
             <div className="bg-black/20 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-2">☁️ Cloudinary</h3>
+              <h3 className="text-white font-semibold mb-2"><FaCloud style={{marginRight:4}} /> Cloudinary</h3>
               <p className="text-gray-400 text-sm mb-2">For cloud image storage</p>
               <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">CLOUDINARY_URL</code>
             </div>
             <div className="bg-black/20 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-2">🗄️ PostgreSQL</h3>
+              <h3 className="text-white font-semibold mb-2"> PostgreSQL</h3>
               <p className="text-gray-400 text-sm mb-2">For production database</p>
               <code className="text-xs text-blue-400 bg-black/30 px-2 py-1 rounded">DATABASE_URL=&lt;your-neon-connection-string&gt;</code>
             </div>

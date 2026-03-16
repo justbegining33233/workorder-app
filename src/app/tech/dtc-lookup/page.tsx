@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaExclamationTriangle, FaSearch } from 'react-icons/fa';
 
 interface DTCResult {
   code: string;
@@ -54,7 +55,7 @@ export default function DTCLookupPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🔎 DTC Code Lookup</h1>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaSearch style={{marginRight:4}} /> DTC Code Lookup</h1>
         <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Diagnose OBD-II fault codes with detailed repair information</p>
       </div>
 
@@ -82,7 +83,7 @@ export default function DTCLookupPage() {
 
         {error && (
           <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 10, padding: 16, color: '#fca5a5', marginBottom: 20 }}>
-            ⚠️ {error} — This code may be vehicle-specific or not in our database. Try Googling it or consult the vehicle service manual.
+            <FaExclamationTriangle style={{marginRight:4}} /> {error} — This code may be vehicle-specific or not in our database. Try Googling it or consult the vehicle service manual.
           </div>
         )}
 

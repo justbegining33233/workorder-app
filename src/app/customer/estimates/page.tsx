@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCalendarAlt, FaCheckCircle, FaComments, FaTimesCircle } from 'react-icons/fa';
 
 interface EstimateItem {
   description: string;
@@ -346,7 +347,7 @@ export default function Estimates() {
                         opacity: loading === estimate.id ? 0.7 : 1
                       }}
                     >
-                      {loading === estimate.id ? 'Accepting...' : '✅ Accept Estimate'}
+                      {loading === estimate.id ? 'Accepting...' : '<FaCheckCircle style={{marginRight:4}} /> Accept Estimate'}
                     </button>
                     <button
                       onClick={() => handleDeny(estimate.id)}
@@ -364,7 +365,7 @@ export default function Estimates() {
                         opacity: loading === estimate.id ? 0.7 : 1
                       }}
                     >
-                      {loading === estimate.id ? 'Denying...' : '❌ Deny Estimate'}
+                      {loading === estimate.id ? 'Denying...' : '<FaTimesCircle style={{marginRight:4}} /> Deny Estimate'}
                     </button>
                   </div>
                 </div>
@@ -560,7 +561,7 @@ export default function Estimates() {
                       fontWeight:600,
                       cursor:'pointer'
                     }}>
-                      📅 Schedule Service
+                      <FaCalendarAlt style={{marginRight:4}} /> Schedule Service
                     </button>
                     <button style={{
                       flex:1,
@@ -573,7 +574,7 @@ export default function Estimates() {
                       fontWeight:600,
                       cursor:'pointer'
                     }}>
-                      💬 Contact Shop
+                      <FaComments style={{marginRight:4}} /> Contact Shop
                     </button>
                   </div>
                 </div>

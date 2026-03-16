@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 import { useEffect, useState, useRef } from 'react';
+import { FaUsers } from 'react-icons/fa';
 
 export default function TechCustomers() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -63,7 +64,7 @@ export default function TechCustomers() {
           <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Tools
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>👥 Customer Portal</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaUsers style={{marginRight:4}} /> Customer Portal</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Search customers and work orders</p>
         </div>
       </div>

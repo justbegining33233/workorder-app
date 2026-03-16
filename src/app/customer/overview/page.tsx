@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 interface OverviewStats {
   activeOrders: number;
@@ -96,7 +97,7 @@ export default function CustomerOverview() {
 
         {error && (
           <div style={{background:'rgba(229,51,42,0.1)',border:'1px solid rgba(229,51,42,0.3)',borderRadius:10,padding:'14px 20px',marginBottom:24,display:'flex',gap:12,alignItems:'center'}}>
-            <span>⚠️</span>
+            <span><FaExclamationTriangle style={{marginRight:4}} /></span>
             <span style={{color:'#fca5a5',fontSize:14}}>{error}</span>
             <button onClick={fetchStats} style={{marginLeft:'auto',background:'#e5332a',color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',cursor:'pointer',fontSize:13}}>Retry</button>
           </div>

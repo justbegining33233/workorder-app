@@ -4,6 +4,7 @@ import { useEffect, useState, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheck, FaCheckCircle, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
 
 type PendingShop = {
   id: string;
@@ -274,7 +275,7 @@ export default function PendingShops() {
           <div style={{textAlign:'center', padding:80, color:'#9aa3b2', fontSize:16}}>Loading...</div>
         ) : pendingShops.length === 0 ? (
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:80, textAlign:'center'}}>
-            <div style={{fontSize:48, marginBottom:16}}>✓</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaCheck style={{marginRight:4}} /></div>
             <div style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>No Pending Applications</div>
             <div style={{fontSize:14, color:'#9aa3b2'}}>All shop applications have been reviewed</div>
           </div>
@@ -291,7 +292,7 @@ export default function PendingShops() {
                       </span>
                     </div>
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                      📍 {shop.location}
+                      <FaMapMarkerAlt style={{marginRight:4}} /> {shop.location}
                     </div>
                     <div style={{fontSize:13, color:'#6b7280'}}>
                       {shop.services} services • Submitted {getTimeAgo(shop.submitted)}
@@ -323,7 +324,7 @@ export default function PendingShops() {
                     onClick={() => handleApproveClick(shop)}
                     style={{flex:1, padding:'12px', background:'#22c55e', color:'white', border:'none', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
                   >
-                    ✓ Approve Shop
+                    <FaCheck style={{marginRight:4}} /> Approve Shop
                   </button>
                   <button 
                     onClick={() => handleReviewDetails(shop)}
@@ -335,7 +336,7 @@ export default function PendingShops() {
                     onClick={() => setDenyConfirmId(shop.id)}
                     style={{padding:'12px 24px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
                   >
-                    ✕ Deny
+                    <FaTimes style={{marginRight:4}} /> Deny
                   </button>
                 </div>
               </div>
@@ -354,7 +355,7 @@ export default function PendingShops() {
                 onClick={() => setShowDetails(false)}
                 style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
               >
-                ✕ Close
+                <FaTimes style={{marginRight:4}} /> Close
               </button>
             </div>
 
@@ -421,13 +422,13 @@ export default function PendingShops() {
                 onClick={() => handleApproveClick(selectedShop)}
                 style={{flex:1, padding:'14px', background:'#22c55e', color:'white', border:'none', borderRadius:8, fontSize:15, fontWeight:600, cursor:'pointer'}}
               >
-                ✓ Approve This Shop
+                <FaCheck style={{marginRight:4}} /> Approve This Shop
               </button>
               <button 
                 onClick={() => setDenyConfirmId(selectedShop.id)}
                 style={{padding:'14px 32px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:15, fontWeight:600, cursor:'pointer'}}
               >
-                ✕ Deny Application
+                <FaTimes style={{marginRight:4}} /> Deny Application
               </button>
             </div>
           </div>
@@ -439,7 +440,7 @@ export default function PendingShops() {
         <div style={{position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.85)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1100, padding:32}}>
           <div style={{background:'linear-gradient(135deg, #3d3d3d 0%, #4a4a4a 50%, #525252 100%)', border:'2px solid rgba(34,197,94,0.5)', borderRadius:16, padding:32, maxWidth:600, width:'100%'}}>
             <div style={{textAlign:'center', marginBottom:24}}>
-              <div style={{fontSize:48, marginBottom:16}}>✓</div>
+              <div style={{fontSize:48, marginBottom:16}}><FaCheck style={{marginRight:4}} /></div>
               <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>Approve Shop Application?</h2>
               <p style={{fontSize:14, color:'#9aa3b2'}}>You are about to approve the following shop:</p>
             </div>
@@ -464,7 +465,7 @@ export default function PendingShops() {
             </div>
 
             <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, padding:16, marginBottom:24}}>
-              <div style={{fontSize:13, color:'#22c55e', fontWeight:600, marginBottom:8}}>✓ Upon approval, the shop will:</div>
+              <div style={{fontSize:13, color:'#22c55e', fontWeight:600, marginBottom:8}}><FaCheck style={{marginRight:4}} /> Upon approval, the shop will:</div>
               <ul style={{margin:0, paddingLeft:20, color:'#9aa3b2', fontSize:13, lineHeight:1.8}}>
                 <li>Receive login access to their account</li>
                 <li>Be redirected to complete their profile (business license, insurance, services)</li>
@@ -490,7 +491,7 @@ export default function PendingShops() {
                   opacity: approving ? 0.7 : 1
                 }}
               >
-                {approving ? 'Approving...' : '✓ Yes, Approve Shop'}
+                {approving ? 'Approving...' : '<FaCheck style={{marginRight:4}} /> Yes, Approve Shop'}
               </button>
               <button 
                 onClick={() => {
@@ -530,7 +531,7 @@ export default function PendingShops() {
       {approveResult && (
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:1000}}>
           <div style={{background:'#1e2533',borderRadius:14,padding:32,minWidth:320,maxWidth:460,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
-            <h3 style={{fontSize:18,fontWeight:700,color:'#22c55e',marginBottom:12}}>✅ {approveResult.shopName} Approved!</h3>
+            <h3 style={{fontSize:18,fontWeight:700,color:'#22c55e',marginBottom:12}}><FaCheckCircle style={{marginRight:4}} /> {approveResult.shopName} Approved!</h3>
             <p style={{fontSize:14,color:'#9aa3b2',marginBottom:16}}>The shop can now log in, complete their profile, access their dashboard and receive work orders.</p>
             {approveResult.username && approveResult.tempPassword && (
               <div style={{background:'rgba(255,255,255,0.06)',borderRadius:8,padding:'12px 16px',marginBottom:16}}>

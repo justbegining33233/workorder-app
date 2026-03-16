@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaFileAlt } from 'react-icons/fa';
 
 export default function Documents() {
   useRequireAuth(['customer']);
@@ -74,7 +75,7 @@ export default function Documents() {
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                 <div style={{flex:1}}>
                   <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:8}}>
-                    <span style={{fontSize:20}}>📄</span>
+                    <span style={{fontSize:20}}><FaFileAlt style={{marginRight:4}} /></span>
                     <div>
                       <h3 style={{fontSize:16, fontWeight:700, color:'#e5e7eb', margin:0}}>{document.name}</h3>
                       <div style={{fontSize:14, color:'#9aa3b2', marginTop:4}}>{document.shop}</div>

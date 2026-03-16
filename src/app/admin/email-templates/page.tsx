@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheck, FaCheckCircle, FaDollarSign, FaEnvelope, FaHandPointRight, FaHardHat, FaKey, FaTimesCircle, FaWrench } from 'react-icons/fa';
 
 export default function EmailTemplates() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -31,14 +32,14 @@ export default function EmailTemplates() {
   }
 
   const templates = [
-    { id: 'welcome', name: 'Welcome Email', description: 'Sent to new users upon registration', icon: '👋' },
-    { id: 'shop-approved', name: 'Shop Approved', description: 'Notification when shop is approved', icon: '✅' },
-    { id: 'shop-denied', name: 'Shop Denied', description: 'Notification when shop application is denied', icon: '❌' },
-    { id: 'workorder-created', name: 'Work Order Created', description: 'Sent when new work order is created', icon: '🔧' },
-    { id: 'workorder-assigned', name: 'Work Order Assigned', description: 'Sent to technician when assigned', icon: '👷' },
-    { id: 'workorder-completed', name: 'Work Order Completed', description: 'Sent when work order is completed', icon: '✓' },
-    { id: 'payment-received', name: 'Payment Received', description: 'Confirmation of payment received', icon: '💰' },
-    { id: 'password-reset', name: 'Password Reset', description: 'Password reset request email', icon: '🔑' },
+    { id: 'welcome', name: 'Welcome Email', description: 'Sent to new users upon registration', icon: '<FaHandPointRight style={{marginRight:4}} />' },
+    { id: 'shop-approved', name: 'Shop Approved', description: 'Notification when shop is approved', icon: '<FaCheckCircle style={{marginRight:4}} />' },
+    { id: 'shop-denied', name: 'Shop Denied', description: 'Notification when shop application is denied', icon: '<FaTimesCircle style={{marginRight:4}} />' },
+    { id: 'workorder-created', name: 'Work Order Created', description: 'Sent when new work order is created', icon: '<FaWrench style={{marginRight:4}} />' },
+    { id: 'workorder-assigned', name: 'Work Order Assigned', description: 'Sent to technician when assigned', icon: '<FaHardHat style={{marginRight:4}} />' },
+    { id: 'workorder-completed', name: 'Work Order Completed', description: 'Sent when work order is completed', icon: '<FaCheck style={{marginRight:4}} />' },
+    { id: 'payment-received', name: 'Payment Received', description: 'Confirmation of payment received', icon: '<FaDollarSign style={{marginRight:4}} />' },
+    { id: 'password-reset', name: 'Password Reset', description: 'Password reset request email', icon: '<FaKey style={{marginRight:4}} />' },
   ];
 
   return (
@@ -48,7 +49,7 @@ export default function EmailTemplates() {
           <Link href="/admin/admin-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Admin Tools
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>✉️ Email Templates</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaEnvelope style={{marginRight:4}} /> Email Templates</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Manage email notifications and templates</p>
         </div>
       </div>
@@ -130,7 +131,7 @@ export default function EmailTemplates() {
               </>
             ) : (
               <div style={{textAlign:'center', padding:60, color:'#9aa3b2'}}>
-                <div style={{fontSize:48, marginBottom:16}}>✉️</div>
+                <div style={{fontSize:48, marginBottom:16}}><FaEnvelope style={{marginRight:4}} /></div>
                 <div style={{fontSize:16}}>Select a template to edit</div>
               </div>
             )}

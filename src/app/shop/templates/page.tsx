@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaClipboardList, FaDollarSign, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
 
 interface WorkOrderTemplate {
   id: string;
@@ -115,7 +116,7 @@ export default function WorkOrderTemplatesPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
           <div>
             <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
-            <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 4px' }}>📋 Work Order Templates</h1>
+            <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 4px' }}><FaClipboardList style={{marginRight:4}} /> Work Order Templates</h1>
             <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Save common job configurations for quick work order creation</p>
           </div>
           <button onClick={openCreate} style={{ padding: '10px 20px', borderRadius: 10, border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
@@ -130,7 +131,7 @@ export default function WorkOrderTemplatesPage() {
         {/* Template Cards */}
         {templates.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}><FaClipboardList style={{marginRight:4}} /></div>
             <p style={{ fontSize: 18, marginBottom: 8 }}>No templates yet</p>
             <p style={{ fontSize: 14 }}>Create your first template to speed up work order creation</p>
           </div>
@@ -150,13 +151,13 @@ export default function WorkOrderTemplatesPage() {
                 </div>
                 {t.description && <p style={{ color: '#64748b', fontSize: 13, marginBottom: 10 }}>{t.description}</p>}
                 <div style={{ display: 'flex', gap: 16, fontSize: 13, color: '#94a3b8' }}>
-                  <span>💰 ${t.estimatedCost.toFixed(2)}</span>
+                  <span><FaDollarSign style={{marginRight:4}} /> ${t.estimatedCost.toFixed(2)}</span>
                   <span>⏱ {t.laborHours}h</span>
                 </div>
                 {(t.repairs.length > 0 || t.maintenance.length > 0) && (
                   <div style={{ marginTop: 10, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 10 }}>
-                    {t.repairs.length > 0 && <p style={{ color: '#94a3b8', fontSize: 12, margin: '0 0 4px' }}>🔧 {t.repairs.join(', ')}</p>}
-                    {t.maintenance.length > 0 && <p style={{ color: '#94a3b8', fontSize: 12, margin: 0 }}>🛠 {t.maintenance.join(', ')}</p>}
+                    {t.repairs.length > 0 && <p style={{ color: '#94a3b8', fontSize: 12, margin: '0 0 4px' }}><FaWrench style={{marginRight:4}} /> {t.repairs.join(', ')}</p>}
+                    {t.maintenance.length > 0 && <p style={{ color: '#94a3b8', fontSize: 12, margin: 0 }}><FaTools style={{marginRight:4}} /> {t.maintenance.join(', ')}</p>}
                   </div>
                 )}
               </div>
@@ -223,7 +224,7 @@ export default function WorkOrderTemplatesPage() {
       {deleteConfirmId && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, padding: 32, maxWidth: 420, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>🗑️</div>
+            <div style={{ fontSize: 36, marginBottom: 12 }}><FaTrash style={{marginRight:4}} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f1f5f9', marginBottom: 8 }}>Delete Template?</h3>
             <p style={{ color: '#94a3b8', marginBottom: 24, fontSize: 14 }}>Delete template "{deleteConfirmName}"? This cannot be undone.</p>
             <div style={{ display: 'flex', gap: 12 }}>

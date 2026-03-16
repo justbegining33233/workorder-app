@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createWorkOrderClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCamera, FaCar, FaCheck, FaCheckCircle, FaClipboardList, FaMapMarkerAlt, FaSatelliteDish, FaTools, FaUser, FaVideo } from 'react-icons/fa';
 
 const VEHICLE_TYPES = ['Car', 'Truck', 'SUV', 'Van', 'Diesel Truck', 'Semi / 18-Wheeler', 'Box Truck', 'RV', 'Motorcycle', 'Heavy Equipment', 'Other'];
 
@@ -174,7 +175,7 @@ function NewRoadsideJobContent() {
             ← Back
           </button>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>🚗 New Roadside Job</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}><FaCar style={{marginRight:4}} /> New Roadside Job</h1>
             <p style={{ color: '#6b7280', fontSize: 13, margin: '2px 0 0' }}>Fill in the details to create a roadside work order</p>
           </div>
         </div>
@@ -184,7 +185,7 @@ function NewRoadsideJobContent() {
 
         {/* Customer Info */}
         <div style={sectionStyle}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 16px' }}>👤 Customer Info</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 16px' }}><FaUser style={{marginRight:4}} /> Customer Info</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div>
               <label style={labelStyle}>Full Name *</label>
@@ -199,7 +200,7 @@ function NewRoadsideJobContent() {
 
         {/* Vehicle Info */}
         <div style={sectionStyle}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 16px' }}>🚙 Vehicle Info</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 16px' }}><FaCar style={{marginRight:4}} /> Vehicle Info</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
             <div>
               <label style={labelStyle}>Year</label>
@@ -240,7 +241,7 @@ function NewRoadsideJobContent() {
 
         {/* Services */}
         <div style={sectionStyle}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 6px' }}>🛠️ Services Requested *</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 6px' }}><FaTools style={{marginRight:4}} /> Services Requested *</h2>
           <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 14 }}>Select all services the customer needs</p>
           {services.length === 0 ? (
             <div style={{ color: '#6b7280', fontSize: 13, padding: '16px 0' }}>
@@ -266,7 +267,7 @@ function NewRoadsideJobContent() {
                       display: 'flex', alignItems: 'center', gap: 8,
                     }}
                   >
-                    <span>{selected ? '✅' : '○'}</span>
+                    <span>{selected ? '<FaCheckCircle style={{marginRight:4}} />' : '○'}</span>
                     {svc.name}
                   </button>
                 );
@@ -275,14 +276,14 @@ function NewRoadsideJobContent() {
           )}
           {form.selectedServices.length > 0 && (
             <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(34,197,94,0.1)', borderRadius: 8, color: '#22c55e', fontSize: 13 }}>
-              ✓ {form.selectedServices.join(' · ')}
+              <FaCheck style={{marginRight:4}} /> {form.selectedServices.join(' · ')}
             </div>
           )}
         </div>
 
         {/* Location */}
         <div style={sectionStyle}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 16px' }}>📍 Location *</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 16px' }}><FaMapMarkerAlt style={{marginRight:4}} /> Location *</h2>
           <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
             <input
               style={{ ...inputStyle, flex: 1 }}
@@ -302,7 +303,7 @@ function NewRoadsideJobContent() {
                 cursor: locating ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap',
               }}
             >
-              {locating ? 'Locating...' : '📡 Use My Location'}
+              {locating ? 'Locating...' : '<FaSatelliteDish style={{marginRight:4}} /> Use My Location'}
             </button>
           </div>
           {form.locationLat && (
@@ -317,7 +318,7 @@ function NewRoadsideJobContent() {
 
         {/* Photos / Videos */}
         <div style={sectionStyle}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 6px' }}>📷 Photos &amp; Videos <span style={{ fontWeight: 400, color: '#6b7280', fontSize: 13 }}>(optional)</span></h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 6px' }}><FaCamera style={{marginRight:4}} /> Photos &amp; Videos <span style={{ fontWeight: 400, color: '#6b7280', fontSize: 13 }}>(optional)</span></h2>
           <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 14px' }}>Add up to 10 photos or videos of the issue</p>
           <button
             type="button"
@@ -331,7 +332,7 @@ function NewRoadsideJobContent() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
               {mediaFiles.map((file, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#111827', border: '1px solid #1f2937', borderRadius: 8, padding: '6px 12px', fontSize: 13, color: '#9aa3b2' }}>
-                  <span>{file.type.startsWith('video') ? '🎥' : '📷'}</span>
+                  <span>{file.type.startsWith('video') ? '<FaVideo style={{marginRight:4}} />' : '<FaCamera style={{marginRight:4}} />'}</span>
                   <span style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
                   <button type="button" onClick={() => removeFile(i)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontSize: 16 }}>×</button>
                 </div>
@@ -342,7 +343,7 @@ function NewRoadsideJobContent() {
 
         {/* Notes */}
         <div style={sectionStyle}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 12px' }}>📝 Notes <span style={{ fontWeight: 400, color: '#6b7280', fontSize: 13 }}>(optional)</span></h2>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', margin: '0 0 12px' }}><FaClipboardList style={{marginRight:4}} /> Notes <span style={{ fontWeight: 400, color: '#6b7280', fontSize: 13 }}>(optional)</span></h2>
           <textarea
             style={{ ...inputStyle, minHeight: 90, resize: 'vertical' }}
             value={form.notes}
@@ -366,7 +367,7 @@ function NewRoadsideJobContent() {
               cursor: submitting ? 'not-allowed' : 'pointer',
             }}
           >
-            {submitting ? 'Creating Work Order...' : '🚗 Create Roadside Work Order'}
+            {submitting ? 'Creating Work Order...' : '<FaCar style={{marginRight:4}} /> Create Roadside Work Order'}
           </button>
           <button
             type="button"

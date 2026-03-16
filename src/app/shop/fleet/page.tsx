@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
+import { FaBuilding, FaCar, FaFileAlt, FaTimes } from 'react-icons/fa';
 
 interface FleetAccount {
   id: string;
@@ -92,7 +93,7 @@ export default function FleetPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🏢 Fleet Accounts</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaBuilding style={{marginRight:4}} /> Fleet Accounts</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>B2B clients with multiple vehicles — {accounts.length} accounts · ${outstanding.toFixed(0)} outstanding</p>
         </div>
         <button onClick={() => { setShowAdd(true); setForm({ netTerms: 30, creditLimit: 0 } as Partial<FleetAccount>); }}
@@ -105,7 +106,7 @@ export default function FleetPage() {
           {loading ? <div style={{ textAlign: 'center', padding: 64, color: '#6b7280' }}>Loading...</div> :
             accounts.length === 0 ? (
               <div style={{ textAlign: 'center', padding: 80 }}>
-                <div style={{ fontSize: 64 }}>🏢</div>
+                <div style={{ fontSize: 64 }}><FaBuilding style={{marginRight:4}} /></div>
                 <div style={{ fontSize: 20, fontWeight: 600, margin: '16px 0 8px' }}>No fleet accounts yet</div>
                 <div style={{ color: '#9ca3af', marginBottom: 24 }}>Add B2B clients like delivery companies or vehicle fleets</div>
                 <button onClick={() => { setShowAdd(true); setForm({ netTerms: 30, creditLimit: 0 } as Partial<FleetAccount>); }}
@@ -140,7 +141,7 @@ export default function FleetPage() {
           <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 20, height: 'fit-content' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <h3 style={{ margin: 0, fontSize: 18 }}>{selected.companyName}</h3>
-              <button onClick={() => setSelected(null)} style={{ background: 'transparent', color: '#6b7280', border: 'none', cursor: 'pointer', fontSize: 18 }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'transparent', color: '#6b7280', border: 'none', cursor: 'pointer', fontSize: 18 }}><FaTimes style={{marginRight:4}} /></button>
             </div>
             <div style={{ fontSize: 13, lineHeight: 2, marginBottom: 16 }}>
               <div><span style={{ color: '#9ca3af' }}>Contact: </span>{selected.contactName}</div>
@@ -152,7 +153,7 @@ export default function FleetPage() {
 
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>🚗 Vehicles ({selected.vehicles.length})</div>
+                <div style={{ fontSize: 14, fontWeight: 600 }}><FaCar style={{marginRight:4}} /> Vehicles ({selected.vehicles.length})</div>
                 <button onClick={() => setShowAddVehicle(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>+ Add Vehicle</button>
               </div>
               {showAddVehicle && (
@@ -177,7 +178,7 @@ export default function FleetPage() {
             </div>
 
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 10 }}>📄 Recent Invoices</div>
+              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 10 }}><FaFileAlt style={{marginRight:4}} /> Recent Invoices</div>
               {selected.invoices.length === 0 ? <div style={{ color: '#6b7280', fontSize: 13 }}>No invoices</div> :
                 selected.invoices.slice(0, 3).map(inv => (
                   <div key={inv.id} style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px', marginBottom: 6, fontSize: 13 }}>

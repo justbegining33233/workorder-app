@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { FaCamera, FaCoffee, FaMapMarkerAlt, FaSignOutAlt, FaUnlock } from 'react-icons/fa';
 
 interface TimeClockProps {
   techId: string;
@@ -414,7 +415,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
           <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>
-            {onBreak ? '☕ On Break' : isClockedIn ? '⏰ Clocked In' : '⏱️ Time Clock'}
+            {onBreak ? '<FaCoffee style={{marginRight:4}} /> On Break' : isClockedIn ? '⏰ Clocked In' : '⏱ Time Clock'}
           </div>
           <div style={{ fontSize: '20px', fontWeight: '600' }}>{techName || 'You'}</div>
         </div>
@@ -471,7 +472,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
             transition: 'all 0.2s',
           }}
         >
-          {loading ? 'Processing...' : isClockedIn ? '🚪 Clock Out' : '🔓 Clock In'}
+          {loading ? 'Processing...' : isClockedIn ? '<FaSignOutAlt style={{marginRight:4}} /> Clock Out' : '<FaUnlock style={{marginRight:4}} /> Clock In'}
         </button>
 
         {isClockedIn && (
@@ -492,7 +493,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
               transition: 'all 0.2s',
             }}
           >
-            {loading ? 'Processing...' : onBreak ? '▶️ End Break' : '☕ Start Break'}
+            {loading ? 'Processing...' : onBreak ? '▶ End Break' : '<FaCoffee style={{marginRight:4}} /> Start Break'}
           </button>
         )}
       </div>
@@ -502,12 +503,12 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
           <div>Clocked in: {new Date(currentEntry.clockIn).toLocaleTimeString()}</div>
           {gpsEnabled && location && (
             <div style={{ fontSize: '11px', marginTop: '4px' }}>
-              📍 Location verified ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
+              <FaMapMarkerAlt style={{marginRight:4}} /> Location verified ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
             </div>
           )}
           {photoEnabled && (
             <div style={{ fontSize: '11px', marginTop: '4px' }}>
-              📸 Photo verification enabled
+              <FaCamera style={{marginRight:4}} /> Photo verification enabled
             </div>
           )}
         </div>

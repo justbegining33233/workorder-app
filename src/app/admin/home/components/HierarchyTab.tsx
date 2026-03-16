@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { FaClipboardList, FaDollarSign, FaHardHat, FaStore } from 'react-icons/fa';
 
 interface SubscriptionData {
   id: string;
@@ -226,7 +227,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
               <p className="text-xs text-[#22C55E] mt-1">{shopGrowth} • +{newShopsThisMonth} this month</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-[#3B82F6]/10 flex items-center justify-center">
-              <span className="text-xl">🏪</span>
+              <span className="text-xl"><FaStore style={{marginRight:4}} /></span>
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-[#27272A]">
@@ -245,7 +246,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
               <p className="text-xs text-[#3B82F6] mt-1">{utilizationRate} capacity used</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-[#22C55E]/10 flex items-center justify-center">
-              <span className="text-xl">👷</span>
+              <span className="text-xl"><FaHardHat style={{marginRight:4}} /></span>
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-[#27272A]">
@@ -264,7 +265,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
               <p className="text-xs text-[#22C55E] mt-1">${performanceMetrics.totalRevenueThisMonth.toLocaleString()} this month</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-[#8B5CF6]/10 flex items-center justify-center">
-              <span className="text-xl">💰</span>
+              <span className="text-xl"><FaDollarSign style={{marginRight:4}} /></span>
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-[#27272A]">
@@ -283,7 +284,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
               <p className="text-xs text-[#22C55E] mt-1">{performanceMetrics.completedThisMonth} completed</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-[#F97316]/10 flex items-center justify-center">
-              <span className="text-xl">📋</span>
+              <span className="text-xl"><FaClipboardList style={{marginRight:4}} /></span>
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-[#27272A]">
@@ -443,7 +444,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
         {filteredSubscriptions.length === 0 ? (
           <div className="py-12 text-center">
             <div className="w-14 h-14 rounded-xl bg-[#27272A] flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🏪</span>
+              <span className="text-2xl"><FaStore style={{marginRight:4}} /></span>
             </div>
             <p className="text-sm text-[#71717A]">
               {searchTerm ? 'No shops match your search' : 'No active shops'}

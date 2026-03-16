@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import MessagingCard from '@/components/MessagingCard';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaComments } from 'react-icons/fa';
 
 export default function TechMessages() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -28,7 +29,7 @@ export default function TechMessages() {
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
-              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>💬 Messages</h1>
+              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaComments style={{marginRight:4}} /> Messages</h1>
               <p style={{fontSize:14, color:'#9aa3b2'}}>Same messaging system as shop admin</p>
             </div>
           </div>

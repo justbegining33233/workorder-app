@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaLock } from 'react-icons/fa';
 
 interface Payment {
   id: string;
@@ -217,7 +218,7 @@ export default function Payments() {
 
         <div style={{ marginTop: 24, padding: 16, background: 'rgba(0,0,0,0.2)', borderRadius: 8, textAlign: 'center' }}>
           <div style={{ fontSize: 12, color: '#9aa3b2' }}>
-            🔒 Secured by Stripe · PCI DSS Compliant · 256-bit SSL Encryption
+            <FaLock style={{marginRight:4}} /> Secured by Stripe · PCI DSS Compliant · 256-bit SSL Encryption
           </div>
         </div>
       </div>

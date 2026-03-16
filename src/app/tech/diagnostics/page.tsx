@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBolt, FaIdCard, FaWrench } from 'react-icons/fa';
 
 export default function TechDiagnostics() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -26,7 +27,7 @@ export default function TechDiagnostics() {
           <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Tools
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🔧 Diagnostic Tools</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaWrench style={{marginRight:4}} /> Diagnostic Tools</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Vehicle diagnostic tools, code readers, and troubleshooting guides</p>
         </div>
       </div>
@@ -35,12 +36,12 @@ export default function TechDiagnostics() {
         {/* External tools */}
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:16, marginBottom:32}}>
           {[
-            { label: 'OBD Codes', desc: 'Full P/B/C/U code library with causes & fixes', icon: '🔍', href: 'https://obd-codes.com' },
-            { label: 'Engine Light Help', desc: 'Free OBD-II code lookup & repair guides', icon: '💡', href: 'https://engine-light-help.com' },
-            { label: 'NHTSA VIN Decoder', desc: 'Official VIN decode — year, make, model, specs', icon: '🪪', href: 'https://vpic.nhtsa.dot.gov/decoder/' },
-            { label: 'CarMD', desc: 'Code severity ratings & repair cost estimates', icon: '📊', href: 'https://carmd.com' },
-            { label: 'iATN TechHelp', desc: 'Peer tech help & diagnostic discussions', icon: '🤝', href: 'https://iatn.net' },
-            { label: 'TIS2Web / ACDelco TDS', desc: 'GM factory scan tool & programming', icon: '⚙️', href: 'https://tis2web.service.gm.com' },
+            { label: 'OBD Codes', desc: 'Full P/B/C/U code library with causes & fixes', icon: '', href: 'https://obd-codes.com' },
+            { label: 'Engine Light Help', desc: 'Free OBD-II code lookup & repair guides', icon: '', href: 'https://engine-light-help.com' },
+            { label: 'NHTSA VIN Decoder', desc: 'Official VIN decode — year, make, model, specs', icon: '<FaIdCard style={{marginRight:4}} />', href: 'https://vpic.nhtsa.dot.gov/decoder/' },
+            { label: 'CarMD', desc: 'Code severity ratings & repair cost estimates', icon: '', href: 'https://carmd.com' },
+            { label: 'iATN TechHelp', desc: 'Peer tech help & diagnostic discussions', icon: '', href: 'https://iatn.net' },
+            { label: 'TIS2Web / ACDelco TDS', desc: 'GM factory scan tool & programming', icon: '', href: 'https://tis2web.service.gm.com' },
           ].map(card => (
             <a key={card.label} href={card.href} target="_blank" rel="noopener noreferrer"
               style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:20, textDecoration:'none', display:'block'}}>
@@ -54,7 +55,7 @@ export default function TechDiagnostics() {
 
         {/* Quick OBD-II reference table */}
         <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-          <h2 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>⚡ Common OBD-II Codes Quick Reference</h2>
+          <h2 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaBolt style={{marginRight:4}} /> Common OBD-II Codes Quick Reference</h2>
           <div style={{overflowX:'auto'}}>
             <table style={{width:'100%', borderCollapse:'collapse', fontSize:13}}>
               <thead>
@@ -66,16 +67,16 @@ export default function TechDiagnostics() {
               </thead>
               <tbody>
                 {[
-                  ['P0300','Random/Multiple Cylinder Misfire','Spark plugs, coils, injectors','🔴 High'],
-                  ['P0420','Catalyst System Efficiency Below Threshold','Catalytic converter, O2 sensor','🟡 Medium'],
-                  ['P0171','System Too Lean (Bank 1)','MAF sensor, vacuum leak, fuel pump','🟡 Medium'],
-                  ['P0442','EVAP System Small Leak','Gas cap, EVAP purge valve, hose','🟢 Low'],
-                  ['P0101','MAF Sensor Range/Performance','Dirty/failed MAF, air intake leak','🟡 Medium'],
-                  ['P0128','Coolant Temp Below Thermostat Regulating','Thermostat stuck open','🟡 Medium'],
-                  ['P0455','EVAP System Large Leak','Gas cap, EVAP vent solenoid','🟢 Low'],
-                  ['P0700','Transmission Control System MIL Request','TCM fault — check trans codes','🔴 High'],
-                  ['B0001','Driver Frontal Stage 1 Deployment','Airbag module, clock spring','🔴 Critical'],
-                  ['C0035','Left Front Wheel Speed Sensor','Wheel speed sensor, wiring, ABS ring','🔴 High'],
+                  ['P0300','Random/Multiple Cylinder Misfire','Spark plugs, coils, injectors',' High'],
+                  ['P0420','Catalyst System Efficiency Below Threshold','Catalytic converter, O2 sensor',' Medium'],
+                  ['P0171','System Too Lean (Bank 1)','MAF sensor, vacuum leak, fuel pump',' Medium'],
+                  ['P0442','EVAP System Small Leak','Gas cap, EVAP purge valve, hose',' Low'],
+                  ['P0101','MAF Sensor Range/Performance','Dirty/failed MAF, air intake leak',' Medium'],
+                  ['P0128','Coolant Temp Below Thermostat Regulating','Thermostat stuck open',' Medium'],
+                  ['P0455','EVAP System Large Leak','Gas cap, EVAP vent solenoid',' Low'],
+                  ['P0700','Transmission Control System MIL Request','TCM fault — check trans codes',' High'],
+                  ['B0001','Driver Frontal Stage 1 Deployment','Airbag module, clock spring',' Critical'],
+                  ['C0035','Left Front Wheel Speed Sensor','Wheel speed sensor, wiring, ABS ring',' High'],
                 ].map(([code, desc, cause, sev]) => (
                   <tr key={code} style={{borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
                     <td style={{padding:'10px 12px', color:'#facc15', fontWeight:700, fontFamily:'monospace'}}>{code}</td>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaChartBar, FaDownload, FaStar } from 'react-icons/fa';
 
 export default function ReportsAnalytics() {
   const _router = useRouter();
@@ -116,7 +117,7 @@ export default function ReportsAnalytics() {
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
-              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>📊 Reports & Analytics</h1>
+              <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaChartBar style={{marginRight:4}} /> Reports & Analytics</h1>
               <p style={{fontSize:14, color:'#9aa3b2'}}>Business insights and performance metrics</p>
             </div>
             <div style={{display:'flex', gap:12}}>
@@ -127,7 +128,7 @@ export default function ReportsAnalytics() {
                 <option value="year">This Year</option>
               </select>
               <button style={{padding:'10px 20px', background:'#22c55e', color:'white', border:'none', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}>
-                📥 Export Report
+                <FaDownload style={{marginRight:4}} /> Export Report
               </button>
             </div>
           </div>
@@ -159,7 +160,7 @@ export default function ReportsAnalytics() {
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Customer Rating</div>
-            <div style={{fontSize:32, fontWeight:700, color:'#e5332a', marginBottom:4}}>⭐ {stats.customerSatisfaction}</div>
+            <div style={{fontSize:32, fontWeight:700, color:'#e5332a', marginBottom:4}}><FaStar style={{marginRight:4}} /> {stats.customerSatisfaction}</div>
             <div style={{fontSize:12, color:'#22c55e'}}>↑ 0.3 from last period</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
@@ -230,7 +231,7 @@ export default function ReportsAnalytics() {
                     <td style={{padding:'16px', fontSize:14, fontWeight:700, color:'#e5e7eb'}}>{tech.name}</td>
                     <td style={{padding:'16px', fontSize:14, color:'#3b82f6', fontWeight:600}}>{tech.jobs}</td>
                     <td style={{padding:'16px', fontSize:14, color:'#22c55e', fontWeight:600}}>${tech.revenue.toLocaleString()}</td>
-                    <td style={{padding:'16px', fontSize:14, color:'#f59e0b', fontWeight:600}}>⭐ {tech.rating}</td>
+                    <td style={{padding:'16px', fontSize:14, color:'#f59e0b', fontWeight:600}}><FaStar style={{marginRight:4}} /> {tech.rating}</td>
                     <td style={{padding:'16px'}}>
                       <div style={{display:'flex', alignItems:'center', gap:8}}>
                         <div style={{flex:1, background:'rgba(255,255,255,0.1)', height:8, borderRadius:4, overflow:'hidden'}}>

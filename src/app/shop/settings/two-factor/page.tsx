@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheckCircle, FaLock, FaUnlock } from 'react-icons/fa';
 
 type Step = 'idle' | 'setup' | 'verify' | 'disable';
 
@@ -63,7 +64,7 @@ export default function TwoFactorSettingsPage() {
       setQrCode(null);
       setSecret(null);
       setTokenInput('');
-      setStatusMsg('✅ Two-Factor Authentication is now enabled on your account.');
+      setStatusMsg('<FaCheckCircle style={{marginRight:4}} /> Two-Factor Authentication is now enabled on your account.');
     } catch (e: any) {
       setErrorMsg(e.message);
     } finally {
@@ -115,7 +116,7 @@ export default function TwoFactorSettingsPage() {
         </div>
 
         <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 16, padding: 32, border: '1px solid rgba(255,255,255,0.1)' }}>
-          <h1 style={{ color: '#f1f5f9', fontSize: 24, fontWeight: 700, marginBottom: 8 }}>🔒 Two-Factor Authentication</h1>
+          <h1 style={{ color: '#f1f5f9', fontSize: 24, fontWeight: 700, marginBottom: 8 }}><FaLock style={{marginRight:4}} /> Two-Factor Authentication</h1>
           <p style={{ color: '#94a3b8', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
             Use an authenticator app (Google Authenticator, Authy, 1Password) to generate time-based one-time codes.
           </p>
@@ -127,7 +128,7 @@ export default function TwoFactorSettingsPage() {
             borderRadius: 8, padding: '10px 16px', marginBottom: 24,
             display: 'flex', alignItems: 'center', gap: 8,
           }}>
-            <span style={{ fontSize: 18 }}>{enabled ? '🟢' : '🔴'}</span>
+            <span style={{ fontSize: 18 }}>{enabled ? '' : ''}</span>
             <span style={{ color: enabled ? '#86efac' : '#fca5a5', fontWeight: 600 }}>
               2FA is currently {enabled ? 'ENABLED' : 'DISABLED'}
             </span>
@@ -224,11 +225,11 @@ export default function TwoFactorSettingsPage() {
             <div>
               {!enabled ? (
                 <button onClick={handleSetup} disabled={fetching} style={{ width: '100%', padding: '13px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
-                  {fetching ? 'Generating…' : '🔒 Enable Two-Factor Authentication'}
+                  {fetching ? 'Generating…' : '<FaLock style={{marginRight:4}} /> Enable Two-Factor Authentication'}
                 </button>
               ) : (
                 <button onClick={() => { setStep('disable'); setTokenInput(''); setErrorMsg(null); }} style={{ width: '100%', padding: '13px', borderRadius: 10, border: '1px solid rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.1)', color: '#fca5a5', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
-                  🔓 Disable Two-Factor Authentication
+                  <FaUnlock style={{marginRight:4}} /> Disable Two-Factor Authentication
                 </button>
               )}
             </div>

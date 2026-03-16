@@ -7,6 +7,7 @@ import { WorkOrder, Message } from '@/types/workorder';
 import { getWorkOrderByIdClient, updateWorkOrderClient, deleteWorkOrderClient } from '@/lib/workordersClient';
 import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaEnvelope, FaExclamationTriangle, FaFileAlt, FaPrint, FaTimes } from 'react-icons/fa';
 
 type Part = { name: string; quantity: number; unitPrice: number };
 type Labor = { description: string; hours: number; ratePerHour: number };
@@ -378,7 +379,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
           <Link href="/workorders/list" style={{color:'#3b82f6', textDecoration:'none', fontSize:14}}>← Back to Work Orders</Link>
         </div>
         <div style={{textAlign:'center', paddingTop:80}}>
-          <div style={{color:'#e5332a', fontSize:24, fontWeight:600, marginBottom:16}}>⚠️ {error || 'Work order not found'}</div>
+          <div style={{color:'#e5332a', fontSize:24, fontWeight:600, marginBottom:16}}><FaExclamationTriangle style={{marginRight:4}} /> {error || 'Work order not found'}</div>
           <p style={{color:'#9aa3b2', marginBottom:24}}>The work order you're looking for doesn't exist or has been removed.</p>
           <Link href="/workorders/list" style={{display:'inline-block', padding:'12px 24px', background:'#3b82f6', color:'white', textDecoration:'none', borderRadius:8, fontWeight:600}}>
             View All Work Orders
@@ -436,7 +437,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                 {workOrder.status.replace('-', ' ').toUpperCase()}
               </span>
               <button onClick={() => window.print()} className="no-print" style={{padding:'8px 16px', background:'#6b7280', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
-                🖨️ Print
+                <FaPrint style={{marginRight:4}} /> Print
               </button>
               {['tech', 'manager'].includes(role) && (
                 <button onClick={() => setDeleteConfirm(true)} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
@@ -753,7 +754,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                             onClick={() => removePart(idx)}
                             style={{padding:'2px 6px', background:'#e5332a', color:'white', border:'none', borderRadius:4, cursor:'pointer', fontSize:10}}
                           >
-                            ✕
+                            <FaTimes style={{marginRight:4}} />
                           </button>
                         )}
                       </div>
@@ -829,7 +830,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                               onClick={() => removeLabor(idx)}
                               style={{padding:'2px 6px', background:'#e5332a', color:'white', border:'none', borderRadius:4, cursor:'pointer', fontSize:10}}
                             >
-                              ✕
+                              <FaTimes style={{marginRight:4}} />
                             </button>
                           )}
                         </div>
@@ -897,7 +898,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                             onClick={() => removeCharge(idx)}
                             style={{padding:'2px 6px', background:'#e5332a', color:'white', border:'none', borderRadius:4, cursor:'pointer', fontSize:10}}
                           >
-                            ✕
+                            <FaTimes style={{marginRight:4}} />
                           </button>
                         )}
                       </div>
@@ -950,7 +951,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                         disabled={emailingInvoice}
                         style={{flex:1, padding:'8px', background:'#3b82f6', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600, opacity: emailingInvoice ? 0.6 : 1}}
                       >
-                        {emailingInvoice ? 'Sending...' : '📧 Email Invoice'}
+                        {emailingInvoice ? 'Sending...' : '<FaEnvelope style={{marginRight:4}} /> Email Invoice'}
                       </button>
                       <a
                         href={`/api/workorders/${id}/invoice`}
@@ -958,13 +959,13 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                         rel="noopener noreferrer"
                         style={{flex:1, padding:'8px', background:'#a855f7', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600, textAlign:'center', textDecoration:'none'}}
                       >
-                        📄 Download PDF
+                        <FaFileAlt style={{marginRight:4}} /> Download PDF
                       </a>
                       <button
                         onClick={() => window.print()}
                         style={{flex:1, padding:'8px', background:'#6b7280', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600}}
                       >
-                        🖨️ Print
+                        <FaPrint style={{marginRight:4}} /> Print
                       </button>
                     </div>
                     {emailInvoiceMsg && (

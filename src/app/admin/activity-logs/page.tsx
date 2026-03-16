@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaCheck, FaClipboardList, FaDollarSign, FaEnvelope, FaExclamationTriangle, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
 
 type ActivityLog = {
   id: string;
@@ -62,11 +63,11 @@ export default function ActivityLogs() {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'shop': return '🏪';
-      case 'revenue': return '💰';
-      case 'user': return '👤';
-      case 'alert': return '⚠️';
-      default: return '📋';
+      case 'shop': return '';
+      case 'revenue': return '';
+      case 'user': return '';
+      case 'alert': return '';
+      default: return '';
     }
   };
 
@@ -92,10 +93,10 @@ export default function ActivityLogs() {
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'success': return '✓';
+      case 'success': return '<FaCheck style={{marginRight:4}} />';
       case 'info': return 'ℹ';
-      case 'warning': return '⚠';
-      case 'error': return '✕';
+      case 'warning': return '<FaExclamationTriangle style={{marginRight:4}} />';
+      case 'error': return '<FaTimes style={{marginRight:4}} />';
       default: return '•';
     }
   };
@@ -190,7 +191,7 @@ export default function ActivityLogs() {
           <div style={{textAlign:'center', padding:80, color:'#9aa3b2', fontSize:16}}>Loading logs...</div>
         ) : logs.length === 0 ? (
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:80, textAlign:'center'}}>
-            <div style={{fontSize:48, marginBottom:16}}>📋</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaClipboardList style={{marginRight:4}} /></div>
             <div style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>No Activity Logs</div>
             <div style={{fontSize:14, color:'#9aa3b2'}}>No logs match the selected filters</div>
           </div>
@@ -223,16 +224,16 @@ export default function ActivityLogs() {
                         <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{log.details}</div>
                         <div style={{display:'flex', gap:16, flexWrap:'wrap'}}>
                           {log.location && (
-                            <div style={{fontSize:12, color:'#6b7280'}}>📍 {log.location}</div>
+                            <div style={{fontSize:12, color:'#6b7280'}}><FaMapMarkerAlt style={{marginRight:4}} /> {log.location}</div>
                           )}
                           {log.email && (
-                            <div style={{fontSize:12, color:'#6b7280'}}>✉️ {log.email}</div>
+                            <div style={{fontSize:12, color:'#6b7280'}}><FaEnvelope style={{marginRight:4}} /> {log.email}</div>
                           )}
                           {log.amount && (
-                            <div style={{fontSize:12, color:'#22c55e', fontWeight:600}}>💵 {log.amount}</div>
+                            <div style={{fontSize:12, color:'#22c55e', fontWeight:600}}><FaDollarSign style={{marginRight:4}} /> {log.amount}</div>
                           )}
                           {log.reason && (
-                            <div style={{fontSize:12, color:'#f59e0b'}}>⚠️ {log.reason}</div>
+                            <div style={{fontSize:12, color:'#f59e0b'}}><FaExclamationTriangle style={{marginRight:4}} /> {log.reason}</div>
                           )}
                         </div>
                       </div>

@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBox, FaCog, FaRulerCombined } from 'react-icons/fa';
 
 export default function TechInventory() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -26,7 +27,7 @@ export default function TechInventory() {
           <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             ← Back to Tools
           </Link>
-          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>🔩 Parts Inventory</h1>
+          <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaCog style={{marginRight:4}} /> Parts Inventory</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Check parts availability, request orders, and track inventory levels</p>
         </div>
       </div>
@@ -35,12 +36,12 @@ export default function TechInventory() {
         {/* Quick links */}
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:16, marginBottom:32}}>
           {[
-            { label: 'Parts Request', desc: 'Submit a request to your shop manager', icon: '📋', href: '/tech/work-orders', ext: false },
-            { label: 'RockAuto', desc: 'Low-cost OEM & aftermarket parts', icon: '🚗', href: 'https://rockauto.com', ext: true },
-            { label: 'NAPA Online', desc: 'Parts lookup & ordering', icon: '🔵', href: 'https://napaonline.com', ext: true },
-            { label: 'AutoZone Pro', desc: 'Commercial account parts lookup', icon: '🟠', href: 'https://autozonepro.com', ext: true },
-            { label: "O'Reilly Fleet", desc: 'Fleet & commercial ordering', icon: '🟢', href: 'https://oreillyauto.com', ext: true },
-            { label: 'OEMPartsPro', desc: 'Factory OEM diagrams & part numbers', icon: '📐', href: 'https://oempartspro.com', ext: true },
+            { label: 'Parts Request', desc: 'Submit a request to your shop manager', icon: '', href: '/tech/work-orders', ext: false },
+            { label: 'RockAuto', desc: 'Low-cost OEM & aftermarket parts', icon: '', href: 'https://rockauto.com', ext: true },
+            { label: 'NAPA Online', desc: 'Parts lookup & ordering', icon: '', href: 'https://napaonline.com', ext: true },
+            { label: 'AutoZone Pro', desc: 'Commercial account parts lookup', icon: '', href: 'https://autozonepro.com', ext: true },
+            { label: "O'Reilly Fleet", desc: 'Fleet & commercial ordering', icon: '', href: 'https://oreillyauto.com', ext: true },
+            { label: 'OEMPartsPro', desc: 'Factory OEM diagrams & part numbers', icon: '<FaRulerCombined style={{marginRight:4}} />', href: 'https://oempartspro.com', ext: true },
           ].map(card => (
             <a
               key={card.label}
@@ -59,7 +60,7 @@ export default function TechInventory() {
 
         {/* Common part brand quick-ref */}
         <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
-          <h2 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:16}}>📦 Common Part Brands Quick Reference</h2>
+          <h2 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:16}}><FaBox style={{marginRight:4}} /> Common Part Brands Quick Reference</h2>
           <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(180px, 1fr))', gap:12}}>
             {[
               { brand: 'ACDelco', info: 'GM OEM parts', color: '#facc15' },

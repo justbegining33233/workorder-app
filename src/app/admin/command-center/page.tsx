@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { FaBolt, FaChartBar, FaChartLine, FaCheck, FaDollarSign, FaExclamationTriangle, FaRegStar, FaStar } from 'react-icons/fa';
 
 interface CommandCenterData {
   timestamp: string;
@@ -188,9 +189,9 @@ export default function CommandCenterPage() {
                      (data?.communication.unreadAdminMessages || 0);
 
   const tabs = [
-    { id: 'business', label: 'Business', icon: '💰' },
+    { id: 'business', label: 'Business', icon: '<FaDollarSign style={{marginRight:4}} />' },
     { id: 'overview', label: 'Overview', icon: '◉' },
-    { id: 'operations', label: 'Operations', icon: '⚡' },
+    { id: 'operations', label: 'Operations', icon: '<FaBolt style={{marginRight:4}} />' },
     { id: 'shops', label: 'Shops', icon: '▣' },
     { id: 'team', label: 'Team', icon: '◎' },
   ];
@@ -332,7 +333,7 @@ export default function CommandCenterPage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
                 <div className="relative">
                   <div className="flex items-center gap-2 text-emerald-400/70 text-sm mb-2">
-                    <span>💵</span> Monthly Recurring Revenue
+                    <span><FaDollarSign style={{marginRight:4}} /></span> Monthly Recurring Revenue
                   </div>
                   <div className="text-5xl font-bold text-emerald-400 mb-2">
                     {formatCurrency(data?.businessMetrics?.mrr || 0)}
@@ -351,7 +352,7 @@ export default function CommandCenterPage() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
                 <div className="relative">
                   <div className="flex items-center gap-2 text-blue-400/70 text-sm mb-2">
-                    <span>📈</span> Annual Recurring Revenue
+                    <span><FaChartLine style={{marginRight:4}} /></span> Annual Recurring Revenue
                   </div>
                   <div className="text-5xl font-bold text-blue-400 mb-2">
                     {formatCurrency(data?.businessMetrics?.arr || 0)}
@@ -370,14 +371,14 @@ export default function CommandCenterPage() {
                 value={data?.businessMetrics?.totalShopsCreated || 0}
                 sublabel="registered"
                 color="violet"
-                icon="🏪"
+                icon=""
               />
               <MetricCard
                 label="Active Subs"
                 value={data?.businessMetrics?.totalActiveSubscriptions || 0}
                 sublabel="paying"
                 color="emerald"
-                icon="✓"
+                icon=""
               />
               <MetricCard
                 label="New This Month"
@@ -407,13 +408,13 @@ export default function CommandCenterPage() {
                 value={data?.customers?.total || 0}
                 sublabel="total"
                 color="blue"
-                icon="👥"
+                icon=""
               />
             </div>
 
             {/* Revenue by Plan & Shops Status */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <GlassCard title="Revenue by Plan" icon="💎">
+              <GlassCard title="Revenue by Plan" icon="">
                 <div className="space-y-4">
                   {data?.businessMetrics?.revenueByPlan && Object.entries(data.businessMetrics.revenueByPlan)
                     .sort((a, b) => b[1].revenue - a[1].revenue)
@@ -440,14 +441,14 @@ export default function CommandCenterPage() {
                     })}
                   {(!data?.businessMetrics?.revenueByPlan || Object.keys(data.businessMetrics.revenueByPlan).length === 0) && (
                     <div className="text-center py-8 text-slate-500">
-                      <span className="text-4xl mb-2 block opacity-20">📊</span>
+                      <span className="text-4xl mb-2 block opacity-20"><FaChartBar style={{marginRight:4}} /></span>
                       <span>No active subscriptions yet</span>
                     </div>
                   )}
                 </div>
               </GlassCard>
 
-              <GlassCard title="Shop Status Breakdown" icon="🏬">
+              <GlassCard title="Shop Status Breakdown" icon="">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center">
                     <div className="text-4xl font-bold text-emerald-400 mb-1">{data?.businessMetrics?.shopsByStatus?.approved || 0}</div>
@@ -476,7 +477,7 @@ export default function CommandCenterPage() {
             </div>
 
             {/* Active Subscriptions List */}
-            <GlassCard title="Active Subscriptions" icon="📋" badge={data?.businessMetrics?.totalActiveSubscriptions || 0}>
+            <GlassCard title="Active Subscriptions" icon="" badge={data?.businessMetrics?.totalActiveSubscriptions || 0}>
               {data?.businessMetrics?.subscriptionsList && data.businessMetrics.subscriptionsList.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -518,7 +519,7 @@ export default function CommandCenterPage() {
                 </div>
               ) : (
                 <div className="text-center py-12 text-slate-500">
-                  <span className="text-5xl mb-3 block opacity-20">📭</span>
+                  <span className="text-5xl mb-3 block opacity-20"></span>
                   <span className="block mb-2">No active subscriptions yet</span>
                   <span className="text-xs text-slate-600">When shops subscribe to plans, they&apos;ll appear here</span>
                 </div>
@@ -772,11 +773,11 @@ export default function CommandCenterPage() {
               </div>
             </GlassCard>
 
-            <GlassCard title="Customer Feedback" icon="★">
+            <GlassCard title="Customer Feedback" icon="">
               <div className="flex items-center gap-6 mb-6">
                 <div className="text-center">
                   <div className="text-5xl font-bold text-yellow-400">{data?.reviews.averageRating || 0}</div>
-                  <div className="text-yellow-400 mt-1">{'★'.repeat(Math.round(data?.reviews.averageRating || 0))}</div>
+                  <div className="text-yellow-400 mt-1">{'<FaStar style={{marginRight:4}} />'.repeat(Math.round(data?.reviews.averageRating || 0))}</div>
                 </div>
                 <div className="flex-1">
                   <div className="text-slate-500 text-sm">Based on</div>
@@ -785,12 +786,12 @@ export default function CommandCenterPage() {
               </div>
               {data?.reviews.recentBadReviews && data.reviews.recentBadReviews.length > 0 && (
                 <div className="pt-4 border-t border-white/5">
-                  <div className="text-xs text-red-400 mb-3">⚠ Recent Low Ratings</div>
+                  <div className="text-xs text-red-400 mb-3"><FaExclamationTriangle style={{marginRight:4}} /> Recent Low Ratings</div>
                   <div className="space-y-2">
                     {data.reviews.recentBadReviews.slice(0, 3).map((review: any, i: number) => (
                       <div key={i} className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                         <div className="flex justify-between mb-1">
-                          <span className="text-red-400 text-sm">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+                          <span className="text-red-400 text-sm">{'<FaStar style={{marginRight:4}} />'.repeat(review.rating)}{'<FaRegStar style={{marginRight:4}} />'.repeat(5 - review.rating)}</span>
                           <span className="text-xs text-slate-500">{review.shop}</span>
                         </div>
                         {review.comment && <div className="text-xs text-slate-400 truncate">{review.comment}</div>}
@@ -842,7 +843,7 @@ export default function CommandCenterPage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                  <span className="text-4xl mb-2 opacity-20">✓</span>
+                  <span className="text-4xl mb-2 opacity-20"><FaCheck style={{marginRight:4}} /></span>
                   <span>No pending approvals</span>
                 </div>
               )}
@@ -853,7 +854,7 @@ export default function CommandCenterPage() {
               )}
             </GlassCard>
 
-            <GlassCard title="Inactive Shops" icon="⚠" className="lg:col-span-2">
+            <GlassCard title="Inactive Shops" icon="" className="lg:col-span-2">
               {data?.shopHealth.inactiveList && data.shopHealth.inactiveList.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {data.shopHealth.inactiveList.map((shop: any, i: number) => (
@@ -866,7 +867,7 @@ export default function CommandCenterPage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                  <span className="text-4xl mb-2 opacity-20">✓</span>
+                  <span className="text-4xl mb-2 opacity-20"><FaCheck style={{marginRight:4}} /></span>
                   <span>All shops are active</span>
                 </div>
               )}

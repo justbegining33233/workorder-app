@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Structured logger that captures errors/warnings in Sentry and writes
  * structured JSON to stdout/stderr for production log aggregation.
  *
