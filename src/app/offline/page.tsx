@@ -1,5 +1,6 @@
-import { FaSatelliteDish } from 'react-icons/fa';
 'use client';
+
+import { FaSatelliteDish } from 'react-icons/fa';
 
 export default function OfflinePage() {
   return (

@@ -1,8 +1,8 @@
-import { FaArrowRight } from 'react-icons/fa';
 // SalesFunnel.tsx - visual funnel with drop percentages
 'use client';
 
 import React from 'react';
+import { FaArrowRight } from 'react-icons/fa';
 import StatusBadge from './StatusBadge';
 
 interface SalesFunnelProps {

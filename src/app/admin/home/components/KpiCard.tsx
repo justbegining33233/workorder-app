@@ -1,8 +1,8 @@
-import { FaExternalLinkAlt } from 'react-icons/fa';
 // KpiCard.tsx - reusable KPI card with sparkline + delta
 'use client';
 
 import React from 'react';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import Sparkline from './Sparkline';
 
 interface KpiCardProps {
