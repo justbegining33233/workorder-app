@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { FaEnvelope, FaMobileAlt, FaRocket, FaBullhorn, FaPlus, FaQuestionCircle } from 'react-icons/fa';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
@@ -141,7 +142,7 @@ export default function CampaignsPage() {
                       textTransform: 'capitalize',
                     }}
                   >
-                    {t === 'both' ? '📧+📱 Both' : t === 'email' ? '📧 Email' : '📱 SMS'}
+                    {t === 'both' ? <><FaEnvelope style={{marginRight:2}} />+<FaMobileAlt style={{marginLeft:2, marginRight:2}} /> Both</> : t === 'email' ? <><FaEnvelope style={{marginRight:6}} />Email</> : <><FaMobileAlt style={{marginRight:6}} />SMS</>}
                   </button>
                 ))}
               </div>
@@ -181,7 +182,7 @@ export default function CampaignsPage() {
                 disabled={sending || !name || !messageBody}
                 style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600, opacity: sending ? 0.6 : 1 }}
               >
-                {sending ? 'Sending...' : '🚀 Send Now'}
+                {sending ? 'Sending...' : <><FaRocket style={{marginRight:6}} />Send Now</>}
               </button>
               <button
                 onClick={() => handleSend(false)}
@@ -205,7 +206,7 @@ export default function CampaignsPage() {
           <div style={{ textAlign: 'center', padding: 60, color: '#9aa3b2' }}>Loading campaigns...</div>
         ) : campaigns.length === 0 ? (
           <div style={{ ...cardStyle, textAlign: 'center', padding: 60 }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>📢</div>
+            <div style={{ fontSize: 48, marginBottom: 12 }}><FaBullhorn /></div>
             <div style={{ fontSize: 18, fontWeight: 600, color: '#e5e7eb', marginBottom: 8 }}>No campaigns yet</div>
             <div style={{ fontSize: 14, color: '#9aa3b2' }}>Create your first campaign to reach your customers</div>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
+import { FaBuilding, FaClock, FaCreditCard, FaBell, FaCog, FaSignOutAlt, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -868,10 +869,10 @@ function ShopSettingsPageContent() {
   };
 
   const tabs = [
-    { id: 'general', icon: '🏢', name: 'General Info' },
-    { id: 'hours', icon: '🕐', name: 'Operating Hours' },
-    { id: 'billing', icon: '💳', name: 'Billing & Plan' },
-    { id: 'notifications', icon: '🔔', name: 'Notifications' },
+    { id: 'general', icon: <FaBuilding />, name: 'General Info' },
+    { id: 'hours', icon: <FaClock />, name: 'Operating Hours' },
+    { id: 'billing', icon: <FaCreditCard />, name: 'Billing & Plan' },
+    { id: 'notifications', icon: <FaBell />, name: 'Notifications' },
   ];
 
   return (
@@ -883,7 +884,9 @@ function ShopSettingsPageContent() {
             <Link href="/shop/admin#overview" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:8, display:'inline-block'}}>
               ← Back to Dashboard
             </Link>
-            <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>⚙️ Shop Settings</h1>
+            <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:4, display:'flex', alignItems:'center', gap:12}}>
+              <FaCog style={{fontSize:28, color:'#e5e7eb'}} /> Shop Settings
+            </h1>
             <p style={{fontSize:14, color:'#9aa3b2'}}>Manage your shop information and preferences</p>
           </div>
           <button
@@ -909,7 +912,7 @@ function ShopSettingsPageContent() {
               gap:8
             }}
           >
-            🚪 Sign Out
+            <FaSignOutAlt style={{marginRight:8}} /> Sign Out
           </button>
         </div>
       </div>
@@ -1017,14 +1020,14 @@ function ShopSettingsPageContent() {
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>
-                      📅 Advanced Scheduling Settings
+                    <div style={{ display:'flex', alignItems:'center', gap:8, fontSize: 16, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>
+                      <FaCalendarAlt /> Advanced Scheduling Settings
                     </div>
                     <div style={{ fontSize: 13, color: '#9aa3b2' }}>
                       Manage capacity, time slots, blocked dates & customer booking availability
                     </div>
                   </div>
-                  <span style={{ fontSize: 24, color: '#3b82f6' }}>→</span>
+                  <FaArrowRight style={{ fontSize: 24, color: '#3b82f6' }} />
                 </Link>
                 
                 <div style={{display:'grid', gap:16}}>

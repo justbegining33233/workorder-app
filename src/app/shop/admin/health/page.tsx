@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
@@ -41,9 +42,9 @@ export default function HealthCheckPage() {
   }, []);
 
   const statusIcon = (status: string) => {
-    if (status === 'ok') return '✅';
-    if (status === 'missing') return '❌';
-    return '⚠️';
+    if (status === 'ok') return <FaCheckCircle style={{ color: '#22c55e', fontSize: 18, verticalAlign: 'middle' }} />;
+    if (status === 'missing') return <FaTimesCircle style={{ color: '#e5332a', fontSize: 18, verticalAlign: 'middle' }} />;
+    return <FaExclamationTriangle style={{ color: '#f59e0b', fontSize: 18, verticalAlign: 'middle' }} />;
   };
 
   const statusColor = (status: string) => {
@@ -104,7 +105,7 @@ export default function HealthCheckPage() {
             {data.summary.missing > 0 && (
               <div style={{ ...cardStyle, marginBottom: 24, background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 20 }}>❌</span>
+                  <FaTimesCircle style={{ fontSize: 20, color: '#e5332a' }} />
                   <div>
                     <div style={{ fontSize: 16, fontWeight: 700, color: '#e5332a' }}>Critical configuration missing</div>
                     <div style={{ fontSize: 13, color: '#e5e7eb' }}>{data.summary.missing} required environment variable(s) are not set. The application may not function correctly.</div>

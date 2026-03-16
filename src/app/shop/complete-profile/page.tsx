@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaCreditCard, FaLink, FaQuestionCircle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import useRequireAuth from '@/lib/useRequireAuth';
@@ -360,7 +361,7 @@ export default function CompleteProfile() {
         </div>
         <div style={{maxWidth:600, margin:'0 auto', padding:48}}>
           <div style={{background:'rgba(0,0,0,0.2)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:16, padding:40, textAlign:'center'}}>
-            <div style={{fontSize:56, marginBottom:16}}>💳</div>
+            <div style={{fontSize:56, marginBottom:16}}><FaCreditCard /></div>
             <h2 style={{fontSize:26, fontWeight:800, color:'#e5e7eb', marginBottom:12}}>Connect Your Stripe Account</h2>
             <p style={{color:'#9aa3b2', fontSize:15, marginBottom:8, lineHeight:1.6}}>
               Connect your Stripe account to receive customer payments directly into your bank account. You can do this later from your settings.
@@ -385,7 +386,7 @@ export default function CompleteProfile() {
                 marginBottom:12,
               }}
             >
-              {stripeLoading ? 'Connecting...' : '🔗 Connect with Stripe'}
+              {stripeLoading ? 'Connecting...' : <><FaLink style={{marginRight:8}} />Connect with Stripe</>}
             </button>
             <button
               onClick={() => { router.push('/shop/home'); }}

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { FaChartBar, FaRegSmileBeam, FaChevronUp, FaChevronDown, FaPhone } from 'react-icons/fa';
 import useRequireAuth from '@/lib/useRequireAuth';
 
 interface ARBucket {
@@ -58,7 +59,7 @@ export default function ARAgingPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>📊 Accounts Receivable Aging</h1>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}><FaChartBar style={{fontSize:26}} /> Accounts Receivable Aging</h1>
         <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Track outstanding balances by age — follow up on overdue accounts</p>
       </div>
 
@@ -74,7 +75,7 @@ export default function ARAgingPage() {
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           data.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>🎉</div>
+              <div style={{ fontSize: 64 }}><FaRegSmileBeam /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>All clear!</div>
               <div style={{ color: '#9ca3af' }}>No outstanding accounts receivable</div>
             </div>
@@ -92,7 +93,7 @@ export default function ARAgingPage() {
                       </div>
                       <div style={{ fontSize: 28, fontWeight: 800, margin: '8px 0 4px' }}>${bucket.total.toFixed(2)}</div>
                       <div style={{ fontSize: 12, color: '#9ca3af' }}>{bucket.days}</div>
-                      {bucket.count > 0 && <div style={{ fontSize: 13, color: c.color, marginTop: 6 }}>Show {isOpen ? '▲' : '▼'} {bucket.count} invoice{bucket.count !== 1 ? 's' : ''}</div>}
+                      {bucket.count > 0 && <div style={{ fontSize: 13, color: c.color, marginTop: 6 }}>Show {isOpen ? <FaChevronUp /> : <FaChevronDown />} {bucket.count} invoice{bucket.count !== 1 ? 's' : ''}</div>}
                     </div>
 
                     {isOpen && bucket.invoices.length > 0 && (
@@ -105,7 +106,7 @@ export default function ARAgingPage() {
                               <span style={{ color: c.color, fontWeight: 700 }}>${(inv.remaining ?? inv.total).toFixed(2)}</span>
                               <span style={{ color: '#6b7280' }}>{inv.daysOutstanding}d overdue</span>
                             </div>
-                            {inv.customer?.phone && <div style={{ color: '#60a5fa', marginTop: 4 }}>📞 {inv.customer.phone}</div>}
+                            {inv.customer?.phone && <div style={{ color: '#60a5fa', marginTop: 4 }}><FaPhone style={{marginRight:4}} />{inv.customer.phone}</div>}
                           </div>
                         ))}
                       </div>

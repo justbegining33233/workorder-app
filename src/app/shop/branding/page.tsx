@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { FaPalette, FaWrench, FaMapMarkerAlt, FaPhone, FaEnvelope, FaCheckCircle } from 'react-icons/fa';
 import useRequireAuth from '@/lib/useRequireAuth';
 
 interface Branding {
@@ -64,12 +65,12 @@ export default function BrandingPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>🎨 Shop Branding</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}><FaPalette style={{fontSize:26}} /> Shop Branding</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Customize your customer-facing pages, invoices, and communications</p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
           <button onClick={save} disabled={saving} style={{ background: saved ? '#22c55e' : '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-            {saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Branding'}
+            {saved ? <><FaCheckCircle style={{marginRight:6}} />Saved!</> : saving ? 'Saving...' : 'Save Branding'}
           </button>
           {saveError && <div style={{ color: '#ef4444', fontSize: 13 }}>{saveError}</div>}
         </div>
@@ -135,7 +136,7 @@ export default function BrandingPage() {
               {/* Preview: branded header */}
               <div style={{ background: '#1a1a2e', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
                 {form.logoUrl ? <img src={form.logoUrl} alt="Logo" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} style={{ height: 36, borderRadius: 6 }} /> :
-                  <div style={{ width: 40, height: 40, background: previewBg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🔧</div>}
+                  <div style={{ width: 40, height: 40, background: previewBg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}><FaWrench /></div>}
                 <div>
                   <div style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>{form.businessName || 'Your Shop Name'}</div>
                   {form.tagline && <div style={{ color: '#9ca3af', fontSize: 11 }}>{form.tagline}</div>}
@@ -148,9 +149,9 @@ export default function BrandingPage() {
                   <span style={{ fontSize: 18, fontWeight: 800 }}>$450.00</span>
                 </div>
                 <div style={{ fontSize: 12, color: '#374151', marginBottom: 8 }}>
-                  {form.address && <div>📍 {form.address}</div>}
-                  {form.phone && <div>📞 {form.phone}</div>}
-                  {form.email && <div>📧 {form.email}</div>}
+                  {form.address && <div><FaMapMarkerAlt style={{marginRight:4}} />{form.address}</div>}
+                  {form.phone && <div><FaPhone style={{marginRight:4}} />{form.phone}</div>}
+                  {form.email && <div><FaEnvelope style={{marginRight:4}} />{form.email}</div>}
                 </div>
                 {form.footerText && (
                   <div style={{ fontSize: 11, color: '#6b7280', borderTop: '1px solid #e5e7eb', paddingTop: 8, fontStyle: 'italic' }}>{form.footerText}</div>

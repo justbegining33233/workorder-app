@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { FaLock, FaClipboardList } from 'react-icons/fa';
 import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
@@ -66,7 +67,7 @@ export default function ShopLogsPage() {
                     background: logType === type ? '#2563eb' : 'transparent',
                     color: logType === type ? '#fff' : '#9ca3af',
                   }}>
-                  {type === 'audit' ? '🔒 Audit' : '📋 Activity'}
+                  {type === 'audit' ? <><FaLock style={{marginRight:6, verticalAlign:'middle'}} /> Audit</> : <><FaClipboardList style={{marginRight:6, verticalAlign:'middle'}} /> Activity</>}
                 </button>
               ))}
             </div>

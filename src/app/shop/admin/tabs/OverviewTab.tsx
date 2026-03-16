@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FaBox, FaUser, FaClipboardList, FaCog } from 'react-icons/fa';
+import { FaBox, FaUser, FaClipboardList, FaCog, FaExclamationTriangle, FaUsers, FaChartBar, FaEnvelope, FaRedo, FaTools, FaPlusCircle, FaStore, FaKey, FaMapMarkerAlt } from 'react-icons/fa';
 import MessagingCard from '@/components/MessagingCard';
 
 type TabName = 'overview' | 'settings' | 'payroll' | 'team' | 'inventory';
@@ -252,7 +252,7 @@ export default function OverviewTab({
       {budgetData && (budgetData.weeklyBudget > 0 || budgetData.monthlyBudget > 0) && (
         <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: 24, marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <div style={{ fontSize: 24 }}>??</div>
+            <div style={{ fontSize: 24 }}><FaExclamationTriangle /></div>
             <div>
               <h3 style={{ color: '#e5e7eb', fontSize: 18, margin: 0 }}>Payroll Budget Tracking</h3>
               <div style={{ color: '#9aa3b2', fontSize: 13 }}>Monitor spending against budget limits</div>
@@ -276,7 +276,7 @@ export default function OverviewTab({
                 </div>
                 {budgetData.weeklySpent > budgetData.weeklyBudget && (
                   <div style={{ marginTop: 8, padding: 8, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, fontSize: 12, color: '#ef4444', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span>??</span>
+                    <span><FaExclamationTriangle /></span>
                     <span>Over budget by ${((budgetData.weeklySpent ?? 0) - (budgetData.weeklyBudget ?? 0)).toFixed(2)}</span>
                   </div>
                 )}
@@ -299,7 +299,7 @@ export default function OverviewTab({
                 </div>
                 {budgetData.monthlySpent > budgetData.monthlyBudget && (
                   <div style={{ marginTop: 8, padding: 8, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, fontSize: 12, color: '#ef4444', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span>??</span>
+                    <span><FaExclamationTriangle /></span>
                     <span>Over budget by ${((budgetData.monthlySpent ?? 0) - (budgetData.monthlyBudget ?? 0)).toFixed(2)}</span>
                   </div>
                 )}
@@ -309,7 +309,7 @@ export default function OverviewTab({
 
           {(budgetData.weeklySpent > budgetData.weeklyBudget || budgetData.monthlySpent > budgetData.monthlyBudget) && (
             <div style={{ marginTop: 20, padding: 16, background: 'rgba(239,68,68,0.15)', border: '2px solid rgba(239,68,68,0.4)', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ fontSize: 32 }}>??</div>
+              <div style={{ fontSize: 32 }}><FaExclamationTriangle /></div>
               <div>
                 <div style={{ color: '#ef4444', fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Budget Alert: Payroll Spending Exceeded</div>
                 <div style={{ color: '#e5e7eb', fontSize: 13 }}>Review your payroll expenses and consider adjusting team schedules or budget limits.</div>
@@ -332,7 +332,7 @@ export default function OverviewTab({
 
           {shopStats.team.currentlyWorking.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 32, color: '#9aa3b2' }}>
-              <div style={{ fontSize: 48, marginBottom: 12 }}>??</div>
+              <div style={{ fontSize: 48, marginBottom: 12 }}><FaUser /></div>
               <div>No one currently clocked in</div>
             </div>
           ) : (
@@ -341,7 +341,7 @@ export default function OverviewTab({
                 <div key={emp.id} style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 8, padding: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(34,197,94,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>
-                      {emp.role === 'manager' ? '??' : '??'}
+                      {emp.role === 'manager' ? <FaUser /> : <FaUser />}
                     </div>
                     <div>
                       <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 14 }}>{emp.name}</div>
@@ -369,18 +369,18 @@ export default function OverviewTab({
 
           <div style={{ display: 'grid', gap: 12 }}>
             {[
-              { href: '/shop/manage-team', bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.3)', color: '#3b82f6', icon: '??', label: 'Manage Team', sub: 'Add or edit team members' },
-              { href: '/shop/reports', bg: 'rgba(34,197,94,0.2)', border: 'rgba(34,197,94,0.3)', color: '#22c55e', icon: '??', label: 'Payroll & Reports', sub: 'Download employee hours report' },
-              { href: '/shop/admin/settings', bg: 'rgba(168,85,247,0.2)', border: 'rgba(168,85,247,0.3)', color: '#a855f7', icon: '??', label: 'Shop Settings', sub: 'Configure rates and margins' },
-              { href: '/shop/templates', bg: 'rgba(251,191,36,0.2)', border: 'rgba(251,191,36,0.3)', color: '#fbbf24', icon: '??', label: 'Work Order Templates', sub: 'Save common job configurations' },
-              { href: '/shop/vendors', bg: 'rgba(139,92,246,0.2)', border: 'rgba(139,92,246,0.3)', color: '#a78bfa', icon: '??', label: 'Vendor Management', sub: 'Manage parts suppliers' },
-              { href: '/shop/locations', bg: 'rgba(20,184,166,0.2)', border: 'rgba(20,184,166,0.3)', color: '#2dd4bf', icon: '??', label: 'Shop Locations', sub: 'Manage multiple branches' },
-              { href: '/shop/settings/two-factor', bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.3)', color: '#60a5fa', icon: '??', label: 'Two-Factor Auth (2FA)', sub: 'Secure your account' },
-              { href: '/shop/analytics', bg: 'rgba(236,72,153,0.2)', border: 'rgba(236,72,153,0.3)', color: '#ec4899', icon: '??', label: 'Shop Analytics', sub: 'Performance & revenue trends' },
-              { href: '/shop/customer-messages', bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.3)', color: '#3b82f6', icon: '??', label: 'Customer Messages', sub: 'All customer conversations' },
-              { href: '/shop/recurring-workorders', bg: 'rgba(34,197,94,0.2)', border: 'rgba(34,197,94,0.3)', color: '#22c55e', icon: '??', label: 'Recurring Jobs', sub: 'Manage scheduled services' },
-              { href: '/shop/services', bg: 'rgba(245,158,11,0.2)', border: 'rgba(245,158,11,0.3)', color: '#f59e0b', icon: '???', label: 'Services', sub: 'Configure offered services' },
-              { href: '/shop/new-inshop-job', bg: 'rgba(229,51,42,0.2)', border: 'rgba(229,51,42,0.3)', color: '#e5332a', icon: '??', label: 'New In-Shop Job', sub: 'Create a walk-in work order' },
+              { href: '/shop/manage-team', bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.3)', color: '#3b82f6', icon: <FaUsers />, label: 'Manage Team', sub: 'Add or edit team members' },
+              { href: '/shop/reports', bg: 'rgba(34,197,94,0.2)', border: 'rgba(34,197,94,0.3)', color: '#22c55e', icon: <FaClipboardList />, label: 'Payroll & Reports', sub: 'Download employee hours report' },
+              { href: '/shop/admin/settings', bg: 'rgba(168,85,247,0.2)', border: 'rgba(168,85,247,0.3)', color: '#a855f7', icon: <FaCog />, label: 'Shop Settings', sub: 'Configure rates and margins' },
+              { href: '/shop/templates', bg: 'rgba(251,191,36,0.2)', border: 'rgba(251,191,36,0.3)', color: '#fbbf24', icon: <FaClipboardList />, label: 'Work Order Templates', sub: 'Save common job configurations' },
+              { href: '/shop/vendors', bg: 'rgba(139,92,246,0.2)', border: 'rgba(139,92,246,0.3)', color: '#a78bfa', icon: <FaStore />, label: 'Vendor Management', sub: 'Manage parts suppliers' },
+              { href: '/shop/locations', bg: 'rgba(20,184,166,0.2)', border: 'rgba(20,184,166,0.3)', color: '#2dd4bf', icon: <FaMapMarkerAlt />, label: 'Shop Locations', sub: 'Manage multiple branches' },
+              { href: '/shop/settings/two-factor', bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.3)', color: '#60a5fa', icon: <FaKey />, label: 'Two-Factor Auth (2FA)', sub: 'Secure your account' },
+              { href: '/shop/analytics', bg: 'rgba(236,72,153,0.2)', border: 'rgba(236,72,153,0.3)', color: '#ec4899', icon: <FaChartBar />, label: 'Shop Analytics', sub: 'Performance & revenue trends' },
+              { href: '/shop/customer-messages', bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.3)', color: '#3b82f6', icon: <FaEnvelope />, label: 'Customer Messages', sub: 'All customer conversations' },
+              { href: '/shop/recurring-workorders', bg: 'rgba(34,197,94,0.2)', border: 'rgba(34,197,94,0.3)', color: '#22c55e', icon: <FaRedo />, label: 'Recurring Jobs', sub: 'Manage scheduled services' },
+              { href: '/shop/services', bg: 'rgba(245,158,11,0.2)', border: 'rgba(245,158,11,0.3)', color: '#f59e0b', icon: <FaTools />, label: 'Services', sub: 'Configure offered services' },
+              { href: '/shop/new-inshop-job', bg: 'rgba(229,51,42,0.2)', border: 'rgba(229,51,42,0.3)', color: '#e5332a', icon: <FaPlusCircle />, label: 'New In-Shop Job', sub: 'Create a walk-in work order' },
             ].map(({ href, bg, border, color, icon, label, sub }) => (
               <Link key={href} href={href} style={{ textDecoration: 'none' }}>
                 <button style={{ width: '100%', padding: 16, background: bg, border: `1px solid ${border}`, borderRadius: 8, color, fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -397,7 +397,7 @@ export default function OverviewTab({
               <Link href="/shop/home" style={{ textDecoration: 'none' }}>
                 <button style={{ width: '100%', padding: 16, background: 'rgba(229,51,42,0.2)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 8, color: '#e5332a', fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontSize: 20 }}>??</span>
+                    <span style={{ fontSize: 20 }}><FaExclamationTriangle /></span>
                     <div>
                       <div>Pending Inventory Requests</div>
                       <div style={{ fontSize: 11, opacity: 0.8 }}>Requires approval</div>

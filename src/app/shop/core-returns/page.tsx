@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { FaRecycle, FaPlus, FaQuestionCircle } from 'react-icons/fa';
 import useRequireAuth from '@/lib/useRequireAuth';
 
 interface CoreReturn { id: string; partName: string; partNumber?: string; vendor?: string; coreValue: number; creditReceived?: number; status: string; workOrderId?: string; notes?: string; createdAt: string; returnedAt?: string; }
@@ -63,7 +64,7 @@ export default function CoreReturnsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>♻️ Core Returns</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}><FaRecycle style={{fontSize:26}} /> Core Returns</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>
             ${pendingValue.toFixed(2)} pending recovery · ${recoveredValue.toFixed(2)} credited
           </p>
@@ -75,7 +76,7 @@ export default function CoreReturnsPage() {
               {s}
             </button>
           ))}
-          <button onClick={() => { setShowAdd(true); setForm({}); }} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>+ Add Core</button>
+          <button onClick={() => { setShowAdd(true); setForm({}); }} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}><FaPlus /> Add Core</button>
         </div>
       </div>
 
@@ -83,10 +84,10 @@ export default function CoreReturnsPage() {
         {loading ? <div style={{ textAlign: 'center', color: '#6b7280', padding: 64 }}>Loading...</div> :
           filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>♻️</div>
+              <div style={{ fontSize: 64 }}><FaRecycle /></div>
               <div style={{ fontSize: 20, fontWeight: 600, margin: '16px 0 8px' }}>No cores tracked</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Track alternators, starters, and other rebuildable cores to recover value</div>
-              <button onClick={() => { setShowAdd(true); setForm({}); }} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Track First Core</button>
+              <button onClick={() => { setShowAdd(true); setForm({}); }} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}><FaPlus /> Track First Core</button>
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>

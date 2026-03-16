@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
@@ -184,7 +185,7 @@ export default function ShopAdminPage() {
         });
       }
     } catch (error) {
-      console.error('?? Error fetching shop stats:', error);
+      console.error('[ShopAdminPage]', <FaExclamationTriangle />, 'Error fetching shop stats:', error);
       // Set empty data structure on error
       setShopStats({
         workOrders: { open: 0, completedToday: 0, completedThisWeek: 0, pendingApprovals: 0 },

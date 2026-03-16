@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { FaCamera, FaKey, FaCar, FaExclamationTriangle, FaPlus, FaQuestionCircle } from 'react-icons/fa';
 import useRequireAuth from '@/lib/useRequireAuth';
 
 interface ConditionReport {
@@ -88,14 +89,14 @@ export default function ConditionReportsPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}>📸 Condition Reports</h1>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}><FaCamera style={{fontSize:26}} /> Condition Reports</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Vehicle check-in/out condition logs with damage notes — protect your shop from liability</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ New Report</button>
       </div>
 
       <div style={{ padding: '20px 32px 0', display: 'flex', gap: 8 }}>
-        {[['all', 'All Reports'], ['check_in', '🔑 Check-In'], ['check_out', '🚗 Check-Out']].map(([v, label]) => (
+        {[['all', 'All Reports'], ['check_in', <><FaKey style={{marginRight:4}} />Check-In</>], ['check_out', <><FaCar style={{marginRight:4}} />Check-Out</>]].map(([v, label]) => (
           <button key={v} onClick={() => setFilter(v as any)}
             style={{ background: filter === v ? '#e5332a' : 'rgba(255,255,255,0.06)', color: filter === v ? '#fff' : '#e5e7eb', border: `1px solid ${filter === v ? '#e5332a' : 'rgba(255,255,255,0.12)'}`, borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
             {label}
@@ -107,7 +108,7 @@ export default function ConditionReportsPage() {
         {loading ? <div style={{ color: '#6b7280' }}>Loading...</div> :
           filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 80 }}>
-              <div style={{ fontSize: 64 }}>📸</div>
+              <div style={{ fontSize: 64 }}><FaCamera /></div>
               <div style={{ fontSize: 18, fontWeight: 600, margin: '16px 0 8px' }}>No condition reports yet</div>
               <div style={{ color: '#9ca3af', marginBottom: 24 }}>Log vehicle condition at check-in and check-out to protect against damage disputes</div>
               <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>+ Create First Report</button>
@@ -122,7 +123,7 @@ export default function ConditionReportsPage() {
                       <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>{new Date(r.createdAt).toLocaleDateString()}</div>
                     </div>
                     <span style={{ background: r.reportType === 'check_in' ? 'rgba(96,165,250,0.2)' : 'rgba(34,197,94,0.2)', color: r.reportType === 'check_in' ? '#60a5fa' : '#22c55e', border: `1px solid ${r.reportType === 'check_in' ? '#3b82f6' : '#22c55e'}`, borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>
-                      {r.reportType === 'check_in' ? '🔑 Check-In' : '🚗 Check-Out'}
+                      {r.reportType === 'check_in' ? <><FaKey style={{marginRight:4}} />Check-In</> : <><FaCar style={{marginRight:4}} />Check-Out</>}
                     </span>
                   </div>
                   {r.mileageIn && <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 6 }}>Mileage: {r.mileageIn.toLocaleString()}</div>}
@@ -134,7 +135,7 @@ export default function ConditionReportsPage() {
                   )}
                   {r.damageNotes && (
                     <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 7, padding: '7px 10px', fontSize: 12, color: '#fca5a5', marginTop: 8 }}>
-                      ⚠️ {r.damageNotes.slice(0, 60)}{r.damageNotes.length > 60 ? '...' : ''}
+                      <FaExclamationTriangle style={{marginRight:4}} />{r.damageNotes.slice(0, 60)}{r.damageNotes.length > 60 ? '...' : ''}
                     </div>
                   )}
                 </div>
@@ -154,8 +155,8 @@ export default function ConditionReportsPage() {
               <label style={{ fontSize: 13, color: '#9ca3af', display: 'block', marginBottom: 6 }}>Report Type</label>
               <select value={form.reportType} onChange={e => setForm(p => ({ ...p, reportType: e.target.value }))}
                 style={{ width: '100%', background: '#374151', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '10px 12px', color: '#e5e7eb', fontSize: 14 }}>
-                <option value="check_in">🔑 Check-In</option>
-                <option value="check_out">🚗 Check-Out</option>
+                <option value="check_in">Check-In</option>
+                <option value="check_out">Check-Out</option>
               </select>
             </div>
 
@@ -188,7 +189,7 @@ export default function ConditionReportsPage() {
                 ))}
               </div>
               <label style={{ display: 'inline-block', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '8px 16px', fontSize: 13, color: '#e5e7eb', cursor: 'pointer' }}>
-                {photoUploading ? 'Uploading...' : '📷 Add Photo'}
+                {photoUploading ? 'Uploading...' : <><FaCamera style={{marginRight:4}} />Add Photo</>}
                 <input type="file" accept="image/*" onChange={handlePhotoUpload} style={{ display: 'none' }} disabled={photoUploading} />
               </label>
             </div>
