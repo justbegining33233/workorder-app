@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaChartBar, FaDownload, FaStar } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaArrowUp, FaChartBar, FaDownload, FaStar } from 'react-icons/fa';
 
 export default function ReportsAnalytics() {
   const _router = useRouter();
@@ -53,7 +53,7 @@ export default function ReportsAnalytics() {
           avgJobValue: r.avgJobValue ?? 0,
           completionRate,
           customerSatisfaction: 0,
-          responseTime: '—',
+          responseTime: ' - ',
         });
         setRevenueByMonth(r.revenueByMonth ?? []);
         setTopServices(r.topServices ?? []);
@@ -113,7 +113,7 @@ export default function ReportsAnalytics() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1600, margin:'0 auto'}}>
           <Link href={getDashboardLink()} style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
@@ -141,32 +141,32 @@ export default function ReportsAnalytics() {
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Total Revenue</div>
             <div style={{fontSize:32, fontWeight:700, color:'#22c55e', marginBottom:4}}>${stats.totalRevenue.toLocaleString()}</div>
-            <div style={{fontSize:12, color:'#22c55e'}}>↑ 12% from last period</div>
+            <div style={{fontSize:12, color:'#22c55e'}}><FaArrowUp style={{marginRight:4}} /> 12% from last period</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Total Jobs</div>
             <div style={{fontSize:32, fontWeight:700, color:'#3b82f6', marginBottom:4}}>{stats.totalJobs}</div>
-            <div style={{fontSize:12, color:'#3b82f6'}}>↑ 8% from last period</div>
+            <div style={{fontSize:12, color:'#3b82f6'}}><FaArrowUp style={{marginRight:4}} /> 8% from last period</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Avg Job Value</div>
             <div style={{fontSize:32, fontWeight:700, color:'#f59e0b', marginBottom:4}}>${stats.avgJobValue}</div>
-            <div style={{fontSize:12, color:'#f59e0b'}}>↑ 5% from last period</div>
+            <div style={{fontSize:12, color:'#f59e0b'}}><FaArrowUp style={{marginRight:4}} /> 5% from last period</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(139,92,246,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Completion Rate</div>
             <div style={{fontSize:32, fontWeight:700, color:'#8b5cf6', marginBottom:4}}>{stats.completionRate}%</div>
-            <div style={{fontSize:12, color:'#8b5cf6'}}>↑ 2% from last period</div>
+            <div style={{fontSize:12, color:'#8b5cf6'}}><FaArrowUp style={{marginRight:4}} /> 2% from last period</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(229,51,42,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Customer Rating</div>
             <div style={{fontSize:32, fontWeight:700, color:'#e5332a', marginBottom:4}}><FaStar style={{marginRight:4}} /> {stats.customerSatisfaction}</div>
-            <div style={{fontSize:12, color:'#22c55e'}}>↑ 0.3 from last period</div>
+            <div style={{fontSize:12, color:'#22c55e'}}><FaArrowUp style={{marginRight:4}} /> 0.3 from last period</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Avg Response Time</div>
             <div style={{fontSize:32, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{stats.responseTime}</div>
-            <div style={{fontSize:12, color:'#22c55e'}}>↓ 3 min from last period</div>
+            <div style={{fontSize:12, color:'#22c55e'}}><FaArrowDown style={{marginRight:4}} /> 3 min from last period</div>
           </div>
         </div>
 
@@ -256,7 +256,7 @@ export default function ReportsAnalytics() {
                 <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>{item.metric}</div>
                 <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline'}}>
                   <div style={{fontSize:28, fontWeight:700, color:'#e5e7eb'}}>{item.value}</div>
-                  <div style={{fontSize:14, fontWeight:600, color:item.change.startsWith('+') || item.change.startsWith('↑') ? '#22c55e' : item.change.startsWith('-') || item.change.startsWith('↓') ? '#e5332a' : '#3b82f6'}}>
+                  <div style={{fontSize:14, fontWeight:600, color:item.change.startsWith('+') || item.change.startsWith('^') ? '#22c55e' : item.change.startsWith('-') || item.change.startsWith('v') ? '#e5332a' : '#3b82f6'}}>
                     {item.change}
                   </div>
                 </div>

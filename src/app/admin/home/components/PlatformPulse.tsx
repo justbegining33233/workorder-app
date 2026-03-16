@@ -47,7 +47,7 @@ export default function PlatformPulse({ apiStatus, uptime, latencyMs, metrics }:
             API, infra, and business signals refreshed continuously so super admins see issues before users do.
           </p>
           <div className="flex flex-wrap items-center gap-2 pt-2">
-            <StatusBadge label={`${apiStatus} • ${uptime.toFixed(2)}% uptime`} tone="success" pulse />
+            <StatusBadge label={`${apiStatus} - ${uptime.toFixed(2)}% uptime`} tone="success" pulse />
             <StatusBadge label={`Latency ${latencyMs}ms`} tone={latencyMs > 350 ? 'warning' : 'success'} size="sm" />
             <StatusBadge label="Auto-refreshing" tone="info" size="sm" />
           </div>

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
-import { FaCar, FaClipboardList, FaRegStar, FaStar, FaTag } from 'react-icons/fa';
+import { FaArrowLeft, FaCar, FaClipboardList, FaRegStar, FaStar, FaTag } from 'react-icons/fa';
 
 interface CRMData {
   customer: {
@@ -124,7 +124,7 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
       <Sidebar role="shop" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 32px' }}>
-        <Link href="/shop/customer-reports" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: 16 }}>← Back to Customers</Link>
+        <Link href="/shop/customer-reports" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, display: 'inline-block', marginBottom: 16 }}><FaArrowLeft style={{marginRight:4}} /> Back to Customers</Link>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: 60, color: '#9aa3b2' }}>Loading...</div>
@@ -140,8 +140,8 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
                 </h1>
                 <div style={{ fontSize: 14, color: '#9aa3b2', marginTop: 4 }}>
                   {data.customer.email}
-                  {data.customer.phone && <span> • {data.customer.phone}</span>}
-                  {data.customer.company && <span> • {data.customer.company}</span>}
+                  {data.customer.phone && <span> - {data.customer.phone}</span>}
+                  {data.customer.company && <span> - {data.customer.company}</span>}
                 </div>
               </div>
               <div style={{ fontSize: 12, color: '#9aa3b2' }}>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheckCircle, FaLock, FaShieldAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaCheckCircle, FaLock, FaShieldAlt } from 'react-icons/fa';
 
 export default function TechTwoFactorPage() {
   const { user, isLoading } = useRequireAuth(['tech', 'manager']);
@@ -72,7 +72,7 @@ export default function TechTwoFactorPage() {
       <div style={{ maxWidth: 480, width: '100%' }}>
         <button onClick={() => router.back()}
           style={{ color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, marginBottom: 16 }}>
-          ← Back
+          <FaArrowLeft style={{marginRight:4}} /> Back
         </button>
         <div style={{ background: '#1e293b', borderRadius: 16, padding: 32, border: '1px solid #334155' }}>
           <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, marginBottom: 8 }}><FaLock style={{marginRight:4}} /> Two-Factor Authentication</h1>

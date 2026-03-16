@@ -162,7 +162,7 @@ export default function TechDVIPage() {
         <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
           {(['green', 'yellow', 'red'] as Condition[]).map(c => (
             <div key={c} style={{ background: conditionStyle[c].bg, border: `1px solid ${conditionStyle[c].border}`, borderRadius: 10, padding: '10px 16px', fontSize: 14, fontWeight: 600 }}>
-              {conditionLabel[c]} — {items.filter(i => i.condition === c).length}
+              {conditionLabel[c]}  -  {items.filter(i => i.condition === c).length}
             </div>
           ))}
           {items.some(i => i.estimatedCost) && (

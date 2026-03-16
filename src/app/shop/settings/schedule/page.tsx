@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useRequireAuth from '@/lib/useRequireAuth';
-import { FaBan, FaCalendarAlt, FaClock, FaSave, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaBan, FaCalendarAlt, FaClock, FaSave, FaWrench } from 'react-icons/fa';
 
 interface Schedule {
   id?: string;
@@ -165,7 +165,7 @@ export default function ScheduleSettingsPage() {
               padding: '8px 16px', color: 'white', cursor: 'pointer'
             }}
           >
-            ← Back
+            <FaArrowLeft style={{marginRight:4}} /> Back
           </button>
           <div>
             <h1 style={{ color: 'white', fontSize: 28, fontWeight: 700, margin: 0 }}><FaCalendarAlt style={{marginRight:4}} /> Schedule Settings</h1>
@@ -397,7 +397,7 @@ export default function ScheduleSettingsPage() {
                     </span>
                     {blocked.reason && (
                       <span style={{ color: '#9aa3b2', marginLeft: 12, fontSize: 13 }}>
-                        — {blocked.reason}
+                         -  {blocked.reason}
                       </span>
                     )}
                   </div>

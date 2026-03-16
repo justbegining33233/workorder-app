@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheck, FaEnvelope, FaMapMarkerAlt, FaMedal, FaPhone, FaStar, FaStore, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaCheck, FaEnvelope, FaMapMarkerAlt, FaMedal, FaPhone, FaStar, FaStore, FaTimes } from 'react-icons/fa';
 
 export const dynamic = 'force-dynamic';
 
@@ -122,7 +122,7 @@ export default function AcceptedShops() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(34,197,94,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
@@ -192,7 +192,7 @@ export default function AcceptedShops() {
                       <FaMapMarkerAlt style={{marginRight:4}} /> {shop.location}
                     </div>
                     <div style={{fontSize:13, color:'#6b7280'}}>
-                      Active for {getTimeActive(shop.joinedDate)} • {shop.services} services
+                      Active for {getTimeActive(shop.joinedDate)} - {shop.services} services
                     </div>
                   </div>
                 </div>
@@ -406,7 +406,7 @@ export default function AcceptedShops() {
                       rel="noopener noreferrer"
                       style={{fontSize:13, color:'#3b82f6', textDecoration:'none', fontWeight:600}}
                     >
-                      Open in Google Maps →
+                      Open in Google Maps <FaArrowRight style={{marginRight:4}} />
                     </a>
                   </div>
                 </div>

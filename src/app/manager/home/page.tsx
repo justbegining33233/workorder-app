@@ -447,7 +447,7 @@ export default function ManagerHome() {
                               </span>
                             </div>
                             <div style={{color:'#9aa3b2', fontSize:13, marginBottom:4}}>
-                              Quantity: {req.quantity} • Urgency: {req.urgency}
+                              Quantity: {req.quantity} - Urgency: {req.urgency}
                             </div>
                             {req.reason && (
                               <div style={{color:'#9aa3b2', fontSize:12, marginTop:8}}>{req.reason}</div>

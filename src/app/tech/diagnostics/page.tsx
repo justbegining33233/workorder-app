@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBolt, FaIdCard, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaBolt, FaExternalLinkAlt, FaIdCard, FaWrench } from 'react-icons/fa';
 
 export default function TechDiagnostics() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -25,7 +25,7 @@ export default function TechDiagnostics() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
           <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Tools
+            <FaArrowLeft style={{marginRight:4}} /> Back to Tools
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaWrench style={{marginRight:4}} /> Diagnostic Tools</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Vehicle diagnostic tools, code readers, and troubleshooting guides</p>
@@ -38,7 +38,7 @@ export default function TechDiagnostics() {
           {[
             { label: 'OBD Codes', desc: 'Full P/B/C/U code library with causes & fixes', icon: '', href: 'https://obd-codes.com' },
             { label: 'Engine Light Help', desc: 'Free OBD-II code lookup & repair guides', icon: '', href: 'https://engine-light-help.com' },
-            { label: 'NHTSA VIN Decoder', desc: 'Official VIN decode — year, make, model, specs', icon: '<FaIdCard style={{marginRight:4}} />', href: 'https://vpic.nhtsa.dot.gov/decoder/' },
+            { label: 'NHTSA VIN Decoder', desc: 'Official VIN decode  -  year, make, model, specs', icon: '<FaIdCard style={{marginRight:4}} />', href: 'https://vpic.nhtsa.dot.gov/decoder/' },
             { label: 'CarMD', desc: 'Code severity ratings & repair cost estimates', icon: '', href: 'https://carmd.com' },
             { label: 'iATN TechHelp', desc: 'Peer tech help & diagnostic discussions', icon: '', href: 'https://iatn.net' },
             { label: 'TIS2Web / ACDelco TDS', desc: 'GM factory scan tool & programming', icon: '', href: 'https://tis2web.service.gm.com' },
@@ -48,7 +48,7 @@ export default function TechDiagnostics() {
               <div style={{fontSize:32, marginBottom:8}}>{card.icon}</div>
               <div style={{fontSize:15, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{card.label}</div>
               <div style={{fontSize:12, color:'#9aa3b2'}}>{card.desc}</div>
-              <div style={{fontSize:11, color:'#3b82f6', marginTop:6}}>↗ External site</div>
+              <div style={{fontSize:11, color:'#3b82f6', marginTop:6}}><FaExternalLinkAlt style={{marginRight:4}} /> External site</div>
             </a>
           ))}
         </div>
@@ -74,7 +74,7 @@ export default function TechDiagnostics() {
                   ['P0101','MAF Sensor Range/Performance','Dirty/failed MAF, air intake leak',' Medium'],
                   ['P0128','Coolant Temp Below Thermostat Regulating','Thermostat stuck open',' Medium'],
                   ['P0455','EVAP System Large Leak','Gas cap, EVAP vent solenoid',' Low'],
-                  ['P0700','Transmission Control System MIL Request','TCM fault — check trans codes',' High'],
+                  ['P0700','Transmission Control System MIL Request','TCM fault  -  check trans codes',' High'],
                   ['B0001','Driver Frontal Stage 1 Deployment','Airbag module, clock spring',' Critical'],
                   ['C0035','Left Front Wheel Speed Sensor','Wheel speed sensor, wiring, ABS ring',' High'],
                 ].map(([code, desc, cause, sev]) => (

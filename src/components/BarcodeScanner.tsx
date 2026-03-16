@@ -46,7 +46,7 @@ export default function BarcodeScanner({ onScan, onClose, label = 'Scan a Barcod
           onScan(value);
         }
       } catch {
-        // Detection error — continue scanning
+        // Detection error  -  continue scanning
       }
     }, 300);
   }
@@ -134,7 +134,7 @@ export default function BarcodeScanner({ onScan, onClose, label = 'Scan a Barcod
             )}
             {scanning && (
               <div style={{ position: 'absolute', bottom: 10, left: 0, right: 0, textAlign: 'center', color: '#93c5fd', fontSize: 13 }}>
-                Point camera at barcode…
+                Point camera at barcode...
               </div>
             )}
             {lastResult && (

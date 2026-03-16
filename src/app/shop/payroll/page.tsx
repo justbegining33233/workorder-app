@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
-import { FaCaretRight, FaCheck, FaCheckCircle, FaClipboardList, FaClock, FaCog, FaDollarSign, FaExclamationTriangle, FaHourglassHalf, FaRegSquare, FaTimes, FaTimesCircle, FaTrash, FaUsers } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaCaretRight, FaCheck, FaCheckCircle, FaClipboardList, FaClock, FaCog, FaDollarSign, FaExclamationTriangle, FaHourglassHalf, FaRegSquare, FaTimes, FaTimesCircle, FaTrash, FaUsers } from 'react-icons/fa';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// --- Types -------------------------------------------------------------------
 interface Employee {
   id: string; firstName: string; lastName: string; email: string; phone?: string;
   role: string; jobTitle?: string; department?: string; employmentType: string;
@@ -55,7 +55,7 @@ interface OvertimeRule {
   seventhDayRule: boolean;
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// --- Constants ---------------------------------------------------------------
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DEPT_COLORS: Record<string, string> = {
   service: '#3b82f6', parts: '#f59e0b', admin: '#8b5cf6', management: '#10b981', default: '#6b7280',
@@ -70,10 +70,10 @@ const STATUS_BADGE: Record<string, { bg: string; color: string; label: string }>
 
 function fmt(n: number) { return `$${n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` }
 function fmtHrs(h: number) { return `${h.toFixed(1)}h` }
-function fmtDate(d?: string) { if (!d) return '—'; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }
+function fmtDate(d?: string) { if (!d) return ' - '; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }
 function weekStart(d = new Date()) { const s = new Date(d); s.setDate(d.getDate() - d.getDay()); s.setHours(0, 0, 0, 0); return s; }
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// --- Main Component ----------------------------------------------------------
 export default function PayrollPage() {
   const { user, isLoading } = useRequireAuth(['shop']);
   const [tab, setTab] = useState<'overview' | 'schedule' | 'timecards' | 'attendance' | 'leave' | 'periods' | 'stubs' | 'settings'>('overview');
@@ -146,9 +146,9 @@ export default function PayrollPage() {
   };
   useEffect(() => { if (tab === 'stubs') loadStubs(); }, [tab]);
 
-  if (isLoading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}><div style={{ fontSize: 18, color: '#6b7280' }}>Loading…</div></div>;
+  if (isLoading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}><div style={{ fontSize: 18, color: '#6b7280' }}>Loading...</div></div>;
 
-  // ─── Computed values ──────────────────────────────────────────────────────
+  // --- Computed values ------------------------------------------------------
   const activeEmps = employees.filter((e) => !e.terminatedAt);
   const pendingLeave = leaveRequests.filter((l) => l.status === 'pending');
   const openPeriods = payPeriods.filter((p) => p.status === 'open' || p.status === 'processing');
@@ -163,7 +163,7 @@ export default function PayrollPage() {
   const lateToday = attendance.filter((a) => a.status === 'late').length;
   const absentToday = attendance.filter((a) => a.status === 'absent').length;
 
-  // ─── Handlers ────────────────────────────────────────────────────────────
+  // --- Handlers ------------------------------------------------------------
   const addShift = async () => {
     const r = await fetch('/api/payroll/schedule', { method: 'POST', headers, body: JSON.stringify(shiftForm) });
     if (r.ok) { setShowAddShift(false); setShiftForm({ shiftType: 'regular' }); load(); }
@@ -200,7 +200,7 @@ export default function PayrollPage() {
       const r = await fetch(`/api/payroll/pay-periods/${periodId}`, { method: 'PUT', headers, body: JSON.stringify({ action: 'run' }) });
       const d = await r.json();
       if (r.ok) {
-        setPayrollMsg(` Payroll complete! ${d.summary.employeeCount} employees — Gross: ${fmt(d.summary.totalGross)}, Net: ${fmt(d.summary.totalNet)}`);
+        setPayrollMsg(` Payroll complete! ${d.summary.employeeCount} employees  -  Gross: ${fmt(d.summary.totalGross)}, Net: ${fmt(d.summary.totalNet)}`);
         setTimeout(() => setPayrollMsg(''), 6000);
         load();
       } else { setPayrollError('Error: ' + (d.error || 'Failed to run payroll')); }
@@ -226,7 +226,7 @@ export default function PayrollPage() {
     load();
   };
 
-  // ─── Sub-components ───────────────────────────────────────────────────────
+  // --- Sub-components -------------------------------------------------------
   const TabBtn = ({ id, label, badge }: { id: typeof tab; label: string; badge?: number }) => (
     <button
       onClick={() => setTab(id)}
@@ -257,7 +257,7 @@ export default function PayrollPage() {
     return <span style={{ background: s.bg, color: s.color, borderRadius: 12, padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{s.label}</span>;
   };
 
-  // ─── Tab: Overview ────────────────────────────────────────────────────────
+  // --- Tab: Overview --------------------------------------------------------
   const OverviewTab = () => (
     <div>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 24 }}>
@@ -281,12 +281,12 @@ export default function PayrollPage() {
           ))}
           {attendance.filter(a => a.status === 'absent').map(a => (
             <div key={a.shiftId} style={{ padding: '6px 0', borderBottom: '1px solid #fde68a', fontSize: 14, color: '#991b1b' }}>
-              <FaTimesCircle style={{marginRight:4}} /> <strong>{a.tech.firstName} {a.tech.lastName}</strong> — no clock-in (scheduled {a.scheduledStart})
+              <FaTimesCircle style={{marginRight:4}} /> <strong>{a.tech.firstName} {a.tech.lastName}</strong>  -  no clock-in (scheduled {a.scheduledStart})
             </div>
           ))}
           {pendingLeave.slice(0, 3).map(l => (
             <div key={l.id} style={{ padding: '6px 0', fontSize: 14, color: '#7c3aed' }}>
-              <FaClipboardList style={{marginRight:4}} /> <strong>{l.tech.firstName} {l.tech.lastName}</strong> requested {l.leaveType.toUpperCase()} — {fmtDate(l.startDate)} to {fmtDate(l.endDate)}
+              <FaClipboardList style={{marginRight:4}} /> <strong>{l.tech.firstName} {l.tech.lastName}</strong> requested {l.leaveType.toUpperCase()}  -  {fmtDate(l.startDate)} to {fmtDate(l.endDate)}
             </div>
           ))}
         </div>
@@ -298,7 +298,7 @@ export default function PayrollPage() {
         {payPeriods.slice(0, 5).map(p => (
           <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f3f4f6' }}>
             <div>
-              <div style={{ fontWeight: 600, fontSize: 14 }}>{fmtDate(p.startDate)} — {fmtDate(p.endDate)}</div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{fmtDate(p.startDate)}  -  {fmtDate(p.endDate)}</div>
               <div style={{ fontSize: 12, color: '#6b7280' }}>{p.periodType} · {p.employeeCount} employees</div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -312,16 +312,16 @@ export default function PayrollPage() {
     </div>
   );
 
-  // ─── Tab: Schedule ────────────────────────────────────────────────────────
+  // --- Tab: Schedule --------------------------------------------------------
   const ScheduleTab = () => (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button onClick={() => { const d = new Date(weekOf); d.setDate(d.getDate() - 7); setWeekOf(d); }} style={{ padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: 8, background: '#fff', cursor: 'pointer' }}>← Prev</button>
+          <button onClick={() => { const d = new Date(weekOf); d.setDate(d.getDate() - 7); setWeekOf(d); }} style={{ padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: 8, background: '#fff', cursor: 'pointer' }}><FaArrowLeft style={{marginRight:4}} /> Prev</button>
           <div style={{ fontWeight: 700, fontSize: 16 }}>
             Week of {weekOf.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </div>
-          <button onClick={() => { const d = new Date(weekOf); d.setDate(d.getDate() + 7); setWeekOf(d); }} style={{ padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: 8, background: '#fff', cursor: 'pointer' }}>Next →</button>
+          <button onClick={() => { const d = new Date(weekOf); d.setDate(d.getDate() + 7); setWeekOf(d); }} style={{ padding: '6px 14px', border: '1px solid #d1d5db', borderRadius: 8, background: '#fff', cursor: 'pointer' }}>Next <FaArrowRight style={{marginRight:4}} /></button>
           <button onClick={() => setWeekOf(weekStart())} style={{ padding: '6px 14px', border: '1px solid #2563eb', borderRadius: 8, background: '#eff6ff', color: '#2563eb', cursor: 'pointer', fontSize: 12 }}>Today</button>
         </div>
         {user?.role === 'shop' && (
@@ -367,7 +367,7 @@ export default function PayrollPage() {
                     <td key={i} style={{ padding: 6, textAlign: 'center', background: isToday ? '#f0f9ff' : undefined, verticalAlign: 'middle' }}>
                       {shift ? (
                         <div style={{ background: shift.status === 'no-show' ? '#fee2e2' : shift.status === 'late' ? '#fef9c3' : '#dbeafe', borderRadius: 8, padding: '6px 4px', fontSize: 11, position: 'relative' }}>
-                          <div style={{ fontWeight: 600 }}>{shift.startTime}–{shift.endTime}</div>
+                          <div style={{ fontWeight: 600 }}>{shift.startTime}-{shift.endTime}</div>
                           <div style={{ color: '#374151' }}>{shift.shiftType}</div>
                           {shift.lateMinutes > 0 && <div style={{ color: '#b45309', fontSize: 10 }}><FaClock style={{marginRight:4}} /> {shift.lateMinutes}m late</div>}
                           {user?.role === 'shop' && (
@@ -375,7 +375,7 @@ export default function PayrollPage() {
                           )}
                         </div>
                       ) : (
-                        <div style={{ color: '#d1d5db', fontSize: 20, lineHeight: 1 }}>—</div>
+                        <div style={{ color: '#d1d5db', fontSize: 20, lineHeight: 1 }}> - </div>
                       )}
                     </td>
                   );
@@ -395,7 +395,7 @@ export default function PayrollPage() {
               <div>
                 <label style={{ display: 'block', fontWeight: 600, marginBottom: 4, fontSize: 13 }}>Employee</label>
                 <select value={shiftForm.techId ?? ''} onChange={e => setShiftForm((f: any) => ({ ...f, techId: e.target.value }))} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 8 }}>
-                  <option value="">Select employee…</option>
+                  <option value="">Select employee...</option>
                   {activeEmps.map(e => <option key={e.id} value={e.id}>{e.firstName} {e.lastName}</option>)}
                 </select>
               </div>
@@ -441,7 +441,7 @@ export default function PayrollPage() {
     </div>
   );
 
-  // ─── Tab: Attendance ──────────────────────────────────────────────────────
+  // --- Tab: Attendance ------------------------------------------------------
   const AttendanceTab = () => (
     <div>
       {attSummary && (
@@ -475,9 +475,9 @@ export default function PayrollPage() {
               <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: a.status === 'absent' ? '#fff5f5' : a.status === 'late' ? '#fefce8' : undefined }}>
                 <td style={{ padding: '10px 16px', fontWeight: 600 }}>{a.tech.firstName} {a.tech.lastName}</td>
                 <td style={{ padding: '10px 16px', fontSize: 13, color: '#6b7280' }}>{fmtDate(a.date)}</td>
-                <td style={{ padding: '10px 16px', fontSize: 13 }}>{a.scheduledStart ?? '—'} – {a.scheduledEnd ?? '—'}</td>
+                <td style={{ padding: '10px 16px', fontSize: 13 }}>{a.scheduledStart ?? ' - '} - {a.scheduledEnd ?? ' - '}</td>
                 <td style={{ padding: '10px 16px', fontSize: 13 }}>
-                  {a.actualClockIn ? new Date(a.actualClockIn).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '—'}
+                  {a.actualClockIn ? new Date(a.actualClockIn).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : ' - '}
                   {a.lateMinutes > 0 && <span style={{ color: '#b45309', fontSize: 11, marginLeft: 6 }}>+{a.lateMinutes}m</span>}
                 </td>
                 <td style={{ padding: '10px 16px', fontSize: 13 }}>
@@ -494,7 +494,7 @@ export default function PayrollPage() {
     </div>
   );
 
-  // ─── Tab: Leave Requests ──────────────────────────────────────────────────
+  // --- Tab: Leave Requests --------------------------------------------------
   const LeaveTab = () => (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -512,7 +512,7 @@ export default function PayrollPage() {
                 <div style={{ fontWeight: 700 }}>{l.tech.firstName} {l.tech.lastName}</div>
                 <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
                   <span style={{ background: '#e9d5ff', color: '#7c3aed', borderRadius: 6, padding: '2px 8px', marginRight: 8, fontSize: 11 }}>{l.leaveType.toUpperCase()}</span>
-                  {fmtDate(l.startDate)} — {fmtDate(l.endDate)} · {l.totalHours}h
+                  {fmtDate(l.startDate)}  -  {fmtDate(l.endDate)} · {l.totalHours}h
                 </div>
                 {l.reason && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>Reason: {l.reason}</div>}
               </div>
@@ -549,7 +549,7 @@ export default function PayrollPage() {
                 <td style={{ padding: '10px 16px' }}>
                   <span style={{ background: '#ede9fe', color: '#7c3aed', borderRadius: 6, padding: '2px 8px', fontSize: 12, fontWeight: 600 }}>{l.leaveType.toUpperCase()}</span>
                 </td>
-                <td style={{ padding: '10px 16px', fontSize: 13 }}>{fmtDate(l.startDate)} — {fmtDate(l.endDate)}</td>
+                <td style={{ padding: '10px 16px', fontSize: 13 }}>{fmtDate(l.startDate)}  -  {fmtDate(l.endDate)}</td>
                 <td style={{ padding: '10px 16px', textAlign: 'right' }}>{l.totalHours}h</td>
                 <td style={{ padding: '10px 16px', textAlign: 'center' }}>
                   <span style={{ background: l.status === 'approved' ? '#dcfce7' : l.status === 'denied' ? '#fde8e8' : '#fef9c3', color: l.status === 'approved' ? '#166534' : l.status === 'denied' ? '#991b1b' : '#92400e', borderRadius: 8, padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{l.status.toUpperCase()}</span>
@@ -568,7 +568,7 @@ export default function PayrollPage() {
               <div>
                 <label style={{ display: 'block', fontWeight: 600, marginBottom: 4, fontSize: 13 }}>Employee</label>
                 <select value={leaveForm.techId ?? ''} onChange={e => setLeaveForm((f: any) => ({ ...f, techId: e.target.value }))} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 8 }}>
-                  <option value="">Select…</option>
+                  <option value="">Select...</option>
                   {activeEmps.map(e => <option key={e.id} value={e.id}>{e.firstName} {e.lastName}</option>)}
                 </select>
               </div>
@@ -607,7 +607,7 @@ export default function PayrollPage() {
     </div>
   );
 
-  // ─── Tab: Pay Periods ─────────────────────────────────────────────────────
+  // --- Tab: Pay Periods -----------------------------------------------------
   const PayPeriodsTab = () => (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -621,7 +621,7 @@ export default function PayrollPage() {
         <div key={p.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 20, marginBottom: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <div style={{ fontWeight: 800, fontSize: 16 }}>{fmtDate(p.startDate)} — {fmtDate(p.endDate)}</div>
+              <div style={{ fontWeight: 800, fontSize: 16 }}>{fmtDate(p.startDate)}  -  {fmtDate(p.endDate)}</div>
               <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
                 {p.periodType} · Pay date: {p.payDate ? fmtDate(p.payDate) : 'Not set'} · {p.employeeCount} employees
               </div>
@@ -645,7 +645,7 @@ export default function PayrollPage() {
             <div style={{ marginTop: 16, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {(p.status === 'open' || p.status === 'processing') && (
                 <button onClick={() => setRunPayrollConfirmId(p.id)} disabled={runningPayroll} style={{ padding: '8px 18px', background: runningPayroll ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 8, cursor: runningPayroll ? 'not-allowed' : 'pointer', fontWeight: 600 }}>
-                  {runningPayroll ? '<FaHourglassHalf style={{marginRight:4}} /> Running…' : '<FaCaretRight style={{marginRight:4}} /> Run Payroll'}
+                  {runningPayroll ? '<FaHourglassHalf style={{marginRight:4}} /> Running...' : '<FaCaretRight style={{marginRight:4}} /> Run Payroll'}
                 </button>
               )}
               {p.status === 'processing' && (
@@ -699,7 +699,7 @@ export default function PayrollPage() {
     </div>
   );
 
-  // ─── Tab: Pay Stubs ───────────────────────────────────────────────────────
+  // --- Tab: Pay Stubs -------------------------------------------------------
   const PayStubsTab = () => (
     <div>
       <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>Pay Stubs</div>
@@ -729,7 +729,7 @@ export default function PayrollPage() {
                   <div style={{ fontSize: 11, color: '#9ca3af' }}>{s.tech?.department ?? ''} · {s.tech?.jobTitle ?? ''}</div>
                 </td>
                 <td style={{ padding: '10px 16px', fontSize: 13, color: '#6b7280' }}>
-                  {s.payPeriod ? `${fmtDate(s.payPeriod.startDate)} — ${fmtDate(s.payPeriod.endDate)}` : '—'}
+                  {s.payPeriod ? `${fmtDate(s.payPeriod.startDate)}  -  ${fmtDate(s.payPeriod.endDate)}` : ' - '}
                 </td>
                 <td style={{ padding: '10px 16px', textAlign: 'right' }}>{fmtHrs(s.regularHours)}</td>
                 <td style={{ padding: '10px 16px', textAlign: 'right', color: s.overtimeHours > 0 ? '#d97706' : undefined, fontWeight: s.overtimeHours > 0 ? 700 : 400 }}>{fmtHrs(s.overtimeHours)}</td>
@@ -748,7 +748,7 @@ export default function PayrollPage() {
     </div>
   );
 
-  // ─── Tab: Settings ────────────────────────────────────────────────────────
+  // --- Tab: Settings --------------------------------------------------------
   const SettingsTab = () => (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'start' }}>
       {/* Overtime Rules */}
@@ -866,7 +866,7 @@ export default function PayrollPage() {
     </div>
   );
 
-  // ─── Render ───────────────────────────────────────────────────────────────
+  // --- Render ---------------------------------------------------------------
   return (
     <div style={{ padding: '32px 40px', maxWidth: 1400, margin: '0 auto' }}>
       {/* Header */}
@@ -887,7 +887,7 @@ export default function PayrollPage() {
       </div>
 
       {/* Loading indicator */}
-      {loading && <div style={{ background: '#eff6ff', borderRadius: 8, padding: '10px 16px', marginBottom: 16, color: '#1d4ed8', fontSize: 14 }}>Loading payroll data…</div>}
+      {loading && <div style={{ background: '#eff6ff', borderRadius: 8, padding: '10px 16px', marginBottom: 16, color: '#1d4ed8', fontSize: 14 }}>Loading payroll data...</div>}
 
       {/* Tab content */}
       {tab === 'overview' && <OverviewTab />}
@@ -937,7 +937,7 @@ export default function PayrollPage() {
             <p style={{ color: '#6b7280', marginBottom: 24 }}>This will generate pay stubs for all active employees in this period.</p>
             <div style={{ display: 'flex', gap: 12 }}>
               <button onClick={() => setRunPayrollConfirmId(null)} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-              <button onClick={() => runPayroll(runPayrollConfirmId)} disabled={runningPayroll} style={{ flex: 1, padding: '10px', background: runningPayroll ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: runningPayroll ? 'not-allowed' : 'pointer' }}>{runningPayroll ? 'Processing…' : 'Run Payroll'}</button>
+              <button onClick={() => runPayroll(runPayrollConfirmId)} disabled={runningPayroll} style={{ flex: 1, padding: '10px', background: runningPayroll ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: runningPayroll ? 'not-allowed' : 'pointer' }}>{runningPayroll ? 'Processing...' : 'Run Payroll'}</button>
             </div>
           </div>
         </div>
@@ -964,7 +964,7 @@ export default function PayrollPage() {
           <div style={{ background: '#fff', borderRadius: 16, padding: 32, maxWidth: 400, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
             <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>Deny Leave Request</h3>
             <label style={{ display: 'block', fontWeight: 600, marginBottom: 8, fontSize: 14 }}>Reason for denial (optional)</label>
-            <textarea value={denyModal.reason} onChange={e => setDenyModal(d => d ? { ...d, reason: e.target.value } : d)} rows={3} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 8, resize: 'vertical', fontFamily: 'inherit', fontSize: 14, boxSizing: 'border-box' }} placeholder="Enter reason…" />
+            <textarea value={denyModal.reason} onChange={e => setDenyModal(d => d ? { ...d, reason: e.target.value } : d)} rows={3} style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 8, resize: 'vertical', fontFamily: 'inherit', fontSize: 14, boxSizing: 'border-box' }} placeholder="Enter reason..." />
             <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
               <button onClick={() => setDenyModal(null)} style={{ flex: 1, padding: '10px', background: '#f3f4f6', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
               <button onClick={() => { approveLeave(denyModal.id, 'denied', denyModal.reason); setDenyModal(null); }} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}><FaTimes style={{marginRight:4}} /> Deny</button>

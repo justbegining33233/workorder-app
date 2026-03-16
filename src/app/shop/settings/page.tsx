@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { FaArrowRight, FaBell, FaBox, FaBuilding, FaCalendarAlt, FaCar, FaCheck, FaCheckCircle, FaClipboardList, FaClock, FaCog, FaComments, FaCreditCard, FaExclamationCircle, FaExclamationTriangle, FaLink, FaSignOutAlt, FaStar, FaTimes, FaTimesCircle, FaTrash, FaTruck, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBell, FaBox, FaBuilding, FaCalendarAlt, FaCar, FaCheck, FaCheckCircle, FaClipboardList, FaClock, FaCog, FaComments, FaCreditCard, FaExclamationCircle, FaExclamationTriangle, FaLink, FaSignOutAlt, FaStar, FaTimes, FaTimesCircle, FaTrash, FaTruck, FaWrench } from 'react-icons/fa';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -882,7 +882,7 @@ function ShopSettingsPageContent() {
         <div style={{maxWidth:1200, margin:'0 auto', display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
           <div>
             <Link href="/shop/admin#overview" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:8, display:'inline-block'}}>
-              ← Back to Dashboard
+              <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
             </Link>
             <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:4, display:'flex', alignItems:'center', gap:12}}>
               <FaCog style={{fontSize:28, color:'#e5e7eb'}} /> Shop Settings
@@ -1159,7 +1159,7 @@ function ShopSettingsPageContent() {
                                   {(service.price || service.duration) && (
                                     <div style={{color:'#9aa3b2', fontSize:11, marginTop:2}}>
                                       {service.price && `$${service.price}`}
-                                      {service.price && service.duration && ' • '}
+                                      {service.price && service.duration && ' - '}
                                       {service.duration && `${(service.duration / 60).toFixed(1)}h`}
                                     </div>
                                   )}
@@ -1221,7 +1221,7 @@ function ShopSettingsPageContent() {
                                     {(service.price || service.duration) && (
                                       <div style={{color:'#9aa3b2', fontSize:11, marginTop:2}}>
                                         {service.price && `$${service.price}`}
-                                        {service.price && service.duration && ' • '}
+                                        {service.price && service.duration && ' - '}
                                         {service.duration && `${(service.duration / 60).toFixed(1)}h`}
                                       </div>
                                     )}
@@ -1554,7 +1554,7 @@ function ShopSettingsPageContent() {
                       cursor: billingLoading ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    View Invoices →
+                    View Invoices <FaArrowRight style={{marginRight:4}} />
                   </button>
                 </div>
 

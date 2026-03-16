@@ -7,7 +7,7 @@ import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
 import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
-import { FaBuilding, FaChartBar, FaCheck, FaCog, FaDollarSign, FaFileAlt, FaSatelliteDish, FaStar, FaStore } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaChartBar, FaCheck, FaCog, FaDollarSign, FaFileAlt, FaSatelliteDish, FaStar, FaStore } from 'react-icons/fa';
 
 function AdminPortalEnhancedContent() {
   const { user, isLoading: authLoading } = useRequireAuth(['admin', 'superadmin']);
@@ -96,7 +96,7 @@ function AdminPortalEnhancedContent() {
             >
               Sign Out
             </button>
-            <Link href="/" className="btn-outline">← Home</Link>
+            <Link href="/" className="btn-outline"><FaArrowLeft style={{marginRight:4}} /> Home</Link>
           </div>
         </div>
 
@@ -136,7 +136,7 @@ function AdminPortalEnhancedContent() {
         </div>
 
         <div className="sos-footer">
-          <span className="sos-tagline">© {new Date().getFullYear()} FixTray • Admin Control Panel</span>
+          <span className="sos-tagline">© {new Date().getFullYear()} FixTray - Admin Control Panel</span>
           <div className="accent-bar" style={{width:112, borderRadius:6}} />
         </div>
       </div>
@@ -200,14 +200,14 @@ function OverviewTab({ workOrders, tenants }: { workOrders: WorkOrder[], tenants
           <div className="sos-item">
             <div>
               <div style={{fontWeight:600}}>New Tenant Created</div>
-              <div style={{fontSize:12, color:'#9aa3b2'}}>ABC Auto Shop • 5 mins ago</div>
+              <div style={{fontSize:12, color:'#9aa3b2'}}>ABC Auto Shop - 5 mins ago</div>
             </div>
             <span className="sos-pill" style={{background:'#4ade80', color:'#000'}}>New</span>
           </div>
           <div className="sos-item">
             <div>
               <div style={{fontWeight:600}}>Payment Processed</div>
-              <div style={{fontSize:12, color:'#9aa3b2'}}>XYZ Motors • $450.00 • 12 mins ago</div>
+              <div style={{fontSize:12, color:'#9aa3b2'}}>XYZ Motors - $450.00 - 12 mins ago</div>
             </div>
             <span className="sos-pill">Completed</span>
           </div>
@@ -237,7 +237,7 @@ function TenantsTab({ tenants, onRefresh: _onRefresh }: { tenants: any[], onRefr
               <div style={{flex:1}}>
                 <div style={{fontWeight:700}}>{tenant.name || `Tenant ${i + 1}`}</div>
                 <div style={{fontSize:12, color:'#9aa3b2'}}>
-                  {tenant.workOrders || 0} work orders • ${tenant.revenue || 0} revenue
+                  {tenant.workOrders || 0} work orders - ${tenant.revenue || 0} revenue
                 </div>
               </div>
               <div style={{display:'flex', gap:8}}>
@@ -271,7 +271,7 @@ function MonitoringTab() {
             <div key={i} className="sos-item">
               <div style={{flex:1}}>
                 <div style={{fontWeight:600}}>{session.user}</div>
-                <div style={{fontSize:12, color:'#b8beca'}}>{session.tenant} • {session.activity}</div>
+                <div style={{fontSize:12, color:'#b8beca'}}>{session.tenant} - {session.activity}</div>
               </div>
               <div style={{fontSize:11, color:'#9aa3b2'}}>{session.time}</div>
             </div>
@@ -421,7 +421,7 @@ function ReviewsTab() {
             <div key={i} className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
               <div style={{marginBottom:8}}>{'<FaStar style={{marginRight:4}} />'.repeat(review.rating)}</div>
               <div style={{fontSize:13, marginBottom:4}}>"{review.text}"</div>
-              <div style={{fontSize:11, color:'#9aa3b2'}}>{review.customer} • {review.tenant}</div>
+              <div style={{fontSize:11, color:'#9aa3b2'}}>{review.customer} - {review.tenant}</div>
             </div>
           ))}
         </div>
@@ -446,7 +446,7 @@ function DocumentsTab() {
           <div key={i} className="sos-item">
             <div>
               <div style={{fontWeight:600}}>{doc.name}</div>
-              <div style={{fontSize:12, color:'#9aa3b2'}}>{doc.type} • {doc.size}</div>
+              <div style={{fontSize:12, color:'#9aa3b2'}}>{doc.type} - {doc.size}</div>
             </div>
             <button className="btn-outline" style={{fontSize:12}}>Download</button>
           </div>

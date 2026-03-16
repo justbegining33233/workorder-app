@@ -150,7 +150,7 @@ export default function ShopSubscribePage() {
             disabled={loading}
             style={{ padding: '16px 48px', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: 'white', border: 'none', borderRadius: 12, fontSize: 17, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, boxShadow: '0 4px 20px rgba(34,197,94,0.3)' }}
           >
-            {loading ? 'Redirecting to checkout...' : `Start Free Trial — ${PLANS.find(p => p.key === selectedPlan)?.name}`}
+            {loading ? 'Redirecting to checkout...' : `Start Free Trial  -  ${PLANS.find(p => p.key === selectedPlan)?.name}`}
           </button>
           <div style={{ marginTop: 16, fontSize: 13, color: '#6b7280' }}>
             14-day free trial · Cancel anytime · No hidden fees

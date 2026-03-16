@@ -1,4 +1,5 @@
 'use client';
+import { FaArrowLeft } from 'react-icons/fa';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -63,7 +64,7 @@ export default function EmployeePerformancePage() {
         <main style={{ flex: 1, padding: '24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <Link href="/shop/reports" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}>← Reports</Link>
+              <Link href="/shop/reports" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}><FaArrowLeft style={{marginRight:4}} /> Reports</Link>
               <h1 style={{ color: '#fff', fontSize: 28, fontWeight: 700, marginTop: 4 }}>Employee Performance</h1>
               <p style={{ color: '#9ca3af', fontSize: 14 }}>Cross-shop performance comparison</p>
             </div>

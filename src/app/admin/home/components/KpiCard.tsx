@@ -1,3 +1,4 @@
+import { FaExternalLinkAlt } from 'react-icons/fa';
 // KpiCard.tsx - reusable KPI card with sparkline + delta
 'use client';
 
@@ -42,7 +43,7 @@ export default function KpiCard({ title, value, change, trend, accent = 'emerald
           <p className="text-[11px] uppercase tracking-[0.08em] text-slate-400">{title}</p>
           <p className="text-2xl font-semibold text-white leading-tight mt-1 group-hover:text-orange-300 transition-colors">{value}</p>
           <span className={`inline-flex items-center gap-1 mt-2 px-2 py-1 rounded-full text-xs ${tone.chip} ${tone.chipText} group-hover:scale-110 transition-transform`}>
-            <span aria-hidden>↗</span>
+            <span aria-hidden><FaExternalLinkAlt style={{marginRight:4}} /></span>
             <span>{change}</span>
           </span>
           {caption && <p className="text-[11px] text-slate-500 mt-2">{caption}</p>}

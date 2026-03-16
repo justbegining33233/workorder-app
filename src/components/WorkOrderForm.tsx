@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { WorkOrderFormData, VehicleType, RepairType, MaintenanceType, TireServiceType } from '@/types/workorder';
-import { FaCheck, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaCheck, FaMapMarkerAlt } from 'react-icons/fa';
 
 interface WorkOrderFormProps {
   initialData?: Partial<WorkOrderFormData> & { id?: string };
@@ -296,7 +296,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
           <div style={{fontSize:14, fontWeight:600, color:'#3b82f6', marginBottom:4}}>Requesting Service From:</div>
           <div style={{fontSize:18, fontWeight:700, color:'#e5e7eb'}}>{selectedShop.shopName || selectedShop.name}</div>
           <div style={{fontSize:13, color:'#9aa3b2', marginTop:4}}>
-            {selectedShop.location} • {selectedShop.distance} mi away
+            {selectedShop.location} - {selectedShop.distance} mi away
           </div>
           {availableServices.length > 0 && (
             <div style={{fontSize:12, color:'#60a5fa', marginTop:8}}>
@@ -686,7 +686,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
             onClick={() => setStep(step - 1)}
             style={{padding:'12px 32px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, cursor:'pointer', fontSize:14, fontWeight:600}}
           >
-            ← Previous
+            <FaArrowLeft style={{marginRight:4}} /> Previous
           </button>
         )}
         <button
@@ -694,7 +694,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
           disabled={loading}
           style={{padding:'12px 32px', background:'#e5332a', color:'white', border:'none', borderRadius:8, cursor: loading ? 'not-allowed' : 'pointer', fontSize:14, fontWeight:600, marginLeft:'auto'}}
         >
-          {step === totalSteps ? (loading ? 'Saving...' : 'Create Work Order') : 'Next →'}
+          {step === totalSteps ? (loading ? 'Saving...' : 'Create Work Order') : 'Next <FaArrowRight style={{marginRight:4}} />'}
         </button>
       </div>
       {formMsg && (

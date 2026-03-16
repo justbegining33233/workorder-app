@@ -63,7 +63,7 @@ export default function Reviews() {
                 <div>
                   <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{review.shop}</h3>
                   <div style={{fontSize:16, color:'#3b82f6', fontWeight:600, marginBottom:4}}>{review.service}</div>
-                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{review.vehicle} • {review.date}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>{review.vehicle} - {review.date}</div>
                   <div style={{fontSize:18, marginBottom:12}}>{renderStars(review.rating)}</div>
                   <div style={{fontSize:14, color:'#e5e7eb', lineHeight:1.5}}>{review.review}</div>
                 </div>

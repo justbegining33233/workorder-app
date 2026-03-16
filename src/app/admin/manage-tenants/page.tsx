@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaChartBar, FaClipboardList, FaCreditCard, FaHourglassHalf, FaMapMarkerAlt, FaStore, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaChartBar, FaClipboardList, FaCreditCard, FaHourglassHalf, FaMapMarkerAlt, FaStore, FaTimes } from 'react-icons/fa';
 
 type Tenant = {
   id: string;
@@ -259,7 +259,7 @@ export default function ManageTenants() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(59,130,246,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaBuilding style={{marginRight:4}} /> Manage Tenants</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Manage all tenant organizations and subscriptions</p>
@@ -370,7 +370,7 @@ export default function ManageTenants() {
                       Health: {tenant.healthScore}
                     </span>
                   </div>
-                  <div style={{fontSize:14, color:'#9aa3b2'}}><FaMapMarkerAlt style={{marginRight:4}} /> {tenant.location} • Owner: {tenant.ownerName}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2'}}><FaMapMarkerAlt style={{marginRight:4}} /> {tenant.location} - Owner: {tenant.ownerName}</div>
                 </div>
               </div>
 

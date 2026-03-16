@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Removed automatic redirect - let individual pages handle auth requirements
       }
     } catch (error) {
-      console.error('âŒ [AUTH CHECK] Auth check error:', error);
+      console.error('âŒ [AUTH CHECK] Auth check error:', error);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -218,7 +218,7 @@ export function useAuth() {
   return context;
 }
 
-/** Where each role belongs — must mirror src/middleware.ts */
+/** Where each role belongs  -  must mirror src/middleware.ts */
 const ROLE_HOME_MAP: Record<string, string> = {
   admin:      '/admin/home',
   superadmin: '/admin/home',

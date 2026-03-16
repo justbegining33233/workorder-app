@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import useRequireAuth from '@/lib/useRequireAuth';
-import { FaClipboardList, FaExclamationTriangle, FaIndustry, FaShoppingCart, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaClipboardList, FaExclamationTriangle, FaIndustry, FaShoppingCart, FaTimes } from 'react-icons/fa';
 
 interface PurchaseOrder {
   id: string;
@@ -54,7 +54,7 @@ export default function PurchaseOrdersPage() {
       if (r.ok) {
         setOrders(await r.json());
       } else if (r.status === 404) {
-        setOrders([]); // API not yet implemented — show empty state gracefully
+        setOrders([]); // API not yet implemented  -  show empty state gracefully
       } else {
         setError('Failed to load purchase orders. Please try again.');
       }
@@ -123,7 +123,7 @@ export default function PurchaseOrdersPage() {
       {/* Header */}
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <button onClick={() => router.back()} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 13, marginBottom: 6, padding: 0 }}>← Back</button>
+          <button onClick={() => router.back()} style={{ background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', fontSize: 13, marginBottom: 6, padding: 0 }}><FaArrowLeft style={{marginRight:4}} /> Back</button>
           <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaShoppingCart style={{marginRight:4}} /> Purchase Orders</h1>
           <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Manage vendor purchase orders and parts procurement</p>
         </div>

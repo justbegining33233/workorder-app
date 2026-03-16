@@ -60,7 +60,7 @@ export default function ThankYouPage() {
         <div className="sos-content">
           <div className="sos-pane" style={{gridColumn:'1 / -1'}}>
             <div className="sos-title" style={{textAlign:'center'}}>Thank you!</div>
-            <p className="sos-desc" style={{textAlign:'center'}}>Registration successful! Redirecting to dashboard in <span style={{color:'#ff7a59', fontWeight:700}}>{countdown}s</span>…</p>
+            <p className="sos-desc" style={{textAlign:'center'}}>Registration successful! Redirecting to dashboard in <span style={{color:'#ff7a59', fontWeight:700}}>{countdown}s</span>...</p>
             <div className="sos-actions" style={{justifyContent:'center'}}>
               <Link
                 href={(() => {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheck, FaClipboardList, FaDollarSign, FaEnvelope, FaExclamationTriangle, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaCheck, FaClipboardList, FaDollarSign, FaEnvelope, FaExclamationTriangle, FaInfoCircle, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
 
 type ActivityLog = {
   id: string;
@@ -94,10 +94,10 @@ export default function ActivityLogs() {
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
       case 'success': return '<FaCheck style={{marginRight:4}} />';
-      case 'info': return 'ℹ';
+      case 'info': return '<FaInfoCircle style={{marginRight:4}} />';
       case 'warning': return '<FaExclamationTriangle style={{marginRight:4}} />';
       case 'error': return '<FaTimes style={{marginRight:4}} />';
-      default: return '•';
+      default: return '-';
     }
   };
 
@@ -129,7 +129,7 @@ export default function ActivityLogs() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(255,255,255,0.1)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>

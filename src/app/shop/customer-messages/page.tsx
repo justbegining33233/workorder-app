@@ -99,7 +99,7 @@ export default function CustomerMessagesPage() {
                 onChange={e => setSelectedCustomerId(e.target.value)}
                 style={{padding:'10px 14px', background:'#1f2937', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, color:'#e5e7eb', fontSize:14, minWidth:280}}
               >
-                <option value="">— Choose a customer —</option>
+                <option value=""> -  Choose a customer  - </option>
                 {customers.map(c => (
                   <option key={c.id} value={c.id}>{c.name} ({c.email})</option>
                 ))}

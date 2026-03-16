@@ -136,7 +136,7 @@ function getPlanDescription(plan: SubscriptionPlan): string {
     case 'starter':
       return 'Solo operators & very small shops';
     case 'growth':
-      return 'Small shops with 2â€“5 technicians';
+      return 'Small shops with 2âEUR"5 technicians';
     case 'professional':
       return 'Established shops running payroll & inventory';
     case 'business':
@@ -260,7 +260,7 @@ export default function PricingPage() {
             Start Free Trial
           </button>
           <p className="text-sm text-gray-500 mt-2">
-            No credit card required â€¢ 14-day free trial â€¢ Cancel anytime
+            No credit card required âEUR¢ 14-day free trial âEUR¢ Cancel anytime
           </p>
         </div>
       </div>

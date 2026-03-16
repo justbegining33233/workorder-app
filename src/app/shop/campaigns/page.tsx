@@ -228,7 +228,7 @@ export default function CampaignsPage() {
                     {c.subject && <div style={{ fontSize: 13, color: '#9aa3b2' }}>Subject: {c.subject}</div>}
                     <div style={{ fontSize: 13, color: '#9aa3b2', marginTop: 4 }}>
                       {c.recipientCount} recipients
-                      {c.status === 'sent' && ` • ${c.sentCount} sent • ${c.failedCount} failed`}
+                      {c.status === 'sent' && ` - ${c.sentCount} sent - ${c.failedCount} failed`}
                     </div>
                   </div>
                   <div style={{ fontSize: 12, color: '#9aa3b2' }}>

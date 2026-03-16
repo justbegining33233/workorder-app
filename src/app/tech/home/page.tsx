@@ -12,7 +12,7 @@ import RealTimeWorkOrders from '@/components/RealTimeWorkOrders';
 import MobileLayout from '@/components/MobileLayout';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { FaBook, FaBox, FaCamera, FaCar, FaChartBar, FaCheckCircle, FaClipboardList, FaCog, FaComments, FaExclamationCircle, FaMapMarkerAlt, FaSearch, FaStopwatch, FaSyncAlt, FaTools, FaUser, FaWrench } from 'react-icons/fa';
+import { FaArrowRight, FaBook, FaBox, FaCamera, FaCar, FaChartBar, FaCheckCircle, FaCircle, FaClipboardList, FaCog, FaComments, FaExclamationCircle, FaMapMarkerAlt, FaRegCircle, FaSearch, FaStopwatch, FaSyncAlt, FaTools, FaUser, FaWrench } from 'react-icons/fa';
 
 export default function TechHome() {
   const router = useRouter();
@@ -272,7 +272,7 @@ export default function TechHome() {
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
                 <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}><FaWrench style={{marginRight:4}} /> My Tasks Today</h2>
-                <Link href="/workorders/list" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All →</Link>
+                <Link href="/workorders/list" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All <FaArrowRight style={{marginRight:4}} /></Link>
               </div>
               
               {todayJobs.length === 0 ? (
@@ -304,7 +304,7 @@ export default function TechHome() {
                             {job.issueDescription?.substring(0, 80)}...
                           </div>
                           <div style={{fontSize:12, color:'#6b7280'}}>
-                            WO-{job.id.substring(0, 8)} • {new Date(job.createdAt).toLocaleDateString()}
+                            WO-{job.id.substring(0, 8)} - {new Date(job.createdAt).toLocaleDateString()}
                           </div>
                         </div>
                         <Link
@@ -402,7 +402,7 @@ export default function TechHome() {
                         {/* Show vendor addresses from recent POs when available */}
                         <div style={{minHeight:48, marginBottom:8}}>
                           {partsVendors.length === 0 ? (
-                            <div style={{fontSize:12, color:'#9aa3b2'}}>No recent POs — shop pickup shown on map</div>
+                            <div style={{fontSize:12, color:'#9aa3b2'}}>No recent POs  -  shop pickup shown on map</div>
                           ) : (
                             <div style={{display:'flex', flexDirection:'column', gap:6}}>
                               {partsVendors.map(p => (
@@ -868,7 +868,7 @@ export default function TechHome() {
                     <div style={{display:'flex', justifyContent:'space-between'}}>
                       <span style={{fontSize:13, color:'#9aa3b2'}}>Status:</span>
                       <span style={{fontSize:13, fontWeight:600, color: techProfile.available ? '#22c55e' : '#ef4444'}}>
-                        {techProfile.available ? '● Active' : '○ Inactive'}
+                        {techProfile.available ? '<FaCircle style={{marginRight:4}} /> Active' : '<FaRegCircle style={{marginRight:4}} /> Inactive'}
                       </span>
                     </div>
                   </div>

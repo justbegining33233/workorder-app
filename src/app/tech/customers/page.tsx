@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 import { useEffect, useState, useRef } from 'react';
-import { FaUsers } from 'react-icons/fa';
+import { FaArrowLeft, FaUsers } from 'react-icons/fa';
 
 export default function TechCustomers() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -62,7 +62,7 @@ export default function TechCustomers() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
           <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Tools
+            <FaArrowLeft style={{marginRight:4}} /> Back to Tools
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaUsers style={{marginRight:4}} /> Customer Portal</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Search customers and work orders</p>
@@ -78,7 +78,7 @@ export default function TechCustomers() {
               aria-label="Search work orders"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Way too big search — try: WO-4324, tire, brake, John Doe, VIN..."
+              placeholder="Way too big search  -  try: WO-4324, tire, brake, John Doe, VIN..."
               style={{flex:1, padding:'14px 18px', borderRadius:12, border:'1px solid rgba(255,255,255,0.08)', background:'rgba(255,255,255,0.02)', color:'#e5e7eb', fontSize:16}}
               onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
             />
@@ -99,7 +99,7 @@ export default function TechCustomers() {
                   <Link key={wo.id} href={`/workorders/${wo.id}`} style={{textDecoration:'none'}}>
                     <div style={{display:'flex', justifyContent:'space-between', padding:12, borderRadius:8, background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.04)'}}>
                       <div>
-                        <div style={{fontWeight:800, color:'#e5e7eb'}}>WO-{wo.id.substring(0,8)} • {wo.status}</div>
+                        <div style={{fontWeight:800, color:'#e5e7eb'}}>WO-{wo.id.substring(0,8)} - {wo.status}</div>
                         <div style={{fontSize:13, color:'#9aa3b2'}}>{wo.issueDescription?.symptoms || (wo.vehicleType ? wo.vehicleType : 'No description')}</div>
                       </div>
                       <div style={{textAlign:'right'}}>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaClipboardList, FaDollarSign, FaStopwatch, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaClipboardList, FaDollarSign, FaStopwatch, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
 
 interface WorkOrderTemplate {
   id: string;
@@ -115,7 +115,7 @@ export default function WorkOrderTemplatesPage() {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
           <div>
-            <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
+            <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}><FaArrowLeft style={{marginRight:4}} /> Admin</Link>
             <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 4px' }}><FaClipboardList style={{marginRight:4}} /> Work Order Templates</h1>
             <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Save common job configurations for quick work order creation</p>
           </div>
@@ -209,7 +209,7 @@ export default function WorkOrderTemplatesPage() {
               {error && <p style={{ color: '#fca5a5', fontSize: 13, marginBottom: 12 }}>{error}</p>}
               <div style={{ display: 'flex', gap: 10 }}>
                 <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
-                  {saving ? 'Saving…' : editId ? 'Update Template' : 'Create Template'}
+                  {saving ? 'Saving...' : editId ? 'Update Template' : 'Create Template'}
                 </button>
                 <button onClick={() => { setShowForm(false); setError(null); }} style={{ padding: '11px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
                   Cancel

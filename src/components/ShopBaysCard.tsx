@@ -353,7 +353,7 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
             color: "#9ca3af",
             fontSize: 12
           }}>
-            Showing first 50 bays • Total: {bays.length} bays
+            Showing first 50 bays - Total: {bays.length} bays
           </div>
         )}
       </div>

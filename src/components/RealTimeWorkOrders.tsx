@@ -39,7 +39,7 @@ export default function RealTimeWorkOrders({
   }, [isConnected, on, off, onWorkOrderUpdate]);
 
   if (!isConnected) {
-    // Don't show a disconnected banner in the UI — keep it silent for UX.
+    // Don't show a disconnected banner in the UI  -  keep it silent for UX.
     return null;
   }
 

@@ -1,5 +1,5 @@
 'use client';
-import { FaClock } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaClock } from 'react-icons/fa';
 
 import { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
@@ -133,7 +133,7 @@ export default function TechTimesheet() {
     entries.forEach(e => {
       const date = new Date(e.clockIn).toISOString().split('T')[0];
       const clockIn = formatTime(e.clockIn);
-      const clockOut = e.clockOut ? formatTime(e.clockOut) : '—';
+      const clockOut = e.clockOut ? formatTime(e.clockOut) : ' - ';
       const durationMs = e.clockOut ? (new Date(e.clockOut).getTime() - new Date(e.clockIn).getTime()) : (Date.now() - new Date(e.clockIn).getTime());
       const duration = fmtDurationMs(durationMs);
       const hours = e.hoursWorked ?? (durationMs / (1000*60*60));
@@ -183,8 +183,8 @@ export default function TechTimesheet() {
       <html><head><title>Payroll ${start.toLocaleDateString()} - ${end.toLocaleDateString()}</title>
       <style>body{font-family:Arial,sans-serif;padding:20px;color:#111}table{width:100%;border-collapse:collapse}th,td{padding:8px;border:1px solid #ddd;text-align:left}</style>
       </head><body>
-        <h2>Payroll — ${user.name}</h2>
-        <div>${start.toLocaleDateString()} → ${end.toLocaleDateString()}</div>
+        <h2>Payroll  -  ${user.name}</h2>
+        <div>${start.toLocaleDateString()} <FaArrowRight style={{marginRight:4}} /> ${end.toLocaleDateString()}</div>
         <table>
           <thead><tr><th>Regular Hours</th><th>Overtime Hours</th><th>Hourly Rate</th><th>Regular Pay</th><th>Overtime Pay</th><th>Total Pay</th></tr></thead>
           <tbody>
@@ -212,7 +212,7 @@ export default function TechTimesheet() {
 
   const { start, end } = getRangeDates();
   // Only show entries in the detailed table that are meaningful there.
-  // Non‑billable / empty rows remain visible in the compact Pay Period table above.
+  // Non-billable / empty rows remain visible in the compact Pay Period table above.
   const detailedEntries = entries.filter(e => e.workOrderId || e.isPto || (e.notes && e.notes.toString().trim() !== ''));
 
   return (
@@ -221,7 +221,7 @@ export default function TechTimesheet() {
         <div style={{maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
           <div>
             <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:8, display:'inline-block'}}>
-              ← Back to Tools
+              <FaArrowLeft style={{marginRight:4}} /> Back to Tools
             </Link>
             <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaClock style={{marginRight:4}} /> Time Tracking</h1>
             <p style={{fontSize:14, color:'#9aa3b2'}}>Track your work hours, breaks, and job time for payroll</p>
@@ -232,7 +232,7 @@ export default function TechTimesheet() {
               <button onClick={() => setRange('week')} style={{padding:'8px 12px', borderRadius:8, background: range==='week'? '#111827':'transparent', border:'1px solid rgba(255,255,255,0.08)', color:'#e5e7eb'}}>This Week</button>
               <button onClick={() => setRange('month')} style={{padding:'8px 12px', borderRadius:8, background: range==='month'? '#111827':'transparent', border:'1px solid rgba(255,255,255,0.08)', color:'#e5e7eb'}}>This Month</button>
             </div>
-            <div style={{fontSize:12, color:'#9aa3b2', marginTop:6}}>{start.toLocaleDateString()} → {end.toLocaleDateString()}</div>
+            <div style={{fontSize:12, color:'#9aa3b2', marginTop:6}}>{start.toLocaleDateString()} <FaArrowRight style={{marginRight:4}} /> {end.toLocaleDateString()}</div>
           </div>
         </div>
       </div>
@@ -255,7 +255,7 @@ export default function TechTimesheet() {
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
             <div>
               <h3 style={{margin:0, color:'#e5e7eb'}}>Timesheet</h3>
-              <div style={{fontSize:12, color:'#9aa3b2'}}>Pay period: <strong style={{color:'#e5e7eb'}}>{start.toLocaleDateString()} → {end.toLocaleDateString()}</strong></div>
+              <div style={{fontSize:12, color:'#9aa3b2'}}>Pay period: <strong style={{color:'#e5e7eb'}}>{start.toLocaleDateString()} <FaArrowRight style={{marginRight:4}} /> {end.toLocaleDateString()}</strong></div>
             </div>
 
             <div style={{textAlign:'right'}}>
@@ -267,8 +267,8 @@ export default function TechTimesheet() {
           <div style={{background:'rgba(0,0,0,0.35)', border:'1px solid rgba(255,255,255,0.04)', borderRadius:12, overflow:'hidden'}}>
             {/* Pay period summary */}
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 12px', borderBottom:'1px solid rgba(255,255,255,0.02)'}}>
-              <div style={{fontSize:13, color:'#9aa3b2'}}>PAY PERIOD — <strong style={{color:'#e5e7eb'}}>{start.toLocaleDateString()} → {end.toLocaleDateString()}</strong></div>
-              <div style={{fontSize:13, color:'#e5e7eb', fontWeight:700}}>TOTAL HOURS — {totals.totalHours.toFixed(2)} hrs</div>
+              <div style={{fontSize:13, color:'#9aa3b2'}}>PAY PERIOD  -  <strong style={{color:'#e5e7eb'}}>{start.toLocaleDateString()} <FaArrowRight style={{marginRight:4}} /> {end.toLocaleDateString()}</strong></div>
+              <div style={{fontSize:13, color:'#e5e7eb', fontWeight:700}}>TOTAL HOURS  -  {totals.totalHours.toFixed(2)} hrs</div>
             </div>
 
             {/* Compact pay-period table: Date | Clock In | Clock Out | Hours */}
@@ -295,7 +295,7 @@ export default function TechTimesheet() {
                   <div key={pe.id} style={{display:'grid', gridTemplateColumns:'120px 100px 100px 80px', padding:'8px 12px', borderBottom:'1px solid rgba(255,255,255,0.03)', alignItems:'center', color:'#e5e7eb'}}>
                     <div style={{fontSize:13, color:'#9aa3b2'}}>{ci.toLocaleDateString()}</div>
                     <div style={{fontWeight:600, fontFamily:'monospace'}}>{formatTime(ci)}</div>
-                    <div style={{fontWeight:600, fontFamily:'monospace'}}>{co ? formatTime(co) : '—'}</div>
+                    <div style={{fontWeight:600, fontFamily:'monospace'}}>{co ? formatTime(co) : ' - '}</div>
                     <div style={{textAlign:'right', fontWeight:700}}>{hours.toFixed(2)}</div>
                   </div>
                 );
@@ -335,8 +335,8 @@ export default function TechTimesheet() {
                           </div>
                         ) : (
                           <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                            <span style={{color:'#9aa3b2'}}>—</span>
-                            <span style={{fontSize:11, background:'rgba(255,255,255,0.03)', color:'#e5e7eb', padding:'2px 6px', borderRadius:999}}>Non‑billable</span>
+                            <span style={{color:'#9aa3b2'}}> - </span>
+                            <span style={{fontSize:11, background:'rgba(255,255,255,0.03)', color:'#e5e7eb', padding:'2px 6px', borderRadius:999}}>Non-billable</span>
                           </div>
                         )
                       )}
@@ -347,7 +347,7 @@ export default function TechTimesheet() {
                       {isEditing ? (
                         <input value={editValues.notes || ''} onChange={(ev) => setEditValues({...editValues, notes: ev.target.value})} placeholder="Notes" style={{width:'100%', padding:6, borderRadius:6, border:'1px solid rgba(255,255,255,0.06)'}} />
                       ) : (
-                        e.notes || '—'
+                        e.notes || ' - '
                       )}
                     </div>
 
@@ -360,7 +360,7 @@ export default function TechTimesheet() {
                         ) : e.isPto ? (
                           <div style={{fontSize:11, color:'#fde68a', background:'#2b2110', padding:'2px 6px', borderRadius:999}}>PTO</div>
                         ) : (
-                          <div style={{fontSize:11, color:'#9aa3b2', background:'rgba(255,255,255,0.03)', padding:'2px 6px', borderRadius:999}}>Non‑billable</div>
+                          <div style={{fontSize:11, color:'#9aa3b2', background:'rgba(255,255,255,0.03)', padding:'2px 6px', borderRadius:999}}>Non-billable</div>
                         )}
                       </div>
 
@@ -406,10 +406,10 @@ export default function TechTimesheet() {
             </div>
           </div>
 
-          {/* Billable hours — separate table for WO-linked time */}
+          {/* Billable hours  -  separate table for WO-linked time */}
           <div style={{marginTop:16, background:'rgba(0,0,0,0.28)', border:'1px solid rgba(255,255,255,0.04)', borderRadius:12, overflow:'hidden'}}>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 12px', borderBottom:'1px solid rgba(255,255,255,0.02)'}}>
-              <div style={{fontSize:13, color:'#9aa3b2'}}>BILLABLE HOURS — <strong style={{color:'#e5e7eb'}}>{start.toLocaleDateString()} → {end.toLocaleDateString()}</strong></div>
+              <div style={{fontSize:13, color:'#9aa3b2'}}>BILLABLE HOURS  -  <strong style={{color:'#e5e7eb'}}>{start.toLocaleDateString()} <FaArrowRight style={{marginRight:4}} /> {end.toLocaleDateString()}</strong></div>
               <div style={{fontSize:13, color:'#e5e7eb', fontWeight:700}}>{totals.billableHours.toFixed(2)} hrs</div>
             </div>
 

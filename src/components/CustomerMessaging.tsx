@@ -73,7 +73,7 @@ export default function CustomerMessaging({
         {messages.length === 0 && <div className="text-sm text-gray-500">No messages yet.</div>}
         {messages.map((m) => (
           <div key={m.id} className={`p-2 rounded ${m.sender === 'customer' ? 'bg-blue-50' : 'bg-gray-50'}`}>
-            <div className="text-xs text-gray-500">{m.senderName ?? m.sender} • {new Date(m.timestamp).toLocaleString()}</div>
+            <div className="text-xs text-gray-500">{m.senderName ?? m.sender} - {new Date(m.timestamp).toLocaleString()}</div>
             <div className="text-sm text-gray-800">{m.body}</div>
           </div>
         ))}

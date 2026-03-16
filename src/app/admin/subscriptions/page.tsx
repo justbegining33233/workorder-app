@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCrown, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaCrown, FaUserTie, FaWrench } from 'react-icons/fa';
 
 interface SubscriptionData {
   id: string;
@@ -160,7 +160,7 @@ export default function AdminSubscriptionsPage() {
                 display: 'inline-block',
               }}
             >
-              ← Back to Dashboard
+              <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
             </Link>
             <button
               onClick={handleLogout}
@@ -237,7 +237,7 @@ export default function AdminSubscriptionsPage() {
                       <div>
                         <h3 style={{ color: '#fff', fontSize: 18, margin: 0 }}>{subscription.shop.shopName}</h3>
                         <p style={{ color: '#9aa3b2', margin: '4px 0', fontSize: 14 }}>
-                          Owner: {subscription.shop.ownerName} • {subscription.shop.email}
+                          Owner: {subscription.shop.ownerName} - {subscription.shop.email}
                         </p>
                       </div>
                       <div style={{ textAlign: 'right' }}>
@@ -271,13 +271,13 @@ export default function AdminSubscriptionsPage() {
                       <div>
                         <div style={{ color: '#9aa3b2', fontSize: 12 }}>Users</div>
                         <div style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>
-                          {subscription.userCount} / {subscription.maxUsers === -1 ? '∞' : subscription.maxUsers}
+                          {subscription.userCount} / {subscription.maxUsers === -1 ? 'Unlimited' : subscription.maxUsers}
                         </div>
                       </div>
                       <div>
                         <div style={{ color: '#9aa3b2', fontSize: 12 }}>Shops</div>
                         <div style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>
-                          1 / {subscription.maxShops === -1 ? '∞' : subscription.maxShops}
+                          1 / {subscription.maxShops === -1 ? 'Unlimited' : subscription.maxShops}
                         </div>
                       </div>
                       <div>
@@ -342,7 +342,7 @@ export default function AdminSubscriptionsPage() {
                         {user.firstName} {user.lastName}
                       </div>
                       <div style={{ color: '#9aa3b2', fontSize: 14 }}>
-                        {user.email} • @{user.username}
+                        {user.email} - @{user.username}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome } from 'react-icons/fa';
+import { FaChevronRight, FaHome } from 'react-icons/fa';
 
 export default function Breadcrumbs() {
   const pathname = usePathname() || '';
@@ -87,7 +87,7 @@ export default function Breadcrumbs() {
           
           return (
             <div key={crumb.href} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ color: '#4b5563', fontSize: 13 }}>›</span>
+              <span style={{ color: '#4b5563', fontSize: 13 }}><FaChevronRight style={{marginRight:4}} /></span>
               {isLast ? (
                 <span style={{
                   color: '#e5332a',

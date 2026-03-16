@@ -60,7 +60,7 @@ export default function ARAgingPage() {
     <div style={{ minHeight: '100vh', background: 'transparent', color: '#e5e7eb', fontFamily: 'system-ui,sans-serif' }}>
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}><FaChartBar style={{fontSize:26}} /> Accounts Receivable Aging</h1>
-        <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Track outstanding balances by age — follow up on overdue accounts</p>
+        <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Track outstanding balances by age  -  follow up on overdue accounts</p>
       </div>
 
       <div style={{ padding: '24px 32px 0' }}>

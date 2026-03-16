@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaEnvelope, FaExclamationTriangle, FaMapMarkerAlt, FaPhone, FaStar } from 'react-icons/fa';
+import { FaArrowLeft, FaEnvelope, FaExclamationTriangle, FaMapMarkerAlt, FaPhone, FaStar } from 'react-icons/fa';
 
 interface ShopLocation {
   id: string;
@@ -100,7 +100,7 @@ export default function ShopLocationsPage() {
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
           <div>
-            <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
+            <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}><FaArrowLeft style={{marginRight:4}} /> Admin</Link>
             <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 4px' }}><FaMapMarkerAlt style={{marginRight:4}} /> Shop Locations</h1>
             <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Manage multiple shop branches and service locations</p>
           </div>
@@ -210,7 +210,7 @@ export default function ShopLocationsPage() {
               {error && <p style={{ color: '#fca5a5', fontSize: 13, marginBottom: 12 }}>{error}</p>}
               <div style={{ display: 'flex', gap: 10 }}>
                 <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
-                  {saving ? 'Saving…' : editId ? 'Update Location' : 'Add Location'}
+                  {saving ? 'Saving...' : editId ? 'Update Location' : 'Add Location'}
                 </button>
                 <button onClick={() => { setShowForm(false); setError(null); }} style={{ padding: '11px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>Cancel</button>
               </div>

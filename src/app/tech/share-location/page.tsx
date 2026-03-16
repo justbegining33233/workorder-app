@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaCheck, FaClipboardList, FaComments, FaMap, FaMapMarkerAlt, FaSyncAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaCheck, FaClipboardList, FaComments, FaMap, FaMapMarkerAlt, FaSyncAlt } from 'react-icons/fa';
 
 export default function ShareLocation() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -66,7 +66,7 @@ export default function ShareLocation() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(59,130,246,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:900, margin:'0 auto'}}>
           <Link href="/tech/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaMapMarkerAlt style={{marginRight:4}} /> Share Location</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Share your current location with customers or dispatch</p>

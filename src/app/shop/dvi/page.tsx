@@ -125,7 +125,7 @@ export default function DVIPage() {
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaSearch style={{marginRight:4}} /> Digital Vehicle Inspections</h1>
-          <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Multi-point inspections sent to customers for approval — average 35% upsell lift</p>
+          <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Multi-point inspections sent to customers for approval  -  average 35% upsell lift</p>
         </div>
         <button onClick={() => setShowNew(true)} style={{ background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>+ New DVI</button>
       </div>

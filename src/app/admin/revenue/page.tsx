@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBolt, FaBullseye, FaChartBar, FaChartLine, FaCheckCircle, FaCreditCard, FaDollarSign, FaHourglassHalf, FaSyncAlt, FaTimesCircle, FaUniversity, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBolt, FaBullseye, FaChartBar, FaChartLine, FaCheckCircle, FaCreditCard, FaDollarSign, FaHourglassHalf, FaSyncAlt, FaTimesCircle, FaUniversity, FaWrench } from 'react-icons/fa';
 
 interface RevenueData {
   mrr: number;
@@ -198,7 +198,7 @@ export default function AdminRevenuePage() {
               href="/admin/home"
               className="text-slate-400 hover:text-slate-100 transition-colors text-sm"
             >
-              ← Back to Dashboard
+              <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
             </Link>
             <h1 className="text-2xl font-semibold text-slate-100"><FaDollarSign style={{marginRight:4}} /> Revenue & Payouts</h1>
           </div>
@@ -292,7 +292,7 @@ export default function AdminRevenuePage() {
             </div>
             <div className="bg-[#0f172a] border border-[#1f2937] rounded-2xl p-4 text-center">
               <div className="text-2xl font-bold text-blue-400">{liveMetrics.conversionRate}</div>
-              <div className="text-slate-400 text-xs">Trial → Paid</div>
+              <div className="text-slate-400 text-xs">Trial <FaArrowRight style={{marginRight:4}} /> Paid</div>
             </div>
             <div className="bg-[#0f172a] border border-[#1f2937] rounded-2xl p-4 text-center">
               <div className="text-2xl font-bold text-purple-400">{formatCurrency(liveMetrics.arpu)}</div>
@@ -599,7 +599,7 @@ export default function AdminRevenuePage() {
           </div>
           <div className="mt-4 p-4 bg-[#111827]/60 border border-[#1f2937] rounded-xl">
             <p className="text-slate-300 text-sm">
-              <strong><FaBolt style={{marginRight:4}} /> Setup Required:</strong> Go to <a href="https://dashboard.stripe.com/settings/payouts" target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Stripe Dashboard → Settings → Payouts</a> to connect your bank account and set your payout schedule (daily, weekly, or monthly).
+              <strong><FaBolt style={{marginRight:4}} /> Setup Required:</strong> Go to <a href="https://dashboard.stripe.com/settings/payouts" target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Stripe Dashboard <FaArrowRight style={{marginRight:4}} /> Settings -> Payouts</a> to connect your bank account and set your payout schedule (daily, weekly, or monthly).
             </p>
           </div>
         </div>

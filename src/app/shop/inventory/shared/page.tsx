@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 
 interface SharedItem {
   id: string;
@@ -91,7 +91,7 @@ export default function SharedInventoryPage() {
         <main style={{ flex: 1, padding: '24px', maxWidth: 1100, margin: '0 auto', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <Link href="/shop/inventory" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}>← Inventory</Link>
+              <Link href="/shop/inventory" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}><FaArrowLeft style={{marginRight:4}} /> Inventory</Link>
               <h1 style={{ color: '#fff', fontSize: 28, fontWeight: 700, marginTop: 4 }}>Shared Inventory</h1>
               <p style={{ color: '#9ca3af', fontSize: 14 }}>View inventory across all your shops and transfer parts</p>
             </div>

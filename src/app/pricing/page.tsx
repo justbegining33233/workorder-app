@@ -8,7 +8,7 @@ const planOrder: SubscriptionPlan[] = ["starter", "growth", "professional", "bus
 
 const planDescriptions: Record<SubscriptionPlan, string> = {
   starter: "Solo operators & very small shops",
-  growth: "Small shops with 2–5 technicians",
+  growth: "Small shops with 2-5 technicians",
   professional: "Established shops running payroll & inventory",
   business: "High-volume shops & multi-location operators",
   enterprise: "Franchises, fleets, and enterprise networks"

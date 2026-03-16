@@ -5,7 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaUserTie, FaUsers, FaWrench } from 'react-icons/fa';
+import { FaCircle, FaUserTie, FaUsers, FaWrench } from 'react-icons/fa';
 
 interface TeamMember {
   id: string;
@@ -296,7 +296,7 @@ export default function ManageTeamPage() {
                               {member.role === 'tech' ? 'Technician' : 'Manager'}
                             </span>
                             <span style={{padding:'4px 12px', background: member.status === 'active' ? 'rgba(34,197,94,0.2)' : 'rgba(107,114,128,0.2)', color: member.status === 'active' ? '#22c55e' : '#9ca3af', borderRadius:12, fontSize:12, fontWeight:600}}>
-                              ● {member.status === 'active' ? 'Active' : 'Inactive'}
+                              <FaCircle style={{marginRight:4}} /> {member.status === 'active' ? 'Active' : 'Inactive'}
                             </span>
                           </div>
                         </div>
@@ -382,7 +382,7 @@ export default function ManageTeamPage() {
 
             <div style={{marginBottom:24}}>
               <label style={{display:'block', fontSize:13, color:'#9aa3b2', marginBottom:8}}>Password *</label>
-              <input type="password" value={newMember.password} onChange={(e) => setNewMember({...newMember, password: e.target.value})} placeholder="••••••••" style={{width:'100%', padding:'12px', background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, color:'#e5e7eb', fontSize:14}} />
+              <input type="password" value={newMember.password} onChange={(e) => setNewMember({...newMember, password: e.target.value})} placeholder="--------" style={{width:'100%', padding:'12px', background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, color:'#e5e7eb', fontSize:14}} />
             </div>
 
             <div style={{display:'flex', gap:12}}>

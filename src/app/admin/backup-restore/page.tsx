@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaArrowDown, FaBox, FaCheck, FaCheckCircle, FaExclamationTriangle, FaHourglassHalf, FaSave } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaBox, FaCheck, FaCheckCircle, FaExclamationTriangle, FaHourglassHalf, FaInfoCircle, FaSave } from 'react-icons/fa';
 
 export default function BackupRestore() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -36,7 +36,7 @@ export default function BackupRestore() {
       setLastBackup(new Date().toLocaleString());
       showToast('Backup downloaded successfully');
     } catch {
-      showToast('Backup failed — try again', false);
+      showToast('Backup failed  -  try again', false);
     } finally {
       setDownloading(false);
     }
@@ -57,13 +57,13 @@ export default function BackupRestore() {
         <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/admin/home" style={{ color: '#e5332a', fontSize: 22, fontWeight: 900, textDecoration: 'none' }}>FixTray Admin</Link>
           <h1 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}><FaSave style={{marginRight:4}} /> Backup & Restore</h1>
-          <Link href="/admin/system-settings" style={{ color: '#9aa3b2', fontSize: 13, textDecoration: 'none' }}>← System Settings</Link>
+          <Link href="/admin/system-settings" style={{ color: '#9aa3b2', fontSize: 13, textDecoration: 'none' }}><FaArrowLeft style={{marginRight:4}} /> System Settings</Link>
         </div>
       </div>
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px' }}>
         <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 10, padding: '16px 20px', marginBottom: 28, display: 'flex', gap: 12 }}>
-          <div style={{ fontSize: 20 }}>ℹ</div>
+          <div style={{ fontSize: 20 }}><FaInfoCircle style={{marginRight:4}} /></div>
           <div style={{ fontSize: 13, color: '#9aa3b2', lineHeight: 1.6 }}>
             Backups export a JSON snapshot of all platform data. Sensitive fields (passwords, payment tokens) are excluded. Store backups securely.
           </div>
@@ -85,7 +85,7 @@ export default function BackupRestore() {
             )}
             <button onClick={handleDownload} disabled={downloading}
               style={{ background: downloading ? '#444' : '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: downloading ? 'not-allowed' : 'pointer' }}>
-              {downloading ? '<FaHourglassHalf style={{marginRight:4}} /> Preparing…' : '<FaArrowDown style={{marginRight:4}} /> Download Backup (JSON)'}
+              {downloading ? '<FaHourglassHalf style={{marginRight:4}} /> Preparing...' : '<FaArrowDown style={{marginRight:4}} /> Download Backup (JSON)'}
             </button>
           </div>
         </div>

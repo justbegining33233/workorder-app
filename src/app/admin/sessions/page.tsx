@@ -66,7 +66,7 @@ export default function AdminSessionsPage() {
             <div className="flex justify-between">
               <div>
                 <div><strong>Session:</strong> {s.id}</div>
-                <div><strong>Admin:</strong> {s.adminId || '—'}</div>
+                <div><strong>Admin:</strong> {s.adminId || ' - '}</div>
                 <div><strong>Created:</strong> {new Date(s.createdAt).toLocaleString()}</div>
                 <div><strong>Expires:</strong> {s.expiresAt ? new Date(s.expiresAt).toLocaleString() : 'Never'}</div>
                 {s.metadata && <div><strong>Meta:</strong> {JSON.stringify(s.metadata)}</div>}

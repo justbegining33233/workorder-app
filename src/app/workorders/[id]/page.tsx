@@ -7,7 +7,7 @@ import { WorkOrder, Message } from '@/types/workorder';
 import { getWorkOrderByIdClient, updateWorkOrderClient, deleteWorkOrderClient } from '@/lib/workordersClient';
 import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaEnvelope, FaExclamationTriangle, FaFileAlt, FaPrint, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaEnvelope, FaExclamationTriangle, FaFileAlt, FaPrint, FaTimes } from 'react-icons/fa';
 
 type Part = { name: string; quantity: number; unitPrice: number };
 type Labor = { description: string; hours: number; ratePerHour: number };
@@ -376,7 +376,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
     return (
       <div style={{minHeight:'100vh', background: 'transparent'}}>
         <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px'}}>
-          <Link href="/workorders/list" style={{color:'#3b82f6', textDecoration:'none', fontSize:14}}>← Back to Work Orders</Link>
+          <Link href="/workorders/list" style={{color:'#3b82f6', textDecoration:'none', fontSize:14}}><FaArrowLeft style={{marginRight:4}} /> Back to Work Orders</Link>
         </div>
         <div style={{textAlign:'center', paddingTop:80}}>
           <div style={{color:'#e5332a', fontSize:24, fontWeight:600, marginBottom:16}}><FaExclamationTriangle style={{marginRight:4}} /> {error || 'Work order not found'}</div>
@@ -416,17 +416,17 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
       {/* Header */}
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
-          <Link href="/workorders/list" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}>← Back to Work Orders</Link>
+          <Link href="/workorders/list" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, marginBottom:16, display:'inline-block'}}><FaArrowLeft style={{marginRight:4}} /> Back to Work Orders</Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:16}}>
             <div>
               <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>Work Order: {workOrder.id}</h1>
               <div style={{fontSize:14, color:'#9aa3b2'}}>
                 <span>Created: {new Date(workOrder.createdAt).toLocaleDateString()}</span>
-                <span style={{margin:'0 8px'}}>•</span>
+                <span style={{margin:'0 8px'}}>-</span>
                 <span>Customer: {workOrder.createdBy}</span>
                 {workOrder.assignedTo && (
                   <>
-                    <span style={{margin:'0 8px'}}>•</span>
+                    <span style={{margin:'0 8px'}}>-</span>
                     <span>Assigned: {workOrder.assignedTo}</span>
                   </>
                 )}

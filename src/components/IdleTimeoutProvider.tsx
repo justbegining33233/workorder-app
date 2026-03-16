@@ -1,3 +1,4 @@
+import { FaArrowRight } from 'react-icons/fa';
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -17,7 +18,7 @@ export default function IdleTimeoutProvider({ children }: { children: React.Reac
     if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null; }
   };
 
-  // Called by hook when idle timer fires → force logout
+  // Called by hook when idle timer fires <FaArrowRight style={{marginRight:4}} /> force logout
   const handleIdle = useCallback(() => {
     stopCountdown();
     setShowWarning(false);
@@ -44,7 +45,7 @@ export default function IdleTimeoutProvider({ children }: { children: React.Reac
     setSecondsLeft(WARN_SECONDS);
   }, []);
 
-  // "Stay logged in" button — dispatch a real activity event so the
+  // "Stay logged in" button  -  dispatch a real activity event so the
   // hook resets its internal timers and calls handleActive for us
   const handleStay = () => {
     window.dispatchEvent(new MouseEvent('mousemove'));

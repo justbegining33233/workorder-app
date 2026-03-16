@@ -230,7 +230,7 @@ export default function CustomerDashboard() {
       icon: '', 
       name: 'Appointments', 
       desc: 'Book and manage service appointments', 
-      detail: `${stats.upcomingAppointments} upcoming • ${stats.appointmentCount} total`, 
+      detail: `${stats.upcomingAppointments} upcoming - ${stats.appointmentCount} total`, 
       badge: stats.upcomingAppointments > 0 ? 'Active' : '', 
       badgeColor: '#10b981', 
       link: '/customer/appointments',
@@ -313,7 +313,7 @@ export default function CustomerDashboard() {
       icon: '', 
       name: 'Rewards', 
       desc: 'Earn points and unlock perks', 
-      detail: `${loyaltyPoints} points • ${tier} tier`, 
+      detail: `${loyaltyPoints} points - ${tier} tier`, 
       badge: 'New', 
       badgeColor: '#a855f7', 
       link: '/customer/rewards',
@@ -395,7 +395,7 @@ export default function CustomerDashboard() {
       {/* Top Navigation */}
       <TopNavBar showMenuButton={false} />
       <div style={{background:'rgba(0,0,0,0.15)', padding:'8px 32px', display:'flex', justifyContent:'flex-end'}}>
-        <div style={{fontSize:12, color:'#b8beca'}}>{tier} • {loyaltyPoints} pts</div>
+        <div style={{fontSize:12, color:'#b8beca'}}>{tier} - {loyaltyPoints} pts</div>
       </div>
 
       <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
@@ -551,7 +551,7 @@ export default function CustomerDashboard() {
                       <div style={{fontSize:11, fontWeight:600, color:'#9aa3b2', marginBottom:8, textTransform:'uppercase'}}>Recent</div>
                       {recentItems.map((item: any, idx: number) => (
                         <div key={idx} style={{fontSize:11, color:'#b8beca', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
-                          <span style={{color:'#e5332a'}}>•</span>
+                          <span style={{color:'#e5332a'}}>-</span>
                           <span style={{flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>
                             {item.serviceName || item.make || item.shopName || item.title || 'Item'}
                           </span>
@@ -615,7 +615,7 @@ export default function CustomerDashboard() {
                       <div style={{fontSize:11, fontWeight:600, color:'#9aa3b2', marginBottom:8, textTransform:'uppercase'}}>Recent</div>
                       {recentItems.map((item: any, idx: number) => (
                         <div key={idx} style={{fontSize:11, color:'#b8beca', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
-                          <span style={{color:'#e5332a'}}>•</span>
+                          <span style={{color:'#e5332a'}}>-</span>
                           <span style={{flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>
                             {item.message || item.subject || item.make || item.content || 'Item'}
                           </span>
@@ -679,7 +679,7 @@ export default function CustomerDashboard() {
                       <div style={{fontSize:11, fontWeight:600, color:'#9aa3b2', marginBottom:8, textTransform:'uppercase'}}>Recent</div>
                       {recentItems.map((item: any, idx: number) => (
                         <div key={idx} style={{fontSize:11, color:'#b8beca', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
-                          <span style={{color:'#e5332a'}}>•</span>
+                          <span style={{color:'#e5332a'}}>-</span>
                           <span style={{flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>
                             {item.shopName || item.rating || item.last4 || item.comment || 'Item'}
                           </span>
@@ -743,7 +743,7 @@ export default function CustomerDashboard() {
                       <div style={{fontSize:11, fontWeight:600, color:'#9aa3b2', marginBottom:8, textTransform:'uppercase'}}>Recent</div>
                       {recentItems.map((item: any, idx: number) => (
                         <div key={idx} style={{fontSize:11, color:'#b8beca', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
-                          <span style={{color:'#e5332a'}}>•</span>
+                          <span style={{color:'#e5332a'}}>-</span>
                           <span style={{flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>
                             {item.title || item.fileName || item.serviceName || 'Item'}
                           </span>

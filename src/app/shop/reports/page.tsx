@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaChartBar, FaDownload } from 'react-icons/fa';
+import { FaArrowLeft, FaChartBar, FaDownload } from 'react-icons/fa';
 
 interface MonthData { month: string; revenue: number; jobs: number; }
 interface ServiceData { service: string; jobs: number; revenue: number; }
@@ -120,7 +120,7 @@ export default function ShopReportsPage() {
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(245,158,11,0.3)', padding: '20px 32px' }}>
         <div style={{ maxWidth: 1600, margin: '0 auto' }}>
           <Link href={getDashboardLink()} style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 16, display: 'inline-block' }}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div>
@@ -158,13 +158,13 @@ export default function ShopReportsPage() {
               <SummaryCard label="Total Revenue" value={`$${report.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} color="#22c55e" border="rgba(34,197,94,0.3)" sub={`${report.totalJobs} total jobs`} />
               <SummaryCard label="Completed Jobs" value={report.completedJobs} color="#3b82f6" border="rgba(59,130,246,0.3)" sub={`${report.pendingJobs} still pending`} />
               <SummaryCard label="Avg Job Value" value={`$${report.avgJobValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} color="#f59e0b" border="rgba(245,158,11,0.3)" sub="per completed job" />
-              <SummaryCard label="Completion Rate" value={report.totalJobs > 0 ? `${Math.round((report.completedJobs / report.totalJobs) * 100)}%` : '—'} color="#8b5cf6" border="rgba(139,92,246,0.3)" sub={`${report.totalJobs} total jobs`} />
+              <SummaryCard label="Completion Rate" value={report.totalJobs > 0 ? `${Math.round((report.completedJobs / report.totalJobs) * 100)}%` : ' - '} color="#8b5cf6" border="rgba(139,92,246,0.3)" sub={`${report.totalJobs} total jobs`} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24 }}>
               {/* Revenue Trend */}
               <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
-                <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', marginBottom: 20 }}>Revenue Trend — {selectedYear}</h2>
+                <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', marginBottom: 20 }}>Revenue Trend  -  {selectedYear}</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {report.revenueByMonth.map((mo, idx) => {
                     const pct = (mo.revenue / maxRevenue) * 100;
@@ -209,7 +209,7 @@ export default function ShopReportsPage() {
 
             {/* Tech Performance */}
             <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', marginBottom: 20 }}>Technician Performance — {MONTH_NAMES[selectedMonth - 1]} {selectedYear}</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb', marginBottom: 20 }}>Technician Performance  -  {MONTH_NAMES[selectedMonth - 1]} {selectedYear}</h2>
               {report.techPerformance.length === 0 ? (
                 <div style={{ color: '#6b7280', fontSize: 14 }}>No technician data for this period.</div>
               ) : (

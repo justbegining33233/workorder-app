@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBook, FaStopwatch, FaTools } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBook, FaStopwatch, FaTools } from 'react-icons/fa';
 
 export default function AllTechTools() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -118,7 +118,7 @@ export default function AllTechTools() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/tech/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
@@ -167,7 +167,7 @@ export default function AllTechTools() {
                 <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>{tool.title}</h3>
                 <p style={{fontSize:14, color:'#9aa3b2', lineHeight:1.6, flex:1}}>{tool.description}</p>
                 <div style={{marginTop:16, paddingTop:16, borderTop:'1px solid rgba(255,255,255,0.1)'}}>
-                  <span style={{color:'#3b82f6', fontSize:14, fontWeight:600}}>Open Tool →</span>
+                  <span style={{color:'#3b82f6', fontSize:14, fontWeight:600}}>Open Tool <FaArrowRight style={{marginRight:4}} /></span>
                 </div>
               </div>
             </Link>

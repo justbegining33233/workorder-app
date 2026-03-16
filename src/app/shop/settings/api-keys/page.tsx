@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaKey } from 'react-icons/fa';
+import { FaArrowLeft, FaKey } from 'react-icons/fa';
 
 interface ApiKey {
   id: string;
@@ -102,7 +102,7 @@ export default function ApiKeysPage() {
         <main style={{ flex: 1, padding: '24px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
             <div>
-              <Link href="/shop/settings" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}>← Settings</Link>
+              <Link href="/shop/settings" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}><FaArrowLeft style={{marginRight:4}} /> Settings</Link>
               <h1 style={{ color: '#fff', fontSize: 28, fontWeight: 700, marginTop: 4 }}>API Keys</h1>
               <p style={{ color: '#9ca3af', fontSize: 14 }}>Manage API keys for external integrations</p>
             </div>
@@ -115,7 +115,7 @@ export default function ApiKeysPage() {
           {/* Newly Created Key Warning */}
           {createdKey && (
             <div style={{ background: '#052e16', border: '1px solid #16a34a', borderRadius: 12, padding: 20, marginBottom: 24 }}>
-              <div style={{ color: '#22c55e', fontWeight: 600, marginBottom: 8 }}><FaKey style={{marginRight:4}} /> API Key Created — Copy it now!</div>
+              <div style={{ color: '#22c55e', fontWeight: 600, marginBottom: 8 }}><FaKey style={{marginRight:4}} /> API Key Created  -  Copy it now!</div>
               <div style={{ color: '#e5e7eb', fontFamily: 'monospace', fontSize: 14, background: '#0f172a', padding: 12, borderRadius: 8, wordBreak: 'break-all' }}>
                 {createdKey}
               </div>
@@ -175,7 +175,7 @@ export default function ApiKeysPage() {
                 <div key={key.id} style={{ background: '#1e293b', borderRadius: 12, padding: 20, border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                   <div>
                     <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 15 }}>{key.name}</div>
-                    <div style={{ color: '#6b7280', fontFamily: 'monospace', fontSize: 13, marginTop: 2 }}>{key.prefix}•••</div>
+                    <div style={{ color: '#6b7280', fontFamily: 'monospace', fontSize: 13, marginTop: 2 }}>{key.prefix}---</div>
                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 6 }}>
                       {key.scopes.map(s => (
                         <span key={s} style={{ background: '#0f172a', color: '#60a5fa', padding: '2px 8px', borderRadius: 12, fontSize: 11 }}>{s}</span>

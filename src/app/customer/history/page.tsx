@@ -64,7 +64,7 @@ export default function History() {
                 <div>
                   <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{item.service}</h3>
                   <div style={{fontSize:16, color:'#3b82f6', fontWeight:600, marginBottom:4}}>{item.shop}</div>
-                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>{item.vehicle} • {item.date}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>{item.vehicle} - {item.date}</div>
                   <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>${item.cost.toFixed(2)}</div>
                   <div style={{fontSize:16, marginBottom:8}}>{renderStars(item.rating)}</div>
                 </div>

@@ -32,7 +32,7 @@ export default function AboutPage() {
         <div className="rounded-3xl border border-slate-800/70 bg-slate-950/70 p-8">
           <h2 className="text-2xl font-semibold text-white">Our story</h2>
           <p className="mt-4 text-sm text-slate-300">
-            FixTray started as an internal system for a multi-shop service group. The team wanted a unified command center for work orders, approvals, and customer updates. That system became FixTray — a platform built by operators for operators.
+            FixTray started as an internal system for a multi-shop service group. The team wanted a unified command center for work orders, approvals, and customer updates. That system became FixTray  -  a platform built by operators for operators.
           </p>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {[

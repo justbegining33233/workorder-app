@@ -1,5 +1,5 @@
 'use client';
-import { FaBolt, FaClock, FaHourglassHalf, FaSave } from 'react-icons/fa';
+import { FaArrowRight, FaBolt, FaClock, FaHourglassHalf, FaSave } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -395,7 +395,7 @@ export default function AdminTestPage() {
         <header className="h-14 bg-[#111827] border-b border-[#1F2937] flex items-center justify-between px-6 sticky top-0 z-10">
           <div>
             <h1 className="text-lg font-semibold text-[#F1F5F9]">System Status</h1>
-            <p className="text-xs text-[#64748B]">{systemModules.length} modules • {totalFeatures} features</p>
+            <p className="text-xs text-[#64748B]">{systemModules.length} modules - {totalFeatures} features</p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -446,11 +446,11 @@ export default function AdminTestPage() {
                 <div className="px-5 py-4 border-b border-[#1F2937] flex items-center justify-between">
                   <div>
                     <h2 className="text-sm font-semibold text-[#E2E8F0]">System Modules</h2>
-                    <p className="text-[11px] text-[#64748B] mt-0.5">{systemModules.length} modules • {totalFeatures} features</p>
+                    <p className="text-[11px] text-[#64748B] mt-0.5">{systemModules.length} modules - {totalFeatures} features</p>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <span className="text-emerald-400">{operationalFeatures} active</span>
-                    <span className="text-[#475569]">•</span>
+                    <span className="text-[#475569]">-</span>
                     <span className="text-[#64748B]">{totalFeatures - operationalFeatures} pending</span>
                   </div>
                 </div>
@@ -502,7 +502,7 @@ export default function AdminTestPage() {
                               onClick={(e) => e.stopPropagation()}
                               className="px-2 py-1 text-[#3B82F6] hover:bg-[#3B82F6]/10 text-xs font-medium rounded transition-colors duration-150 no-underline flex-shrink-0"
                             >
-                              Open →
+                              Open <FaArrowRight style={{marginRight:4}} />
                             </Link>
                           )}
                           
@@ -648,7 +648,7 @@ export default function AdminTestPage() {
           
           {/* Footer */}
           <div className="mt-8 pt-6 border-t border-[#1F2937] text-center text-[#64748B] text-xs">
-            <p>FixTray Admin Dashboard • © 2026</p>
+            <p>FixTray Admin Dashboard - © 2026</p>
           </div>
         </main>
       </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBell, FaCar, FaClock, FaCloud, FaCreditCard, FaCrown, FaEnvelope, FaHardHat, FaMicroscope, FaMobileAlt, FaPencilAlt, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBell, FaCar, FaCaretDown, FaClock, FaCloud, FaCreditCard, FaCrown, FaEnvelope, FaHardHat, FaInfoCircle, FaMicroscope, FaMobileAlt, FaPencilAlt, FaUserTie, FaWrench } from 'react-icons/fa';
 
 interface Feature {
   name: string;
@@ -27,13 +27,13 @@ export default function AppGuidePage() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
   const categories: FeatureCategory[] = [
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // AUTHENTICATION & SECURITY
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Authentication & Security',
       icon: '',
-      description: 'User login, registration, and security features — all roles',
+      description: 'User login, registration, and security features  -  all roles',
       features: [
         { name: 'User Login', description: 'Email/password authentication for all user types', status: 'ready', route: '/login', apiEndpoint: '/api/auth/login' },
         { name: 'User Registration', description: 'New user signup with email verification', status: 'ready', route: '/register', apiEndpoint: '/api/auth/register' },
@@ -44,7 +44,7 @@ export default function AppGuidePage() {
         { name: 'CSRF Protection', description: 'Cross-site request forgery prevention', status: 'ready', apiEndpoint: '/api/auth/csrf' },
         { name: 'Rate Limiting', description: 'Brute force protection on login', status: 'ready', notes: 'Built into auth endpoints' },
         { name: 'Session Management', description: 'View and revoke active sessions', status: 'ready', apiEndpoint: '/api/auth/sessions' },
-        { name: 'Two-Factor Auth (2FA)', description: 'Additional login security', status: 'ready', route: '/shop/settings/two-factor', apiEndpoint: '/api/auth/2fa/status', notes: 'OTP-based 2FA; generate code via /api/auth/2fa/setup → verify with /api/auth/2fa/verify → disable with /api/auth/2fa/disable' },
+        { name: 'Two-Factor Auth (2FA)', description: 'Additional login security', status: 'ready', route: '/shop/settings/two-factor', apiEndpoint: '/api/auth/2fa/status', notes: 'OTP-based 2FA; generate code via /api/auth/2fa/setup <FaArrowRight style={{marginRight:4}} /> verify with /api/auth/2fa/verify -> disable with /api/auth/2fa/disable' },
       ]
     },
     {
@@ -85,7 +85,7 @@ export default function AppGuidePage() {
     {
       name: 'Shop Admin Control Center',
       icon: '',
-      description: 'Full-featured shop admin panel — payroll, budget, team, employee profiles',
+      description: 'Full-featured shop admin panel  -  payroll, budget, team, employee profiles',
       features: [
         { name: 'Shop Admin Dashboard', description: 'Central control center with payroll budget, team clock status, and business overview', status: 'ready', route: '/shop/admin' },
         { name: 'Payroll Center', description: '7-tab payroll system: summaries, employee breakdown, time entries, rate management, overrides, budget tracking, and export', status: 'ready', route: '/shop/payroll', apiEndpoint: '/api/shop/payroll' },
@@ -396,11 +396,11 @@ export default function AppGuidePage() {
         { name: 'Docker Support', description: 'Container deployment', status: 'ready', notes: 'Dockerfile included' },
       ]
     },
-    // ─────────────────────────────────────────────
-    // ADMIN — DATA, EXPORT & REPORTING
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
+    // ADMIN  -  DATA, EXPORT & REPORTING
+    // ---------------------------------------------
     {
-      name: 'Admin — Data & Export',
+      name: 'Admin  -  Data & Export',
       icon: '',
       description: 'Admin-level data exports, performance, and usage reporting',
       features: [
@@ -413,9 +413,9 @@ export default function AppGuidePage() {
         { name: 'Global Activity Log', description: 'Platform-wide audit trail (separate from per-shop)', status: 'ready', apiEndpoint: '/api/activity-logs' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // SHOP SCHEDULE & AVAILABILITY
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Shop Schedule & Availability',
       icon: '',
@@ -428,9 +428,9 @@ export default function AppGuidePage() {
         { name: 'Schedule Management (Manager)', description: 'Manager can adjust team schedules', status: 'ready', apiEndpoint: '/api/manager/schedule' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // TECH MANAGEMENT (SHOP/ADMIN)
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Tech Management (Shop/Admin)',
       icon: '<FaHardHat style={{marginRight:4}} />',
@@ -444,11 +444,11 @@ export default function AppGuidePage() {
         { name: 'Tech Enhanced Dashboard', description: 'Advanced tech view with all tools in one place', status: 'ready', route: '/tech/enhanced' },
       ]
     },
-    // ─────────────────────────────────────────────
-    // PAYROLL SYSTEM — ADVANCED
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
+    // PAYROLL SYSTEM  -  ADVANCED
+    // ---------------------------------------------
     {
-      name: 'Payroll System — Advanced',
+      name: 'Payroll System  -  Advanced',
       icon: '',
       description: 'Full enterprise payroll: pay periods, paystubs, leave, overtime, and scheduling',
       features: [
@@ -465,9 +465,9 @@ export default function AppGuidePage() {
         { name: 'Attendance Tracking', description: 'Track daily attendance and absences', status: 'ready', apiEndpoint: '/api/payroll/attendance' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // SUBSCRIPTION MANAGEMENT
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Subscription Management',
       icon: '',
@@ -481,9 +481,9 @@ export default function AppGuidePage() {
         { name: 'Payment Success / Cancel Pages', description: 'Post-payment flow pages', status: 'ready', route: '/payment/success' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // STRIPE CONNECT & ADVANCED PAYMENTS
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Stripe Connect & Advanced Payments',
       icon: '',
@@ -500,9 +500,9 @@ export default function AppGuidePage() {
         { name: 'Customer Payment Methods', description: 'Save and manage customer payment methods', status: 'ready', apiEndpoint: '/api/customers/payment-methods' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // REAL-TIME, PUSH & CRON
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Real-time, Push & Cron',
       icon: '',
@@ -518,9 +518,9 @@ export default function AppGuidePage() {
         { name: 'Cron: Recurring Reminders', description: 'Daily cron to send recurring job reminders', status: 'ready', apiEndpoint: '/api/cron/recurring-reminders' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // PORTAL CHAT
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Portal Chat',
       icon: '',
@@ -532,9 +532,9 @@ export default function AppGuidePage() {
         { name: 'Shop Customer Messages', description: 'Shop view of all customer chats', status: 'ready', route: '/shop/customer-messages', apiEndpoint: '/api/shop/messages' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // CUSTOMER VEHICLES
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Customer Vehicles',
       icon: '<FaCar style={{marginRight:4}} />',
@@ -548,9 +548,9 @@ export default function AppGuidePage() {
         { name: 'Customer Search', description: 'Search customers by name, email, or phone', status: 'ready', apiEndpoint: '/api/customers/search' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // WORK AUTHORIZATIONS & RECURRING JOBS
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'Work Authorizations & Recurring',
       icon: '<FaPencilAlt style={{marginRight:4}} />',
@@ -564,13 +564,13 @@ export default function AppGuidePage() {
         { name: 'Customer Recurring Approvals', description: 'Customer portal view of pending recurring approvals', status: 'ready', route: '/customer/recurring-approvals', apiEndpoint: '/api/customers/recurring-approvals' },
       ]
     },
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     // FINDSHOPS (CUSTOMER-FACING MARKETPLACE)
-    // ─────────────────────────────────────────────
+    // ---------------------------------------------
     {
       name: 'FindShops Marketplace',
       icon: '',
-      description: 'Customer-facing shop discovery, ratings, booking, and tracking — the public marketplace side of FixTray',
+      description: 'Customer-facing shop discovery, ratings, booking, and tracking  -  the public marketplace side of FixTray',
       features: [
         { name: 'Shop Search / Browse', description: 'Search shops by location, type, and services', status: 'ready', route: '/customer/findshops', apiEndpoint: '/api/customers/shops' },
         { name: 'Shop Detail Page', description: 'Customer-facing shop profile with services, hours, reviews', status: 'ready', route: '/customer/shop/[id]', apiEndpoint: '/api/customers/shops/[id]' },
@@ -633,7 +633,7 @@ export default function AppGuidePage() {
               </div>
             </div>
             <Link href="/admin/home" className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-300 text-sm transition-colors">
-              ← Back to Admin
+              <FaArrowLeft style={{marginRight:4}} /> Back to Admin
             </Link>
           </div>
         </div>
@@ -723,7 +723,7 @@ export default function AppGuidePage() {
                       <p className="text-emerald-400 font-semibold">{readyCount}/{category.features.length}</p>
                       <p className="text-gray-500 text-xs">features ready</p>
                     </div>
-                    <span className={`text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
+                    <span className={`text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}><FaCaretDown style={{marginRight:4}} /></span>
                   </div>
                 </button>
 
@@ -743,7 +743,7 @@ export default function AppGuidePage() {
                               </div>
                               <p className="text-gray-400 text-sm ml-5">{feature.description}</p>
                               {feature.notes && (
-                                <p className="text-gray-500 text-xs ml-5 mt-1">ℹ {feature.notes}</p>
+                                <p className="text-gray-500 text-xs ml-5 mt-1"><FaInfoCircle style={{marginRight:4}} /> {feature.notes}</p>
                               )}
                               {feature.apiEndpoint && (
                                 <p className="text-gray-600 text-xs ml-5 mt-1 font-mono">API: {feature.apiEndpoint}</p>
@@ -754,7 +754,7 @@ export default function AppGuidePage() {
                                 href={feature.route}
                                 className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-300 text-xs transition-colors whitespace-nowrap"
                               >
-                                Open →
+                                Open <FaArrowRight style={{marginRight:4}} />
                               </Link>
                             )}
                           </div>
@@ -808,7 +808,7 @@ export default function AppGuidePage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>FixTray Work Order Management • {totalFeatures} Features • {readyFeatures} Ready to Use</p>
+          <p>FixTray Work Order Management - {totalFeatures} Features - {readyFeatures} Ready to Use</p>
         </div>
       </div>
     </div>

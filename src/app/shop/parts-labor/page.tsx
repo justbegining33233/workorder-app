@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBox, FaStopwatch, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaBox, FaStopwatch, FaWrench } from 'react-icons/fa';
 
 // Category color palettes
 const CATEGORY_COLORS: Record<string, { accent: string; bandBg: string; rowBg: string }> = {
@@ -350,7 +350,7 @@ export default function PartsAndLabor() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/shop/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Shop Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Shop Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>

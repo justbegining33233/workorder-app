@@ -1,4 +1,5 @@
 'use client';
+import { FaArrowRight } from 'react-icons/fa';
 
 import Link from 'next/link';
 
@@ -140,7 +141,7 @@ export default function QuickActionCard(props: QuickActionCardProps) {
             fontSize: 18,
             fontWeight: 700,
           }}>
-            →
+            <FaArrowRight style={{marginRight:4}} />
           </span>
         </div>
       )}

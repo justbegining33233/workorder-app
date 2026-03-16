@@ -5,7 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaEnvelope, FaFolder, FaPhone, FaUsers } from 'react-icons/fa';
+import { FaCircle, FaEnvelope, FaFolder, FaPhone, FaUsers } from 'react-icons/fa';
 
 interface TeamMember {
   id: string;
@@ -53,7 +53,7 @@ export default function ManagerTeamPage() {
             phone: t.phone || '',
             status: t.clockedIn ? 'Clocked In' : 'Off',
             assignedJobs: t.assignedJobs ?? 0,
-            joinedDate: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : '—',
+            joinedDate: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : ' - ',
           }))
         );
       }
@@ -80,7 +80,7 @@ export default function ManagerTeamPage() {
   if (isLoading)
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>
-        Loading…
+        Loading...
       </div>
     );
   if (!user) return null;
@@ -110,7 +110,7 @@ export default function ManagerTeamPage() {
           <div style={{ marginBottom: '20px' }}>
             <input
               type="text"
-              placeholder="Search by name or role…"
+              placeholder="Search by name or role..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               style={{
@@ -123,7 +123,7 @@ export default function ManagerTeamPage() {
 
           {/* Team grid */}
           {loadingTeam ? (
-            <p style={{ color: '#94a3b8' }}>Loading team…</p>
+            <p style={{ color: '#94a3b8' }}>Loading team...</p>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748b' }}>
               <div style={{ fontSize: '3rem', marginBottom: '12px' }}><FaUsers style={{marginRight:4}} /></div>
@@ -168,7 +168,7 @@ export default function ManagerTeamPage() {
                       background: member.status === 'Clocked In' ? 'rgba(34,197,94,0.15)' : 'rgba(100,116,139,0.2)',
                       color: member.status === 'Clocked In' ? '#4ade80' : '#94a3b8',
                     }}>
-                      ● {member.status}
+                      <FaCircle style={{marginRight:4}} /> {member.status}
                     </span>
                     <span style={{ fontSize: '0.78rem', padding: '3px 10px', borderRadius: '9999px', background: 'rgba(59,130,246,0.15)', color: '#60a5fa' }}>
                       <FaFolder style={{marginRight:4}} /> {member.assignedJobs} job{member.assignedJobs !== 1 ? 's' : ''}

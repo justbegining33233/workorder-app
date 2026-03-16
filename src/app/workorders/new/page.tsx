@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createWorkOrderClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCamera, FaCar, FaCheck, FaCheckCircle, FaClipboardList, FaMapMarkerAlt, FaSatelliteDish, FaTools, FaUser, FaVideo } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaCamera, FaCar, FaCheck, FaCheckCircle, FaClipboardList, FaExternalLinkAlt, FaMapMarkerAlt, FaRegCircle, FaSatelliteDish, FaTools, FaUser, FaVideo } from 'react-icons/fa';
 
 const VEHICLE_TYPES = ['Car', 'Truck', 'SUV', 'Van', 'Diesel Truck', 'Semi / 18-Wheeler', 'Box Truck', 'RV', 'Motorcycle', 'Heavy Equipment', 'Other'];
 
@@ -172,7 +172,7 @@ function NewRoadsideJobContent() {
             onClick={() => router.back()}
             style={{ color: '#3b82f6', background: 'none', border: 'none', fontSize: 14, fontWeight: 600, cursor: 'pointer', padding: 0 }}
           >
-            ← Back
+            <FaArrowLeft style={{marginRight:4}} /> Back
           </button>
           <div>
             <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}><FaCar style={{marginRight:4}} /> New Roadside Job</h1>
@@ -246,7 +246,7 @@ function NewRoadsideJobContent() {
           {services.length === 0 ? (
             <div style={{ color: '#6b7280', fontSize: 13, padding: '16px 0' }}>
               No services configured yet.{' '}
-              <Link href="/shop/services" style={{ color: '#3b82f6' }}>Add services in shop settings →</Link>
+              <Link href="/shop/services" style={{ color: '#3b82f6' }}>Add services in shop settings <FaArrowRight style={{marginRight:4}} /></Link>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8 }}>
@@ -267,7 +267,7 @@ function NewRoadsideJobContent() {
                       display: 'flex', alignItems: 'center', gap: 8,
                     }}
                   >
-                    <span>{selected ? '<FaCheckCircle style={{marginRight:4}} />' : '○'}</span>
+                    <span>{selected ? '<FaCheckCircle style={{marginRight:4}} />' : '<FaRegCircle style={{marginRight:4}} />'}</span>
                     {svc.name}
                   </button>
                 );
@@ -310,7 +310,7 @@ function NewRoadsideJobContent() {
             <div style={{ fontSize: 12, color: '#6b7280' }}>
               GPS: {form.locationLat}, {form.locationLng} ·{' '}
               <a href={`https://www.google.com/maps?q=${form.locationLat},${form.locationLng}`} target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>
-                View on Map ↗
+                View on Map <FaExternalLinkAlt style={{marginRight:4}} />
               </a>
             </div>
           )}

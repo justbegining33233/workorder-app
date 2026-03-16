@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaChartBar, FaCheck, FaClipboardList, FaCog, FaDollarSign, FaEnvelope, FaHourglassHalf, FaLock, FaSave, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBuilding, FaChartBar, FaCheck, FaClipboardList, FaCog, FaDollarSign, FaEnvelope, FaHourglassHalf, FaLock, FaSave, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 
 export default function AdminTools() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -76,7 +76,7 @@ export default function AdminTools() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaCog style={{marginRight:4}} /> All Admin Tools</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Complete admin control center and management tools</p>
@@ -92,7 +92,7 @@ export default function AdminTools() {
                 <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>{tool.name}</h3>
                 <p style={{fontSize:14, color:'#9aa3b2', lineHeight:1.5}}>{tool.description}</p>
                 <div style={{marginTop:16, display:'inline-flex', alignItems:'center', gap:8, color:tool.color, fontSize:14, fontWeight:600}}>
-                  Open Tool →
+                  Open Tool <FaArrowRight style={{marginRight:4}} />
                 </div>
               </div>
             </Link>

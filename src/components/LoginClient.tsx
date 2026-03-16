@@ -107,7 +107,7 @@ export default function LoginClient() {
       } catch { serverError = true; }
 
       if (serverError) {
-        setErrors({ username: 'Server error — please try again in a moment.' });
+        setErrors({ username: 'Server error  -  please try again in a moment.' });
       } else {
         setErrors({ username: 'Invalid username or password' });
       }
@@ -224,7 +224,7 @@ export default function LoginClient() {
                 </div>
                 <div className="sos-field">
                   <label>Password</label>
-                  <input type="password" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="sos-input" placeholder="••••••••" autoComplete="new-password" />
+                  <input type="password" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="sos-input" placeholder="--------" autoComplete="new-password" />
                   {errors.password && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.password}</p>)}
                 </div>
                 <div className="sos-actions">
@@ -274,12 +274,12 @@ export default function LoginClient() {
                     </div>
                     <div className="sos-field">
                       <label>Password *</label>
-                      <input type="password" value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} className="sos-input" placeholder="••••••••" />
+                      <input type="password" value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} className="sos-input" placeholder="--------" />
                       {errors.password && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.password}</p>)}
                     </div>
                     <div className="sos-field">
                       <label>Confirm Password *</label>
-                      <input type="password" value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} className="sos-input" placeholder="••••••••" />
+                      <input type="password" value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} className="sos-input" placeholder="--------" />
                       {errors.confirmPassword && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.confirmPassword}</p>)}
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -341,12 +341,12 @@ export default function LoginClient() {
                     </div>
                     <div className="sos-field">
                       <label>Password *</label>
-                      <input type="password" value={shopSignupForm.password} onChange={(e) => setShopSignupForm({ ...shopSignupForm, password: e.target.value })} className="sos-input" placeholder="••••••••" />
+                      <input type="password" value={shopSignupForm.password} onChange={(e) => setShopSignupForm({ ...shopSignupForm, password: e.target.value })} className="sos-input" placeholder="--------" />
                       {errors.password && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.password}</p>)}
                     </div>
                     <div className="sos-field">
                       <label>Confirm Password *</label>
-                      <input type="password" value={shopSignupForm.confirmPassword} onChange={(e) => setShopSignupForm({ ...shopSignupForm, confirmPassword: e.target.value })} className="sos-input" placeholder="••••••••" />
+                      <input type="password" value={shopSignupForm.confirmPassword} onChange={(e) => setShopSignupForm({ ...shopSignupForm, confirmPassword: e.target.value })} className="sos-input" placeholder="--------" />
                       {errors.confirmPassword && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.confirmPassword}</p>)}
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">

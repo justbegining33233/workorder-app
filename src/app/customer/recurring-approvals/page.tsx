@@ -93,7 +93,7 @@ export default function RecurringApprovals() {
           <FaBell style={{marginRight:4}} /> Services Awaiting Your Approval
         </h1>
         <p style={{ color: '#9aa3b2', fontSize: 14, marginBottom: 32, lineHeight: 1.6 }}>
-          Your shop has scheduled recurring services for you. Review each one — <strong style={{ color: '#e5e7eb' }}>no bay is reserved until you confirm.</strong> Skip it if you don&apos;t need it this time.
+          Your shop has scheduled recurring services for you. Review each one  -  <strong style={{ color: '#e5e7eb' }}>no bay is reserved until you confirm.</strong> Skip it if you don&apos;t need it this time.
         </p>
 
         {loading ? (

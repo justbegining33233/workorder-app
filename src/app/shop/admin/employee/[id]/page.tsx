@@ -1,5 +1,5 @@
 'use client';
-import { FaCheck, FaEdit, FaEnvelope, FaMobileAlt, FaSave, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaCheck, FaEdit, FaEnvelope, FaMobileAlt, FaRegCircle, FaSave, FaUserTie, FaWrench } from 'react-icons/fa';
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -159,7 +159,7 @@ export default function EmployeeProfile() {
           fontSize: 13,
           fontWeight: 600,
         }}>
-          ← Back to Team
+          <FaArrowLeft style={{marginRight:4}} /> Back to Team
         </Link>
       </div>
 
@@ -204,7 +204,7 @@ export default function EmployeeProfile() {
                     fontSize: 12,
                     fontWeight: 600,
                   }}>
-                    {employee.available ? '<FaCheck style={{marginRight:4}} /> Available' : '○ Unavailable'}
+                    {employee.available ? '<FaCheck style={{marginRight:4}} /> Available' : '<FaRegCircle style={{marginRight:4}} /> Unavailable'}
                   </div>
                 </div>
 

@@ -7,7 +7,7 @@ import { useSocket } from '@/lib/socket';
 import OilSlickNavCanvas from '@/components/OilSlickNavCanvas';
 import ShopSwitcher from '@/components/ShopSwitcher';
 import GlobalSearch from '@/components/GlobalSearch';
-import { FaBell, FaCaretRight, FaCog, FaSignOutAlt, FaSquare, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaArrowRight, FaBell, FaCaretDown, FaCaretRight, FaCog, FaSignOutAlt, FaSquare, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 
 interface TopNavBarProps {
   onMenuToggle?: () => void;
@@ -413,7 +413,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                   <span style={{ color: '#9ca3af', fontSize: 12 }}>{n.time}</span>
                 </div>
                 <div style={{ color: '#cbd5e1', fontSize: 12, marginTop: 4 }}>{n.body}</div>
-                <div style={{ color: '#93c5fd', fontSize: 11, marginTop: 6 }}>Click to view messages →</div>
+                <div style={{ color: '#93c5fd', fontSize: 11, marginTop: 6 }}>Click to view messages <FaArrowRight style={{marginRight:4}} /></div>
               </div>
             ))}
           </div>
@@ -531,7 +531,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               }}
             >
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
-              <span style={{ fontSize: 14 }}>▾</span>
+              <span style={{ fontSize: 14 }}><FaCaretDown style={{marginRight:4}} /></span>
             </button>
 
             {showProfileMenu && (

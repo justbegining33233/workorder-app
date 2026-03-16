@@ -105,7 +105,7 @@ export default function NotificationBell() {
         className="btn-outline"
         style={{position:'relative', padding:'8px 12px'}}
       >
-        ðŸ””
+        ðŸ""
         {unreadCount > 0 && (
           <span style={{
             position:'absolute',
@@ -180,7 +180,7 @@ export default function NotificationBell() {
                       onClick={(e) => { e.stopPropagation(); deleteNotif(notif.id); }}
                       style={{fontSize:16, color:'#6b7280', lineHeight:1, background:'none', border:'none', cursor:'pointer'}}
                     >
-                      Ã—
+                      Ã - 
                     </button>
                   </div>
                   <div style={{fontSize:12, color:'#9ca3af', marginBottom:4}}>{notif.message}</div>
@@ -188,7 +188,7 @@ export default function NotificationBell() {
                     <div style={{fontSize:10, color:'#6b7280'}}>
                       {new Date(notif.createdAt).toLocaleString()}
                     </div>
-                    <div style={{fontSize:11, color:'#93c5fd'}}>View â†’</div>
+                    <div style={{fontSize:11, color:'#93c5fd'}}>View â'</div>
                   </div>
                 </div>
               ))

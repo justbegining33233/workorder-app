@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TechLiveMap from '@/components/TechLiveMap';
-import { FaCheckCircle, FaClock, FaLock, FaMapMarkerAlt, FaStore } from 'react-icons/fa';
+import { FaArrowLeft, FaCheckCircle, FaClock, FaLock, FaMapMarkerAlt, FaStore } from 'react-icons/fa';
 
 interface WorkOrderDetails {
   id: string;
@@ -162,7 +162,7 @@ export default function WorkOrderDetailsPage() {
             alignItems:'center',
             gap:8
           }}>
-            ← Back to Tracking
+            <FaArrowLeft style={{marginRight:4}} /> Back to Tracking
           </Link>
         </div>
 
@@ -345,7 +345,7 @@ export default function WorkOrderDetailsPage() {
                 textAlign:'center',
               }}>
                 <div style={{fontSize:24, marginBottom:8}}><FaCheckCircle style={{marginRight:4}} /></div>
-                <div style={{color:'#22c55e', fontWeight:700, fontSize:16}}>Payment Complete — Thank You!</div>
+                <div style={{color:'#22c55e', fontWeight:700, fontSize:16}}>Payment Complete  -  Thank You!</div>
                 <div style={{color:'#9aa3b2', fontSize:13, marginTop:4}}>Your work order is closed. A receipt was sent to your email.</div>
               </div>
             )}

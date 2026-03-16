@@ -6,7 +6,7 @@ import Link from 'next/link';
 import '@/styles/sos-theme.css';
 import { getAllWorkOrdersClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaCar, FaClipboardList } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaCar, FaClipboardList } from 'react-icons/fa';
 
 interface WorkOrder {
   id: string;
@@ -67,7 +67,7 @@ function WorkOrderListPageContent() {
 
   const fromParam = searchParams?.get('from') || '';
   const backHref = fromParam === 'admin' ? '/shop/admin' : '/shop/home';
-  const backLabel = fromParam === 'admin' ? '← Back to Shop Admin' : '← Back to Shop Dashboard';
+  const backLabel = fromParam === 'admin' ? '<FaArrowLeft style={{marginRight:4}} /> Back to Shop Admin' : '<- Back to Shop Dashboard';
 
   return (
     <div className="sos-wrap">

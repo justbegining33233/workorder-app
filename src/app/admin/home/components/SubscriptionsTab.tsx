@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaStar } from 'react-icons/fa';
+import { FaArrowRight, FaStar } from 'react-icons/fa';
 
 interface SubscriptionData {
   id: string;
@@ -619,7 +619,7 @@ export function SubscriptionsTab({ subscriptions, liveMetrics, threeMonthAverage
                     </div>
                     <div>
                       <p className="text-sm text-[#FAFAFA]">{sub.shop.shopName}</p>
-                      <p className="text-[10px] text-[#52525B]">${plan.price}/mo • {plan.name}</p>
+                      <p className="text-[10px] text-[#52525B]">${plan.price}/mo - {plan.name}</p>
                     </div>
                   </div>
                   <span className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -633,7 +633,7 @@ export function SubscriptionsTab({ subscriptions, liveMetrics, threeMonthAverage
           </div>
           {activeSubscriptions.length > 4 && (
             <button className="w-full mt-4 py-2 text-xs text-[#71717A] hover:text-[#A1A1AA] transition-colors">
-              View all {activeSubscriptions.length} subscriptions →
+              View all {activeSubscriptions.length} subscriptions <FaArrowRight style={{marginRight:4}} />
             </button>
           )}
         </div>

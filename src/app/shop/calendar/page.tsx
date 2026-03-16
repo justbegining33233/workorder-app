@@ -1,5 +1,5 @@
 'use client';
-import { FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -161,7 +161,7 @@ export default function ShopCalendar() {
           </div>
         </div>
         <Link href="/shop/home" style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', borderRadius:6, textDecoration:'none', fontSize:13, fontWeight:600}}>
-          ← Back to Dashboard
+          <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
         </Link>
       </div>
 
@@ -169,11 +169,11 @@ export default function ShopCalendar() {
         {/* Controls */}
         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24, flexWrap:'wrap', gap:12}}>
           <div style={{display:'flex', gap:8, alignItems:'center'}}>
-            <button onClick={view === 'month' ? prevMonth : prevWeek} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'none', borderRadius:8, cursor:'pointer', fontSize:16, fontWeight:700}}>‹</button>
+            <button onClick={view === 'month' ? prevMonth : prevWeek} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'none', borderRadius:8, cursor:'pointer', fontSize:16, fontWeight:700}}><FaChevronLeft style={{marginRight:4}} /></button>
             <h2 style={{fontSize:24, fontWeight:700, color:'#e5e7eb', margin:0, minWidth:250, textAlign:'center'}}>
               {view === 'month' ? monthName : `Week of ${startOfWeek.toLocaleDateString()}`}
             </h2>
-            <button onClick={view === 'month' ? nextMonth : nextWeek} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'none', borderRadius:8, cursor:'pointer', fontSize:16, fontWeight:700}}>›</button>
+            <button onClick={view === 'month' ? nextMonth : nextWeek} style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'none', borderRadius:8, cursor:'pointer', fontSize:16, fontWeight:700}}><FaChevronRight style={{marginRight:4}} /></button>
           </div>
           <div style={{display:'flex', gap:8}}>
             <button onClick={goToday} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:8, cursor:'pointer', fontSize:13, fontWeight:600}}>Today</button>

@@ -103,7 +103,7 @@ export default function ShopReviewsPage() {
 
   const avgRating = reviews.length
     ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
-    : '—';
+    : ' - ';
   const ratingCounts = STARS.map(s => ({ star: s, count: reviews.filter(r => r.rating === s).length }));
 
   if (isLoading) return <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
@@ -183,7 +183,7 @@ export default function ShopReviewsPage() {
                       {review.customer.firstName} {review.customer.lastName}
                     </div>
                     <div style={{ color: '#6b7280', fontSize: 12, marginTop: 2 }}>
-                      {review.workOrder.vehicleType} • {review.workOrder.serviceLocation} • {new Date(review.createdAt).toLocaleDateString()}
+                      {review.workOrder.vehicleType} - {review.workOrder.serviceLocation} - {new Date(review.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                   <div style={{ fontSize: 20, color: '#fbbf24' }}>
@@ -202,7 +202,7 @@ export default function ShopReviewsPage() {
                 {review.shopResponse ? (
                   <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 8, padding: 14, marginBottom: 10 }}>
                     <div style={{ fontSize: 12, fontWeight: 600, color: '#22c55e', marginBottom: 6 }}>
-                      <FaStore style={{marginRight:4}} /> Your Response — {review.shopResponseAt ? new Date(review.shopResponseAt).toLocaleDateString() : ''}
+                      <FaStore style={{marginRight:4}} /> Your Response  -  {review.shopResponseAt ? new Date(review.shopResponseAt).toLocaleDateString() : ''}
                     </div>
                     <div style={{ color: '#d1d5db', fontSize: 14, lineHeight: 1.5 }}>
                       {responding === review.id ? null : review.shopResponse}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBookmark, FaBox, FaClipboardList, FaCreditCard, FaEnvelope, FaIndustry, FaPhone, FaRegStar, FaStar, FaTimes, FaTrash, FaUser } from 'react-icons/fa';
+import { FaArrowLeft, FaBookmark, FaBox, FaClipboardList, FaCreditCard, FaEnvelope, FaIndustry, FaPhone, FaRegStar, FaStar, FaTimes, FaTrash, FaUser } from 'react-icons/fa';
 
 type TabId = 'vendors' | 'orders';
 
@@ -38,7 +38,7 @@ export default function VendorManagementPage() {
   const { user, isLoading } = useRequireAuth(['shop']);
   const [activeTab, setActiveTab] = useState<TabId>('vendors');
 
-  // ── Vendors state ──
+  // -- Vendors state --
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [vendorsLoading, setVendorsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -51,7 +51,7 @@ export default function VendorManagementPage() {
   const [deleteOrderConfirmId, setDeleteOrderConfirmId] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState('all');
 
-  // ── Orders state ──
+  // -- Orders state --
   const [orders, setOrders] = useState<PurchaseOrder[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [showOrderForm, setShowOrderForm] = useState(false);
@@ -88,7 +88,7 @@ export default function VendorManagementPage() {
 
   useEffect(() => { if (user) { loadVendors(); loadOrders(); } }, [user]);
 
-  // ── Vendor handlers ──
+  // -- Vendor handlers --
   const openCreate = () => { setEditId(null); setForm({ ...BLANK_V }); setShowForm(true); setVendorError(null); };
   const openEdit = (v: Vendor) => {
     setEditId(v.id);
@@ -116,7 +116,7 @@ export default function VendorManagementPage() {
     } catch { setVendorError('Delete failed'); setDeleteVendorConfirm(null); }
   };
 
-  // ── Order handlers ──
+  // -- Order handlers --
   const addItem = () => setOrderItems(prev => [...prev, { ...BLANK_ITEM }]);
   const removeItem = (i: number) => setOrderItems(prev => prev.filter((_, idx) => idx !== i));
   const updateItem = (i: number, field: keyof OrderItem, val: string) =>
@@ -169,7 +169,7 @@ export default function VendorManagementPage() {
 
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
-          <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
+          <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}><FaArrowLeft style={{marginRight:4}} /> Admin</Link>
           <h1 style={{ color: '#f1f5f9', fontSize: 26, fontWeight: 700, margin: '4px 0 2px' }}><FaIndustry style={{marginRight:4}} /> Vendors & Parts Orders</h1>
           <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Manage suppliers and track parts orders</p>
         </div>
@@ -187,7 +187,7 @@ export default function VendorManagementPage() {
           ))}
         </div>
 
-        {/* ── VENDORS TAB ── */}
+        {/* -- VENDORS TAB -- */}
         {activeTab === 'vendors' && (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
@@ -222,7 +222,7 @@ export default function VendorManagementPage() {
             {displayed.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}><FaIndustry style={{marginRight:4}} /></div>
-                <p style={{ fontSize: 16 }}>{vendors.length === 0 ? 'No vendors yet — add your first parts supplier' : 'No vendors in this category'}</p>
+                <p style={{ fontSize: 16 }}>{vendors.length === 0 ? 'No vendors yet  -  add your first parts supplier' : 'No vendors in this category'}</p>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
@@ -261,7 +261,7 @@ export default function VendorManagementPage() {
           </>
         )}
 
-        {/* ── PARTS ORDERS TAB ── */}
+        {/* -- PARTS ORDERS TAB -- */}
         {activeTab === 'orders' && (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 20 }}>
@@ -302,7 +302,7 @@ export default function VendorManagementPage() {
             </div>
 
             {ordersLoading ? (
-              <div style={{ textAlign: 'center', padding: 40, color: '#475569' }}>Loading orders…</div>
+              <div style={{ textAlign: 'center', padding: 40, color: '#475569' }}>Loading orders...</div>
             ) : displayedOrders.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#475569' }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}><FaBox style={{marginRight:4}} /></div>
@@ -374,7 +374,7 @@ export default function VendorManagementPage() {
                               {order.items.map(item => (
                                 <tr key={item.id} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', color: '#e2e8f0' }}>
                                   <td style={{ padding: '6px 8px' }}>{item.itemName}</td>
-                                  <td style={{ padding: '6px 8px', color: '#64748b' }}>{item.sku || '—'}</td>
+                                  <td style={{ padding: '6px 8px', color: '#64748b' }}>{item.sku || ' - '}</td>
                                   <td style={{ padding: '6px 8px', textAlign: 'right' }}>{item.quantity}</td>
                                   <td style={{ padding: '6px 8px', textAlign: 'right' }}>${item.unitCost.toFixed(2)}</td>
                                   <td style={{ padding: '6px 8px', textAlign: 'right', fontWeight: 600 }}>${(item.unitCost * item.quantity).toFixed(2)}</td>
@@ -393,7 +393,7 @@ export default function VendorManagementPage() {
         )}
       </div>
 
-      {/* ── VENDOR FORM MODAL ── */}
+      {/* -- VENDOR FORM MODAL -- */}
       {showForm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}
           onClick={() => { setShowForm(false); setVendorError(null); }}>
@@ -447,7 +447,7 @@ export default function VendorManagementPage() {
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={handleSave} disabled={saving}
                 style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#3b82f6', color: 'white', fontWeight: 600, cursor: 'pointer' }}>
-                {saving ? 'Saving…' : editId ? 'Update Vendor' : 'Add Vendor'}
+                {saving ? 'Saving...' : editId ? 'Update Vendor' : 'Add Vendor'}
               </button>
               <button onClick={() => { setShowForm(false); setVendorError(null); }}
                 style={{ padding: '11px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
@@ -458,7 +458,7 @@ export default function VendorManagementPage() {
         </div>
       )}
 
-      {/* ── ORDER FORM MODAL ── */}
+      {/* -- ORDER FORM MODAL -- */}
       {showOrderForm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}
           onClick={() => setShowOrderForm(false)}>
@@ -470,7 +470,7 @@ export default function VendorManagementPage() {
               <label style={{ color: '#94a3b8', fontSize: 13, display: 'block', marginBottom: 4 }}>Vendor *</label>
               {vendors.length > 0 ? (
                 <select value={orderVendor} onChange={e => setOrderVendor(e.target.value)} style={{ ...inp, background: '#1e293b' }}>
-                  <option value="">— Select vendor —</option>
+                  <option value=""> -  Select vendor  - </option>
                   {vendors.filter(v => v.isActive).map(v => <option key={v.id} value={v.name}>{v.name}</option>)}
                   <option value="__custom__">Other (type below)</option>
                 </select>
@@ -524,7 +524,7 @@ export default function VendorManagementPage() {
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={handleCreateOrder} disabled={savingOrder}
                 style={{ flex: 1, padding: 12, borderRadius: 8, border: 'none', background: savingOrder ? 'rgba(229,51,42,0.4)' : '#e5332a', color: '#fff', fontWeight: 700, cursor: savingOrder ? 'default' : 'pointer' }}>
-                {savingOrder ? 'Placing…' : 'Place Order'}
+                {savingOrder ? 'Placing...' : 'Place Order'}
               </button>
               <button onClick={() => setShowOrderForm(false)}
                 style={{ padding: '12px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>

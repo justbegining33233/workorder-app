@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheckCircle, FaLock } from 'react-icons/fa';
+import { FaArrowLeft, FaCheckCircle, FaLock } from 'react-icons/fa';
 
 export default function SecuritySettings() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -34,7 +34,7 @@ export default function SecuritySettings() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/admin-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Admin Tools
+            <FaArrowLeft style={{marginRight:4}} /> Back to Admin Tools
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaLock style={{marginRight:4}} /> Security Settings</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Manage security policies and permissions</p>

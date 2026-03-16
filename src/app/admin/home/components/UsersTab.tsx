@@ -1,5 +1,5 @@
 'use client';
-import { FaCrown } from 'react-icons/fa';
+import { FaArrowRight, FaArrowUp, FaCrown } from 'react-icons/fa';
 
 import React from 'react';
 
@@ -259,7 +259,7 @@ export function UsersTab({ users, liveMetrics }: UsersTabProps) {
             </div>
           </div>
           <MiniLineChart data={userGrowthTrend} color="#22C55E" height={50} />
-          <p className="text-[10px] text-[#52525B] mt-2">+{newUsersThisMonthCount} this month • +{newUsersThisWeekCount} this week</p>
+          <p className="text-[10px] text-[#52525B] mt-2">+{newUsersThisMonthCount} this month - +{newUsersThisWeekCount} this week</p>
         </div>
 
         <div className="bg-[#18181B] border border-[#27272A] rounded-xl p-5 hover:border-[#3F3F46] transition-all duration-200">
@@ -284,7 +284,7 @@ export function UsersTab({ users, liveMetrics }: UsersTabProps) {
             <div>
               <p className="text-xs text-[#71717A] uppercase tracking-wider font-medium">Retention Rate</p>
               <p className="text-2xl font-bold text-[#FAFAFA] mt-1">{engagementMetrics.userRetentionRate}%</p>
-              <p className="text-xs text-[#22C55E] mt-1">↑ 2.3% vs last month</p>
+              <p className="text-xs text-[#22C55E] mt-1"><FaArrowUp style={{marginRight:4}} /> 2.3% vs last month</p>
             </div>
             <div className="w-16 h-16 rounded-full border-4 border-[#8B5CF6] flex items-center justify-center">
               <span className="text-sm font-bold text-[#8B5CF6]">{engagementMetrics.userRetentionRate}%</span>
@@ -544,7 +544,7 @@ export function UsersTab({ users, liveMetrics }: UsersTabProps) {
         {newUsersArray.length > 8 && (
           <div className="text-center mt-4 pt-4 border-t border-[#27272A]">
             <button className="text-xs text-[#F97316] hover:text-[#FB923C] font-medium">
-              View all {newUsersArray.length} new users →
+              View all {newUsersArray.length} new users <FaArrowRight style={{marginRight:4}} />
             </button>
           </div>
         )}

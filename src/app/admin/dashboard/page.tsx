@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Total Subscriptions</div>
               <div style={{ color: '#10b981', fontSize: 32, fontWeight: 700 }}>{stats.totalSubscriptions || 0}</div>
               <div style={{ color: '#6ee7b7', fontSize: 12, marginTop: 8 }}>
-                {stats.activeSubscriptions || 0} active • {stats.trialingSubscriptions || 0} trialing
+                {stats.activeSubscriptions || 0} active - {stats.trialingSubscriptions || 0} trialing
               </div>
             </div>
 

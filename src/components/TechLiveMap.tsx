@@ -185,7 +185,7 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           } else {
             try { userMarkerRef.current.setLatLng([lat, lng]); } catch {}
           }
-          // do not recenter the map — keep shop marker visible
+          // do not recenter the map  -  keep shop marker visible
           return;
         }
 
@@ -244,7 +244,7 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         const mid = [(from[0]+to[0])/2, (from[1]+to[1])/2];
         L.popup({ closeButton: true, autoClose: true })
           .setLatLng(mid)
-          .setContent(`<div style="font-weight:700;color:#111;padding:6px;">Route • ${distMi.toFixed(1)} mi • ETA ≈ ${etaMinutes} min</div>`)
+          .setContent(`<div style="font-weight:700;color:#111;padding:6px;">Route - ${distMi.toFixed(1)} mi - ETA ~ ${etaMinutes} min</div>`)
           .openOn(mapRef.current);
       } catch {}
     };

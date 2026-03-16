@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaBolt, FaBox, FaBoxes, FaBuilding, FaBullhorn, FaCalendarAlt, FaChartBar, FaClipboardList, FaCodeBranch, FaCog, FaComments, FaCreditCard, FaDesktop, FaEdit, FaGift, FaHeartbeat, FaIndustry, FaListAlt, FaLock, FaMapMarkerAlt, FaPaintBrush, FaPlug, FaReceipt, FaRoad, FaScroll, FaShoppingCart, FaStar, FaStore, FaSyncAlt, FaTools, FaTruck, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaBolt, FaBox, FaBoxes, FaBuilding, FaBullhorn, FaCalendarAlt, FaChartBar, FaCircle, FaClipboardList, FaCodeBranch, FaCog, FaComments, FaCreditCard, FaDesktop, FaEdit, FaGift, FaHeartbeat, FaIndustry, FaListAlt, FaLock, FaMapMarkerAlt, FaPaintBrush, FaPlug, FaReceipt, FaRoad, FaScroll, FaShoppingCart, FaStar, FaStore, FaSyncAlt, FaTools, FaTruck, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -290,7 +290,7 @@ export default function ShopHome() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           vendor: 'Auto-reorder',
-          notes: `Auto-reorder: ${partName} — current stock ${currentStock}, order qty ${orderQuantity}`,
+          notes: `Auto-reorder: ${partName}  -  current stock ${currentStock}, order qty ${orderQuantity}`,
           items: [{ partNumber: '', description: partName, qty: orderQuantity, unitCost: 0 }],
         }),
       });
@@ -299,7 +299,7 @@ export default function ShopHome() {
         router.push('/shop/purchase-orders');
       }
     } catch {
-      // Silently ignore — non-critical path
+      // Silently ignore  -  non-critical path
     }
   };
 
@@ -482,7 +482,7 @@ export default function ShopHome() {
                   <div style={{display:'flex', flexDirection:'column', gap:10}}>
                     {pendingWorkOrders.length === 0 && (
                       <div style={{color:'#9aa3b2', fontSize:13, padding:12, border:'1px dashed rgba(255,255,255,0.15)', borderRadius:10}}>
-                        No customers waiting — nice work.
+                        No customers waiting  -  nice work.
                       </div>
                     )}
                     {pendingWorkOrders.map(order => {
@@ -496,7 +496,7 @@ export default function ShopHome() {
                             <span style={{padding:'4px 8px', background:style.bg, color:style.color, borderRadius:8, fontSize:11, fontWeight:700}}>{order.priority}</span>
                           </div>
                           <div style={{fontSize:12, color:'#9aa3b2'}}>
-                            {order.customer} • {order.vehicle} • {order.id}
+                            {order.customer} - {order.vehicle} - {order.id}
                           </div>
                           <div style={{display:'flex', gap:8, alignItems:'stretch'}}>
                             <div style={{flex:1, display:'flex', flexDirection:'column', gap:6}}>
@@ -552,7 +552,7 @@ export default function ShopHome() {
                         <div style={{fontSize:15, fontWeight:700, color:'#e5e7eb'}}>{member.name}</div>
                         <div style={{display:'flex', alignItems:'center', gap:6, marginTop:4}}>
                           <span style={{padding:'2px 8px', background:member.status === 'Active' ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)', color:member.status === 'Active' ? '#22c55e' : '#f59e0b', borderRadius:8, fontSize:11, fontWeight:600}}>
-                            ● {member.status}
+                            <FaCircle style={{marginRight:4}} /> {member.status}
                           </span>
                           <span style={{padding:'2px 8px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', borderRadius:8, fontSize:10, fontWeight:600}}>
                             {member.role === 'tech' ? '<FaWrench style={{marginRight:4}} /> Tech' : '<FaUserTie style={{marginRight:4}} /> Manager'}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaDesktop } from 'react-icons/fa';
+import { FaArrowLeft, FaDesktop } from 'react-icons/fa';
 
 interface Session {
   id: string;
@@ -77,7 +77,7 @@ export default function SessionsPage() {
         <main style={{ flex: 1, padding: '24px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
             <div>
-              <Link href="/shop/settings" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}>← Settings</Link>
+              <Link href="/shop/settings" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}><FaArrowLeft style={{marginRight:4}} /> Settings</Link>
               <h1 style={{ color: '#fff', fontSize: 28, fontWeight: 700, marginTop: 4 }}>Active Sessions</h1>
               <p style={{ color: '#9ca3af', fontSize: 14 }}>Manage where you&apos;re logged in</p>
             </div>

@@ -28,8 +28,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
 };
 
 const PROMOS = [
-  ' Summer Tire Special — $15 off any set of 4 tires this month!',
-  '<FaOilCan style={{marginRight:4}} /> Oil change + tire rotation package — only $59.99!',
+  ' Summer Tire Special  -  $15 off any set of 4 tires this month!',
+  '<FaOilCan style={{marginRight:4}} /> Oil change + tire rotation package  -  only $59.99!',
   '<FaStar style={{marginRight:4}} /> Refer a friend and get $25 off your next service',
   '<FaMobileAlt style={{marginRight:4}} /> Text us your VIN for an instant maintenance report',
   '<FaBatteryFull style={{marginRight:4}} /> Free battery test with any service this week',

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaUser } from 'react-icons/fa';
+import { FaArrowLeft, FaUser } from 'react-icons/fa';
 
 interface Summary {
   totalCustomers: number;
@@ -86,7 +86,7 @@ export default function CustomerReportsPage() {
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/shop/home" style={{ color: '#e5332a', fontSize: 22, fontWeight: 900, textDecoration: 'none' }}>FixTray</Link>
           <h1 style={{ fontSize: 20, fontWeight: 700, color: '#e5e7eb' }}><FaUser style={{marginRight:4}} /> Customer Reports</h1>
-          <Link href="/shop/reports" style={{ color: '#9aa3b2', fontSize: 13, textDecoration: 'none' }}>← Revenue Reports</Link>
+          <Link href="/shop/reports" style={{ color: '#9aa3b2', fontSize: 13, textDecoration: 'none' }}><FaArrowLeft style={{marginRight:4}} /> Revenue Reports</Link>
         </div>
       </div>
 
@@ -112,7 +112,7 @@ export default function CustomerReportsPage() {
                 { label: 'Total Customers', value: summary?.totalCustomers, color: '#3b82f6' },
                 { label: `New (${days}d)`, value: summary?.newCustomers, color: '#22c55e' },
                 { label: 'Returning', value: summary?.returningCustomers, color: '#f59e0b' },
-                { label: 'Retention Rate', value: `${summary?.retentionRate ?? '—'}%`, color: '#a855f7' },
+                { label: 'Retention Rate', value: `${summary?.retentionRate ?? ' - '}%`, color: '#a855f7' },
                 { label: 'Avg Jobs/Customer', value: summary?.avgJobsPerCustomer, color: '#06b6d4' },
               ].map(({ label, value, color }) => (
                 <div key={label} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '20px 16px', textAlign: 'center' }}>

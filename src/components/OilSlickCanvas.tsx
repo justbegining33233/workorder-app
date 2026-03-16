@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 /**
  * OilSlickCanvas
  * Renders a full-screen canvas animation that simulates petroleum iridescence
- * on dark water — thin swirling streaks of colour driven by a layered sine-wave
+ * on dark water  -  thin swirling streaks of colour driven by a layered sine-wave
  * flow field. No external libraries required.
  */
 
@@ -20,7 +20,7 @@ interface Particle {
   hue: number;
 }
 
-/** Multi-octave smooth noise approximation — no library needed */
+/** Multi-octave smooth noise approximation  -  no library needed */
 function fieldNoise(x: number, y: number, t: number): number {
   const s = 0.0022;
   return (
@@ -74,7 +74,7 @@ export default function OilSlickCanvas() {
       t += 0.006;
       hueBase = (hueBase + 0.07) % 360;
 
-      // Very slow dark fade — lets trails linger like real oil on water
+      // Very slow dark fade  -  lets trails linger like real oil on water
       c.fillStyle = "rgba(2, 6, 8, 0.016)";
       c.fillRect(0, 0, w, h);
 
@@ -84,14 +84,14 @@ export default function OilSlickCanvas() {
         const nx = p.x + Math.cos(angle) * SPEED;
         const ny = p.y + Math.sin(angle) * SPEED;
 
-        // Iridescent hue shifts with flow angle and age — key to the oil look
+        // Iridescent hue shifts with flow angle and age  -  key to the oil look
         const hue = (p.hue + p.age * 0.35 + angle * 28) % 360;
         // Saturation: high in mid-life, muted at start/end
         const lifeFrac = p.age / p.maxAge;
-        const sat = 65 + Math.sin(lifeFrac * Math.PI) * 28; // 65–93 %
-        // Lightness: 30–55 % — dark, metallic, not neon
+        const sat = 65 + Math.sin(lifeFrac * Math.PI) * 28; // 65-93 %
+        // Lightness: 30-55 %  -  dark, metallic, not neon
         const lum = 32 + Math.sin(p.age * 0.055 + 1.2) * 18;
-        // Alpha: fade in, hold, fade out — very low so streaks accumulate
+        // Alpha: fade in, hold, fade out  -  very low so streaks accumulate
         const alpha =
           Math.sin(lifeFrac * Math.PI) * 0.14 +
           0.02;

@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBox, FaCheck, FaEdit, FaTimes, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaBox, FaCheck, FaEdit, FaTimes, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
 
-// ── FixTray Service Catalog ──────────────────────────────────────────────────
+// -- FixTray Service Catalog --------------------------------------------------
 const CATALOG: Record<string, string[]> = {
   diesel: [
     'Engine Diagnostics','Engine Repair','Engine Rebuild','Transmission Repair',
@@ -241,7 +241,7 @@ export default function ShopServicesPage() {
 
         {/* Header */}
         <div style={{ marginBottom: 28 }}>
-          <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}>← Admin</Link>
+          <Link href="/shop/admin" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}><FaArrowLeft style={{marginRight:4}} /> Admin</Link>
           <div style={{ marginTop: 6 }}>
             <h1 style={{ color: '#f1f5f9', fontSize: 28, fontWeight: 700, margin: 0 }}><FaTools style={{marginRight:4}} /> Service Catalog</h1>
             <p style={{ color: '#64748b', fontSize: 13, margin: '4px 0 0' }}>
@@ -264,7 +264,7 @@ export default function ShopServicesPage() {
           ))}
         </div>
 
-        {/* ── TAB 1: MY SERVICES ── */}
+        {/* -- TAB 1: MY SERVICES -- */}
         {activeTab === 'my' && (
           <>
             {activeCats.length > 0 && (
@@ -319,7 +319,7 @@ export default function ShopServicesPage() {
                           <div><span style={{ color: '#64748b' }}>Duration </span><span style={{ color: '#f1f5f9', fontWeight: 600 }}>{svc.duration} min</span></div>
                         )}
                         {svc.price == null && !svc.duration && (
-                          <span style={{ color: '#475569', fontSize: 12 }}>No pricing set — <button onClick={() => openEdit(svc)} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', fontSize: 12, padding: 0 }}>add price</button></span>
+                          <span style={{ color: '#475569', fontSize: 12 }}>No pricing set  -  <button onClick={() => openEdit(svc)} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', fontSize: 12, padding: 0 }}>add price</button></span>
                         )}
                       </div>
                     </div>
@@ -330,7 +330,7 @@ export default function ShopServicesPage() {
           </>
         )}
 
-        {/* ── TAB 2: FIXTRAY CATALOG ── */}
+        {/* -- TAB 2: FIXTRAY CATALOG -- */}
         {activeTab === 'catalog' && (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
@@ -420,11 +420,11 @@ export default function ShopServicesPage() {
           </>
         )}
 
-        {/* ── TAB 3: CUSTOM SERVICE ── */}
+        {/* -- TAB 3: CUSTOM SERVICE -- */}
         {activeTab === 'custom' && (
           <div style={{ maxWidth: 540 }}>
             <p style={{ color: '#94a3b8', fontSize: 13, marginBottom: 24 }}>
-              Add a service that isn&apos;t in the FixTray catalog — unique offerings, specialty work, or anything specific to your shop.
+              Add a service that isn&apos;t in the FixTray catalog  -  unique offerings, specialty work, or anything specific to your shop.
             </p>
 
             {customError && (
@@ -474,13 +474,13 @@ export default function ShopServicesPage() {
         )}
       </div>
 
-      {/* ── EDIT MODAL ── */}
+      {/* -- EDIT MODAL -- */}
       {showEditModal && editingService && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
           onClick={() => { setShowEditModal(false); setEditingService(null); }}>
           <div style={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: 32, width: '100%', maxWidth: 500 }}
             onClick={e => e.stopPropagation()}>
-            <h2 style={{ color: '#f1f5f9', fontSize: 20, fontWeight: 700, margin: '0 0 24px' }}>Edit — {editingService.serviceName}</h2>
+            <h2 style={{ color: '#f1f5f9', fontSize: 20, fontWeight: 700, margin: '0 0 24px' }}>Edit  -  {editingService.serviceName}</h2>
             <form onSubmit={handleEditSave}>
               <div style={{ marginBottom: 16 }}>
                 <label style={labelStyle}>Service Name *</label>

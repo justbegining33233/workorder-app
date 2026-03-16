@@ -1,5 +1,5 @@
 'use client';
-import { FaBuilding, FaCalendarAlt, FaCheck, FaComments, FaDollarSign, FaEnvelope, FaHourglassHalf, FaMapMarkerAlt, FaPhone, FaRegStar, FaStar, FaStopwatch, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaCalendarAlt, FaCheck, FaComments, FaDollarSign, FaEnvelope, FaHourglassHalf, FaMapMarkerAlt, FaPhone, FaRegStar, FaStar, FaStopwatch, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -169,7 +169,7 @@ export default function ShopDetailsPage({ params }: Props) {
           borderRadius:8,
           border:'1px solid rgba(59,130,246,0.3)'
         }}>
-          ← Back to Find Shops
+          <FaArrowLeft style={{marginRight:4}} /> Back to Find Shops
         </Link>
 
         {/* Shop Header */}

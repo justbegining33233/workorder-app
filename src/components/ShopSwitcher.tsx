@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaCheck, FaStore } from 'react-icons/fa';
+import { FaCaretDown, FaCheck, FaStore } from 'react-icons/fa';
 
 interface Shop {
   id: string;
@@ -76,7 +76,7 @@ export default function ShopSwitcher() {
         <span style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {current?.businessName || 'Switch Shop'}
         </span>
-        <span style={{ color: '#6b7280', fontSize: 10 }}>▼</span>
+        <span style={{ color: '#6b7280', fontSize: 10 }}><FaCaretDown style={{marginRight:4}} /></span>
       </button>
 
       {open && (

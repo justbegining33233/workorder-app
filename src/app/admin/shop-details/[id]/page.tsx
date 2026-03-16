@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaCalendarAlt, FaCheck, FaCreditCard, FaExclamationTriangle, FaHourglassHalf, FaPhone, FaStar, FaTimesCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaCalendarAlt, FaCheck, FaCreditCard, FaExclamationTriangle, FaHourglassHalf, FaPhone, FaStar, FaTimesCircle } from 'react-icons/fa';
 
 type ShopDetails = {
   id: string;
@@ -152,7 +152,7 @@ export default function ShopDetailsPage() {
           <div style={{ fontSize: 48, marginBottom: 16 }}><FaTimesCircle style={{marginRight:4}} /></div>
           <div style={{ fontSize: 20, marginBottom: 16 }}>{error || 'Shop not found'}</div>
           <Link href="/admin/manage-customers" style={{ color: '#3b82f6', textDecoration: 'none' }}>
-            ← Back to Manage Customers
+            <FaArrowLeft style={{marginRight:4}} /> Back to Manage Customers
           </Link>
         </div>
       </div>
@@ -174,7 +174,7 @@ export default function ShopDetailsPage() {
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(34,197,94,0.3)', padding: '20px 32px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
           <Link href="/admin/manage-customers" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 16, display: 'inline-block' }}>
-            ← Back to Manage Customers
+            <FaArrowLeft style={{marginRight:4}} /> Back to Manage Customers
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
@@ -184,7 +184,7 @@ export default function ShopDetailsPage() {
                   {shop.status}
                 </span>
               </div>
-              <p style={{ fontSize: 14, color: '#9aa3b2' }}>Owner: {shop.ownerName || 'N/A'} • {shop.shopType || 'Auto'} Shop</p>
+              <p style={{ fontSize: 14, color: '#9aa3b2' }}>Owner: {shop.ownerName || 'N/A'} - {shop.shopType || 'Auto'} Shop</p>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
               {shop.status === 'approved' && (

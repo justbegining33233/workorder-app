@@ -198,12 +198,12 @@ export default function LiveTracking() {
               <div key={order.workOrderId} style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
                 <div style={{marginBottom:20}}>
                   <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>{order.issueDescription}</h3>
-                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Work Order • {order.workOrderId}</div>
+                  <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>Work Order - {order.workOrderId}</div>
                   <div style={{fontSize:16, color:'#3b82f6', fontWeight:600, marginBottom:12}}>{order.status}</div>
 
                   {order.tech && (
                     <div style={{fontSize:14, color:'#9aa3b2', marginBottom:4}}>
-                      <FaUser style={{marginRight:4}} />‍<FaWrench style={{marginRight:4}} /> {order.tech.name}
+                      <FaUser style={{marginRight:4}} /><FaWrench style={{marginRight:4}} /> {order.tech.name}
                     </div>
                   )}
 

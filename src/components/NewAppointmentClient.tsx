@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCalendarAlt, FaCamera, FaCheck, FaFrown, FaMapMarkerAlt, FaSearch, FaStar, FaTag } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendarAlt, FaCamera, FaCheck, FaFrown, FaMapMarkerAlt, FaSearch, FaStar, FaTag } from 'react-icons/fa';
 
 interface Shop {
   id: string;
@@ -288,7 +288,7 @@ export default function NewAppointmentClient() {
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(229,51,42,0.3)', padding: '20px 32px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <Link href="/customer/appointments" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
-            ← Back to Appointments
+            <FaArrowLeft style={{marginRight:4}} /> Back to Appointments
           </Link>
           <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}><FaCalendarAlt style={{marginRight:4}} /> Book New Appointment</h1>
           <p style={{ fontSize: 14, color: '#9aa3b2' }}>Schedule a service at your preferred auto shop</p>

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import MessagingCard from '@/components/MessagingCard';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaComments } from 'react-icons/fa';
+import { FaArrowLeft, FaComments } from 'react-icons/fa';
 
 export default function TechMessages() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -25,7 +25,7 @@ export default function TechMessages() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
           <Link href="/tech/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>

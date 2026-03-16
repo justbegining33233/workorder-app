@@ -3,7 +3,7 @@
 // Use react-icons for all icons
 import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { FaChartBar, FaHome, FaStore, FaComments, FaClipboardList, FaBoxes, FaUsers, FaLock, FaMoneyBill, FaClock, FaCalendarAlt, FaTools, FaCar, FaSearch, FaCamera, FaIndustry, FaRecycle, FaCogs, FaPaintBrush, FaPlug, FaBolt, FaMapMarkerAlt, FaCog, FaKey, FaDesktop, FaHeartbeat, FaUser, FaStar, FaCreditCard, FaSignOutAlt, FaChevronLeft, FaChevronRight, FaChevronDown, FaChevronUp, FaEnvelope, FaPrint, FaDownload, FaBell, FaEdit, FaListAlt, FaRoad, FaUserTie, FaGift, FaBullhorn, FaShoppingCart, FaBuilding, FaLeaf, FaScroll, FaReceipt, FaCodeBranch, FaBullseye, FaSyncAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBell, FaBolt, FaBoxes, FaBuilding, FaBullhorn, FaBullseye, FaCalendarAlt, FaCamera, FaCar, FaCaretDown, FaChartBar, FaChevronDown, FaChevronLeft, FaChevronRight, FaChevronUp, FaClipboardList, FaClock, FaCodeBranch, FaCog, FaCogs, FaComments, FaCreditCard, FaDesktop, FaDownload, FaEdit, FaEnvelope, FaGift, FaHeartbeat, FaHome, FaIndustry, FaKey, FaLeaf, FaListAlt, FaLock, FaMapMarkerAlt, FaMoneyBill, FaPaintBrush, FaPlug, FaPrint, FaReceipt, FaRecycle, FaRoad, FaScroll, FaSearch, FaShoppingCart, FaSignOutAlt, FaStar, FaStore, FaSyncAlt, FaTools, FaUser, FaUserTie, FaUsers } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -224,7 +224,7 @@ const techGroups: MenuGroup[] = [
   },
 ];
 
-// ─── COMPONENT ───────────────────────────────────────────────────────────────
+// --- COMPONENT ---------------------------------------------------------------
 
 export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, activeHash }: SidebarProps) {
   const pathname = usePathname();
@@ -352,7 +352,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
             onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {collapsed ? '→' : '←'}
+            {collapsed ? '<FaArrowRight style={{marginRight:4}} />' : '<FaArrowLeft style={{marginRight:4}} />'}
           </button>
         </div>
 
@@ -400,7 +400,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
                         fontSize: 9,
                         transition: 'transform 0.2s',
                         transform: isGroupOpen ? 'rotate(180deg)' : 'none',
-                      }}>▼</span>
+                      }}><FaCaretDown style={{marginRight:4}} /></span>
                     </>
                   )}
                 </button>

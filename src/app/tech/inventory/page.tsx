@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBox, FaCog, FaRulerCombined } from 'react-icons/fa';
+import { FaArrowLeft, FaBox, FaCog, FaExternalLinkAlt, FaRulerCombined } from 'react-icons/fa';
 
 export default function TechInventory() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -25,7 +25,7 @@ export default function TechInventory() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
           <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Tools
+            <FaArrowLeft style={{marginRight:4}} /> Back to Tools
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaCog style={{marginRight:4}} /> Parts Inventory</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Check parts availability, request orders, and track inventory levels</p>
@@ -53,7 +53,7 @@ export default function TechInventory() {
               <div style={{fontSize:32, marginBottom:8}}>{card.icon}</div>
               <div style={{fontSize:15, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{card.label}</div>
               <div style={{fontSize:12, color:'#9aa3b2'}}>{card.desc}</div>
-              {card.ext && <div style={{fontSize:11, color:'#3b82f6', marginTop:6}}>↗ External site</div>}
+              {card.ext && <div style={{fontSize:11, color:'#3b82f6', marginTop:6}}><FaExternalLinkAlt style={{marginRight:4}} /> External site</div>}
             </a>
           ))}
         </div>

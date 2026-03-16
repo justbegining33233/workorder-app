@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import MessagingCard from '@/components/MessagingCard';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaComments } from 'react-icons/fa';
+import { FaArrowLeft, FaComments } from 'react-icons/fa';
 
 export default function AdminMessages() {
   const { user, isLoading } = useRequireAuth(['admin', 'superadmin']);
@@ -28,7 +28,7 @@ export default function AdminMessages() {
             href="/admin/home"
             style={{ color: '#818cf8', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 16, display: 'inline-block' }}
           >
-            ← Back to Admin Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Admin Dashboard
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>

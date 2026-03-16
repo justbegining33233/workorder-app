@@ -9,7 +9,7 @@ export default function SecurityPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Security</p>
         <h1 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">Security that matches the product.</h1>
         <p className="mt-5 max-w-2xl text-lg text-slate-300">
-          FixTray ships practical, verifiable safeguards in the codebase today — authentication, authorization, CSRF protection, rate limiting, and input validation.
+          FixTray ships practical, verifiable safeguards in the codebase today  -  authentication, authorization, CSRF protection, rate limiting, and input validation.
         </p>
       </section>
 

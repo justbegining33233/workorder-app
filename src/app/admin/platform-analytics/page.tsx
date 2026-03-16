@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaChartBar, FaChartLine } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaArrowUp, FaChartBar, FaChartLine } from 'react-icons/fa';
 
 export default function PlatformAnalytics() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -34,7 +34,7 @@ export default function PlatformAnalytics() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/admin-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Admin Tools
+            <FaArrowLeft style={{marginRight:4}} /> Back to Admin Tools
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaChartBar style={{marginRight:4}} /> Platform Analytics</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Detailed analytics and performance metrics</p>
@@ -47,22 +47,22 @@ export default function PlatformAnalytics() {
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Total Revenue</div>
             <div style={{fontSize:32, fontWeight:700, color:'#22c55e', marginBottom:8}}>$0</div>
-            <div style={{fontSize:12, color:'#22c55e'}}>↑ 0% from last month</div>
+            <div style={{fontSize:12, color:'#22c55e'}}><FaArrowUp style={{marginRight:4}} /> 0% from last month</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Active Users</div>
             <div style={{fontSize:32, fontWeight:700, color:'#3b82f6', marginBottom:8}}>0</div>
-            <div style={{fontSize:12, color:'#3b82f6'}}>↑ 0% from last month</div>
+            <div style={{fontSize:12, color:'#3b82f6'}}><FaArrowUp style={{marginRight:4}} /> 0% from last month</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Work Orders</div>
             <div style={{fontSize:32, fontWeight:700, color:'#a855f7', marginBottom:8}}>0</div>
-            <div style={{fontSize:12, color:'#a855f7'}}>↑ 0% from last month</div>
+            <div style={{fontSize:12, color:'#a855f7'}}><FaArrowUp style={{marginRight:4}} /> 0% from last month</div>
           </div>
           <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:13, color:'#9aa3b2', marginBottom:8}}>Avg Response Time</div>
             <div style={{fontSize:32, fontWeight:700, color:'#f59e0b', marginBottom:8}}>0h</div>
-            <div style={{fontSize:12, color:'#22c55e'}}>↓ 0% faster</div>
+            <div style={{fontSize:12, color:'#22c55e'}}><FaArrowDown style={{marginRight:4}} /> 0% faster</div>
           </div>
         </div>
 

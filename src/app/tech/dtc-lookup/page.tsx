@@ -83,7 +83,7 @@ export default function DTCLookupPage() {
 
         {error && (
           <div style={{ background: 'rgba(229,51,42,0.1)', border: '1px solid rgba(229,51,42,0.3)', borderRadius: 10, padding: 16, color: '#fca5a5', marginBottom: 20 }}>
-            <FaExclamationTriangle style={{marginRight:4}} /> {error} — This code may be vehicle-specific or not in our database. Try Googling it or consult the vehicle service manual.
+            <FaExclamationTriangle style={{marginRight:4}} /> {error}  -  This code may be vehicle-specific or not in our database. Try Googling it or consult the vehicle service manual.
           </div>
         )}
 

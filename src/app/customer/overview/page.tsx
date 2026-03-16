@@ -107,19 +107,19 @@ export default function CustomerOverview() {
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:24, marginBottom:40}}>
           <div style={{background:'rgba(59,130,246,0.1)', border:'1px solid rgba(59,130,246,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>Active Orders</div>
-            <div style={{fontSize:36, fontWeight:700, color:'#3b82f6'}}>{loading ? '–' : stats.activeOrders}</div>
+            <div style={{fontSize:36, fontWeight:700, color:'#3b82f6'}}>{loading ? '-' : stats.activeOrders}</div>
           </div>
           <div style={{background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>Completed This Month</div>
-            <div style={{fontSize:36, fontWeight:700, color:'#22c55e'}}>{loading ? '–' : stats.completedThisMonth}</div>
+            <div style={{fontSize:36, fontWeight:700, color:'#22c55e'}}>{loading ? '-' : stats.completedThisMonth}</div>
           </div>
           <div style={{background:'rgba(245,158,11,0.1)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>Unread Messages</div>
-            <div style={{fontSize:36, fontWeight:700, color:'#f59e0b'}}>{loading ? '–' : stats.unreadMessages}</div>
+            <div style={{fontSize:36, fontWeight:700, color:'#f59e0b'}}>{loading ? '-' : stats.unreadMessages}</div>
           </div>
           <div style={{background:'rgba(168,85,247,0.1)', border:'1px solid rgba(168,85,247,0.3)', borderRadius:12, padding:24}}>
             <div style={{fontSize:14, color:'#9aa3b2', marginBottom:8}}>Loyalty Points</div>
-            <div style={{fontSize:36, fontWeight:700, color:'#a855f7'}}>{loading ? '–' : stats.loyaltyPoints.toLocaleString()}</div>
+            <div style={{fontSize:36, fontWeight:700, color:'#a855f7'}}>{loading ? '-' : stats.loyaltyPoints.toLocaleString()}</div>
           </div>
         </div>
 

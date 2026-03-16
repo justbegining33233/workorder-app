@@ -1,4 +1,5 @@
 'use client';
+import { FaArrowLeft } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -163,7 +164,7 @@ export default function CouponManagementPage() {
                 display: 'inline-block',
               }}
             >
-              ← Back to Dashboard
+              <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
             </Link>
             <button
               onClick={handleLogout}

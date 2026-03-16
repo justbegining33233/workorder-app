@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
-import { FaBriefcase, FaCalendarAlt, FaCar, FaChartBar, FaCog, FaCreditCard, FaEnvelope, FaMobileAlt, FaPlug, FaWrench } from 'react-icons/fa';
+import { FaBriefcase, FaCalendarAlt, FaCar, FaChartBar, FaCircle, FaCog, FaCreditCard, FaEnvelope, FaMobileAlt, FaPlug, FaRegCircle, FaWrench } from 'react-icons/fa';
 
 interface IntegrationConfig {
   id: string;
@@ -104,7 +104,7 @@ export default function IntegrationsPage() {
                     </div>
                     <button onClick={() => toggle(prov.key)}
                       style={{ background: isEnabled ? `${prov.color}25` : 'rgba(107,114,128,0.2)', color: isEnabled ? prov.color : '#9ca3af', border: `1px solid ${isEnabled ? prov.color : '#6b7280'}`, borderRadius: 20, padding: '4px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
-                      {isEnabled ? '● Connected' : '○ Disabled'}
+                      {isEnabled ? '<FaCircle style={{marginRight:4}} /> Connected' : '<FaRegCircle style={{marginRight:4}} /> Disabled'}
                     </button>
                   </div>
 
@@ -115,7 +115,7 @@ export default function IntegrationsPage() {
                       {prov.fields.map(f => (
                         <div key={f.k} style={{ marginBottom: 10 }}>
                           <label style={{ fontSize: 12, color: '#9ca3af', display: 'block', marginBottom: 4 }}>{f.label}</label>
-                          <input type={f.type || 'text'} value={formFields[f.k] || ''} onChange={e => setFormFields(p => ({ ...p, [f.k]: e.target.value }))} placeholder={f.type === 'password' ? '••••••••' : ''}
+                          <input type={f.type || 'text'} value={formFields[f.k] || ''} onChange={e => setFormFields(p => ({ ...p, [f.k]: e.target.value }))} placeholder={f.type === 'password' ? '--------' : ''}
                             style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 7, padding: '8px 12px', color: '#e5e7eb', fontSize: 13, boxSizing: 'border-box' }} />
                         </div>
                       ))}

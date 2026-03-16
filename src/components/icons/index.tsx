@@ -248,7 +248,7 @@ export function IconFileText({ size = defaults.size, color = defaults.color, str
   );
 }
 
-/** FixTray brand mark — wrench inside a shield */
+/** FixTray brand mark  -  wrench inside a shield */
 export function IconFixTrayLogo({ size = 32, color = '#e5332a', className }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" className={className}>

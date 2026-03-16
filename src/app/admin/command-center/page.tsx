@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBolt, FaChartBar, FaChartLine, FaCheck, FaCheckSquare, FaDollarSign, FaDotCircle, FaExclamationTriangle, FaRegCircle, FaRegStar, FaStar, FaSyncAlt } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp, FaBolt, FaChartBar, FaChartLine, FaCheck, FaCheckSquare, FaCircle, FaDollarSign, FaDotCircle, FaExclamationTriangle, FaExternalLinkAlt, FaRegCircle, FaRegStar, FaStar, FaSyncAlt } from 'react-icons/fa';
 
 interface CommandCenterData {
   timestamp: string;
@@ -211,7 +211,7 @@ export default function CommandCenterPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <Link href="/admin/home" className="group flex items-center gap-2 text-slate-400 hover:text-white transition-all">
-                <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">←</span>
+                <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors"><FaArrowLeft style={{marginRight:4}} /></span>
               </Link>
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -242,7 +242,7 @@ export default function CommandCenterPage() {
                     : 'bg-white/5 text-slate-400 border border-white/10'
                 }`}
               >
-                {autoRefresh ? '● Live' : '○ Paused'}
+                {autoRefresh ? '<FaCircle style={{marginRight:4}} /> Live' : '<FaRegCircle style={{marginRight:4}} /> Paused'}
               </button>
               <button
                 onClick={fetchData}
@@ -312,7 +312,7 @@ export default function CommandCenterPage() {
               )}
               {(data?.shopHealth?.pendingApproval || 0) > 0 && (
                 <Link href="/admin/pending-shops" className="px-3 py-1.5 rounded-xl bg-yellow-500/20 text-yellow-300 text-sm font-medium border border-yellow-500/20 hover:bg-yellow-500/30 transition-colors">
-                  {data?.shopHealth?.pendingApproval || 0} Pending Approvals →
+                  {data?.shopHealth?.pendingApproval || 0} Pending Approvals <FaArrowRight style={{marginRight:4}} />
                 </Link>
               )}
               {(data?.communication?.unreadAdminMessages || 0) > 0 && (
@@ -340,7 +340,7 @@ export default function CommandCenterPage() {
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <span className={`flex items-center gap-1 ${(data?.businessMetrics?.momGrowth || 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(data?.businessMetrics?.momGrowth || 0) >= 0 ? '↑' : '↓'} {Math.abs(data?.businessMetrics?.momGrowth || 0)}% MoM
+                      {(data?.businessMetrics?.momGrowth || 0) >= 0 ? '<FaArrowUp style={{marginRight:4}} />' : '<FaArrowDown style={{marginRight:4}} />'} {Math.abs(data?.businessMetrics?.momGrowth || 0)}% MoM
                     </span>
                     <span className="text-slate-500">|</span>
                     <span className="text-slate-400">{data?.businessMetrics?.totalActiveSubscriptions || 0} active subs</span>
@@ -400,7 +400,7 @@ export default function CommandCenterPage() {
                 value={`${data?.businessMetrics?.churnRate || 0}%`}
                 sublabel="rate"
                 color="orange"
-                icon="↓"
+                icon="v"
                 isString
               />
               <MetricCard
@@ -532,10 +532,10 @@ export default function CommandCenterPage() {
                 Review Pending Shops ({data?.shopHealth?.pendingApproval || 0})
               </Link>
               <Link href="/admin/revenue" className="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-sm font-medium border border-emerald-500/20 transition-all">
-                Revenue Details →
+                Revenue Details <FaArrowRight style={{marginRight:4}} />
               </Link>
               <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-400 text-sm font-medium border border-violet-500/20 transition-all">
-                Open Stripe Dashboard ↗
+                Open Stripe Dashboard <FaExternalLinkAlt style={{marginRight:4}} />
               </a>
             </div>
           </>
@@ -550,7 +550,7 @@ export default function CommandCenterPage() {
                 value={data?.realTimeOps.clockedInNow || 0}
                 sublabel="employees"
                 color="emerald"
-                icon="●"
+                icon="*"
                 pulse
               />
               <MetricCard
@@ -558,14 +558,14 @@ export default function CommandCenterPage() {
                 value={data?.realTimeOps.activeWorkOrders || 0}
                 sublabel="in progress"
                 color="blue"
-                icon="◆"
+                icon="*"
               />
               <MetricCard
                 label="Today's Jobs"
                 value={data?.realTimeOps.todayWorkOrders || 0}
                 sublabel="created"
                 color="violet"
-                icon="▲"
+                icon="^"
               />
               <MetricCard
                 label="Revenue Today"
@@ -580,7 +580,7 @@ export default function CommandCenterPage() {
                 value={data?.realTimeOps.todayAppointments || 0}
                 sublabel="scheduled"
                 color="orange"
-                icon="◇"
+                icon="o"
               />
               <MetricCard
                 label="New Customers"
@@ -642,7 +642,7 @@ export default function CommandCenterPage() {
                     </div>
                   </div>
                   <Link href="/admin/revenue" className="mt-4 flex items-center justify-center gap-2 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-sm text-slate-400 hover:text-white transition-all">
-                    View Details <span>→</span>
+                    View Details <span><FaArrowRight style={{marginRight:4}} /></span>
                   </Link>
                 </GlassCard>
               </div>
@@ -651,7 +651,7 @@ export default function CommandCenterPage() {
             {/* Secondary Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Active Employees */}
-              <GlassCard title="Currently Working" icon="●" badge={data?.realTimeOps.clockedInNow || 0}>
+              <GlassCard title="Currently Working" icon="*" badge={data?.realTimeOps.clockedInNow || 0}>
                 {data?.realTimeOps.clockedInDetails && data.realTimeOps.clockedInDetails.length > 0 ? (
                   <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
                     {data.realTimeOps.clockedInDetails.map((emp, i) => (
@@ -737,7 +737,7 @@ export default function CommandCenterPage() {
               </div>
             </GlassCard>
 
-            <GlassCard title="Service Types" icon="◆">
+            <GlassCard title="Service Types" icon="*">
               <div className="space-y-4">
                 {data?.serviceBreakdown && Object.entries(data.serviceBreakdown).map(([type, count]) => {
                   const total = Object.values(data.serviceBreakdown).reduce((a, b) => a + b, 0);
@@ -760,7 +760,7 @@ export default function CommandCenterPage() {
               </div>
             </GlassCard>
 
-            <GlassCard title="Appointments" icon="◇">
+            <GlassCard title="Appointments" icon="o">
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-6 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20 text-center">
                   <div className="text-4xl font-bold text-orange-400 mb-1">{data?.realTimeOps.todayAppointments || 0}</div>
@@ -849,7 +849,7 @@ export default function CommandCenterPage() {
               )}
               {(data?.shopHealth?.pendingApproval || 0) > 0 && (
                 <Link href="/admin/pending-shops" className="mt-4 flex items-center justify-center gap-2 py-3 rounded-xl bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 font-medium transition-all">
-                  Review Approvals →
+                  Review Approvals <FaArrowRight style={{marginRight:4}} />
                 </Link>
               )}
             </GlassCard>
@@ -894,7 +894,7 @@ export default function CommandCenterPage() {
               </div>
             </GlassCard>
 
-            <GlassCard title="Currently Working" icon="●" className="lg:col-span-2" badge={data?.realTimeOps.clockedInNow || 0}>
+            <GlassCard title="Currently Working" icon="*" className="lg:col-span-2" badge={data?.realTimeOps.clockedInNow || 0}>
               {data?.realTimeOps.clockedInDetails && data.realTimeOps.clockedInDetails.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar">
                   {data.realTimeOps.clockedInDetails.map((emp, i) => (
@@ -923,7 +923,7 @@ export default function CommandCenterPage() {
               )}
             </GlassCard>
 
-            <GlassCard title="Customers" icon="◆" className="lg:col-span-3">
+            <GlassCard title="Customers" icon="*" className="lg:col-span-3">
               <div className="grid grid-cols-3 gap-4">
                 <div className="p-6 rounded-xl bg-white/5 border border-white/5 text-center">
                   <div className="text-4xl font-bold mb-1">{data?.customers.total || 0}</div>

@@ -7,7 +7,7 @@ import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
 import { useRequireAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
-import { FaCamera, FaMapMarkerAlt, FaStar } from 'react-icons/fa';
+import { FaArrowLeft, FaCamera, FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 
 function TechPortalEnhancedContent() {
   const { user } = useRequireAuth(['tech']);
@@ -82,7 +82,7 @@ function TechPortalEnhancedContent() {
             >
               Sign Out
             </button>
-            <Link href="/" className="btn-outline">← Home</Link>
+            <Link href="/" className="btn-outline"><FaArrowLeft style={{marginRight:4}} /> Home</Link>
           </div>
         </div>
 
@@ -161,7 +161,7 @@ function AssignmentsTab({ workOrders, onRefresh }: { workOrders: WorkOrder[], on
                 <span className="sos-pill" style={{fontSize:10}}>{wo.status}</span>
               </div>
               <div style={{fontSize:13, color:'#b8beca', marginBottom:8}}>
-                {wo.vehicleType} • {wo.services.repairs?.[0]?.type || wo.services.maintenance?.[0]?.type || 'Service'}
+                {wo.vehicleType} - {wo.services.repairs?.[0]?.type || wo.services.maintenance?.[0]?.type || 'Service'}
               </div>
               <div style={{fontSize:12, color:'#9aa3b2', marginBottom:12}}>
                 Customer: {wo.createdBy || 'Unknown'}
@@ -387,7 +387,7 @@ function PerformanceTab() {
           <div className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
             <div style={{marginBottom:8}}><FaStar style={{marginRight:4}} /></div>
             <div style={{fontSize:13, marginBottom:4}}>"Excellent work! Very professional."</div>
-            <div style={{fontSize:11, color:'#9aa3b2'}}>John Doe • 12/10/2025</div>
+            <div style={{fontSize:11, color:'#9aa3b2'}}>John Doe - 12/10/2025</div>
           </div>
         </div>
       </div>

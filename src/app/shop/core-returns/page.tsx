@@ -103,14 +103,14 @@ export default function CoreReturnsPage() {
                   {filtered.map(item => (
                     <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                       <td style={{ padding: '12px 14px', fontWeight: 600 }}>{item.partName}</td>
-                      <td style={{ padding: '12px 14px', color: '#9ca3af' }}>{item.partNumber || '—'}</td>
-                      <td style={{ padding: '12px 14px', color: '#9ca3af' }}>{item.vendor || '—'}</td>
+                      <td style={{ padding: '12px 14px', color: '#9ca3af' }}>{item.partNumber || ' - '}</td>
+                      <td style={{ padding: '12px 14px', color: '#9ca3af' }}>{item.vendor || ' - '}</td>
                       <td style={{ padding: '12px 14px', color: '#f59e0b', fontWeight: 600 }}>${item.coreValue.toFixed(2)}</td>
-                      <td style={{ padding: '12px 14px', color: '#22c55e' }}>{item.creditReceived ? `$${item.creditReceived.toFixed(2)}` : '—'}</td>
+                      <td style={{ padding: '12px 14px', color: '#22c55e' }}>{item.creditReceived ? `$${item.creditReceived.toFixed(2)}` : ' - '}</td>
                       <td style={{ padding: '12px 14px' }}>
                         <span style={{ background: statusColor[item.status] + '22', color: statusColor[item.status], border: `1px solid ${statusColor[item.status]}`, borderRadius: 20, padding: '3px 10px', fontSize: 11, fontWeight: 700, textTransform: 'capitalize' }}>{item.status}</span>
                       </td>
-                      <td style={{ padding: '12px 14px', color: '#60a5fa' }}>{item.workOrderId ? `#${item.workOrderId.slice(-6).toUpperCase()}` : '—'}</td>
+                      <td style={{ padding: '12px 14px', color: '#60a5fa' }}>{item.workOrderId ? `#${item.workOrderId.slice(-6).toUpperCase()}` : ' - '}</td>
                       <td style={{ padding: '12px 14px' }}>
                         <div style={{ display: 'flex', gap: 6 }}>
                           {item.status === 'pending' && <button onClick={() => updateStatus(item.id, 'returned')} style={{ background: 'rgba(96,165,250,0.2)', color: '#60a5fa', border: '1px solid #60a5fa', borderRadius: 5, padding: '4px 10px', fontSize: 11, cursor: 'pointer' }}>Returned</button>}

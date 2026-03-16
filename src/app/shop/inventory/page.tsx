@@ -287,7 +287,7 @@ export default function ShopInventoryPage() {
                       <td style={{ padding: 16, textAlign: 'right', color: '#e5e7eb', fontWeight: 600 }}>
                         ${item.price.toFixed(2)}
                       </td>
-                      <td style={{ padding: 16, color: '#9aa3b2' }}>{item.supplier || '—'}</td>
+                      <td style={{ padding: 16, color: '#9aa3b2' }}>{item.supplier || ' - '}</td>
                       <td style={{ padding: 16, textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                           <button

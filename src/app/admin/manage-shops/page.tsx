@@ -1,5 +1,5 @@
 'use client';
-import { FaBan, FaCheck, FaStar, FaSyncAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaBan, FaCheck, FaStar, FaSyncAlt } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -123,7 +123,7 @@ export default function ManageShops() {
           </div>
         </div>
         <Link href="/admin/home" style={{padding:'8px 16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', borderRadius:6, textDecoration:'none', fontSize:13, fontWeight:600}}>
-          ← Back to Dashboard
+          <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
         </Link>
       </div>
 

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 
 type Step = 'request' | 'confirm' | 'done';
 
@@ -24,7 +24,7 @@ export default function ResetPasswordPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: identifier.trim(), via: 'email' }),
       });
-      // Always move forward — API returns success even for unknown accounts
+      // Always move forward  -  API returns success even for unknown accounts
       setStep('confirm');
     } catch {
       setError('Unable to connect. Please try again.');
@@ -120,7 +120,7 @@ export default function ResetPasswordPage() {
                 onClick={() => { setStep('request'); setToken(''); setPassword(''); setConfirm(''); setError(''); }}
                 style={{ width: '100%', padding: '10px', background: 'transparent', color: '#6b7280', border: 'none', fontSize: 14, cursor: 'pointer', marginTop: 8 }}
               >
-                ← Use a different email
+                <FaArrowLeft style={{marginRight:4}} /> Use a different email
               </button>
             </form>
           </>

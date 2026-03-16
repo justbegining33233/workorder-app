@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaCar, FaTruck } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaCar, FaTruck } from 'react-icons/fa';
 
 interface Vehicle {
   id: string;
@@ -192,7 +192,7 @@ export default function CustomerVehiclesPage() {
       <div style={{ background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(229,51,42,0.3)', padding: '20px 32px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto' }}>
           <Link href="/customer/home" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: 14, fontWeight: 600, marginBottom: 8, display: 'inline-block' }}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>

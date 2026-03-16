@@ -146,7 +146,7 @@ export default function GlobalSearch() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  <span style={{ color: '#e5e7eb', fontSize: 14 }}><FaWrench style={{marginRight:4}} /> {wo.id.slice(0, 8)} — {wo.customer.firstName} {wo.customer.lastName}</span>
+                  <span style={{ color: '#e5e7eb', fontSize: 14 }}><FaWrench style={{marginRight:4}} /> {wo.id.slice(0, 8)}  -  {wo.customer.firstName} {wo.customer.lastName}</span>
                   <span style={{ color: '#9aa3b2', fontSize: 12 }}>{wo.status}</span>
                 </div>
               ))}
@@ -165,7 +165,7 @@ export default function GlobalSearch() {
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
                   <span style={{ color: '#e5e7eb', fontSize: 14 }}><FaCar style={{marginRight:4}} /> {v.year} {v.make} {v.model}</span>
-                  <span style={{ color: '#9aa3b2', fontSize: 12 }}>{v.licensePlate} — {v.customer.firstName} {v.customer.lastName}</span>
+                  <span style={{ color: '#9aa3b2', fontSize: 12 }}>{v.licensePlate}  -  {v.customer.firstName} {v.customer.lastName}</span>
                 </div>
               ))}
             </div>

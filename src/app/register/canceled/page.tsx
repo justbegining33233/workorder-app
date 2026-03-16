@@ -24,7 +24,7 @@ function CanceledContent() {
         </h1>
 
         <p style={{ color: '#475569', lineHeight: 1.6, marginBottom: 8 }}>
-          You cancelled before completing checkout. Your shop registration has been saved — you can retry payment at any time.
+          You cancelled before completing checkout. Your shop registration has been saved  -  you can retry payment at any time.
         </p>
 
         <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.6, marginBottom: 32 }}>

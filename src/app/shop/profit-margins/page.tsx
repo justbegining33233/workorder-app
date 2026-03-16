@@ -67,7 +67,7 @@ export default function ProfitMarginsPage() {
       <div style={{ background: 'rgba(0,0,0,0.3)', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700 }}><FaChartLine style={{marginRight:4}} /> Profit Margins</h1>
-          <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Per-job profitability analysis — identify your most and least profitable work</p>
+          <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: 14 }}>Per-job profitability analysis  -  identify your most and least profitable work</p>
         </div>
         <select value={days} onChange={e => setDays(Number(e.target.value))}
           style={{ background: '#374151', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, padding: '9px 14px', color: '#e5e7eb', fontSize: 14, cursor: 'pointer' }}>

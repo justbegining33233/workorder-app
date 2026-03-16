@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheckCircle, FaLock, FaUnlock } from 'react-icons/fa';
+import { FaArrowLeft, FaCheckCircle, FaLock, FaUnlock } from 'react-icons/fa';
 
 type Step = 'idle' | 'setup' | 'verify' | 'disable';
 
@@ -111,7 +111,7 @@ export default function TwoFactorSettingsPage() {
       <div style={{ maxWidth: 560, margin: '0 auto' }}>
         <div style={{ marginBottom: 28 }}>
           <Link href="/shop/settings" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: 14 }}>
-            ← Back to Settings
+            <FaArrowLeft style={{marginRight:4}} /> Back to Settings
           </Link>
         </div>
 
@@ -146,7 +146,7 @@ export default function TwoFactorSettingsPage() {
             </div>
           )}
 
-          {/* â”€â”€â”€ SETUP STEP: show QR code â”€â”€â”€ */}
+          {/* â"EURâ"EURâ"EUR SETUP STEP: show QR code â"EURâ"EURâ"EUR */}
           {step === 'verify' && qrCode && (
             <div style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
               <p style={{ color: '#93c5fd', fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
@@ -180,7 +180,7 @@ export default function TwoFactorSettingsPage() {
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={handleVerify} disabled={tokenInput.length !== 6 || fetching} style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#22c55e', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: tokenInput.length !== 6 ? 0.5 : 1 }}>
-                  {fetching ? 'Activating…' : 'Activate 2FA'}
+                  {fetching ? 'Activating...' : 'Activate 2FA'}
                 </button>
                 <button onClick={() => { setStep('idle'); setQrCode(null); setSecret(null); setTokenInput(''); }} style={{ padding: '11px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
                   Cancel
@@ -189,7 +189,7 @@ export default function TwoFactorSettingsPage() {
             </div>
           )}
 
-          {/* â”€â”€â”€ DISABLE STEP: confirm with TOTP â”€â”€â”€ */}
+          {/* â"EURâ"EURâ"EUR DISABLE STEP: confirm with TOTP â"EURâ"EURâ"EUR */}
           {step === 'disable' && (
             <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
               <p style={{ color: '#fca5a5', fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
@@ -211,7 +211,7 @@ export default function TwoFactorSettingsPage() {
               />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={handleDisable} disabled={tokenInput.length !== 6 || fetching} style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: '#ef4444', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: tokenInput.length !== 6 ? 0.5 : 1 }}>
-                  {fetching ? 'Disabling…' : 'Confirm Disable'}
+                  {fetching ? 'Disabling...' : 'Confirm Disable'}
                 </button>
                 <button onClick={() => { setStep('idle'); setTokenInput(''); }} style={{ padding: '11px 16px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}>
                   Cancel
@@ -220,12 +220,12 @@ export default function TwoFactorSettingsPage() {
             </div>
           )}
 
-          {/* â”€â”€â”€ IDLE STATE: action buttons â”€â”€â”€ */}
+          {/* â"EURâ"EURâ"EUR IDLE STATE: action buttons â"EURâ"EURâ"EUR */}
           {step === 'idle' && (
             <div>
               {!enabled ? (
                 <button onClick={handleSetup} disabled={fetching} style={{ width: '100%', padding: '13px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
-                  {fetching ? 'Generating…' : '<FaLock style={{marginRight:4}} /> Enable Two-Factor Authentication'}
+                  {fetching ? 'Generating...' : '<FaLock style={{marginRight:4}} /> Enable Two-Factor Authentication'}
                 </button>
               ) : (
                 <button onClick={() => { setStep('disable'); setTokenInput(''); setErrorMsg(null); }} style={{ width: '100%', padding: '13px', borderRadius: 10, border: '1px solid rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.1)', color: '#fca5a5', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>

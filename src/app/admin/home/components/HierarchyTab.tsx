@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { FaClipboardList, FaDollarSign, FaHardHat, FaStore } from 'react-icons/fa';
+import { FaArrowRight, FaClipboardList, FaDollarSign, FaHardHat, FaStore } from 'react-icons/fa';
 
 interface SubscriptionData {
   id: string;
@@ -224,7 +224,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
             <div>
               <p className="text-xs text-[#71717A] uppercase tracking-wider font-medium">Active Shops</p>
               <p className="text-2xl font-bold text-[#FAFAFA] mt-1">{totalShops}</p>
-              <p className="text-xs text-[#22C55E] mt-1">{shopGrowth} • +{newShopsThisMonth} this month</p>
+              <p className="text-xs text-[#22C55E] mt-1">{shopGrowth} - +{newShopsThisMonth} this month</p>
             </div>
             <div className="w-12 h-12 rounded-xl bg-[#3B82F6]/10 flex items-center justify-center">
               <span className="text-xl"><FaStore style={{marginRight:4}} /></span>
@@ -663,7 +663,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
                       </td>
                       <td className="py-4 text-right">
                         <button className="text-xs text-[#F97316] hover:text-[#FB923C] font-medium">
-                          Manage →
+                          Manage <FaArrowRight style={{marginRight:4}} />
                         </button>
                       </td>
                     </tr>
@@ -680,7 +680,7 @@ export function HierarchyTab({ subscriptions, liveMetrics }: HierarchyTabProps) 
               Showing {filteredSubscriptions.length} of {activeSubscriptions.length} shops
             </p>
             <button className="text-xs text-[#F97316] hover:text-[#FB923C] font-medium">
-              Export Organization Data →
+              Export Organization Data <FaArrowRight style={{marginRight:4}} />
             </button>
           </div>
         )}
@@ -773,11 +773,11 @@ function ActionItem({ label, value, type, action, href }: { label: string; value
       </div>
       {href ? (
         <Link href={href} className={`text-xs font-medium ${colors[type].text} hover:underline`}>
-          {action} →
+          {action} <FaArrowRight style={{marginRight:4}} />
         </Link>
       ) : (
         <button className={`text-xs font-medium ${colors[type].text} hover:underline`}>
-          {action} →
+          {action} <FaArrowRight style={{marginRight:4}} />
         </button>
       )}
     </div>

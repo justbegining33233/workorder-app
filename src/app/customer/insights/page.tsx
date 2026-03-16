@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaArrowRight, FaChartBar, FaChartLine } from 'react-icons/fa';
+import { FaArrowDown, FaArrowRight, FaArrowUp, FaChartBar, FaChartLine } from 'react-icons/fa';
 
 interface Insight {
   id: string;
@@ -44,8 +44,8 @@ export default function Insights() {
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend.includes('↑')) return '<FaChartLine style={{marginRight:4}} />';
-    if (trend.includes('↓')) return '<FaChartLine style={{marginRight:4}} />';
+    if (trend.includes('<FaArrowUp style={{marginRight:4}} />')) return '<FaChartLine style={{marginRight:4}} />';
+    if (trend.includes('<FaArrowDown style={{marginRight:4}} />')) return '<FaChartLine style={{marginRight:4}} />';
     return '<FaArrowRight style={{marginRight:4}} />';
   };
 
@@ -127,7 +127,7 @@ export default function Insights() {
               <div style={{fontSize:14, color:'#9aa3b2'}}>Services Completed</div>
             </div>
             <div style={{textAlign:'center'}}>
-              <div style={{fontSize:32, fontWeight:700, color:'#f59e0b'}}>{summary?.averageRating ? summary.averageRating.toFixed(1) : '—'}</div>
+              <div style={{fontSize:32, fontWeight:700, color:'#f59e0b'}}>{summary?.averageRating ? summary.averageRating.toFixed(1) : ' - '}</div>
               <div style={{fontSize:14, color:'#9aa3b2'}}>Average Rating</div>
             </div>
             <div style={{textAlign:'center'}}>

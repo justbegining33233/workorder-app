@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaLink } from 'react-icons/fa';
+import { FaArrowLeft, FaLink } from 'react-icons/fa';
 
 interface PaymentLink {
   id: string;
@@ -87,7 +87,7 @@ export default function PaymentLinksPage() {
         <main style={{ flex: 1, padding: '24px', maxWidth: 900, margin: '0 auto', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
             <div>
-              <Link href="/shop/admin" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}>← Admin</Link>
+              <Link href="/shop/admin" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}><FaArrowLeft style={{marginRight:4}} /> Admin</Link>
               <h1 style={{ color: '#fff', fontSize: 28, fontWeight: 700, marginTop: 4 }}>Payment Links</h1>
               <p style={{ color: '#9ca3af', fontSize: 14 }}>Create and send payment links to customers</p>
             </div>

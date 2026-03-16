@@ -16,7 +16,7 @@ import {
 } from '../types/shop';
 import { SUBSCRIPTION_PLANS } from '../lib/subscription';
 import '../styles/sos-theme.css';
-import { FaSmile } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaSmile } from 'react-icons/fa';
 
 const MAX_SERVICES = 5;
 
@@ -377,7 +377,7 @@ export default function ShopRegistrationForm() {
           // Redirect to Stripe hosted checkout to collect payment for the subscription
           window.location.href = data.checkoutUrl;
         } else {
-          // Fallback: Stripe wasn't configured — go to thank-you page
+          // Fallback: Stripe wasn't configured  -  go to thank-you page
           router.push('/auth/thank-you');
         }
       } else {
@@ -777,7 +777,7 @@ export default function ShopRegistrationForm() {
                         </div>
 
                         <div style={{fontSize:13, color:'#6b7280', marginBottom:12}}>
-                          Up to {plan.maxUsers} users • Up to {plan.maxShops} shop{plan.maxShops !== 1 ? 's' : ''}
+                          Up to {plan.maxUsers} users - Up to {plan.maxShops} shop{plan.maxShops !== 1 ? 's' : ''}
                         </div>
 
                         <div style={{display:'flex', flexWrap:'wrap', gap:4}}>
@@ -827,11 +827,11 @@ export default function ShopRegistrationForm() {
             <div style={{display:'flex', gap:12}}>
               {step > 1 && (
                 <button type="button" onClick={() => setStep(step - 1)} className="btn-outline">
-                  ← Back
+                  <FaArrowLeft style={{marginRight:4}} /> Back
                 </button>
               )}
               <button type="submit" className="btn-primary" disabled={loading}>
-                {loading ? 'Submitting...' : step === 5 ? 'Complete Registration' : 'Next →'}
+                {loading ? 'Submitting...' : step === 5 ? 'Complete Registration' : 'Next <FaArrowRight style={{marginRight:4}} />'}
               </button>
             </div>
           </div>

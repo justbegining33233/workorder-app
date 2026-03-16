@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBell } from 'react-icons/fa';
+import { FaArrowLeft, FaBell } from 'react-icons/fa';
 
 interface Notification {
   id: string;
@@ -56,7 +56,7 @@ export default function CustomerNotificationsPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', padding: 24 }}>
       <div style={{ maxWidth: 700, margin: '0 auto' }}>
-        <Link href="/customer/dashboard" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}>← Dashboard</Link>
+        <Link href="/customer/dashboard" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}><FaArrowLeft style={{marginRight:4}} /> Dashboard</Link>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, marginBottom: 24 }}>
           <div>
             <h1 style={{ color: '#fff', fontSize: 28, fontWeight: 700 }}>Notifications</h1>

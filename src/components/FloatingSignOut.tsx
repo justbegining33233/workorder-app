@@ -23,7 +23,7 @@ export default function FloatingSignOut() {
     setVisible(!isAuthPage && hasToken);
   }, [pathname]);
 
-  // Hidden on mobile — MobileNav already has Sign Out
+  // Hidden on mobile  -  MobileNav already has Sign Out
   if (!visible || isMobile) return null;
 
   const handleSignOut = async () => {

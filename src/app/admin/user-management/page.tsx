@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaEnvelope, FaHourglassHalf, FaUsers } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding, FaEnvelope, FaHourglassHalf, FaUsers } from 'react-icons/fa';
 
 type User = {
   id: string;
@@ -119,7 +119,7 @@ export default function UserManagement() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(168,85,247,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaUsers style={{marginRight:4}} /> User Management</h1>
           <p style={{fontSize:14, color:'#9aa3b2'}}>Manage all platform users and roles</p>
@@ -214,7 +214,7 @@ export default function UserManagement() {
                     <div style={{fontSize:13, color:'#6b7280'}}><FaBuilding style={{marginRight:4}} /> {user.organization}</div>
                   )}
                   <div style={{fontSize:12, color:'#6b7280', marginTop:8}}>
-                    Joined: {user.joinedDate.toLocaleDateString()} • Last login: {getTimeAgo(user.lastLogin)}
+                    Joined: {user.joinedDate.toLocaleDateString()} - Last login: {getTimeAgo(user.lastLogin)}
                   </div>
                 </div>
                 <div style={{display:'flex', gap:8}}>

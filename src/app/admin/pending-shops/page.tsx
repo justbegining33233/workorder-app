@@ -4,7 +4,7 @@ import { useEffect, useState, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheck, FaCheckCircle, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaCheck, FaCheckCircle, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
 
 type PendingShop = {
   id: string;
@@ -256,7 +256,7 @@ export default function PendingShops() {
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1400, margin:'0 auto'}}>
           <Link href="/admin/home" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
-            ← Back to Dashboard
+            <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <div>
@@ -295,7 +295,7 @@ export default function PendingShops() {
                       <FaMapMarkerAlt style={{marginRight:4}} /> {shop.location}
                     </div>
                     <div style={{fontSize:13, color:'#6b7280'}}>
-                      {shop.services} services • Submitted {getTimeAgo(shop.submitted)}
+                      {shop.services} services - Submitted {getTimeAgo(shop.submitted)}
                     </div>
                   </div>
                 </div>
@@ -460,7 +460,7 @@ export default function PendingShops() {
               </div>
               <div>
                 <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>Contact</div>
-                <div style={{fontSize:14, color:'#e5e7eb'}}>{shopToApprove.email} • {shopToApprove.phone}</div>
+                <div style={{fontSize:14, color:'#e5e7eb'}}>{shopToApprove.email} - {shopToApprove.phone}</div>
               </div>
             </div>
 

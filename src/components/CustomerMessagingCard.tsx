@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaComments, FaExclamationTriangle, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// --- Types -------------------------------------------------------------------
 
 interface Message {
   id: string;
@@ -46,7 +46,7 @@ interface CustomerMessagingCardProps {
   initialShopId?: string;
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// --- Constants ---------------------------------------------------------------
 
 const ROLE_ICON: Record<string, string> = { shop: "<FaStore style={{marginRight:4}} />", manager: "<FaUserTie style={{marginRight:4}} />", tech: "<FaWrench style={{marginRight:4}} />" };
 const ROLE_LABEL: Record<string, string> = { shop: "Shop", manager: "Manager", tech: "Tech" };
@@ -60,7 +60,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "tech", label: "Techs" },
 ];
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// --- Component ---------------------------------------------------------------
 
 export default function CustomerMessagingCard({ header = "Messages", initialShopId }: CustomerMessagingCardProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -144,7 +144,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
      
   }, [selected?.contactId, selected?.contactRole]);
 
-  // ─── API helpers ───────────────────────────────────────────────────────────
+  // --- API helpers -----------------------------------------------------------
 
   const fetchMessages = async () => {
     try {
@@ -211,7 +211,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
     } catch { /* silent */ }
   };
 
-  // ─── Actions ───────────────────────────────────────────────────────────────
+  // --- Actions ---------------------------------------------------------------
 
   const handleSelectConversation = (conv: Conversation) => {
     setSelected(conv);
@@ -253,7 +253,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
     finally { setLoading(false); }
   };
 
-  // ─── Render ────────────────────────────────────────────────────────────────
+  // --- Render ----------------------------------------------------------------
 
   return (
     <div style={{ background: "rgba(0,0,0,0.35)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, overflow: "hidden" }}>
@@ -264,7 +264,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
           <span>Session expired. Please sign in again.</span>
           <button onClick={() => { localStorage.clear(); window.location.href = "/auth/login"; }}
             style={{ padding: "4px 10px", background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer", fontSize: 11, fontWeight: 700 }}>
-            Log‑In
+            Log-In
           </button>
         </div>
       )}
@@ -337,7 +337,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
                       {ROLE_LABEL[conv.contactRole] ?? conv.contactRole}
                     </span>
                     <div style={{ fontSize: 11, color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {conv.lastMessage.length > 40 ? conv.lastMessage.slice(0, 40) + "…" : conv.lastMessage}
+                      {conv.lastMessage.length > 40 ? conv.lastMessage.slice(0, 40) + "..." : conv.lastMessage}
                     </div>
                     <div style={{ fontSize: 9, color: "#4b5563", marginTop: 2 }}>
                       {new Date(conv.lastMessageAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
@@ -357,7 +357,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
               <div>
                 <label style={{ display: "block", color: "#9ca3af", fontSize: 12, marginBottom: 6 }}>To:</label>
                 {contactsLoading ? (
-                  <div style={{ color: "#6b7280", fontSize: 12 }}>Loading contacts…</div>
+                  <div style={{ color: "#6b7280", fontSize: 12 }}>Loading contacts...</div>
                 ) : noContacts ? (
                   <div style={{ color: "#f59e0b", fontSize: 13, padding: "10px 12px", background: "rgba(245,158,11,0.08)", borderRadius: 8 }}>
                     <FaExclamationTriangle style={{marginRight:4}} /> No messageable contacts found.
@@ -379,17 +379,17 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
                       setNewRecipient(c ?? null);
                     }}
                     style={{ width: "100%", padding: "8px 10px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(0,0,0,0.3)", color: "#e5e7eb", fontSize: 13 }}>
-                    <option value="">— Select recipient —</option>
+                    <option value=""> -  Select recipient  - </option>
                     {availableContacts.map((c) => (
                       <option key={`${c.role}_${c.id}`} value={`${c.role}_${c.id}`}>
-                        {ROLE_ICON[c.role]} {c.name} ({ROLE_LABEL[c.role] ?? c.role}) — {c.contextLabel}
+                        {ROLE_ICON[c.role]} {c.name} ({ROLE_LABEL[c.role] ?? c.role})  -  {c.contextLabel}
                       </option>
                     ))}
                   </select>
                 )}
               </div>
               <textarea
-                placeholder="Type your message…"
+                placeholder="Type your message..."
                 value={messageText}
                 maxLength={5000}
                 onChange={(e) => setMessageText(e.target.value)}
@@ -399,7 +399,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={handleSend} disabled={loading || !messageText.trim() || !newRecipient}
                   style={{ flex: 1, padding: "10px 0", background: "#e5332a", color: "white", border: "none", borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: loading || !messageText.trim() || !newRecipient ? "not-allowed" : "pointer", opacity: loading || !messageText.trim() || !newRecipient ? 0.5 : 1 }}>
-                  {loading ? "Sending…" : "Send Message"}
+                  {loading ? "Sending..." : "Send Message"}
                 </button>
                 <button onClick={() => { setShowCompose(false); setNewRecipient(null); setMessageText(""); }}
                   style={{ padding: "10px 16px", background: "rgba(255,255,255,0.07)", color: "#9ca3af", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
@@ -425,7 +425,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
               {/* Messages */}
               <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
                 {threadMessages.length === 0 && (
-                  <div style={{ textAlign: 'center', color: '#4b5563', fontSize: 12, padding: 12 }}>Loading messages…</div>
+                  <div style={{ textAlign: 'center', color: '#4b5563', fontSize: 12, padding: 12 }}>Loading messages...</div>
                 )}
                 {threadMessages
                   .slice()
@@ -459,12 +459,12 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
                   maxLength={5000}
                   onChange={(e) => setMessageText(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                  placeholder={`Reply to ${selected.contactName}…`}
+                  placeholder={`Reply to ${selected.contactName}...`}
                   style={{ flex: 1, padding: "8px 10px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.12)", background: "rgba(0,0,0,0.25)", color: "#e5e7eb", fontSize: 13, resize: "none", minHeight: 44, maxHeight: 100 }}
                 />
                 <button onClick={handleSend} disabled={loading || !messageText.trim()}
                   style={{ padding: "8px 16px", background: "#e5332a", color: "white", border: "none", borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: loading || !messageText.trim() ? "not-allowed" : "pointer", opacity: loading || !messageText.trim() ? 0.5 : 1, alignSelf: "flex-end" }}>
-                  {loading ? "…" : "Send"}
+                  {loading ? "..." : "Send"}
                 </button>
               </div>
             </>

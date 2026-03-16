@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBell, FaBolt, FaCalendarAlt, FaCar, FaDollarSign, FaStopwatch, FaSyncAlt, FaTrash, FaUser } from 'react-icons/fa';
+import { FaArrowLeft, FaBell, FaBolt, FaCalendarAlt, FaCar, FaDollarSign, FaStopwatch, FaSyncAlt, FaTrash, FaUser } from 'react-icons/fa';
 
 interface RecurringSchedule {
   id: string;
@@ -173,7 +173,7 @@ export default function RecurringWorkOrders() {
               onClick={() => router.back()}
               className="text-slate-400 hover:text-slate-100 text-sm transition-colors"
             >
-              ← Back
+              <FaArrowLeft style={{marginRight:4}} /> Back
             </button>
             <h1 className="text-2xl font-semibold"><FaSyncAlt style={{marginRight:4}} /> Recurring Work Orders</h1>
           </div>

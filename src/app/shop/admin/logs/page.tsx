@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { FaLock, FaClipboardList } from 'react-icons/fa';
+import { FaArrowLeft, FaClipboardList, FaLock } from 'react-icons/fa';
 import Link from 'next/link';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
@@ -55,7 +55,7 @@ export default function ShopLogsPage() {
         <main style={{ flex: 1, padding: '24px', maxWidth: 1000, margin: '0 auto', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <Link href="/shop/admin" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}>← Admin</Link>
+              <Link href="/shop/admin" style={{ color: '#60a5fa', textDecoration: 'none', fontSize: 14 }}><FaArrowLeft style={{marginRight:4}} /> Admin</Link>
               <h1 style={{ color: '#fff', fontSize: 28, fontWeight: 700, marginTop: 4 }}>Shop Logs</h1>
               <p style={{ color: '#9ca3af', fontSize: 14 }}>Audit trail and activity history</p>
             </div>
