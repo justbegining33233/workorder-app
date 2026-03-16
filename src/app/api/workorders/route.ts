@@ -4,7 +4,7 @@ import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
 import { sendWorkOrderCreatedEmail } from '@/lib/emailService';
 import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
-import { workOrderCreateSchema } from '@/lib/validation';
+
 import { sanitizeObject } from '@/lib/sanitize';
 
 export async function GET(request: NextRequest) {
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
   }
   
-  const rateLimitResult = rateLimit(rateLimitConfigs.api)(request);
+  const rateLimitResult = await rateLimit(rateLimitConfigs.api)(request);
   if (rateLimitResult) return rateLimitResult;
   
   try {

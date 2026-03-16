@@ -199,7 +199,7 @@ const CATEGORY_CONFIG: Array<{ id: CategoryId; label: string; note?: string }> =
 ];
 
 export default function CompleteProfile() {
-  const { user, isLoading } = useRequireAuth(['shop']);
+  const { user, isLoading: _isLoading } = useRequireAuth(['shop']);
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
@@ -314,7 +314,7 @@ export default function CompleteProfile() {
         try {
           const error = await response.json();
           errorMessage = error.message || error.error || error.detail || error.errorMessage || errorMessage;
-        } catch (parseErr) {
+        } catch {
           // ignore
         }
         console.error('Complete profile failed', { status: response.status, errorMessage });
@@ -351,7 +351,7 @@ export default function CompleteProfile() {
   };
 
   if (step === 2) {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const _token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     return (
       <div style={{minHeight:'100vh', background: 'transparent'}}>
         <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(229,51,42,0.3)', padding:'16px 32px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>

@@ -32,7 +32,11 @@ export async function GET(request: NextRequest) {
       ['closed', 'completed', 'Completed'].includes(w.status)
     );
 
-    const loyaltyPoints = completed.length * 50;
+    // Points = 1 per dollar spent (sum of amountPaid or estimatedCost)
+    const loyaltyPoints = completed.reduce((sum, w) => {
+      const paid = w.amountPaid || w.estimatedCost || 0;
+      return sum + Math.floor(paid);
+    }, 0);
 
     // Map of tierId → most recent active claim
     const claimMap = new Map<string, typeof existingClaims[0]>();
@@ -61,13 +65,16 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // History: one entry per completed work order
-    const history = completed.slice(0, 10).map((w, i) => ({
-      id: `entry-${i}`,
-      description: 'Completed service',
-      points: 50,
-      date: w.completedAt ? new Date(w.completedAt).toLocaleDateString() : 'N/A',
-    }));
+    // History: one entry per completed work order with dollar-based points
+    const history = completed.slice(0, 10).map((w, i) => {
+      const paid = w.amountPaid || w.estimatedCost || 0;
+      return {
+        id: `entry-${i}`,
+        description: `Completed service — $${paid.toFixed(2)} spent`,
+        points: Math.floor(paid),
+        date: w.completedAt ? new Date(w.completedAt).toLocaleDateString() : 'N/A',
+      };
+    });
 
     return NextResponse.json({ loyaltyPoints, rewards, history });
   } catch (error) {
@@ -88,14 +95,18 @@ export async function POST(request: NextRequest) {
 
     const customerId = auth.id;
 
-    // Check loyalty points
-    const woCount = await prisma.workOrder.count({
+    // Check loyalty points (1 per dollar spent)
+    const completedWOs = await prisma.workOrder.findMany({
       where: {
         customerId,
         status: { in: ['closed', 'completed', 'Completed'] },
       },
+      select: { amountPaid: true, estimatedCost: true },
     });
-    const loyaltyPoints = woCount * 50;
+    const loyaltyPoints = completedWOs.reduce((sum, w) => {
+      const paid = w.amountPaid || w.estimatedCost || 0;
+      return sum + Math.floor(paid);
+    }, 0);
     if (loyaltyPoints < tier.pointCost) {
       return NextResponse.json({ error: 'Not enough points' }, { status: 400 });
     }

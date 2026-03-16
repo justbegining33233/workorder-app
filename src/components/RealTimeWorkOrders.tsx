@@ -10,8 +10,8 @@ interface RealTimeWorkOrdersProps {
 }
 
 export default function RealTimeWorkOrders({
-  shopId,
-  userId,
+  shopId: _shopId,
+  userId: _userId,
   onWorkOrderUpdate
 }: RealTimeWorkOrdersProps) {
   const { isConnected, on, off } = useSocket();

@@ -1,8 +1,8 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { uploadToCloudinary } from '@/lib/cloudinary';
-import { addPhoto, loadPhotos, PhotoMeta } from '@/lib/photos';
+import { addPhoto, loadPhotos } from '@/lib/photos';
 import { requireRole } from '@/lib/auth';
-import { updateWorkOrder, getWorkOrderById } from '@/lib/workorders';
+import prisma from '@/lib/prisma';
 import type { AuthUser } from '@/lib/auth';
 
 export const runtime = 'nodejs';
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     // If a workOrderId was provided, append photo to workOrder.workPhotos directly
     if (workOrderId) {
       try {
-        const workOrder = await getWorkOrderById(workOrderId);
+        const workOrder = await prisma.workOrder.findUnique({ where: { id: workOrderId } });
         if (workOrder) {
           const workPhotos = [
             ...((workOrder.workPhotos as unknown[]) || []),
@@ -60,7 +60,10 @@ export async function POST(request: NextRequest) {
               uploadedBy: user.id,
             },
           ];
-          await updateWorkOrder(workOrderId, { workPhotos: workPhotos as any });
+          await prisma.workOrder.update({
+            where: { id: workOrderId },
+            data: { workPhotos: workPhotos as any },
+          });
         }
       } catch (err) {
         console.error('[photos] Failed to attach photo to work order', err);

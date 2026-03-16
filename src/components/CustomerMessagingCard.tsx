@@ -122,7 +122,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
     fetchMessages();
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   // Keep ref in sync with state so stale-closure polls can read the current selection
@@ -140,7 +140,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
     if (!selected) return;
     const interval = setInterval(() => fetchThread(selected), 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [selected?.contactId, selected?.contactRole]);
 
   // ─── API helpers ───────────────────────────────────────────────────────────

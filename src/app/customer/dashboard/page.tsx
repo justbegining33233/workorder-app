@@ -1,19 +1,17 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import NotificationBell from '../../../components/NotificationBell';
 import TopNavBar from '../../../components/TopNavBar';
 import RealTimeWorkOrders from '../../../components/RealTimeWorkOrders';
-import CustomerMessagingCard from '../../../components/CustomerMessagingCard';
 import { useRequireAuth, useAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 
 export default function CustomerDashboard() {
   useRequireAuth(['customer']);
   const { logout } = useAuth();
-  const [userName, setUserName] = useState('');
+  const [_userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
-  const [mounted, setMounted] = useState(false);
+  const [_mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('discover');
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [tier, setTier] = useState('Bronze');
@@ -58,50 +56,6 @@ export default function CustomerDashboard() {
     messages: 0,
     appointments: 0
   });
-
-  useEffect(() => {
-    setMounted(true);
-    const name = localStorage.getItem('userName');
-    const id = localStorage.getItem('userId');
-    
-    if (name) setUserName(name);
-    if (id) setUserId(id);
-    fetchStats();
-  }, []);
-
-  // Live updates: listen for socket events dispatched by `useSocket`
-  useEffect(() => {
-    const onWorkOrderUpdated = (e: any) => {
-      const data = e?.detail || e;
-      // Prepend to recent history and refresh counts
-      setRecentData(prev => ({ ...prev, history: [data, ...prev.history].slice(0, 3) }));
-      // Refresh counts to keep UI consistent
-      fetchStats();
-    };
-
-    const onNewMessage = (e: any) => {
-      const data = e?.detail || e;
-      // Prepend to recent messages and increment unread count
-      setRecentData(prev => ({ ...prev, messages: [data, ...prev.messages].slice(0, 3) }));
-      setStats(prev => ({ ...prev, unreadMessages: (prev.unreadMessages || 0) + 1 }));
-    };
-
-    const onLocationUpdate = (e: any) => {
-      // For live tracking card (if viewing an active tracking work order), we might refresh tracking data
-      // For now just refresh stats to pick up any tracking-based changes
-      fetchStats();
-    };
-
-    window.addEventListener('work-order:updated', onWorkOrderUpdated as EventListener);
-    window.addEventListener('chat:new-message', onNewMessage as EventListener);
-    window.addEventListener('tech:location_updated', onLocationUpdate as EventListener);
-
-    return () => {
-      window.removeEventListener('work-order:updated', onWorkOrderUpdated as EventListener);
-      window.removeEventListener('chat:new-message', onNewMessage as EventListener);
-      window.removeEventListener('tech:location_updated', onLocationUpdate as EventListener);
-    };
-  }, []);
 
   const fetchStats = async () => {
     try {
@@ -210,7 +164,51 @@ export default function CustomerDashboard() {
     }
   };
 
-  const handleSignOut = () => {
+  useEffect(() => {
+    setMounted(true);
+    const name = localStorage.getItem('userName');
+    const id = localStorage.getItem('userId');
+    
+    if (name) setUserName(name);
+    if (id) setUserId(id);
+    fetchStats();
+  }, []);
+
+  // Live updates: listen for socket events dispatched by `useSocket`
+  useEffect(() => {
+    const onWorkOrderUpdated = (e: any) => {
+      const data = e?.detail || e;
+      // Prepend to recent history and refresh counts
+      setRecentData(prev => ({ ...prev, history: [data, ...prev.history].slice(0, 3) }));
+      // Refresh counts to keep UI consistent
+      fetchStats();
+    };
+
+    const onNewMessage = (e: any) => {
+      const data = e?.detail || e;
+      // Prepend to recent messages and increment unread count
+      setRecentData(prev => ({ ...prev, messages: [data, ...prev.messages].slice(0, 3) }));
+      setStats(prev => ({ ...prev, unreadMessages: (prev.unreadMessages || 0) + 1 }));
+    };
+
+    const onLocationUpdate = (_e: any) => {
+      // For live tracking card (if viewing an active tracking work order), we might refresh tracking data
+      // For now just refresh stats to pick up any tracking-based changes
+      fetchStats();
+    };
+
+    window.addEventListener('work-order:updated', onWorkOrderUpdated as EventListener);
+    window.addEventListener('chat:new-message', onNewMessage as EventListener);
+    window.addEventListener('tech:location_updated', onLocationUpdate as EventListener);
+
+    return () => {
+      window.removeEventListener('work-order:updated', onWorkOrderUpdated as EventListener);
+      window.removeEventListener('chat:new-message', onNewMessage as EventListener);
+      window.removeEventListener('tech:location_updated', onLocationUpdate as EventListener);
+    };
+  }, []);
+
+  const _handleSignOut = () => {
     logout();
   };
 

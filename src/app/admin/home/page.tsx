@@ -34,7 +34,7 @@ function AdminHomeContent() {
     liveMetrics,
     usersLiveMetrics,
     shopsLiveMetrics,
-    dataLoaded
+    dataLoaded: _dataLoaded
   } = useAdminData();
 
   const { logout } = useAuth();
@@ -150,7 +150,7 @@ function AdminHomeContent() {
     { href: '/admin/test', label: '🩺 Health Check', icon: 'health' },
   ];
 
-  const signalItems = [
+  const _signalItems = [
     { label: 'Pending approvals', value: pendingShops.length ?? 0 },
     { label: 'Approved shops', value: approvedShops.length ?? 0 },
     { label: 'Active subscriptions', value: subscriptions.length ?? 0 },

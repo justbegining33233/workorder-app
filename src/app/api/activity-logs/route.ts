@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth';
-
-// In-memory storage for activity logs
-const activityLogs: {
-  id: string;
-  type: string;
-  action: string;
-  details: string;
-  time: Date;
-  severity: string;
-  user: string;
-  location?: string;
-  email?: string;
-  amount?: string;
-  reason?: string;
-}[] = [];
+import prisma from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin']);
@@ -26,28 +12,22 @@ export async function GET(request: NextRequest) {
     const severity = searchParams.get('severity');
     const limit = searchParams.get('limit');
 
-    let filteredLogs = [...activityLogs];
+    const where: any = {};
+    if (type && type !== 'all') where.type = type;
+    if (severity && severity !== 'all') where.severity = severity;
 
-    // Filter by type
-    if (type && type !== 'all') {
-      filteredLogs = filteredLogs.filter(log => log.type === type);
-    }
+    const logs = await prisma.activityLog.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: limit ? parseInt(limit) : 100,
+    });
 
-    // Filter by severity
-    if (severity && severity !== 'all') {
-      filteredLogs = filteredLogs.filter(log => log.severity === severity);
-    }
+    // Map createdAt → time for backwards compatibility with frontend
+    const mapped = logs.map(log => ({ ...log, time: log.createdAt }));
 
-    // Sort by time (most recent first)
-    filteredLogs.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-
-    // Apply limit
-    if (limit) {
-      filteredLogs = filteredLogs.slice(0, parseInt(limit));
-    }
-
-    return NextResponse.json(filteredLogs);
-  } catch {
+    return NextResponse.json(mapped);
+  } catch (error) {
+    console.error('Failed to fetch activity logs:', error);
     return NextResponse.json(
       { error: 'Failed to fetch activity logs' },
       { status: 500 }

@@ -8,9 +8,9 @@ export default function ServiceWorkerRegister() {
       // Register service worker
       navigator.serviceWorker
         .register('/sw.js')
-        .then((registration) => {
+        .then((_registration) => {
         })
-        .catch((error) => {
+        .catch((_error) => {
         });
 
       // Request notification permission for mobile
@@ -23,6 +23,7 @@ export default function ServiceWorkerRegister() {
     }
 
     // Handle PWA install prompt
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let deferredPrompt: any;
 
     window.addEventListener('beforeinstallprompt', (e) => {

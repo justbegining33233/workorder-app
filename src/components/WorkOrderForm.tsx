@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { WorkOrderFormData, VehicleType, RepairType, MaintenanceType, TireServiceType, VehicleLocation, ServiceLocationType } from '@/types/workorder';
+import { WorkOrderFormData, VehicleType, RepairType, MaintenanceType, TireServiceType } from '@/types/workorder';
 
 interface WorkOrderFormProps {
   initialData?: Partial<WorkOrderFormData> & { id?: string };
@@ -80,7 +80,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
   };
 
   // Check if a service is available based on shop's offerings
-  const isServiceAvailable = (serviceName: string): boolean => {
+  const _isServiceAvailable = (serviceName: string): boolean => {
     // If no shop is selected or user is tech/manager, show all services
     if (!selectedShop || userRole === 'tech' || userRole === 'manager') {
       return true;
@@ -110,10 +110,10 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
   const [vehicleGreased, setVehicleGreased] = useState(initialData?.services?.maintenance?.[0]?.vehicleGreased ?? false);
   const [tireServiceType, setTireServiceType] = useState<TireServiceType | ''>('');
   
-  const [customerProvidesParts, setCustomerProvidesParts] = useState(initialData?.partsMaterials?.customerProvided ?? false);
-  const [techBringsParts, setTechBringsParts] = useState(initialData?.partsMaterials?.techBringParts ?? false);
-  const [partNotes, setPartNotes] = useState(initialData?.partsMaterials?.notes || '');
-  const [partNumbers, setPartNumbers] = useState(initialData?.partsMaterials?.partNumbers || '');
+  const [customerProvidesParts, _setCustomerProvidesParts] = useState(initialData?.partsMaterials?.customerProvided ?? false);
+  const [techBringsParts, _setTechBringsParts] = useState(initialData?.partsMaterials?.techBringParts ?? false);
+  const [partNotes, _setPartNotes] = useState(initialData?.partsMaterials?.notes || '');
+  const [partNumbers, _setPartNumbers] = useState(initialData?.partsMaterials?.partNumbers || '');
   
   const [symptoms, setSymptoms] = useState(initialData?.issueDescription?.symptoms || '');
   const [pictures, setPictures] = useState<File[]>([]);

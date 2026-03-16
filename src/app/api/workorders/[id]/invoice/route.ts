@@ -38,8 +38,7 @@ export async function GET(
     }
     
     // Generate PDF - cast to WorkOrder type
-    // @ts-ignore - Prisma schema doesn't match old WorkOrder interface exactly
-    const pdf = generateInvoicePDF(workOrder);
+    const pdf = generateInvoicePDF(workOrder as any);
     const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
     
     return new NextResponse(pdfBuffer, {

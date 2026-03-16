@@ -43,7 +43,7 @@ export default function AutomationsPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-  const [saveError, setSaveError] = useState('');
+  const [_saveError, _setSaveError] = useState('');
 
   useEffect(() => { if (!user) return; load(); }, [user]);
 

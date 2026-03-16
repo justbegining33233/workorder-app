@@ -151,7 +151,7 @@ function getPlanDescription(plan: SubscriptionPlan): string {
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
-  const handlePlanSelect = (plan: SubscriptionPlan) => {
+  const handlePlanSelect = (_plan: SubscriptionPlan) => {
     // Handle plan selection - redirect to signup or checkout
     // You would typically redirect to a checkout page or signup flow
   };

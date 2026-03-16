@@ -32,8 +32,6 @@ export default function StateInspectionsPage() {
   const [form, setForm] = useState({ inspectionType: 'safety', result: 'pass', stickerId: '', expiryDate: '', odometer: '', fee: '', notes: '', workOrderId: '' });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -41,6 +39,8 @@ export default function StateInspectionsPage() {
     if (r.ok) setInspections(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const create = async () => {
     setSaving(true);

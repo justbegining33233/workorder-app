@@ -58,10 +58,11 @@ const shopGroups: MenuGroup[] = [
     defaultOpen: false,
     items: [
       { icon: '👥', label: 'Manage Team',  href: '/shop/manage-team' },
+      { icon: '🔐', label: 'Permissions',  href: '/shop/settings/permissions' },
       { icon: '💰', label: 'Payroll',      href: '/shop/payroll' },
       { icon: '⏰', label: 'Time Clock',   href: '/shop/admin#timeclock' },
       { icon: '🗓️', label: 'Schedule',     href: '/shop/settings/schedule' },
-    ],
+    ]
   },
   {
     label: 'Inventory & Parts',
@@ -69,6 +70,7 @@ const shopGroups: MenuGroup[] = [
     defaultOpen: false,
     items: [
       { icon: '📦', label: 'Inventory',       href: '/shop/inventory' },
+      { icon: '🔄', label: 'Shared Inventory', href: '/shop/inventory/shared' },
       { icon: '🏭', label: 'Vendors',         href: '/shop/vendors' },
       { icon: '🛒', label: 'Purchase Orders', href: '/shop/purchase-orders' },
       { icon: '♻️', label: 'Core Returns',    href: '/shop/core-returns' },
@@ -94,11 +96,15 @@ const shopGroups: MenuGroup[] = [
     icon: '💹',
     defaultOpen: false,
     items: [
-      { icon: '📈', label: 'Reports',        href: '/shop/reports' },
-      { icon: '👤', label: 'Customer Data',  href: '/shop/customer-reports' },
-      { icon: '📊', label: 'AR Aging',       href: '/shop/ar-aging' },
-      { icon: '💹', label: 'Profit Margins', href: '/shop/profit-margins' },
-      { icon: '⭐', label: 'Reviews',        href: '/shop/reviews' },
+      { icon: '📈', label: 'Reports',           href: '/shop/reports' },
+      { icon: '📋', label: 'EOD Report',          href: '/shop/eod-report' },
+      { icon: '⏱️', label: 'SLA Metrics',        href: '/shop/analytics/sla' },
+      { icon: '👷', label: 'Employee Perf',      href: '/shop/analytics/performance' },
+      { icon: '👤', label: 'Customer CRM',      href: '/shop/customer-reports' },
+      { icon: '📊', label: 'AR Aging',           href: '/shop/ar-aging' },
+      { icon: '💹', label: 'Profit Margins',     href: '/shop/profit-margins' },
+      { icon: '💳', label: 'Payment Links',      href: '/shop/payment-links' },
+      { icon: '⭐', label: 'Reviews',            href: '/shop/reviews' },
     ],
   },
   {
@@ -107,6 +113,7 @@ const shopGroups: MenuGroup[] = [
     defaultOpen: false,
     items: [
       { icon: '🎁', label: 'Referrals',    href: '/shop/referrals' },
+      { icon: '📢', label: 'Campaigns',    href: '/shop/campaigns' },
       { icon: '🎨', label: 'Branding',     href: '/shop/branding' },
       { icon: '🔌', label: 'Integrations', href: '/shop/integrations' },
       { icon: '⚡', label: 'Automations',  href: '/shop/automations' },
@@ -120,8 +127,13 @@ const shopGroups: MenuGroup[] = [
     items: [
       { icon: '⚙️', label: 'Shop Settings',   href: '/shop/settings' },
       { icon: '🔧', label: 'Admin Panel',     href: '/shop/admin/settings' },
+      { icon: '📜', label: 'Audit Logs',      href: '/shop/admin/logs' },
       { icon: '🧾', label: 'Tax Settings',    href: '/shop/tax-settings' },
       { icon: '🔐', label: 'Two-Factor Auth', href: '/shop/settings/two-factor' },
+      { icon: '🔑', label: 'API Keys',        href: '/shop/settings/api-keys' },
+      { icon: '🪝', label: 'Webhooks',        href: '/shop/settings/webhooks' },
+      { icon: '🖥️', label: 'Sessions',        href: '/shop/settings/sessions' },
+      { icon: '🩺', label: 'Health Check',    href: '/shop/admin/health' },
     ],
   },
 ];
@@ -133,8 +145,9 @@ const managerGroups: MenuGroup[] = [
     defaultOpen: true,
     items: [
       { icon: '🏠', label: 'Dashboard',   href: '/manager/home' },
+      { icon: '📊', label: 'Reports',     href: '/manager/dashboard' },
       { icon: '💬', label: 'Messages',    href: '/manager/home#messages' },
-    ],
+    ]
   },
   {
     label: 'Work Orders',
@@ -198,6 +211,7 @@ const techGroups: MenuGroup[] = [
       { icon: '📸', label: 'Photos',         href: '/tech/photos' },
       { icon: '📦', label: 'Inventory',      href: '/tech/inventory' },
       { icon: '📍', label: 'Share Location', href: '/tech/share-location' },
+      { icon: '🔐', label: 'Two-Factor Auth', href: '/tech/settings/two-factor' },
     ],
   },
 ];

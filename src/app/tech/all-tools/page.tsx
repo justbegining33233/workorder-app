@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function AllTechTools() {
   const { user, isLoading } = useRequireAuth(['tech']);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   if (isLoading) {
     return (
@@ -108,7 +109,6 @@ export default function AllTechTools() {
   ];
 
   const categories = ['All', 'Job Creation', 'Job Management', 'Field Tools', 'Communication', 'Resources', 'Time Management', 'Customer Service', 'Technical Tools', 'Documentation'];
-  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const filteredTools = selectedCategory === 'All' ? tools : tools.filter(t => t.category === selectedCategory);
 

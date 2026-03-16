@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 
 // POST - Add a blocked date
 export async function POST(request: NextRequest) {

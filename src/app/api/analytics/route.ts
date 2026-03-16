@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllWorkOrders } from '@/lib/workorders';
+import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 
 export async function GET(request: NextRequest) {
@@ -7,20 +7,34 @@ export async function GET(request: NextRequest) {
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
 
-  if (auth.role !== 'admin' && auth.role !== 'shop') {
+  if (auth.role !== 'admin' && auth.role !== 'shop' && auth.role !== 'superadmin') {
     return NextResponse.json({ error: 'Unauthorized - Admin or Shop access only' }, { status: 403 });
   }
 
   try {
-    const workOrders = await getAllWorkOrders();
+    // Build where clause based on role
+    const where: Record<string, unknown> = {};
+    if (auth.role === 'shop') {
+      where.shopId = auth.id;
+    }
+
+    const workOrders = await prisma.workOrder.findMany({
+      where,
+      include: {
+        assignedTo: { select: { id: true, firstName: true, lastName: true } },
+      },
+    });
 
     // Calculate stats
     const closedOrders = workOrders.filter(wo => wo.status === 'closed');
     const inProgressOrders = workOrders.filter(wo => wo.status === 'in-progress');
     const pendingOrders = workOrders.filter(wo => wo.status === 'pending');
 
-    // Revenue
-    const totalRevenue = closedOrders.reduce((sum, wo) => sum + (wo.estimate?.amount || 0), 0);
+    // Revenue — estimate is a Json? field, try to extract amount
+    const totalRevenue = closedOrders.reduce((sum, wo) => {
+      const est = wo.estimate as Record<string, unknown> | null;
+      return sum + (Number(est?.amount) || wo.estimatedCost || 0);
+    }, 0);
     const averageJobValue = closedOrders.length > 0 ? totalRevenue / closedOrders.length : 0;
 
     // Completion time
@@ -38,17 +52,21 @@ export async function GET(request: NextRequest) {
     // Tech performance
     const techPerformance: Record<string, { completed: number; totalRevenue: number; avgTime: number }> = {};
     closedOrders.forEach(wo => {
-      const tech = wo.assignedTo || 'Unassigned';
-      if (!techPerformance[tech]) {
-        techPerformance[tech] = { completed: 0, totalRevenue: 0, avgTime: 0 };
+      const techName = wo.assignedTo ? `${wo.assignedTo.firstName} ${wo.assignedTo.lastName}` : 'Unassigned';
+      if (!techPerformance[techName]) {
+        techPerformance[techName] = { completed: 0, totalRevenue: 0, avgTime: 0 };
       }
-      techPerformance[tech].completed++;
-      techPerformance[tech].totalRevenue += wo.estimate?.amount || 0;
+      techPerformance[techName].completed++;
+      const est = wo.estimate as Record<string, unknown> | null;
+      techPerformance[techName].totalRevenue += Number(est?.amount) || wo.estimatedCost || 0;
     });
 
     // Calculate average time per tech
     Object.keys(techPerformance).forEach(tech => {
-      const techOrders = closedOrders.filter(wo => (wo.assignedTo || 'Unassigned') === tech);
+      const techOrders = closedOrders.filter(wo => {
+        const name = wo.assignedTo ? `${wo.assignedTo.firstName} ${wo.assignedTo.lastName}` : 'Unassigned';
+        return name === tech;
+      });
       const times = techOrders
         .filter(wo => wo.createdAt && wo.updatedAt)
         .map(wo => {
@@ -59,10 +77,10 @@ export async function GET(request: NextRequest) {
       techPerformance[tech].avgTime = times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : 0;
     });
 
-    // SLA compliance (if promised dates set)
+    // SLA compliance — use dueDate as the promised completion date
     const slaCompliant = closedOrders.filter(wo => {
-      if (!wo.sla?.promisedCompletionDate) return false;
-      const promised = new Date(wo.sla.promisedCompletionDate).getTime();
+      if (!wo.dueDate) return false;
+      const promised = new Date(wo.dueDate).getTime();
       const actual = new Date(wo.updatedAt).getTime();
       return actual <= promised;
     }).length;

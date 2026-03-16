@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireRole } from '@/lib/auth';
 
@@ -236,7 +236,7 @@ export async function GET(request: NextRequest) {
         take: 100
       });
       lowStockItems = allStock.filter(item => item.quantity <= (item.reorderPoint || 0));
-    } catch (e) {
+    } catch {
       // Inventory might not be set up
     }
 

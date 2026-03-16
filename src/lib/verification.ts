@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 export function generateNumericOTP(digits = 6) {
   const max = Math.pow(10, digits);
-  const num = Math.floor(Math.random() * max).toString().padStart(digits, '0');
+  const num = crypto.randomInt(0, max).toString().padStart(digits, '0');
   return num;
 }
 

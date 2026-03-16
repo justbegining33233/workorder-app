@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   const shopId = auth.shopId ?? auth.id;
-  const locations = getLocationsByShop(shopId);
+  const locations = await getLocationsByShop(shopId);
 
   return NextResponse.json({ locations });
 }
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const location = createLocation(shopId, {
+  const location = await createLocation(shopId, {
     name,
     address,
     city,

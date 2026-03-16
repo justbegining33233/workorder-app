@@ -29,7 +29,7 @@ type TopShop = {
 };
 
 export default function FinancialReports() {
-  const router = useRouter();
+  const _router = useRouter();
   const { user, isLoading } = useRequireAuth(['admin']);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<FinancialStats>({

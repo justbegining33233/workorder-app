@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWorkOrderById, updateWorkOrder } from '@/lib/workorders';
+import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
     }
     const { workOrderId } = await req.json();
-    const wo = await getWorkOrderById(workOrderId);
+    const wo = await prisma.workOrder.findUnique({ where: { id: workOrderId } });
     
     if (!wo) {
       return NextResponse.json({ error: 'Work order not found' }, { status: 404 });
@@ -28,7 +28,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Work order must be waiting-for-payment' }, { status: 400 });
     }
     
-    const updated = await updateWorkOrder(workOrderId, { status: 'closed' });
+    const updated = await prisma.workOrder.update({
+      where: { id: workOrderId },
+      data: { status: 'closed' },
+    });
     return NextResponse.json(updated);
   } catch (e) {
     console.error('Failed to mark as paid', e);

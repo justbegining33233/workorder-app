@@ -1,91 +1,163 @@
-const { PrismaClient } = require('@prisma/client');
-const { STRIPE_PRODUCTS, createOrRetrieveCustomer, createSubscription } = require('../lib/stripe');
+/**
+ * FixTray — Stripe Product & Price Setup
+ *
+ * Creates all 5 subscription products + monthly prices in your Stripe account
+ * and prints the env vars you need to paste into .env / Railway.
+ *
+ * Usage:
+ *   node scripts/setup-stripe.js            # create products & prices
+ *   node scripts/setup-stripe.js --check    # just show what's already set
+ *
+ * Requires: STRIPE_SECRET_KEY in .env (or as an env var)
+ */
+require('dotenv').config();
 
-const prisma = new PrismaClient();
+const Stripe = require('stripe');
 
-async function setupStripeProducts() {
-  console.log('Setting up Stripe products and prices...');
-
-  // This script would be run to create products in Stripe
-  // In a real implementation, you'd use the Stripe CLI or dashboard to create these
-  // For now, this is a placeholder showing the structure
-
-  console.log('Stripe Products Configuration:');
-  Object.entries(STRIPE_PRODUCTS).forEach(([plan, config]) => {
-    console.log(`${plan}:`);
-    console.log(`  Product ID: ${config.productId}`);
-    console.log(`  Price ID: ${config.priceId}`);
-    console.log(`  Price: $${config.price}/month`);
-    console.log(`  Max Users: ${config.maxUsers}`);
-    console.log(`  Max Shops: ${config.maxShops}`);
-    console.log('');
-  });
-
-  console.log('To set up in Stripe:');
-  console.log('1. Go to your Stripe Dashboard');
-  console.log('2. Create products for each plan');
-  console.log('3. Add monthly prices to each product');
-  console.log('4. Copy the product and price IDs to your .env file');
-  console.log('');
-  console.log('Environment variables needed:');
-  console.log('STRIPE_STARTER_PRODUCT_ID=prod_...');
-  console.log('STRIPE_STARTER_PRICE_ID=price_...');
-  console.log('STRIPE_GROWTH_PRODUCT_ID=prod_...');
-  console.log('STRIPE_GROWTH_PRICE_ID=price_...');
-  console.log('// ... and so on for each plan');
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+if (!STRIPE_SECRET_KEY) {
+  console.error('❌  STRIPE_SECRET_KEY is not set. Add it to your .env file first.');
+  process.exit(1);
 }
 
-async function createSampleSubscription() {
-  console.log('Creating sample subscription...');
+const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-  try {
-    // This is an example of how to create a subscription
-    // In practice, this would be done through your signup flow
+// ── Plan definitions (must match src/lib/stripe.ts) ──────────────────────────
+const PLANS = [
+  { key: 'STARTER',       name: 'FixTray Starter',       price: 9988,  maxUsers: 1,  maxShops: 1  },
+  { key: 'GROWTH',        name: 'FixTray Growth',        price: 24988, maxUsers: 5,  maxShops: 1  },
+  { key: 'PROFESSIONAL',  name: 'FixTray Professional',  price: 49988, maxUsers: 15, maxShops: 1  },
+  { key: 'BUSINESS',      name: 'FixTray Business',      price: 74988, maxUsers: 40, maxShops: 5  },
+  { key: 'ENTERPRISE',    name: 'FixTray Enterprise',    price: 99988, maxUsers: -1, maxShops: -1 },
+];
 
-    const customer = await createOrRetrieveCustomer('admin@fixtray.com', 'FixTray Admin');
-    console.log('Customer created/retrieved:', customer.id);
+async function checkExisting() {
+  console.log('\n📋  Current env var status:\n');
+  let allSet = true;
+  for (const plan of PLANS) {
+    const prodEnv = `STRIPE_${plan.key}_PRODUCT_ID`;
+    const priceEnv = `STRIPE_${plan.key}_PRICE_ID`;
+    const prodVal = process.env[prodEnv];
+    const priceVal = process.env[priceEnv];
+    const prodOk = prodVal && prodVal.startsWith('prod_');
+    const priceOk = priceVal && priceVal.startsWith('price_');
+    console.log(`  ${prodOk ? '✅' : '❌'}  ${prodEnv}=${prodVal || '(missing)'}`);
+    console.log(`  ${priceOk ? '✅' : '❌'}  ${priceEnv}=${priceVal || '(missing)'}`);
+    if (!prodOk || !priceOk) allSet = false;
+  }
+  console.log(allSet ? '\n✅  All Stripe env vars are set!' : '\n⚠️   Some env vars are missing — run this script without --check to create them.');
+  return allSet;
+}
 
-    const subscription = await createSubscription(customer.id, STRIPE_PRODUCTS.professional.priceId, {
-      shopId: 'sample-shop-id',
+async function createProducts() {
+  console.log('\n🚀  Creating Stripe products & prices...\n');
+
+  const envLines = [];
+
+  for (const plan of PLANS) {
+    const prodEnvKey = `STRIPE_${plan.key}_PRODUCT_ID`;
+    const priceEnvKey = `STRIPE_${plan.key}_PRICE_ID`;
+
+    // Check if product already exists by looking up by name
+    let product;
+    const existingProducts = await stripe.products.search({
+      query: `name:"${plan.name}"`,
     });
-    console.log('Subscription created:', subscription.id);
 
-    // Create subscription record in database
-    await prisma.subscription.create({
-      data: {
-        shopId: 'sample-shop-id',
-        plan: 'professional',
-        stripeSubscriptionId: subscription.id,
-        stripeCustomerId: customer.id,
-        maxUsers: STRIPE_PRODUCTS.professional.maxUsers,
-        maxShops: STRIPE_PRODUCTS.professional.maxShops,
-      },
+    if (existingProducts.data.length > 0) {
+      product = existingProducts.data[0];
+      console.log(`  ♻️   ${plan.name} — already exists (${product.id})`);
+    } else {
+      product = await stripe.products.create({
+        name: plan.name,
+        description: `FixTray ${plan.key.charAt(0) + plan.key.slice(1).toLowerCase()} plan — up to ${plan.maxUsers === -1 ? 'unlimited' : plan.maxUsers} users, ${plan.maxShops === -1 ? 'unlimited' : plan.maxShops} shop(s)`,
+        metadata: {
+          fixtray_plan: plan.key.toLowerCase(),
+          maxUsers: String(plan.maxUsers),
+          maxShops: String(plan.maxShops),
+        },
+      });
+      console.log(`  ✅  ${plan.name} — created (${product.id})`);
+    }
+
+    // Check if a monthly price already exists for this product
+    let price;
+    const existingPrices = await stripe.prices.list({
+      product: product.id,
+      active: true,
+      type: 'recurring',
+      limit: 10,
     });
+    const matchingPrice = existingPrices.data.find(
+      (p) => p.unit_amount === plan.price && p.recurring?.interval === 'month'
+    );
 
-    console.log('Database record created');
+    if (matchingPrice) {
+      price = matchingPrice;
+      console.log(`  ♻️   $${(plan.price / 100).toFixed(2)}/mo price — already exists (${price.id})`);
+    } else {
+      price = await stripe.prices.create({
+        product: product.id,
+        unit_amount: plan.price,
+        currency: 'usd',
+        recurring: { interval: 'month' },
+        metadata: { fixtray_plan: plan.key.toLowerCase() },
+      });
+      console.log(`  ✅  $${(plan.price / 100).toFixed(2)}/mo price — created (${price.id})`);
+    }
 
-  } catch (error) {
-    console.error('Error creating sample subscription:', error);
+    envLines.push(`${prodEnvKey}=${product.id}`);
+    envLines.push(`${priceEnvKey}=${price.id}`);
+    console.log('');
+  }
+
+  // Print env block
+  console.log('━'.repeat(60));
+  console.log('📋  Add these to your .env / Railway environment:\n');
+  console.log(envLines.join('\n'));
+  console.log('\n' + '━'.repeat(60));
+
+  // Offer to append to .env
+  const fs = require('fs');
+  const path = require('path');
+  const envPath = path.resolve(__dirname, '..', '.env');
+
+  if (fs.existsSync(envPath)) {
+    let envContent = fs.readFileSync(envPath, 'utf8');
+    let appended = 0;
+
+    for (const line of envLines) {
+      const [key] = line.split('=');
+      // Only add if not already present
+      if (!envContent.includes(key + '=')) {
+        envContent += '\n' + line;
+        appended++;
+      } else {
+        // Update existing value
+        const regex = new RegExp(`^${key}=.*$`, 'm');
+        envContent = envContent.replace(regex, line);
+        appended++;
+      }
+    }
+
+    fs.writeFileSync(envPath, envContent, 'utf8');
+    console.log(`\n✅  Updated ${appended} env vars in .env`);
+  } else {
+    console.log('\n⚠️   No .env file found — copy the values above manually.');
   }
 }
 
 async function main() {
-  const command = process.argv[2];
+  const arg = process.argv[2];
 
-  switch (command) {
-    case 'setup':
-      await setupStripeProducts();
-      break;
-    case 'sample':
-      await createSampleSubscription();
-      break;
-    default:
-      console.log('Usage:');
-      console.log('  node setup-stripe.js setup    - Show Stripe product configuration');
-      console.log('  node setup-stripe.js sample   - Create a sample subscription');
+  if (arg === '--check') {
+    await checkExisting();
+  } else {
+    await createProducts();
   }
-
-  await prisma.$disconnect();
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error('❌  Error:', err.message);
+  process.exit(1);
+});

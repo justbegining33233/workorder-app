@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
-import { validateCsrf } from '@/lib/csrf';
+import { verifyToken } from '@/lib/auth';
+
 
 // Helper function to calculate distance between two GPS coordinates (Haversine formula)
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -32,6 +32,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
+    // Only shop owners, managers, techs, and admins can view time entries
+    if (!['shop', 'manager', 'tech', 'admin', 'superadmin'].includes(decoded.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const techId = searchParams.get('techId');
     const shopId = searchParams.get('shopId');
@@ -42,8 +47,19 @@ export async function GET(request: NextRequest) {
     const where: any = {};
     
     if (techId) {
+      // Techs can only view their own entries
+      if (decoded.role === 'tech' && decoded.id !== techId) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
       where.techId = techId;
     } else if (shopId) {
+      // Shops can only view their own shop's entries
+      if (decoded.role === 'shop' && decoded.id !== shopId) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      if (decoded.role === 'manager' && decoded.shopId !== shopId) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
       where.shopId = shopId;
     } else {
       return NextResponse.json({ error: 'Either techId or shopId required' }, { status: 400 });
@@ -227,7 +243,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Append a break record into the JSON `breaks` field (supports multiple breaks)
-      const existingBreaks = (activeEntry as any).breaks || [];
+      const _existingBreaks = (activeEntry as any).breaks || [];
       const newBreak = { start: new Date().toISOString(), end: null, durationMinutes: null, type: 'break' };
 
       const updatedEntry = await prisma.timeEntry.update({

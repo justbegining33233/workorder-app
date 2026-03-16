@@ -7,9 +7,15 @@ async function setupAdmin() {
   try {
     console.log('\n=== Setting up admin account ===\n');
     
-    const username = 'admin1006';
-    const password = '10062001';
-    const email = 'joseruizvilla391@gmail.com';
+    const username = process.env.ADMIN_USERNAME || process.argv[2];
+    const password = process.env.ADMIN_PASSWORD || process.argv[3];
+    const email = process.env.ADMIN_EMAIL || process.argv[4];
+
+    if (!username || !password || !email) {
+      console.error('Usage: ADMIN_USERNAME=xxx ADMIN_PASSWORD=xxx ADMIN_EMAIL=xxx node setup-admin.js');
+      console.error('   or: node setup-admin.js <username> <password> <email>');
+      process.exit(1);
+    }
 
     // Check if admin already exists
     const existing = await prisma.admin.findUnique({

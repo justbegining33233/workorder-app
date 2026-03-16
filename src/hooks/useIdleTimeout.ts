@@ -20,10 +20,12 @@ export function useIdleTimeout({ onIdle, onWarning, onActive, enabled }: Options
   const onActiveRef = useRef(onActive);
   const enabledRef  = useRef(enabled);
 
-  onIdleRef.current   = onIdle;
-  onWarnRef.current   = onWarning;
-  onActiveRef.current = onActive;
-  enabledRef.current  = enabled;
+  useEffect(() => {
+    onIdleRef.current   = onIdle;
+    onWarnRef.current   = onWarning;
+    onActiveRef.current = onActive;
+    enabledRef.current  = enabled;
+  });
 
   const warnTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -73,6 +75,6 @@ export function useIdleTimeout({ onIdle, onWarning, onActive, enabled }: Options
       clearTimers();
     };
   // Only re-run when enabled changes — NOT when callbacks change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [enabled]);
 }

@@ -6,7 +6,7 @@ import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
 // GET - Get low stock items
 export async function GET(request: NextRequest) {
   try {
-    const rateLimitResponse = rateLimit(rateLimitConfigs.api)(request);
+    const rateLimitResponse = await rateLimit(rateLimitConfigs.api)(request);
     if (rateLimitResponse) return rateLimitResponse;
 
     const auth = requireRole(request, ['shop', 'manager', 'tech']);

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireRole, AuthUser } from '@/lib/auth';
 
-const VALID_STATUSES = ['ordered', 'shipped', 'received', 'cancelled'];
+const _VALID_STATUSES = ['ordered', 'shipped', 'received', 'cancelled'];
 
 // GET /api/shop/purchase-orders — list all orders for the shop
 export async function GET(request: NextRequest) {

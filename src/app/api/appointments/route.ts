@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { AuthUser } from '@/lib/auth';
+import { sendSms } from '@/lib/smsService';
 
 // GET - Get appointments
 export async function GET(request: NextRequest) {
@@ -174,6 +175,15 @@ export async function POST(request: NextRequest) {
           read: false,
         },
       });
+    }
+
+    // Send SMS confirmation to customer
+    if (appointment.customer.phone) {
+      const dateStr = new Date(scheduledDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      sendSms(
+        appointment.customer.phone,
+        `FixTray: Your appointment at ${appointment.shop.shopName} is confirmed for ${dateStr}. Service: ${serviceType}.`
+      ).catch(() => {});
     }
 
     return NextResponse.json({ 

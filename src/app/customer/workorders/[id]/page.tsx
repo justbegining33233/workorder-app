@@ -47,7 +47,7 @@ interface WorkOrderDetails {
 export default function WorkOrderDetailsPage() {
   useRequireAuth(['customer']);
   const params = useParams();
-  const router = useRouter();
+  const _router = useRouter();
   const [userName, setUserName] = useState('');
   const [workOrder, setWorkOrder] = useState<WorkOrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,7 +83,7 @@ export default function WorkOrderDetailsPage() {
       } else {
         setError('Failed to load work order details');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load work order details');
     } finally {
       setLoading(false);

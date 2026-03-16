@@ -92,7 +92,7 @@ export default function WorkOrderTemplatesPage() {
     finally { setSaving(false); }
   };
 
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = async (id: string, _name: string) => {
     try {
       await fetch(`/api/shop/templates/${id}`, { method: 'DELETE', headers });
       setSuccess('Template deleted');

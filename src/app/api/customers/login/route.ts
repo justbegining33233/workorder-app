@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load prisma & bcrypt inside handler
 import { verifyPassword, generateToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = loginSchema.parse(body);
 
-    // Rate limiting — 5 attempts per 15 minutes per IP + identifier
+    // Rate limiting � 5 attempts per 15 minutes per IP + identifier
     const clientIP = getClientIP(request);
     const identifier = String(data.email || data.username || '').toLowerCase();
     const rateLimitKey = `customer_login:${clientIP}:${identifier}`;
@@ -97,28 +97,28 @@ export async function POST(request: NextRequest) {
     response.cookies.set('refresh_id', refresh.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
     response.cookies.set('refresh_sig', refreshRaw, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
     response.cookies.set('csrf_token', csrf, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
     response.cookies.set('sos_auth', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 15,
     });

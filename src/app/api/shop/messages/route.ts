@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 
 // DEPRECATED: Uses legacy Message model scoped to work orders.
 // New chat functionality uses /api/messages (DirectMessage model).

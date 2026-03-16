@@ -1,10 +1,12 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSocket } from '@/lib/socket';
 import OilSlickNavCanvas from '@/components/OilSlickNavCanvas';
+import ShopSwitcher from '@/components/ShopSwitcher';
+import GlobalSearch from '@/components/GlobalSearch';
 
 interface TopNavBarProps {
   onMenuToggle?: () => void;
@@ -333,7 +335,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       gain.connect(ctx.destination);
       oscillator.start();
       oscillator.stop(ctx.currentTime + 0.12);
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -501,6 +503,8 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
               {shopName}
             </div>
           )}
+          {userRole === 'shop' && <ShopSwitcher />}
+          {['shop', 'manager', 'tech'].includes(userRole) && <GlobalSearch />}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, overflow: 'hidden' }}>

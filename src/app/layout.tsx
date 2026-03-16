@@ -13,7 +13,7 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: 'cover',          // enables env(safe-area-inset-*) on iOS + Android Chrome
   themeColor: '#e5332a',         // Android Chrome toolbar color
-};
+};                                                                                                                                                                                      
 
 export const metadata: Metadata = {
   title: "FixTray - Work Order Management",

@@ -100,7 +100,7 @@ export async function checkFeatureAccess(shopId: string, feature: string): Promi
 /**
  * API route wrapper to enforce subscription limits
  */
-export function withSubscriptionLimits(handler: Function) {
+export function withSubscriptionLimits(handler: (request: NextRequest, context: any) => Promise<Response>) {
   return async (request: NextRequest, context: any) => {
     try {
       // Extract shopId from request (this might need to be adjusted based on your API structure)
@@ -132,7 +132,7 @@ export function withSubscriptionLimits(handler: Function) {
   };
 }
 
-export function withFeatureGate(feature: string) {
+export function withFeatureGate(_feature: string) {
   // Placeholder for future implementation
   return (Component: any) => Component;
 }

@@ -19,7 +19,12 @@ const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 
 const PORT = process.env.PORT || 3001;
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-insecure-secret-do-not-use-in-prod';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  console.error('FATAL: JWT_SECRET must be set in production');
+  process.exit(1);
+}
+const jwtSecret = JWT_SECRET || 'dev-only-insecure-secret-do-not-use-in-prod';
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
   : ['http://localhost:3000', 'https://fixtray.app', 'https://www.fixtray.app'];
@@ -52,7 +57,7 @@ io.use((socket, next) => {
     if (!token) {
       return next(new Error('Authentication required'));
     }
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, jwtSecret);
     socket.data.user = decoded;
     next();
   } catch {
@@ -72,8 +77,8 @@ io.on('connection', (socket) => {
 
   // ─── Work Order events ─────────────────────────────────────────────
   socket.on('work-order-update', (data) => {
-    // Broadcast to all users in the relevant shop room
-    const room = data.shopId ? `shop:${data.shopId}` : null;
+    // Use authenticated shopId from JWT, not user-supplied data
+    const room = shopId ? `shop:${shopId}` : null;
     if (room) io.to(room).emit('work-order-updated', data);
   });
 

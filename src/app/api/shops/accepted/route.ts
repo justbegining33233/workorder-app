@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     // Format response — only expose public-facing fields (NO password, no credentials)
     const formattedShops = approvedShops.map((shop) => {
       const completedJobs = shop.workOrders.filter(wo => wo.status === 'closed').length;
-      const totalRevenue = shop.workOrders
+      const _totalRevenue = shop.workOrders
         .filter(wo => wo.paymentStatus === 'paid')
         .reduce((sum, wo) => sum + (wo.amountPaid || 0), 0);
 

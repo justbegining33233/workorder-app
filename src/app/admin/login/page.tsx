@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
       } else {
         setError(data.error || 'Login failed');
       }
-    } catch (error) {
+    } catch {
       console.error('Login error:', error);
       setError('Login failed. Please try again.');
     } finally {

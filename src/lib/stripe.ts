@@ -1,4 +1,4 @@
-﻿import Stripe from 'stripe';
+import Stripe from 'stripe';
 
 // Only instantiate Stripe when the secret key is provided. During build-time
 // (or in environments where Stripe isn't configured) constructing the Stripe
@@ -16,55 +16,70 @@ const stripe = process.env.STRIPE_SECRET_KEY
 
 export default stripe;
 
-// Stripe Product and Price IDs for each plan
-// These would be created in your Stripe dashboard
+// Stripe Product and Price IDs for each plan.
+// Set these in your environment — see docs/STRIPE_SETUP_GUIDE.md.
+// If an env var is missing the value will be undefined, and the
+// `requireStripeId()` guard below will throw a clear error at
+// runtime so you know exactly which env var to set.
+
+function requireStripeId(envVar: string, value: string | undefined): string {
+  if (!value) {
+    throw new Error(
+      `Missing Stripe env var: ${envVar}. ` +
+      `Run \`node scripts/setup-stripe.js\` or add it to your .env file. ` +
+      `See docs/STRIPE_SETUP_GUIDE.md for details.`
+    );
+  }
+  return value;
+}
+
 export const STRIPE_PRODUCTS = {
   starter: {
-    productId: process.env.STRIPE_STARTER_PRODUCT_ID || 'prod_starter_placeholder',
-    priceId: process.env.STRIPE_STARTER_PRICE_ID || 'price_starter_placeholder',
+    get productId() { return requireStripeId('STRIPE_STARTER_PRODUCT_ID', process.env.STRIPE_STARTER_PRODUCT_ID); },
+    get priceId()   { return requireStripeId('STRIPE_STARTER_PRICE_ID',   process.env.STRIPE_STARTER_PRICE_ID); },
     name: 'Starter',
     price: 99.88,
-    interval: 'month',
+    interval: 'month' as const,
     maxUsers: 1,
     maxShops: 1,
   },
   growth: {
-    productId: process.env.STRIPE_GROWTH_PRODUCT_ID || 'prod_growth_placeholder',
-    priceId: process.env.STRIPE_GROWTH_PRICE_ID || 'price_growth_placeholder',
+    get productId() { return requireStripeId('STRIPE_GROWTH_PRODUCT_ID', process.env.STRIPE_GROWTH_PRODUCT_ID); },
+    get priceId()   { return requireStripeId('STRIPE_GROWTH_PRICE_ID',   process.env.STRIPE_GROWTH_PRICE_ID); },
     name: 'Growth',
     price: 249.88,
-    interval: 'month',
+    interval: 'month' as const,
     maxUsers: 5,
     maxShops: 1,
   },
   professional: {
-    productId: process.env.STRIPE_PROFESSIONAL_PRODUCT_ID || 'prod_professional_placeholder',
-    priceId: process.env.STRIPE_PROFESSIONAL_PRICE_ID || 'price_professional_placeholder',
+    get productId() { return requireStripeId('STRIPE_PROFESSIONAL_PRODUCT_ID', process.env.STRIPE_PROFESSIONAL_PRODUCT_ID); },
+    get priceId()   { return requireStripeId('STRIPE_PROFESSIONAL_PRICE_ID',   process.env.STRIPE_PROFESSIONAL_PRICE_ID); },
     name: 'Professional',
     price: 499.88,
-    interval: 'month',
+    interval: 'month' as const,
     maxUsers: 15,
     maxShops: 1,
   },
   business: {
-    productId: process.env.STRIPE_BUSINESS_PRODUCT_ID || 'prod_business_placeholder',
-    priceId: process.env.STRIPE_BUSINESS_PRICE_ID || 'price_business_placeholder',
+    get productId() { return requireStripeId('STRIPE_BUSINESS_PRODUCT_ID', process.env.STRIPE_BUSINESS_PRODUCT_ID); },
+    get priceId()   { return requireStripeId('STRIPE_BUSINESS_PRICE_ID',   process.env.STRIPE_BUSINESS_PRICE_ID); },
     name: 'Business',
     price: 749.88,
-    interval: 'month',
+    interval: 'month' as const,
     maxUsers: 40,
     maxShops: 5,
   },
   enterprise: {
-    productId: process.env.STRIPE_ENTERPRISE_PRODUCT_ID || 'prod_enterprise_placeholder',
-    priceId: process.env.STRIPE_ENTERPRISE_PRICE_ID || 'price_enterprise_placeholder',
+    get productId() { return requireStripeId('STRIPE_ENTERPRISE_PRODUCT_ID', process.env.STRIPE_ENTERPRISE_PRODUCT_ID); },
+    get priceId()   { return requireStripeId('STRIPE_ENTERPRISE_PRICE_ID',   process.env.STRIPE_ENTERPRISE_PRICE_ID); },
     name: 'Enterprise',
     price: 999.88,
-    interval: 'month',
+    interval: 'month' as const,
     maxUsers: -1, // unlimited
     maxShops: -1, // unlimited
   },
-} as const;
+};
 
 export type StripePlan = keyof typeof STRIPE_PRODUCTS;
 
@@ -229,132 +244,8 @@ export async function getSubscription(subscriptionId: string) {
   }
 }
 
-/**
- * Handle Stripe webhooks
- */
-export async function handleWebhook(rawBody: string, signature: string) {
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
-  try {
-    const event = stripe.webhooks.constructEvent(rawBody, signature, endpointSecret);
-
-    switch (event.type) {
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-        // Handle subscription changes
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionChange(subscription);
-        break;
-
-      case 'customer.subscription.deleted':
-        // Handle subscription cancellation
-        const cancelledSubscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionCancellation(cancelledSubscription);
-        break;
-
-      case 'invoice.payment_succeeded':
-        // Handle successful payment
-        const invoice = event.data.object as Stripe.Invoice;
-        await handlePaymentSuccess(invoice);
-        break;
-
-      case 'invoice.payment_failed':
-        // Handle failed payment
-        const failedInvoice = event.data.object as Stripe.Invoice;
-        await handlePaymentFailure(failedInvoice);
-        break;
-
-      default:
-    }
-
-    return { received: true };
-  } catch (error) {
-    console.error('Webhook error:', error);
-    throw error;
-  }
-}
-
-/**
- * Handle subscription changes from webhooks
- */
-async function handleSubscriptionChange(subscription: Stripe.Subscription) {
-  const { prisma } = await import('@/lib/prisma');
-
-  try {
-    // Find the plan based on the price ID
-    const priceId = subscription.items.data[0].price.id;
-    const plan = Object.keys(STRIPE_PRODUCTS).find(
-      key => STRIPE_PRODUCTS[key as StripePlan].priceId === priceId
-    ) as StripePlan | undefined;
-
-    if (!plan) {
-      console.error('Unknown price ID:', priceId);
-      return;
-    }
-
-    // Update the subscription in our database
-    await prisma.subscription.upsert({
-      where: { stripeSubscriptionId: subscription.id },
-      update: {
-        plan,
-        status: subscription.status,
-        currentPeriodStart: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000) : null,
-        currentPeriodEnd: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000) : null,
-        cancelAtPeriodEnd: (subscription as any).cancel_at_period_end || false,
-        maxUsers: STRIPE_PRODUCTS[plan].maxUsers || 1,
-        maxShops: STRIPE_PRODUCTS[plan].maxShops || 1,
-        updatedAt: new Date(),
-      },
-      create: {
-        shopId: subscription.metadata.shopId || 'unknown',
-        plan,
-        status: subscription.status,
-        stripeSubscriptionId: subscription.id,
-        stripeCustomerId: subscription.customer as string,
-        currentPeriodStart: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000) : null,
-        currentPeriodEnd: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000) : null,
-        cancelAtPeriodEnd: (subscription as any).cancel_at_period_end || false,
-        maxUsers: STRIPE_PRODUCTS[plan].maxUsers || 1,
-        maxShops: STRIPE_PRODUCTS[plan].maxShops || 1,
-      },
-    });
-  } catch (error) {
-    console.error('Error handling subscription change:', error);
-  }
-}
-
-/**
- * Handle subscription cancellation
- */
-async function handleSubscriptionCancellation(subscription: Stripe.Subscription) {
-  const { prisma } = await import('@/lib/prisma');
-
-  try {
-    await prisma.subscription.update({
-      where: { stripeSubscriptionId: subscription.id },
-      data: {
-        status: 'cancelled',
-        updatedAt: new Date(),
-      },
-    });
-  } catch (error) {
-    console.error('Error handling subscription cancellation:', error);
-  }
-}
-
-/**
- * Handle successful payment
- */
-async function handlePaymentSuccess(invoice: Stripe.Invoice) {
-  // Handle successful payment (e.g., update subscription status, send confirmation)
-}
-
-/**
- * Handle failed payment
- */
-async function handlePaymentFailure(invoice: Stripe.Invoice) {
-  // Handle failed payment (e.g., suspend subscription, send notification)
-}
+// NOTE: Webhook handling lives in src/app/api/stripe/webhook/route.ts.
+// Do NOT add duplicate webhook logic here.
 
 /**
  * Create a coupon

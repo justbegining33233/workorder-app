@@ -47,5 +47,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>FixTray needs camera access to scan barcodes and capture photos for work orders.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>FixTray needs your location to provide accurate service dispatching and time-clock verification.</string>
 </dict>
 </plist>

@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { generateNumericOTP, generateTokenHex, hashTokenSha256 } from '@/lib/verification';
 import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
@@ -11,17 +11,11 @@ async function sendByEmail(email: string, raw: string, siteUrl: string) {
     await resend.emails.send({ to: email, from, subject: 'Your verification code', text: `Your code: ${raw}`, html: `<p>Your code: <strong>${raw}</strong></p><p>Or click <a href="${siteUrl}/auth/reset?token=${raw}">here</a></p>` });
     return true;
   }
-  // Fallback: log to server console for dev
-  try {
-    const req = require;
-    const fs = req('fs');
-    const path = req('path');
-    const dir = path.join(process.cwd(), 'tmp');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-    const file = path.join(dir, 'reset-debug.log');
-    fs.appendFileSync(file, `${new Date().toISOString()} ${email} ${raw}\n`);
-  } catch (e) {
-    // ignore file write errors in dev
+  // Fallback: log to server console for dev only
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[dev] reset code for ${email}: ${raw}`);
+  } else {
+    console.error('RESEND_API_KEY not configured — cannot send reset email');
   }
   return false;
 }
@@ -34,7 +28,7 @@ async function sendBySms(phone: string, raw: string) {
       const client = twilioLib(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
       await client.messages.create({ to: phone, from: process.env.TWILIO_FROM, body: `Your verification code: ${raw}` });
       return true;
-    } catch (e) {
+    } catch {
       // fall through to console fallback
     }
   }
@@ -51,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     if (!identifier) return NextResponse.json({ success: true }); // generic response
 
-    // Rate limiting — 3 requests per hour per IP + identifier to prevent OTP spam
+    // Rate limiting � 3 requests per hour per IP + identifier to prevent OTP spam
     const clientIP = getClientIP(request);
     const rateLimitKey = `pw_reset:${clientIP}:${String(identifier).toLowerCase()}`;
     const rateLimit = await checkRateLimit(rateLimitKey, { maxRequests: 3, windowMs: 60 * 60 * 1000 });
@@ -75,7 +69,7 @@ export async function POST(request: NextRequest) {
     const tokenHash = hashTokenSha256(raw);
     const expiresAt = new Date(Date.now() + (via === 'sms' ? 5 : 15) * 60 * 1000);
 
-    // Store token record (production) â€” if this fails, fall back to console logging
+    // Store token record (production) — if this fails, fall back to console logging
     try {
       await prisma.verificationToken.create({ data: {
         userId: user.id,
@@ -84,7 +78,7 @@ export async function POST(request: NextRequest) {
         expiresAt,
         metadata: JSON.stringify({ ip: getClientIP(request), via }),
       }});
-    } catch (e) {
+    } catch {
       // still continue to attempt delivery (dev fallback will log the raw token)
     }
 

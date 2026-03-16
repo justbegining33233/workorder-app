@@ -48,7 +48,7 @@ export default function NewInShopJob() {
     e.preventDefault();
     
     // Create work order
-    const workOrder = createWorkOrderClient({
+    const _workOrder = createWorkOrderClient({
       vehicleType: 'personal-vehicle',
       serviceLocationType: 'in-shop',
       services: {

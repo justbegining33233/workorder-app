@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   const shopId = auth.shopId ?? auth.id;
-  const templates = getTemplatesByShop(shopId);
+  const templates = await getTemplatesByShop(shopId);
 
   return NextResponse.json({ templates });
 }
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'name and serviceType are required' }, { status: 400 });
   }
 
-  const template = createTemplate(shopId, {
+  const template = await createTemplate(shopId, {
     name,
     serviceType,
     description: description ?? '',

@@ -17,8 +17,6 @@ export default function CoreReturnsPage() {
   const [creditModal, setCreditModal] = useState<{ id: string; defaultAmt: number } | null>(null);
   const [creditAmt, setCreditAmt] = useState('');
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -26,6 +24,8 @@ export default function CoreReturnsPage() {
     if (r.ok) setItems(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const save = async () => {
     setFormError('');

@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
       ...new Set(appointments.map((a) => a.shop.id).filter((id) => !shopIdsFromWOs.includes(id))),
     ];
 
-    let apptStaffMap = new Map<string, typeof staffByShop>();
+    const apptStaffMap = new Map<string, typeof staffByShop>();
     if (shopIdsFromAppts.length > 0) {
       const apptStaff = await prisma.tech.findMany({
         where: { shopId: { in: shopIdsFromAppts }, terminatedAt: null },

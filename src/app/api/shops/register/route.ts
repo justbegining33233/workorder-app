@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { requireRole } from '@/lib/auth';
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       // Pre-create (or retrieve) the Stripe customer so the email is pre-filled
       const stripeCustomer = await createOrRetrieveCustomer(data.email, data.ownerName || data.shopName);
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
 
       const session = await stripeClient.checkout.sessions.create({
         mode: 'subscription',
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
           },
         ],
         subscription_data: {
-          trial_period_days: 7, // 7-day free trial — card collected now, charged after trial
+          trial_period_days: 7, // 7-day free trial � card collected now, charged after trial
           metadata: {
             shopId: newShop.id,
             plan: data.subscriptionPlan,
@@ -99,8 +99,8 @@ export async function POST(request: Request) {
 
       checkoutUrl = session.url;
     } catch (stripeError) {
-      console.error('🔴 [REGISTER] Stripe Checkout Session creation failed:', stripeError);
-      // Registration record was saved — admin can still manually activate the shop.
+      console.error('?? [REGISTER] Stripe Checkout Session creation failed:', stripeError);
+      // Registration record was saved � admin can still manually activate the shop.
     }
 
     return NextResponse.json({

@@ -25,7 +25,12 @@ process.on('unhandledRejection', (reason, promise) => {
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  console.error('FATAL: JWT_SECRET must be set in production');
+  process.exit(1);
+}
+const jwtSecret = JWT_SECRET || 'dev-only-insecure-secret-do-not-use-in-prod';
 
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
@@ -79,7 +84,7 @@ app.prepare().then(() => {
         return next(new Error('Authentication error'));
       }
 
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, jwtSecret);
       socket.userId = decoded.id;
       socket.role = decoded.role;
       socket.shopId = decoded.shopId;
@@ -112,13 +117,15 @@ app.prepare().then(() => {
         // Handle work order updates
         socket.on('work-order-update', (data) => {
           try {
-            // Broadcast to relevant users
-            const { workOrderId, shopId, assignedTo } = data;
+            // Validate: only broadcast to the shop the sender belongs to
+            const { workOrderId, assignedTo } = data;
+            const shopId = socket.shopId; // Use authenticated shopId, not user-supplied
 
             // Notify shop admin
             if (shopId) {
               io.to(`shop_${shopId}`).emit('work-order-updated', {
                 ...data,
+                shopId, // enforce server-side shopId
                 updatedBy: socket.userId,
                 timestamp: new Date().toISOString(),
               });
@@ -128,6 +135,7 @@ app.prepare().then(() => {
             if (assignedTo) {
               io.to(`user_${assignedTo}`).emit('work-order-updated', {
                 ...data,
+                shopId,
                 updatedBy: socket.userId,
                 timestamp: new Date().toISOString(),
               });

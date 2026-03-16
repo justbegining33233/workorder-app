@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import PasswordResetForm from '@/components/PasswordResetForm';
 import { getCsrfToken } from '@/lib/clientCsrf';
 import { useAuth } from '@/contexts/AuthContext';
+import { IconUser, IconWrench } from '@/components/icons';
 import '@/styles/sos-theme.css';
 import OilSlickCanvas from '@/components/OilSlickCanvas';
 
@@ -16,7 +17,6 @@ export default function LoginClient() {
   const { login } = useAuth();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
-  const [showSecurityTip, setShowSecurityTip] = useState(false);
 
   // Reset form fields every time this page mounts (e.g. after logout)
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
@@ -30,8 +30,6 @@ export default function LoginClient() {
   const [showReset, setShowReset] = useState(false);
   const [regMsg, setRegMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
-  const showSecurityBanner = () => setShowSecurityTip(true);
-
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
@@ -40,9 +38,6 @@ export default function LoginClient() {
     if (!loginForm.username) newErrors.username = 'Username is required';
     if (!loginForm.password) newErrors['password'] = 'Password is required';
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
-
-    // Show security tip every time sign-in is attempted
-    showSecurityBanner();
 
     setLoading(true);
     try {
@@ -54,7 +49,7 @@ export default function LoginClient() {
         if (adminResponse.status === 404) {
           try {
             adminResponse = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
-          } catch (e) { /* ignore */ }
+          } catch { /* ignore */ }
         }
         if (adminResponse.ok) {
           const adminData = await adminResponse.json();
@@ -64,7 +59,7 @@ export default function LoginClient() {
           return;
         }
         if (adminResponse.status >= 500) serverError = true;
-      } catch (e) { serverError = true; }
+      } catch { serverError = true; }
 
       // Tech/Manager
       try {
@@ -77,7 +72,7 @@ export default function LoginClient() {
           return;
         }
         if (techResponse.status >= 500) serverError = true;
-      } catch (e) { serverError = true; }
+      } catch { serverError = true; }
 
       // Shop
       try {
@@ -93,7 +88,7 @@ export default function LoginClient() {
           return;
         }
         if (shopResponse.status >= 500) serverError = true;
-      } catch (e) { serverError = true; }
+      } catch { serverError = true; }
 
       // Customer
       try {
@@ -109,7 +104,7 @@ export default function LoginClient() {
           return;
         }
         if (customerResponse.status >= 500) serverError = true;
-      } catch (e) { serverError = true; }
+      } catch { serverError = true; }
 
       if (serverError) {
         setErrors({ username: 'Server error — please try again in a moment.' });
@@ -117,7 +112,7 @@ export default function LoginClient() {
         setErrors({ username: 'Invalid username or password' });
       }
       setLoading(false);
-    } catch (error) {
+    } catch {
       setErrors({ username: 'An error occurred during login. Please try again.' });
       setLoading(false);
     }
@@ -171,7 +166,7 @@ export default function LoginClient() {
       try {
         const response = await fetch('/api/shops/pending', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ shopName: shopSignupForm.shopName, ownerName: shopSignupForm.ownerName || shopSignupForm.shopName, email: shopSignupForm.email, phone: shopSignupForm.phone, address: shopSignupForm.address, city: shopSignupForm.city, state: shopSignupForm.state, zipCode: shopSignupForm.zip, location: `${shopSignupForm.city}, ${shopSignupForm.state}`, businessLicense: 'Pending verification', insurancePolicy: 'Pending verification', services: 0, status: 'pending', username: shopSignupForm.username, password: shopSignupForm.password }) });
         if (response.ok) { setTimeout(() => { router.push('/auth/pending-approval'); setLoading(false); }, 1000); } else { setRegMsg({type:'error',text:'Failed to submit shop registration. Please try again.'}); setLoading(false); }
-      } catch (error) { setRegMsg({type:'error',text:'Error submitting registration. Please try again.'}); setLoading(false); }
+      } catch { setRegMsg({type:'error',text:'Error submitting registration. Please try again.'}); setLoading(false); }
     } else {
       try {
         // Always fetch a fresh CSRF token immediately before registration
@@ -196,8 +191,8 @@ export default function LoginClient() {
         const firstName = nameParts[0] || signupForm.fullName;
         const lastName = nameParts.slice(1).join(' ') || 'User';
         const response = await fetch('/api/customers/register', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken }, body: JSON.stringify({ email: signupForm.email, username: signupForm.username || signupForm.email.split('@')[0], password: signupForm.password, firstName, lastName }) });
-        if (response.ok) { const data = await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you'); setLoading(false); }, 1000); } else { const errorData = await response.json(); setRegMsg({type:'error',text:errorData.error || 'Failed to create customer account. Please try again.'}); setLoading(false); }
-      } catch (error) { setRegMsg({type:'error',text:'Error creating account. Please try again.'}); setLoading(false); }
+        if (response.ok) { await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you'); setLoading(false); }, 1000); } else { const errorData = await response.json(); setRegMsg({type:'error',text:errorData.error || 'Failed to create customer account. Please try again.'}); setLoading(false); }
+      } catch { setRegMsg({type:'error',text:'Error creating account. Please try again.'}); setLoading(false); }
     }
   };
 
@@ -205,53 +200,6 @@ export default function LoginClient() {
 
   return (
     <div className="sos-wrap">
-      {/* Security tip modal — user must dismiss */}
-      {showSecurityTip && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 99999,
-          background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <div style={{
-            background: '#1a1d27', border: '1px solid #e5332a',
-            borderRadius: 14, padding: '32px 36px', maxWidth: 400, width: '90%',
-            textAlign: 'center', boxShadow: '0 8px 40px rgba(229,51,42,0.3)',
-            position: 'relative',
-          }}>
-            <button
-              onClick={() => setShowSecurityTip(false)}
-              style={{
-                position: 'absolute', top: 14, right: 16,
-                background: 'none', border: 'none', color: '#9aa3b2',
-                cursor: 'pointer', fontSize: 20, lineHeight: 1,
-              }}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <div style={{ fontSize: 44, marginBottom: 14 }}>🔒</div>
-            <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>
-              Keep your account safe
-            </h2>
-            <p style={{ color: '#b8beca', fontSize: 14, margin: '0 0 8px' }}>
-              For your security, please <strong style={{ color: '#ff948d' }}>do not save your password</strong> in the browser.
-            </p>
-            <p style={{ color: '#b8beca', fontSize: 13, margin: '0 0 24px' }}>
-              Never share your login credentials with anyone. Always sign out when you&apos;re done.
-            </p>
-            <button
-              onClick={() => setShowSecurityTip(false)}
-              style={{
-                background: '#e5332a', border: 'none', color: '#fff',
-                borderRadius: 8, padding: '11px 32px', cursor: 'pointer',
-                fontSize: 15, fontWeight: 600, width: '100%',
-              }}
-            >
-              Got it, I understand
-            </button>
-          </div>
-        </div>
-      )}
       <OilSlickCanvas />
       <div className="sos-card">
         <div className="sos-header">
@@ -294,12 +242,12 @@ export default function LoginClient() {
                   <label>I am signing up as: *</label>
                   <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
                     <button type="button" onClick={() => { setAccountType('customer'); setErrors({}); }} className={`btn-outline ${accountType === 'customer' ? 'active' : ''}`} style={{padding:'16px', borderWidth:2, background: accountType === 'customer' ? 'rgba(229,51,42,0.14)' : 'transparent', boxShadow: accountType === 'customer' ? '0 0 0 2px #e5332a' : 'none'}}>
-                      <div style={{fontSize:'18px', marginBottom:'6px'}}>👤</div>
+                      <div style={{marginBottom:'6px', display:'flex', justifyContent:'center'}}><IconUser size={24} color={accountType === 'customer' ? '#e5332a' : '#9aa3b2'} /></div>
                       <div>Customer</div>
                       <div style={{fontSize:'11px', color:'#9aa3b2', marginTop:'4px'}}>Need service</div>
                     </button>
                     <button type="button" onClick={() => { setAccountType('shop'); setErrors({}); }} className={`btn-outline ${accountType === 'shop' ? 'active' : ''}`} style={{padding:'16px', borderWidth:2, background: accountType === 'shop' ? 'rgba(229,51,42,0.14)' : 'transparent', boxShadow: accountType === 'shop' ? '0 0 0 2px #e5332a' : 'none'}}>
-                      <div style={{fontSize:'18px', marginBottom:'6px'}}>🏪</div>
+                      <div style={{marginBottom:'6px', display:'flex', justifyContent:'center'}}><IconWrench size={24} color={accountType === 'shop' ? '#e5332a' : '#9aa3b2'} /></div>
                       <div>Shop</div>
                       <div style={{fontSize:'11px', color:'#9aa3b2', marginTop:'4px'}}>Provide service</div>
                     </button>

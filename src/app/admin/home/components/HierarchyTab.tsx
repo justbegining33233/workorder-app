@@ -92,7 +92,7 @@ interface HierarchyTabProps {
 }
 
 // Chart Components
-function DonutChart({ value, max, color, size = 70 }: { value: number; max: number; color: string; size?: number }) {
+function _DonutChart({ value, max, color, size = 70 }: { value: number; max: number; color: string; size?: number }) {
   const percent = max > 0 ? (value / max) * 100 : 0;
   const radius = 28;
   const circumference = 2 * Math.PI * radius;

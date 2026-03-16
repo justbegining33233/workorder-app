@@ -5,9 +5,17 @@ import { authenticateRequest } from '@/lib/auth';
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = authenticateRequest(req);
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!['shop', 'manager', 'admin', 'superadmin'].includes(auth.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
   const { id } = await params;
   const body = await req.json();
-  const account = await prisma.fleetAccount.update({ where: { id }, data: body });
+  // Allowlist mutable fields — prevent shopId/id overwrite
+  const { companyName, contactName, contactEmail, contactPhone, billingAddress, taxId, netTerms, creditLimit, notes, status } = body;
+  const account = await prisma.fleetAccount.update({
+    where: { id },
+    data: { companyName, contactName, contactEmail, contactPhone, billingAddress, taxId, netTerms, creditLimit, notes, status },
+  });
   return NextResponse.json(account);
 }
 

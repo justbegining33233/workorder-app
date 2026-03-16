@@ -1,15 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 
 // GET /api/purchase-orders?shopId=...
 export async function GET(request: NextRequest) {
   try {
+    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    // Only shop owners, managers, and admins can view purchase orders
+    if (!['shop', 'manager', 'admin', 'superadmin'].includes(decoded.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const shopId = searchParams.get('shopId');
 
     if (!shopId) {
       return NextResponse.json({ error: 'Shop ID required' }, { status: 400 });
+    }
+
+    // Enforce ownership: shops/managers can only see their own POs
+    if (decoded.role === 'shop' && decoded.id !== shopId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    if (decoded.role === 'manager' && decoded.shopId !== shopId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const orders = await prisma.purchaseOrder.findMany({

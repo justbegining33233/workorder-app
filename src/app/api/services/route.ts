@@ -9,7 +9,7 @@ import { sanitizeObject } from '@/lib/sanitize';
 export async function GET(request: NextRequest) {
   try {
     // Rate limiting
-    const rateLimitResponse = rateLimit(rateLimitConfigs.api)(request);
+    const rateLimitResponse = await rateLimit(rateLimitConfigs.api)(request);
     if (rateLimitResponse) return rateLimitResponse;
 
     // Authentication
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting
-    const rateLimitResponse = rateLimit(rateLimitConfigs.api)(request);
+    const rateLimitResponse = await rateLimit(rateLimitConfigs.api)(request);
     if (rateLimitResponse) return rateLimitResponse;
 
     // Authentication - only shop owners and managers

@@ -45,3 +45,4 @@ next-env.d.ts
 # Local secrets / env setup files
 VERCEL_ENV_SETUP.txt
 tmp_secrets.txt
+tmp/

@@ -11,7 +11,7 @@ export async function GET(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const location = getLocationById(id);
+  const location = await getLocationById(id);
   if (!location) return NextResponse.json({ error: 'Location not found' }, { status: 404 });
 
   return NextResponse.json({ location });
@@ -26,7 +26,7 @@ export async function PUT(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const existing = getLocationById(id);
+  const existing = await getLocationById(id);
   if (!existing) return NextResponse.json({ error: 'Location not found' }, { status: 404 });
 
   const shopId = auth.shopId ?? auth.id;
@@ -38,7 +38,7 @@ export async function PUT(
   if (!body || typeof body !== 'object') {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
-  const location = updateLocation(id, body);
+  const location = await updateLocation(id, body);
 
   return NextResponse.json({ location });
 }
@@ -52,7 +52,7 @@ export async function DELETE(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const existing = getLocationById(id);
+  const existing = await getLocationById(id);
   if (!existing) return NextResponse.json({ error: 'Location not found' }, { status: 404 });
 
   const shopId = auth.shopId ?? auth.id;
@@ -60,6 +60,6 @@ export async function DELETE(
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  deleteLocation(id);
+  await deleteLocation(id);
   return NextResponse.json({ success: true });
 }

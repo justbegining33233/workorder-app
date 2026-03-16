@@ -65,6 +65,18 @@ export async function POST(request: NextRequest) {
           deliveryMethod: 'in-app',
         },
       });
+
+      // Dispatch webhook for payment received
+      const { dispatchWebhook } = await import('@/lib/webhookService');
+      dispatchWebhook(workOrder.shopId, 'payment.received', {
+        workOrderId: workOrder.id,
+        amount: workOrder.amountPaid,
+        customerId: workOrder.customerId,
+      }).catch(() => {});
+
+      // Award loyalty points
+      const { awardLoyaltyPoints } = await import('@/lib/loyaltyService');
+      awardLoyaltyPoints(workOrder.customerId, workOrder.id, workOrder.amountPaid || 0).catch(() => {});
     }
     
     return NextResponse.json({ received: true });

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 interface SubscriptionData {
   id: string;
@@ -171,6 +171,7 @@ const PLAN_DETAILS = {
 };
 
 export function SubscriptionsTab({ subscriptions, liveMetrics, threeMonthAverages }: SubscriptionsTabProps) {
+  const [now] = useState(() => Date.now());
   const activeSubscriptions = subscriptions.filter(sub => sub.status === 'active');
   const trialingSubscriptions = subscriptions.filter(sub => sub.status === 'trialing');
   const canceledSubscriptions = subscriptions.filter(sub => sub.status === 'canceled' || sub.status === 'cancelled');
@@ -393,7 +394,7 @@ export function SubscriptionsTab({ subscriptions, liveMetrics, threeMonthAverage
               <span className="text-xs font-medium text-[#22C55E]">${totalRevenue.toLocaleString()}/mo</span>
             </div>
             <div className="h-2 rounded-full bg-[#27272A] overflow-hidden flex">
-              {planStats.filter(p => p.count > 0).map((p, i) => (
+              {planStats.filter(p => p.count > 0).map((p, _i) => (
                 <div 
                   key={p.key} 
                   className="h-full" 
@@ -603,9 +604,9 @@ export function SubscriptionsTab({ subscriptions, liveMetrics, threeMonthAverage
             Upcoming Renewals
           </h3>
           <div className="space-y-3">
-            {activeSubscriptions.slice(0, 4).map((sub, i) => {
+            {activeSubscriptions.slice(0, 4).map((sub, _i) => {
               const plan = PLAN_DETAILS[sub.plan.toLowerCase() as keyof typeof PLAN_DETAILS] || PLAN_DETAILS.starter;
-              const daysUntilRenewal = Math.ceil((new Date(sub.currentPeriodEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+              const daysUntilRenewal = Math.ceil((new Date(sub.currentPeriodEnd).getTime() - now) / (1000 * 60 * 60 * 24));
               return (
                 <div key={sub.id} className="flex items-center justify-between p-3 bg-[#27272A]/30 rounded-lg">
                   <div className="flex items-center gap-3">

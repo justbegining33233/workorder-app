@@ -32,13 +32,6 @@ interface TeamMember {
   jobs: number;
 }
 
-interface InventoryItem {
-  part: string;
-  stock: number;
-  reorder: number;
-  status: string;
-}
-
 type QuickAction = {
   label: string;
   href: string;
@@ -63,7 +56,7 @@ export default function ShopHome() {
     phone: '',
     password: ''
   });
-  const [todayJobs, setTodayJobs] = useState<Job[]>([]);
+  const [_todayJobs, _setTodayJobs] = useState<Job[]>([]);
   const [shopStats, setShopStats] = useState({
     openJobs: 0,
     completedToday: 0,
@@ -78,7 +71,7 @@ export default function ShopHome() {
   const [selectedDestinations, setSelectedDestinations] = useState<Record<string, string>>({});
   const [pendingWorkOrders, setPendingWorkOrders] = useState<Job[]>([]);
   const [bays, setBays] = useState<Array<{ id: string; name: string; tech: string; jobs: Job[] }>>([]);
-  const [roadcallJobs, setRoadcallJobs] = useState<Job[]>([]);
+  const [_roadcallJobs, setRoadcallJobs] = useState<Job[]>([]);
   const userId = (user as any)?.id ?? '';
   const shopId = (user as any)?.shopId ?? user?.id ?? '';
 
@@ -169,7 +162,7 @@ export default function ShopHome() {
             jobs: [],
           })));
         }
-      } catch (err) {
+      } catch {
         // Dashboard will show zeros/empty � not a crash
       }
     };
@@ -250,7 +243,7 @@ export default function ShopHome() {
 
   const isManager = user.role === 'manager';
 
-  const handleSignOut = () => {
+  const _handleSignOut = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
     router.push('/auth/login');
@@ -287,7 +280,7 @@ export default function ShopHome() {
     }
   };
 
-  const handleOrderPart = async (partName: string, currentStock: number, reorderLevel: number) => {
+  const _handleOrderPart = async (partName: string, currentStock: number, reorderLevel: number) => {
     const orderQuantity = reorderLevel * 2;
     try {
       const token = localStorage.getItem('token');
@@ -309,7 +302,7 @@ export default function ShopHome() {
     }
   };
 
-  const handleOpenWorkorder = (orderId: string) => {
+  const _handleOpenWorkorder = (orderId: string) => {
     router.push(`/workorders/${orderId}`);
   };
 
@@ -350,12 +343,12 @@ export default function ShopHome() {
           status: destinationId === 'roadcall' ? 'Roadcall' : 'In Bay',
         }),
       });
-    } catch (err) {
-      console.error('Failed to persist bay assignment:', err);
+    } catch {
+      console.error('Failed to persist bay assignment');
     }
   };
 
-  const handleReturnToPending = (bayId: string, orderId: string) => {
+  const _handleReturnToPending = (bayId: string, orderId: string) => {
     let moved: Job | undefined;
     setBays(current => {
       const updated = current.map(bay => {
@@ -375,7 +368,7 @@ export default function ShopHome() {
     }
   };
 
-  const handleReturnRoadcallToPending = (orderId: string) => {
+  const _handleReturnRoadcallToPending = (orderId: string) => {
     let moved: Job | undefined;
     setRoadcallJobs(current => {
       moved = current.find(j => j.id === orderId);

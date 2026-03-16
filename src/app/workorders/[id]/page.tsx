@@ -11,7 +11,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 type Part = { name: string; quantity: number; unitPrice: number };
 type Labor = { description: string; hours: number; ratePerHour: number };
 type AdditionalCharge = { description: string; amount: number };
-type Photo = { url: string; type: string; caption?: string; timestamp: Date };
+type _Photo = { url: string; type: string; caption?: string; timestamp: Date };
 
 export default function WorkOrderDetail({ params }: { params: Promise<{ id: string }> }) {
   useRequireAuth(['shop', 'manager', 'tech', 'superadmin']);
@@ -58,6 +58,8 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
   const [showPhotoForm, setShowPhotoForm] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [emailingInvoice, setEmailingInvoice] = useState(false);
+  const [emailInvoiceMsg, setEmailInvoiceMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -105,7 +107,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
       if (updated) {
         setWorkOrder(updated);
       }
-    } catch (error) {
+    } catch {
       console.error('Error updating status:', error);
     }
   };
@@ -117,7 +119,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
       if (updated) {
         setWorkOrder(updated);
       }
-    } catch (error) {
+    } catch {
       console.error('Error updating work order:', error);
     }
   };
@@ -329,11 +331,35 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
       } else {
         throw new Error('Failed to delete');
       }
-    } catch (error) {
+    } catch {
       console.error('Error deleting work order:', error);
       setError('Failed to delete work order');
     } finally {
       setDeleteConfirm(false);
+    }
+  };
+
+  const handleEmailInvoice = async () => {
+    if (!id) return;
+    setEmailingInvoice(true);
+    setEmailInvoiceMsg(null);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/workorders/${id}/email-invoice`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEmailInvoiceMsg('Invoice emailed to customer!');
+      } else {
+        setEmailInvoiceMsg(data.error || 'Failed to email invoice');
+      }
+    } catch {
+      setEmailInvoiceMsg('Failed to email invoice');
+    } finally {
+      setEmailingInvoice(false);
+      setTimeout(() => setEmailInvoiceMsg(null), 4000);
     }
   };
 
@@ -409,6 +435,9 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
               <span style={{padding:'8px 16px', background:statusColors[workOrder.status], color:statusTextColors[workOrder.status], borderRadius:8, fontSize:13, fontWeight:600}}>
                 {workOrder.status.replace('-', ' ').toUpperCase()}
               </span>
+              <button onClick={() => window.print()} className="no-print" style={{padding:'8px 16px', background:'#6b7280', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
+                🖨️ Print
+              </button>
               {['tech', 'manager'].includes(role) && (
                 <button onClick={() => setDeleteConfirm(true)} style={{padding:'8px 16px', background:'#e5332a', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:13, fontWeight:600}}>
                   Delete
@@ -915,6 +944,34 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                       <div style={{marginBottom:4, display:'flex', justifyContent:'space-between', color:'#9aa3b2'}}><span>FixTray Service Fee:</span><span>${FIXTRAY_SERVICE_FEE.toFixed(2)}</span></div>
                       <div style={{marginBottom:4, display:'flex', justifyContent:'space-between', fontWeight:700, borderTop:'1px solid rgba(255,255,255,0.2)', paddingTop:4}}><span>Total Due:</span><span style={{color:'#22c55e'}}>${totalDue.toFixed(2)}</span></div>
                     </div>
+                    <div style={{display:'flex', gap:8, marginTop:12}}>
+                      <button
+                        onClick={handleEmailInvoice}
+                        disabled={emailingInvoice}
+                        style={{flex:1, padding:'8px', background:'#3b82f6', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600, opacity: emailingInvoice ? 0.6 : 1}}
+                      >
+                        {emailingInvoice ? 'Sending...' : '📧 Email Invoice'}
+                      </button>
+                      <a
+                        href={`/api/workorders/${id}/invoice`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{flex:1, padding:'8px', background:'#a855f7', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600, textAlign:'center', textDecoration:'none'}}
+                      >
+                        📄 Download PDF
+                      </a>
+                      <button
+                        onClick={() => window.print()}
+                        style={{flex:1, padding:'8px', background:'#6b7280', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600}}
+                      >
+                        🖨️ Print
+                      </button>
+                    </div>
+                    {emailInvoiceMsg && (
+                      <div style={{marginTop:8, padding:'8px 12px', background: emailInvoiceMsg.includes('emailed') ? 'rgba(34,197,94,0.15)' : 'rgba(229,51,42,0.15)', border: `1px solid ${emailInvoiceMsg.includes('emailed') ? 'rgba(34,197,94,0.3)' : 'rgba(229,51,42,0.3)'}`, borderRadius:6, fontSize:12, color: emailInvoiceMsg.includes('emailed') ? '#22c55e' : '#e5332a'}}>
+                        {emailInvoiceMsg}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

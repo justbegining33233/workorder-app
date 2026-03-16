@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/middleware';
 import prisma from '@/lib/prisma';
 import { cancelSubscription } from '@/lib/stripe';
@@ -17,7 +17,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
   try {
     const shopId = paramShopId;
-    const { reason, immediate = false } = await request.json();
+    const { _reason, immediate = false } = await request.json();
 
     // Get current subscription
     const subscription = await prisma.subscription.findUnique({

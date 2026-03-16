@@ -23,17 +23,44 @@ const ROLE_HOME: Record<string, string> = {
   customer:   '/customer/dashboard',
 };
 
-// ─── JWT payload decode (no signature verify — routing only) ─────────────────
-// Signature is still verified on every real API call via authenticateRequest().
-// Here we only need the role claim to decide where to send the browser.
+// ─── JWT signature verification (Web Crypto API — Edge-compatible) ───────────
 
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
+async function verifyJwt(token: string): Promise<Record<string, unknown> | null> {
   try {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) return null;
+
     const parts = token.split('.');
     if (parts.length !== 3) return null;
-    // atob is available in the Edge runtime
-    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(base64));
+
+    const encoder = new TextEncoder();
+
+    // Import the HMAC key
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify'],
+    );
+
+    // Decode the signature from base64url
+    const sigBase64 = parts[2].replace(/-/g, '+').replace(/_/g, '/');
+    const sigBinary = Uint8Array.from(atob(sigBase64), (c) => c.charCodeAt(0));
+
+    // Verify: HMAC-SHA256( header.payload, secret ) === signature
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      sigBinary,
+      encoder.encode(`${parts[0]}.${parts[1]}`),
+    );
+
+    if (!valid) return null;
+
+    // Signature valid — decode payload
+    const payloadBase64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(payloadBase64));
   } catch {
     return null;
   }
@@ -41,8 +68,11 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Allow unauthenticated access to role-specific login pages
+  if (pathname === '/admin/login') return NextResponse.next();
 
   // Find the route group this path belongs to
   const entry = Object.entries(ROUTE_ROLES).find(([prefix]) =>
@@ -66,7 +96,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const payload = decodeJwtPayload(token);
+  const payload = await verifyJwt(token);
   const role = payload?.role as string | undefined;
 
   // Unreadable token → send to login
@@ -92,6 +122,6 @@ export const config = {
     '/customer/:path*',
     '/manager/:path*',
     '/workorders/:path*',
-    '/reports',
+    '/reports/:path*',
   ],
 };

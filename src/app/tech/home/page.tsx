@@ -34,45 +34,6 @@ export default function TechHome() {
     revenue: '$0'
   });
 
-  // Initialize data when user is available
-  useEffect(() => {
-    if (!user) return;
-    // Fetch shop profile if shopId exists
-    if (user.shopId) {
-      fetchShopProfile(user.shopId);
-      // Fetch aggregated shop stats from work orders
-      const token = localStorage.getItem('token');
-      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-      fetch(`/api/workorders?shopId=${user.shopId}&limit=100`, { headers })
-        .then(r => r.ok ? r.json() : null)
-        .then(data => {
-          if (!data) return;
-          const orders: any[] = data.workOrders || [];
-          const today = new Date(); today.setHours(0, 0, 0, 0);
-          const openJobs = orders.filter((w: any) => ['assigned', 'in-progress'].includes(w.status)).length;
-          const completedToday = orders.filter((w: any) => w.status === 'closed' && new Date(w.updatedAt) >= today).length;
-          const todayRevenue = orders
-            .filter((w: any) => w.status === 'closed' && w.paymentStatus === 'paid' && new Date(w.updatedAt) >= today)
-            .reduce((s: number, w: any) => s + (w.amountPaid || 0), 0);
-          setShopStats({ openJobs, completedToday, partsOrdered: 0, revenue: `$${todayRevenue.toLocaleString('en-US', { minimumFractionDigits: 0 })}` });
-        })
-        .catch(() => {});
-    }
-    // Fetch tech profile
-    fetchTechProfile(user.id);
-    // Fetch assigned work orders
-    fetchTodayJobs(user.id);
-    // Fetch unread message count
-    fetchMessageUnreadCount();
-    // Set up auto-refresh every 10 seconds
-    const refreshInterval = setInterval(() => {
-      fetchTechProfile(user.id);
-      fetchTodayJobs(user.id);
-      fetchMessageUnreadCount();
-    }, 10000);
-    return () => clearInterval(refreshInterval);
-  }, [user]);
-
   // Fetch shop profile and set coordinates
   const fetchShopProfile = async (shopId: string) => {
     try {
@@ -101,8 +62,8 @@ export default function TechHome() {
       } else {
         // Read response body for helpful debugging info
         let bodyText = '';
-        try { bodyText = await response.text(); } catch (e) { bodyText = '<no body>'; }
-        const msg = `status:${response.status} body:${bodyText}`;
+        try { bodyText = await response.text(); } catch { bodyText = '<no body>'; }
+        const _msg = `status:${response.status} body:${bodyText}`;
         setShopProfile(undefined);
       }
     } catch (error) {
@@ -125,29 +86,6 @@ export default function TechHome() {
       console.error('Geocoding failed:', error);
     }
   };
-
-
-  // Show loading state while checking authentication
-  if (isLoading) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'transparent',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#e5e7eb',
-        fontSize: '18px'
-      }}>
-        Loading...
-      </div>
-    );
-  }
-
-  // If no user, the useRequireAuth hook will handle redirect
-  if (!user) {
-    return null;
-  }
 
   const fetchTechProfile = async (techId: string) => {
     try {
@@ -197,7 +135,69 @@ export default function TechHome() {
     }
   };
 
-  const handleSignOut = () => {
+  // Initialize data when user is available
+  useEffect(() => {
+    if (!user) return;
+    // Fetch shop profile if shopId exists
+    if (user.shopId) {
+      fetchShopProfile(user.shopId);
+      // Fetch aggregated shop stats from work orders
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+      fetch(`/api/workorders?shopId=${user.shopId}&limit=100`, { headers })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (!data) return;
+          const orders: any[] = data.workOrders || [];
+          const today = new Date(); today.setHours(0, 0, 0, 0);
+          const openJobs = orders.filter((w: any) => ['assigned', 'in-progress'].includes(w.status)).length;
+          const completedToday = orders.filter((w: any) => w.status === 'closed' && new Date(w.updatedAt) >= today).length;
+          const todayRevenue = orders
+            .filter((w: any) => w.status === 'closed' && w.paymentStatus === 'paid' && new Date(w.updatedAt) >= today)
+            .reduce((s: number, w: any) => s + (w.amountPaid || 0), 0);
+          setShopStats({ openJobs, completedToday, partsOrdered: 0, revenue: `$${todayRevenue.toLocaleString('en-US', { minimumFractionDigits: 0 })}` });
+        })
+        .catch(() => {});
+    }
+    // Fetch tech profile
+    fetchTechProfile(user.id);
+    // Fetch assigned work orders
+    fetchTodayJobs(user.id);
+    // Fetch unread message count
+    fetchMessageUnreadCount();
+    // Set up auto-refresh every 10 seconds
+    const refreshInterval = setInterval(() => {
+      fetchTechProfile(user.id);
+      fetchTodayJobs(user.id);
+      fetchMessageUnreadCount();
+    }, 10000);
+    return () => clearInterval(refreshInterval);
+  }, [user]);
+
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#e5e7eb',
+        fontSize: '18px'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
+
+  const _handleSignOut = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
     localStorage.removeItem('userId');

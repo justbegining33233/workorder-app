@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const returnUrl = `${process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000'}/shop/settings`;
+    const returnUrl = `${process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://fixtray.app'}/shop/settings`;
 
     // Create billing portal session
     const session = await stripe.billingPortal.sessions.create({

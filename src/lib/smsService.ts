@@ -9,9 +9,9 @@
  *   TWILIO_MESSAGING_SERVICE_SID – (optional) use a Messaging Service instead of a fixed from number
  */
 
-let twilioClient: ReturnType<typeof import('twilio')> | null = null;
+let twilioClient: any | null = null;
 
-function getClient() {
+async function getClient() {
   if (twilioClient) return twilioClient;
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
@@ -19,8 +19,7 @@ function getClient() {
   if (!sid || !token || !sid.startsWith('AC') || token.length < 16) return null;
   // Lazy-load Twilio to avoid cold-start overhead when not configured
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const twilio = require('twilio');
+    const twilio = (await import('twilio')).default;
     twilioClient = twilio(sid, token);
     return twilioClient;
   } catch {
@@ -34,7 +33,7 @@ function getClient() {
  * Prefers TWILIO_MESSAGING_SERVICE_SID when set; falls back to TWILIO_FROM_NUMBER.
  */
 export async function sendSms(to: string, body: string): Promise<boolean> {
-  const client = getClient();
+  const client = await getClient();
   if (!client || !to) return false;
 
   // Normalize phone number — Twilio requires E.164 format (+1XXXXXXXXXX)

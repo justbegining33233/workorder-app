@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
-import { sendEstimateReadyEmail, sendJobCompletedEmail, sendStatusUpdateEmail } from '@/lib/emailService';
+import { sendEstimateReadyEmail, sendJobCompletedEmail, sendStatusUpdateEmail, sendEmail } from '@/lib/emailService';
 import { pushEstimateReady, pushJobCompleted } from '@/lib/serverPush';
-import { Estimate } from '@/types/workorder';
+import { sendSms } from '@/lib/smsService';
+import { awardLoyaltyPoints } from '@/lib/loyaltyService';
+import { dispatchWebhook } from '@/lib/webhookService';
+
 import { validateRequest, workOrderUpdateSchema } from '@/lib/validationSchemas';
 
 export async function GET(
@@ -163,6 +166,10 @@ export async function PUT(
           deliveryMethod: 'in-app',
         },
       });
+
+      // Dispatch webhook for status change
+      const webhookEvent = data.status === 'closed' ? 'workorder.closed' : 'workorder.updated';
+      dispatchWebhook(current.shopId, webhookEvent, { workOrderId: id, fromStatus: current.status, toStatus: data.status }).catch(() => {});
     }
     
     // Send estimate email if estimated cost added
@@ -179,6 +186,17 @@ export async function PUT(
         current.issueDescription || 'Vehicle Service'
       ).catch(console.error);
       pushEstimateReady(current.customerId, totalDue, id).catch(console.error);
+
+      // SMS notification for estimate ready
+      if (current.customer.phone) {
+        sendSms(
+          current.customer.phone,
+          `FixTray: Your estimate is ready — $${data.estimatedCost.toFixed(2)} for "${current.issueDescription?.slice(0, 40) || 'Vehicle Service'}". Review at fixtray.app/customer (WO: ...${id.slice(-6)})`
+        ).catch(() => {});
+      }
+
+      // Dispatch webhook for estimate ready
+      dispatchWebhook(current.shopId, 'estimate.ready', { workOrderId: id, estimatedCost: data.estimatedCost }).catch(() => {});
       
       await prisma.notification.create({
         data: {
@@ -203,7 +221,7 @@ export async function PUT(
         estimatedCost: data.estimatedCost,
         amountPaid: data.amountPaid,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-        completedAt: data.completedAt ? new Date(data.completedAt) : (data.status === 'completed' ? new Date() : undefined),
+        completedAt: data.completedAt ? new Date(data.completedAt) : (data.status === 'closed' ? new Date() : undefined),
       },
       include: {
         customer: true,
@@ -211,6 +229,41 @@ export async function PUT(
         assignedTo: true,
       },
     });
+
+    // Award loyalty points when work order is closed
+    if (data.status === 'closed' && current.status !== 'closed') {
+      const paid = data.amountPaid || current.amountPaid || current.estimatedCost || 0;
+      awardLoyaltyPoints(current.customerId, id, paid).catch(console.error);
+
+      // Post-service follow-up: email + SMS asking for review
+      const customerName = `${current.customer.firstName} ${current.customer.lastName}`;
+      const shopName = current.shop?.shopName || 'Your Auto Shop';
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://fixtray.app';
+      const reviewLink = `${appUrl}/customer/reviews?shopId=${current.shopId}`;
+
+      sendEmail({
+        to: current.customer.email,
+        subject: `How was your experience at ${shopName}?`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #e5332a;">Thank you, ${customerName}!</h2>
+            <p>Your service at <strong>${shopName}</strong> is complete.</p>
+            <p>We'd love to hear about your experience. Your feedback helps us improve and helps other customers find great service.</p>
+            <a href="${reviewLink}" style="display: inline-block; background: #e5332a; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: 600;">
+              Leave a Review
+            </a>
+            <p style="color: #888; font-size: 12px; margin-top: 30px;">Thank you for choosing ${shopName}!</p>
+          </div>
+        `,
+      }).catch(console.error);
+
+      if (current.customer.phone) {
+        sendSms(
+          current.customer.phone,
+          `Thank you for your visit to ${shopName}! We'd love your feedback: ${reviewLink}`
+        ).catch(() => {});
+      }
+    }
 
     return NextResponse.json(updatedWorkOrder);
   } catch (error) {

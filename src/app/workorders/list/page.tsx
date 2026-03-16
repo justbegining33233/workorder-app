@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense, useMemo } from 'react';
+import { useState, Suspense, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import '@/styles/sos-theme.css';
@@ -20,15 +20,15 @@ interface WorkOrder {
 
 function WorkOrderListPageContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const filter = searchParams?.get('filter') || '';
+  const _router = useRouter();
+  const _filter = searchParams?.get('filter') || '';
   const status = searchParams?.get('status') || '';
 
-  const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || '');
+  const [userRole, _setUserRole] = useState(() => localStorage.getItem('userRole') || '');
 
   // Removed useEffect for userRole as it's now initialized directly
 
-  const getDashboardLink = () => {
+  const _getDashboardLink = () => {
     switch (userRole) {
       case 'superadmin': return '/admin/home';
       case 'shop': return '/shop/home';
@@ -39,7 +39,7 @@ function WorkOrderListPageContent() {
     }
   };
 
-  const [workOrders, setWorkOrders] = useState<WorkOrder[]>(() => getAllWorkOrdersClient());
+  const [workOrders, _setWorkOrders] = useState<WorkOrder[]>(() => getAllWorkOrdersClient());
   const filteredOrders = useMemo(() => {
     let filtered = [...workOrders];
     if (status) {

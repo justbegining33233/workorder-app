@@ -297,6 +297,19 @@ tbody td {
   input, select, textarea, button {
     font-size: 16px !important; /* Prevents zoom on iOS */
   }
+
+  /* Smoother native-feel scrolling */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Hide scrollbars on mobile for cleaner app feel */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  body {
+    scrollbar-width: none;
+  }
 }
 
 /* Pulse animation for loading indicators */
@@ -306,6 +319,87 @@ tbody td {
   }
   50% {
     opacity: 0.4;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PRINT STYLES
+───────────────────────────────────────────────────────────── */
+@media print {
+  /* Reset dark background for print */
+  body {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide navigation, sidebars, and non-essential UI */
+  nav, header,
+  .no-print,
+  [data-sidebar],
+  [data-topnav],
+  [data-mobile-nav] {
+    display: none !important;
+  }
+
+  /* Hide buttons, forms, and interactive elements */
+  button, select, input, textarea, form {
+    display: none !important;
+  }
+
+  /* But show text-only content inside forms */
+  .print-show {
+    display: block !important;
+  }
+
+  /* Reset colors for readability */
+  * {
+    color: #000 !important;
+    background: white !important;
+    border-color: #ccc !important;
+    box-shadow: none !important;
+  }
+
+  /* Status badges keep color on print */
+  [data-print-status] {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: inherit !important;
+    color: inherit !important;
+  }
+
+  /* Work order detail page: display as clean printout */
+  div[style*="minHeight"] {
+    min-height: auto !important;
+    padding: 0 !important;
+  }
+
+  /* Reset grid to single column for print */
+  div[style*="gridTemplateColumns"] {
+    display: block !important;
+  }
+
+  /* Ensure links show URL */
+  a[href]:after {
+    content: none;
+  }
+
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+  .page-break-after {
+    page-break-after: always;
+  }
+  .no-page-break {
+    page-break-inside: avoid;
+  }
+
+  /* Reasonable margins */
+  @page {
+    margin: 0.75in;
   }
 }
 

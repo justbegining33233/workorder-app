@@ -91,7 +91,7 @@ function MiniLineChart({ data, color, height = 40 }: { data: number[]; color: st
 }
 
 export default function ManageTenants() {
-  const router = useRouter();
+  const _router = useRouter();
   const { user, isLoading } = useRequireAuth(['admin']);
   const [loading, setLoading] = useState(true);
   const [tenants, setTenants] = useState<Tenant[]>([]);

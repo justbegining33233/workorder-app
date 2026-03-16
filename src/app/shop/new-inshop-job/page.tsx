@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MaintenanceType } from '../../../types/workorder';
+
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ShopNewInShopJob() {

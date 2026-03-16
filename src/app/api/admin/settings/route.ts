@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { requireRole, AuthUser } from '@/lib/auth';
+import { requireRole } from '@/lib/auth';
 import { getSettings, updateSettings, resetSettings } from '@/lib/platform-settings';
 
 export async function GET(request: NextRequest) {

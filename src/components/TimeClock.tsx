@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 
@@ -18,12 +18,12 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
   const [gpsEnabled, setGpsEnabled] = useState(false);
   const [location, setLocation] = useState<{lat: number, lon: number} | null>(null);
   const [photoEnabled, setPhotoEnabled] = useState(false);
-  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const [_capturedPhoto, _setCapturedPhoto] = useState<string | null>(null);
   const [shopLocation, setShopLocation] = useState<{lat: number, lon: number} | null>(null);
   const [gpsRadius, setGpsRadius] = useState(30.48); // 100 feet in meters
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [cameraActive, setCameraActive] = useState(false);
+  const [_cameraActive, setCameraActive] = useState(false);
   const [clockMsg, setClockMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   useEffect(() => {
@@ -140,7 +140,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
     });
   };
 
-  const startCamera = async () => {
+  const _startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
       if (videoRef.current) {
@@ -154,7 +154,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
     }
   };
 
-  const capturePhoto = (): string | null => {
+  const _capturePhoto = (): string | null => {
     if (!videoRef.current || !canvasRef.current) return null;
     
     const canvas = canvasRef.current;
@@ -169,7 +169,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
     return null;
   };
 
-  const stopCamera = () => {
+  const _stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
@@ -220,7 +220,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
             setLoading(false);
             return;
           }
-        } catch (error) {
+        } catch {
           setClockMsg({type:'error',text:'GPS verification failed. Please enable location services and try again.'});
           setLoading(false);
           return;
@@ -294,7 +294,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
             setLoading(false);
             return;
           }
-        } catch (error) {
+        } catch {
           setClockMsg({type:'error',text:'GPS verification failed. Please enable location services and try again.'});
           setLoading(false);
           return;

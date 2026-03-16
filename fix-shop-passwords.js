@@ -28,9 +28,14 @@ async function fixShopPasswords() {
       console.log(`  Email: ${shop.email}`);
       console.log(`  Username: ${shop.username}`);
       
-      // Set a default password
-      const defaultPassword = 'Password123!';
-      const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+      // Set password from env or CLI arg
+      const newPassword = process.env.SHOP_DEFAULT_PASSWORD || process.argv[2];
+      if (!newPassword) {
+        console.error('Usage: SHOP_DEFAULT_PASSWORD=xxx node fix-shop-passwords.js');
+        console.error('   or: node fix-shop-passwords.js <password>');
+        process.exit(1);
+      }
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
       
       // Update the shop
       await prisma.shop.update({
@@ -40,14 +45,13 @@ async function fixShopPasswords() {
         },
       });
       
-      console.log(`  ✅ Password set to: ${defaultPassword}`);
+      console.log(`  ✅ Password set for shop`);
       console.log(`  Note: Shop can now login and should change this password!\n`);
     }
 
     console.log('\n✅ All approved shops now have passwords!\n');
     console.log('📝 Login credentials for approved shops:');
     console.log('   Username: shop email or username');
-    console.log('   Password: Password123!');
     console.log('\n⚠️  Please advise shops to change their passwords after first login!\n');
 
   } catch (error) {

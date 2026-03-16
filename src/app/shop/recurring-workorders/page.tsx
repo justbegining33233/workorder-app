@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
@@ -127,7 +126,7 @@ export default function RecurringWorkOrders() {
       } else {
         setFormError(data.error || 'Failed to create schedule');
       }
-    } catch (err) {
+    } catch {
       setFormError('Error creating schedule');
     } finally {
       setSaving(false);

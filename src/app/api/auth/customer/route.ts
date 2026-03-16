@@ -1,8 +1,7 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 import { customerLoginSchema } from '@/lib/validation';
 import { sanitizeObject } from '@/lib/sanitize';
-// @ts-ignore
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 
 // POST /api/auth/customer
@@ -85,7 +84,13 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const cookieValue = `${refresh.id}:${refreshRaw}`;
+    const cookieOpts = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
+    };
     const response = NextResponse.json({
       id: customer.id,
       username: customer.email,
@@ -95,31 +100,19 @@ export async function POST(request: NextRequest) {
       accessToken,
       emailVerified: customer.emailVerified ?? true,
     }, { status: 200 });
-    response.cookies.set('refresh_id', refresh.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-    });
-    response.cookies.set('refresh_sig', refreshRaw, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-    });
+    response.cookies.set('refresh_id', refresh.id, cookieOpts);
+    response.cookies.set('refresh_sig', refreshRaw, cookieOpts);
     response.cookies.set('csrf_token', csrf, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
     response.cookies.set('sos_auth', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: 60 * 15,
     });

@@ -6,7 +6,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ShopInventoryPage() {
   useRequireAuth(['shop']);
-  const router = useRouter();
+  const _router = useRouter();
   const [inventory, setInventory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [shopId, setShopId] = useState('');

@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/reset/request', {
+      const _res = await fetch('/api/auth/reset/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: identifier.trim(), via: 'email' }),

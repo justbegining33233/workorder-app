@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   });
 
   const settings = await prisma.shopSettings.findUnique({ where: { shopId } });
-  const markup = settings?.inventoryMarkup || 0.3;
+  const _markup = settings?.inventoryMarkup || 0.3;
 
   const results = orders.map(wo => {
     const revenue = wo.estimatedCost || 0;

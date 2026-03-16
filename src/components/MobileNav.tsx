@@ -1,14 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import {
+  IconHome, IconOrders, IconMessages, IconTeam, IconCalendar,
+  IconWrench, IconClock, IconSettings, IconInventory, IconDollar,
+  IconChart, IconCar, IconStar, IconUser, IconCreditCard, IconSearch,
+  IconCamera, IconMapPin, IconClipboard, IconTools, IconLogOut, IconGrid,
+  IconFileText,
+} from '@/components/icons';
 
 interface MobileNavProps {
   role: 'customer' | 'shop' | 'tech' | 'manager';
 }
 
 interface NavItem {
-  icon: string;
+  icon: ReactNode;
   label: string;
   path: string;
 }
@@ -17,62 +24,64 @@ interface NavItem {
 const navConfig: Record<string, { primary: NavItem[]; more: NavItem[] }> = {
   customer: {
     primary: [
-      { icon: '🏠', label: 'Home',    path: '/customer/dashboard' },
-      { icon: '🗓️', label: 'Appts',   path: '/customer/appointments' },
-      { icon: '🔧', label: 'Repairs', path: '/customer/history' },
-      { icon: '💬', label: 'Chat',    path: '/customer/messages' },
+      { icon: <IconHome size={22} />,     label: 'Home',    path: '/customer/dashboard' },
+      { icon: <IconCalendar size={22} />, label: 'Appts',   path: '/customer/appointments' },
+      { icon: <IconWrench size={22} />,   label: 'Repairs', path: '/customer/history' },
+      { icon: <IconMessages size={22} />, label: 'Chat',    path: '/customer/messages' },
     ],
     more: [
-      { icon: '👤', label: 'Profile',   path: '/customer/overview' },
-      { icon: '⭐', label: 'Reviews',   path: '/customer/reviews' },
-      { icon: '💳', label: 'Payments',  path: '/customer/payments' },
-      { icon: '🚗', label: 'My Cars',   path: '/customer/vehicles' },
+      { icon: <IconUser size={22} />,       label: 'Profile',       path: '/customer/overview' },
+      { icon: <IconStar size={22} />,       label: 'Reviews',       path: '/customer/reviews' },
+      { icon: <IconCreditCard size={22} />, label: 'Payments',      path: '/customer/payments' },
+      { icon: <IconCar size={22} />,        label: 'My Cars',       path: '/customer/vehicles' },
+      { icon: <IconCalendar size={22} />,   label: 'Recurring',     path: '/customer/recurring-approvals' },
+      { icon: <IconClipboard size={22} />,  label: 'Notifications', path: '/customer/notifications' },
     ],
   },
   shop: {
     primary: [
-      { icon: '🏠', label: 'Home',    path: '/shop/home' },
-      { icon: '🗂',  label: 'Orders',  path: '/workorders/list' },
-      { icon: '💬', label: 'Messages', path: '/shop/customer-messages' },
-      { icon: '👥', label: 'Team',     path: '/shop/manage-team' },
+      { icon: <IconHome size={22} />,     label: 'Home',     path: '/shop/home' },
+      { icon: <IconOrders size={22} />,   label: 'Orders',   path: '/workorders/list' },
+      { icon: <IconMessages size={22} />, label: 'Messages', path: '/shop/customer-messages' },
+      { icon: <IconTeam size={22} />,     label: 'Team',     path: '/shop/manage-team' },
     ],
     more: [
-      { icon: '📦', label: 'Inventory',  path: '/shop/inventory' },
-      { icon: '💰', label: 'Payroll',    path: '/shop/payroll' },
-      { icon: '📈', label: 'Reports',    path: '/shop/reports' },
-      { icon: '🚗', label: 'Bay Board',  path: '/shop/bays' },
-      { icon: '⭐', label: 'Reviews',    path: '/shop/reviews' },
-      { icon: '⚙️', label: 'Settings',  path: '/shop/settings' },
+      { icon: <IconInventory size={22} />, label: 'Inventory',  path: '/shop/inventory' },
+      { icon: <IconDollar size={22} />,    label: 'Payroll',    path: '/shop/payroll' },
+      { icon: <IconChart size={22} />,     label: 'Reports',    path: '/shop/reports' },
+      { icon: <IconCar size={22} />,       label: 'Bay Board',  path: '/shop/bays' },
+      { icon: <IconStar size={22} />,      label: 'Reviews',    path: '/shop/reviews' },
+      { icon: <IconSettings size={22} />,  label: 'Settings',   path: '/shop/settings' },
     ],
   },
   tech: {
     primary: [
-      { icon: '🏠', label: 'Home',      path: '/tech/home' },
-      { icon: '📋', label: 'My Jobs',   path: '/workorders/list' },
-      { icon: '⏰', label: 'Clock',     path: '/tech/home#timeclock' },
-      { icon: '💬', label: 'Messages',  path: '/tech/messages' },
+      { icon: <IconHome size={22} />,       label: 'Home',     path: '/tech/home' },
+      { icon: <IconClipboard size={22} />,  label: 'My Jobs',  path: '/workorders/list' },
+      { icon: <IconClock size={22} />,      label: 'Clock',    path: '/tech/home#timeclock' },
+      { icon: <IconMessages size={22} />,   label: 'Messages', path: '/tech/messages' },
     ],
     more: [
-      { icon: '🔍', label: 'DVI Form',    path: '/tech/dvi' },
-      { icon: '🔎', label: 'DTC Lookup',  path: '/tech/dtc-lookup' },
-      { icon: '📸', label: 'Photos',      path: '/tech/photos' },
-      { icon: '🔧', label: 'All Tools',   path: '/tech/all-tools' },
-      { icon: '📦', label: 'Inventory',   path: '/tech/inventory' },
-      { icon: '📍', label: 'Location',    path: '/tech/share-location' },
+      { icon: <IconSearch size={22} />,   label: 'DVI Form',    path: '/tech/dvi' },
+      { icon: <IconFileText size={22} />, label: 'DTC Lookup',  path: '/tech/dtc-lookup' },
+      { icon: <IconCamera size={22} />,   label: 'Photos',      path: '/tech/photos' },
+      { icon: <IconTools size={22} />,    label: 'All Tools',   path: '/tech/all-tools' },
+      { icon: <IconInventory size={22} />,label: 'Inventory',   path: '/tech/inventory' },
+      { icon: <IconMapPin size={22} />,   label: 'Location',    path: '/tech/share-location' },
     ],
   },
   manager: {
     primary: [
-      { icon: '🏠', label: 'Home',       path: '/manager/home' },
-      { icon: '📋', label: 'Assign',     path: '/manager/assignments' },
-      { icon: '👥', label: 'Team',       path: '/manager/team' },
-      { icon: '💬', label: 'Messages',   path: '/manager/home#messages' },
+      { icon: <IconHome size={22} />,      label: 'Home',     path: '/manager/home' },
+      { icon: <IconClipboard size={22} />, label: 'Assign',   path: '/manager/assignments' },
+      { icon: <IconTeam size={22} />,      label: 'Team',     path: '/manager/team' },
+      { icon: <IconMessages size={22} />,  label: 'Messages', path: '/manager/home#messages' },
     ],
     more: [
-      { icon: '📝', label: 'Estimates',  path: '/manager/estimates' },
-      { icon: '⏰', label: 'Time Clock', path: '/manager/home#timeclock' },
-      { icon: '📦', label: 'Inventory',  path: '/manager/home#inventory' },
-      { icon: '🗂',  label: 'All Orders', path: '/workorders/list' },
+      { icon: <IconFileText size={22} />,   label: 'Estimates',  path: '/manager/estimates' },
+      { icon: <IconClock size={22} />,      label: 'Time Clock', path: '/manager/home#timeclock' },
+      { icon: <IconInventory size={22} />,  label: 'Inventory',  path: '/manager/home#inventory' },
+      { icon: <IconOrders size={22} />,     label: 'All Orders', path: '/workorders/list' },
     ],
   },
 };
@@ -160,7 +169,7 @@ export default function MobileNav({ role }: MobileNavProps) {
                   transition: 'all 0.15s',
                 }}
               >
-                <span style={{ fontSize: 22 }}>{item.icon}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</span>
                 <span style={{ fontSize: 10, fontWeight: 500 }}>{item.label}</span>
               </button>
             );
@@ -193,7 +202,7 @@ export default function MobileNav({ role }: MobileNavProps) {
             cursor: 'pointer',
           }}
         >
-          🚪 Sign Out
+          <IconLogOut size={16} /> Sign Out
         </button>
       </div>
 
@@ -240,7 +249,7 @@ export default function MobileNav({ role }: MobileNavProps) {
                   background: '#e5332a',
                 }} />
               )}
-              <span style={{ fontSize: 20 }}>{item.icon}</span>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: active ? '#e5332a' : '#6b7280' }}>{item.icon}</span>
               <span style={{ fontSize: 10, fontWeight: active ? 600 : 400, letterSpacing: '0.02em' }}>
                 {item.label}
               </span>
@@ -262,7 +271,7 @@ export default function MobileNav({ role }: MobileNavProps) {
             transition: 'color 0.15s',
           }}
         >
-          <span style={{ fontSize: 20 }}>{drawerOpen ? '✕' : '⋯'}</span>
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{drawerOpen ? <span style={{ fontSize: 18, lineHeight: 1 }}>✕</span> : <IconGrid size={20} />}</span>
           <span style={{ fontSize: 10, fontWeight: 400 }}>More</span>
         </button>
       </div>

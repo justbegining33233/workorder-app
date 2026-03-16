@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import MobileNav from './MobileNav';
+import { IconMenu } from '@/components/icons';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -64,12 +65,14 @@ export default function MobileLayout({
                   background: 'none',
                   border: 'none',
                   color: '#e5e7eb',
-                  fontSize: '20px',
                   cursor: 'pointer',
                   padding: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                ☰
+                <IconMenu size={22} />
               </button>
             )}
             {topNavContent}

@@ -108,6 +108,20 @@ export async function POST(request: NextRequest) {
     };
     response.cookies.set('refresh_id', refresh.id, cookieOpts);
     response.cookies.set('refresh_sig', refreshRaw, cookieOpts);
+    response.cookies.set('csrf_token', csrf, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
+    });
+    response.cookies.set('sos_auth', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+      maxAge: 60 * 15,
+    });
 
     return response;
     } catch (error: unknown) {

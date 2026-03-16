@@ -27,8 +27,8 @@ export default function TechTimesheet() {
   const refreshRef = useRef<number | null>(null);
 
   // --- Work-order assignment / job-time UI state
-  const [assigningEntryId, setAssigningEntryId] = useState<string | null>(null);
-  const [woInputs, setWoInputs] = useState<Record<string, string>>({});
+  const [_assigningEntryId, _setAssigningEntryId] = useState<string | null>(null);
+  const [_woInputs, _setWoInputs] = useState<Record<string, string>>({});
 
 
   // edit state for inline row editing
@@ -127,7 +127,7 @@ export default function TechTimesheet() {
     return { totalHours, billableHours, nonBillableHours, billableEst };
   }, [entries, user]);
 
-  const downloadCsv = () => {
+  const _downloadCsv = () => {
     const rows = [ ['Date','Clock In','Clock Out','Duration (hh:mm:ss)','Hours','Notes'] ];
     entries.forEach(e => {
       const date = new Date(e.clockIn).toISOString().split('T')[0];
@@ -149,7 +149,7 @@ export default function TechTimesheet() {
     URL.revokeObjectURL(url);
   };
 
-  const downloadPayrollCsv = () => {
+  const _downloadPayrollCsv = () => {
     if (!user) return;
     // Compute weekly totals, split regular/overtime (40h threshold)
     const rows = [ ['Employee','Week Start','Week End','Regular Hours','Overtime Hours','Hourly Rate','Regular Pay','Overtime Pay','Total Pay'] ];
@@ -175,7 +175,7 @@ export default function TechTimesheet() {
     URL.revokeObjectURL(url);
   };
 
-  const printPayroll = () => {
+  const _printPayroll = () => {
     if (!user) return;
     const { start, end } = getRangeDates();
     const html = `
@@ -315,7 +315,7 @@ export default function TechTimesheet() {
                 const clockOut = e.clockOut ? new Date(e.clockOut) : null;
                 const now = new Date();
                 const durationMs = clockOut ? (clockOut.getTime() - clockIn.getTime()) : (now.getTime() - clockIn.getTime());
-                const duration = fmtDurationMs(durationMs);
+                const _duration = fmtDurationMs(durationMs);
                 const hours = e.hoursWorked ?? (durationMs / (1000*60*60));
 
                 const isEditing = editingId === e.id;

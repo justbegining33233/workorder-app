@@ -28,6 +28,8 @@ model Customer {
   phone            String?
   company          String?
   stripeCustomerId String?  @unique
+  internalNotes    String?
+  tags             String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -150,6 +152,10 @@ model Shop {
   payPeriods          PayPeriod[]
   payStubs            PayStub[]
   overtimeRule        OvertimeRule?
+  vendors             Vendor[]
+  workOrderTemplates  WorkOrderTemplate[]
+  shopLocations       ShopLocation[]
+  campaigns           Campaign[]
 
   @@map("shops")
 }
@@ -240,6 +246,10 @@ model Tech {
   role      String // tech, manager
 
   available Boolean @default(true)
+
+  // Two-Factor Authentication for techs/managers
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret  String?
 
   // Labor rate for payroll
   hourlyRate Float @default(0)
@@ -506,6 +516,7 @@ model ActivityLog {
   amount   String?
   severity String // info, success, warning, error
   user     String
+  shopId   String? // Shop scope for shop-facing logs
 
   metadata String?
 
@@ -513,6 +524,7 @@ model ActivityLog {
 
   @@index([type])
   @@index([createdAt])
+  @@index([shopId])
   @@map("activity_logs")
 }
 
@@ -540,9 +552,12 @@ model RefreshToken {
   createdAt DateTime @default(now())
   expiresAt DateTime
   metadata  String?
+  revoked   Boolean  @default(false) // Session revocation support
+  revokedAt DateTime?
 
   admin Admin? @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
+  @@index([revoked])
   @@map("refresh_tokens")
 }
 
@@ -633,6 +648,9 @@ model ShopSettings {
   notificationsEnabled     Boolean @default(true)
   notificationSoundEnabled Boolean @default(true)
   notificationPreferences  Json?
+
+  // Security settings
+  require2FA Boolean @default(false) // Require techs/managers to set up 2FA
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -759,12 +777,14 @@ model AuditLog {
   details    String? // Additional context
   ipAddress  String?
   userAgent  String?
+  shopId     String? // Shop scope for shop-facing logs
 
   createdAt DateTime @default(now())
 
   @@index([adminId])
   @@index([action])
   @@index([createdAt])
+  @@index([shopId])
   @@map("audit_logs")
 }
 
@@ -1818,4 +1838,187 @@ model PortalChatMessage {
 
   @@index([role, channelId])
   @@map("portal_chat_messages")
+}
+
+// ─── Tenant ───────────────────────────────────────────────────────────────────
+model Tenant {
+  id             String   @id @default(cuid())
+  companyName    String
+  subdomain      String   @unique
+  logo           String?
+  contactEmail   String
+  contactPhone   String
+  street         String?
+  city           String?
+  state          String?
+  zip            String?
+  plan           String   @default("free") // free | basic | pro | enterprise
+  planStatus     String   @default("active") // active | suspended | cancelled
+  planStartDate  DateTime @default(now())
+  planRenewalDate DateTime?
+  maxUsers       Int      @default(5)
+  maxWorkOrders  Int      @default(100)
+  timezone       String   @default("America/New_York")
+  currency       String   @default("USD")
+  businessStart  String   @default("08:00")
+  businessEnd    String   @default("17:00")
+  emailNotifs    Boolean  @default(true)
+  smsNotifs      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("tenants")
+}
+
+// ─── Vendor ───────────────────────────────────────────────────────────────────
+model Vendor {
+  id            String   @id @default(cuid())
+  shopId        String
+  name          String
+  contactName   String   @default("")
+  phone         String   @default("")
+  email         String   @default("")
+  website       String   @default("")
+  category      String   @default("parts") // parts | fluids | tires | tools | other
+  accountNumber String   @default("")
+  paymentTerms  String   @default("Net 30")
+  rating        Int      @default(0)
+  notes         String   @default("")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  shop Shop @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@map("vendors")
+}
+
+// ─── Work Order Template ──────────────────────────────────────────────────────
+model WorkOrderTemplate {
+  id            String   @id @default(cuid())
+  shopId        String
+  name          String
+  serviceType   String   @default("")
+  description   String   @default("")
+  repairs       String[] @default([])
+  maintenance   String[] @default([])
+  estimatedCost Float    @default(0)
+  laborHours    Float    @default(0)
+  notes         String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  shop Shop @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@map("workorder_templates")
+}
+
+// ─── Shop Location ────────────────────────────────────────────────────────────
+model ShopLocation {
+  id       String  @id @default(cuid())
+  shopId   String
+  name     String
+  address  String  @default("")
+  city     String  @default("")
+  state    String  @default("")
+  zip      String  @default("")
+  phone    String  @default("")
+  email    String  @default("")
+  isMain   Boolean @default(false)
+  status   String  @default("active") // active | inactive
+  notes    String  @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shop Shop @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@map("shop_locations")
+}
+
+// ─── API Keys ─────────────────────────────────────────────────────────────────
+model ApiKey {
+  id       String  @id @default(cuid())
+  shopId   String
+  name     String  // "Production Key", "Staging Key", etc.
+  keyHash  String  @unique // SHA-256 hash of the raw key
+  prefix   String  // First 8 chars of the key for identification (ft_live_xxxx...)
+  scopes   String  @default("read") // comma-separated: read, write, workorders, inventory, etc.
+
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  revoked    Boolean   @default(false)
+  revokedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([keyHash])
+  @@map("api_keys")
+}
+
+// ─── Webhooks ─────────────────────────────────────────────────────────────────
+model Webhook {
+  id     String @id @default(cuid())
+  shopId String
+
+  url    String // Endpoint to call
+  secret String // HMAC signing secret
+  events String // Comma-separated: workorder.created, workorder.updated, payment.received, etc.
+  active Boolean @default(true)
+
+  lastTriggeredAt DateTime?
+  lastStatus      Int?       // HTTP status of last delivery
+  failureCount    Int        @default(0) // Consecutive failures (auto-disable at 10)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@map("webhooks")
+}
+
+// ─── Permissions ──────────────────────────────────────────────────────────────
+model Permission {
+  id     String @id @default(cuid())
+  shopId String
+
+  // Who: either a techId or a role name (tech, manager)
+  techId String?
+  role   String? // If set, applies to all users with this role in the shop
+
+  // What: specific permission keys
+  permission String // e.g. "workorders.create", "inventory.edit", "payroll.view", "settings.manage"
+  allowed    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([shopId, techId, permission])
+  @@index([shopId])
+  @@index([techId])
+  @@map("permissions")
+}
+
+model Campaign {
+  id         String   @id @default(cuid())
+  shopId     String
+  shop       Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  name       String
+  type       String   // "email" | "sms" | "both"
+  subject    String?  // Email subject
+  body       String   // Message body (HTML for email, plain for SMS)
+  status     String   @default("draft") // "draft" | "sending" | "sent" | "failed"
+  recipientCount Int  @default(0)
+  sentCount  Int      @default(0)
+  failedCount Int     @default(0)
+  sentAt     DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([shopId])
+  @@map("campaigns")
 }

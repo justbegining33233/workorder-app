@@ -33,8 +33,6 @@ export default function WorkAuthorizationsPage() {
   const [copied, setCopied] = useState('');
   const [formError, setFormError] = useState('');
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -42,6 +40,8 @@ export default function WorkAuthorizationsPage() {
     if (r.ok) setAuths(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const create = async () => {
     if (!form.workSummary.trim()) { setFormError('Work summary is required.'); return; }

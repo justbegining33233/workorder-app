@@ -1,7 +1,7 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
-import { validateCsrf, validatePublicCsrf } from '@/lib/csrf';
+import { validateCsrf } from '@/lib/csrf';
 import { hashPassword } from '@/lib/auth';
 import { z } from 'zod';
 import { sendShopApprovedEmail } from '@/lib/emailService';

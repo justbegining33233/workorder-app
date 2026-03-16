@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 
 // GET - List all inventory items with optional low stock filter
 export async function GET(request: NextRequest) {
@@ -188,7 +188,7 @@ export async function PUT(request: NextRequest) {
     }
     
     const body = await request.json();
-    const { id, shopId, action, quantity, ...updates } = body;
+    const { id, _shopId, action, quantity, ...updates } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Item ID required' }, { status: 400 });

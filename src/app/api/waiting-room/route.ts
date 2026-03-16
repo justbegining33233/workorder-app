@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     orders: activeOrders.map(wo => ({
       id: wo.id,
       ticketNumber: wo.id.slice(-6).toUpperCase(),
-      customerFirstName: wo.customer.firstName,
+      customerInitial: wo.customer.firstName ? wo.customer.firstName.charAt(0) + '.' : '',
       status: wo.status,
       vehicleType: wo.vehicleType,
       bay: wo.bay,

@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getShopById } from '../../../../lib/shops';
 
 // GET /api/shops/[id] - Returns shop profile by ID

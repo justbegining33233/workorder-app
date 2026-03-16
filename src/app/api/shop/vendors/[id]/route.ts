@@ -11,7 +11,7 @@ export async function GET(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const vendor = getVendorById(id);
+  const vendor = await getVendorById(id);
   if (!vendor) return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
 
   return NextResponse.json({ vendor });
@@ -26,7 +26,7 @@ export async function PUT(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const existing = getVendorById(id);
+  const existing = await getVendorById(id);
   if (!existing) return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
 
   const shopId = auth.shopId ?? auth.id;
@@ -40,7 +40,7 @@ export async function PUT(
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
-  const vendor = updateVendor(id, body);
+  const vendor = await updateVendor(id, body);
 
   return NextResponse.json({ vendor });
 }
@@ -54,7 +54,7 @@ export async function DELETE(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const existing = getVendorById(id);
+  const existing = await getVendorById(id);
   if (!existing) return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
 
   const shopId = auth.shopId ?? auth.id;
@@ -62,6 +62,6 @@ export async function DELETE(
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  deleteVendor(id);
+  await deleteVendor(id);
   return NextResponse.json({ success: true });
 }

@@ -20,7 +20,7 @@ interface ManagerDashboardData {
 }
 
 export default function ManagerDashboard() {
-  const router = useRouter();
+  const _router = useRouter();
   const { user, isLoading } = useRequireAuth(['manager']);
   const [data, setData] = useState<ManagerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);

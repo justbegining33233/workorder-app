@@ -1,4 +1,4 @@
-﻿/**
+/**
  * POST /api/cron/recurring-workorders
  * GET  /api/cron/recurring-workorders  (Vercel Cron calls GET)
  *
@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
 
     for (const schedule of due) {
       try {
-        // requiresApproval=true â†’ status 'awaiting-confirmation', notify customer, bay NOT reserved
-        // requiresApproval=false â†’ status 'pending', goes straight to shop queue
+        // requiresApproval=true → status 'awaiting-confirmation', notify customer, bay NOT reserved
+        // requiresApproval=false → status 'pending', goes straight to shop queue
         const woStatus = schedule.requiresApproval ? 'awaiting-confirmation' : 'pending';
 
         const workOrder = await prisma.workOrder.create({
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
             vehicleId: schedule.vehicleId || null,
             vehicleType: schedule.vehicleType,
             serviceLocation: schedule.serviceLocation,
-            issueDescription: `[Recurring] ${schedule.title} — ${schedule.issueDescription}`,
+            issueDescription: `[Recurring] ${schedule.title} � ${schedule.issueDescription}`,
             estimatedCost: schedule.estimatedCost || null,
             status: woStatus,
             paymentStatus: 'unpaid',
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Vercel Cron calls GET — run same processing logic
+// Vercel Cron calls GET � run same processing logic
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const authHeader = request.headers.get('authorization');
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
             vehicleId: schedule.vehicleId || null,
             vehicleType: schedule.vehicleType,
             serviceLocation: schedule.serviceLocation,
-            issueDescription: `[Recurring] ${schedule.title} — ${schedule.issueDescription}`,
+            issueDescription: `[Recurring] ${schedule.title} � ${schedule.issueDescription}`,
             estimatedCost: schedule.estimatedCost || null,
             status: woStatus,
             paymentStatus: 'unpaid',

@@ -1,4 +1,4 @@
-﻿import { io, Socket } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 class SocketClient {
   private socket: Socket | null = null;
@@ -12,9 +12,8 @@ class SocketClient {
     }
 
     // Connect to the in-app Socket.IO path by default (uses same origin)
-    // Fallback to NEXT_PUBLIC_SOCKET_URL or http://localhost:3001 if the in-app path fails
-    const primaryUrl = process.env.NEXT_PUBLIC_SOCKET_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
-    const fallbackUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
+    const primaryUrl = process.env.NEXT_PUBLIC_SOCKET_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://fixtray.app');
+    const fallbackUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'https://fixtray.app';
 
     this.socket = io(primaryUrl, {
       path: '/api/socket',
@@ -25,10 +24,10 @@ class SocketClient {
     });
 
     // If connection fails to primary, attempt fallback
-    this.socket.on('connect_error', (err) => {
+    this.socket.on('connect_error', (_err) => {
       try {
         this.socket?.disconnect();
-      } catch (e) {}
+      } catch {}
       // Ensure fallback uses the same server path
       this.socket = io(fallbackUrl, { path: '/api/socket', auth: { token }, transports: ['websocket','polling'], timeout: 10000 }); // Increased timeout
       this.setupEventHandlers();
@@ -45,11 +44,11 @@ class SocketClient {
       this.reconnectAttempts = 0;
     });
 
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on('disconnect', (_reason) => {
       this.handleReconnect();
     });
 
-    this.socket.on('connect_error', (error) => {
+    this.socket.on('connect_error', (_error) => {
       this.handleReconnect();
     });
 

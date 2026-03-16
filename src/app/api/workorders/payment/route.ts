@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWorkOrderById, updateWorkOrder } from '@/lib/workorders';
+import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
 import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
@@ -18,34 +18,35 @@ export async function POST(request: NextRequest) {
       const ok = await validateCsrf(request);
       if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
     }
-    const { workOrderId, amount, method, notes } = await request.json();
+    const { workOrderId, amount } = await request.json();
 
-    const workOrder = await getWorkOrderById(workOrderId);
+    const workOrder = await prisma.workOrder.findUnique({ where: { id: workOrderId } });
     if (!workOrder) {
       return NextResponse.json({ error: 'Work order not found' }, { status: 404 });
     }
 
-    const payment = {
-      id: `pay-${Date.now()}`,
-      amount,
-      method,
-      receivedAt: new Date(),
-      receivedBy: request.headers.get('x-user-role') || 'manager',
-      notes,
-    };
+    const payment = Number(amount);
+    if (!Number.isFinite(payment) || payment <= 0) {
+      return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
+    }
 
-    const payments = [...(workOrder.payments || []), payment];
-    const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+    const totalPaid = (workOrder.amountPaid || 0) + payment;
 
     // Auto-close if fully paid (estimate + FixTray $5 service fee)
+    const est = workOrder.estimate as Record<string, unknown> | null;
+    const estimateAmount = Number(est?.amount) || workOrder.estimatedCost || 0;
     let status = workOrder.status;
-    if (totalPaid >= ((workOrder.estimate?.amount || 0) + FIXTRAY_SERVICE_FEE) && status === 'waiting-for-payment') {
+    if (totalPaid >= (estimateAmount + FIXTRAY_SERVICE_FEE) && status === 'waiting-for-payment') {
       status = 'closed';
     }
 
-    const updated = await updateWorkOrder(workOrderId, { 
-      payments,
-      status,
+    const updated = await prisma.workOrder.update({
+      where: { id: workOrderId },
+      data: {
+        amountPaid: totalPaid,
+        paymentStatus: totalPaid >= (estimateAmount + FIXTRAY_SERVICE_FEE) ? 'paid' : 'pending',
+        status,
+      },
     });
 
     return NextResponse.json(updated);

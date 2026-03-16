@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { hashPassword, verifyToken } from '@/lib/auth';
 import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
 import { validateRequest } from '@/lib/validation';
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const adminLoginSchema = z.object({
   username: z.string().min(1),
@@ -13,7 +14,7 @@ const adminLoginSchema = z.object({
 // POST - Admin login
 export async function POST(request: NextRequest) {
   try {
-    const rateLimitResponse = rateLimit(rateLimitConfigs.auth)(request);
+    const rateLimitResponse = await rateLimit(rateLimitConfigs.auth)(request);
     if (rateLimitResponse) return rateLimitResponse;
 
     const body = await request.json();
@@ -41,7 +42,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify password
-    const bcrypt = require('bcrypt');
     const valid = await bcrypt.compare(password, admin.password);
 
     if (!valid) {
@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate JWT token
-    const jwt = require('jsonwebtoken');
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
       console.error('FATAL: JWT_SECRET is not set — admin token signed with insecure fallback!');

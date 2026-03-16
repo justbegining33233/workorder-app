@@ -26,8 +26,6 @@ export default function EnvironmentalFeesPage() {
   const [editForm, setEditForm] = useState({ name: '', amount: '', feeType: 'oil', description: '', unit: 'per service', isActive: true });
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -35,6 +33,8 @@ export default function EnvironmentalFeesPage() {
     if (r.ok) setFees(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const save = async () => {
     setFormError('');

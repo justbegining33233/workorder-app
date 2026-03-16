@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
       code: cached.code,
       system: cached.system,
       description: cached.description,
-      possibleCauses: cached.possibleCauses ? JSON.parse(cached.possibleCauses) : [],
-      commonFixes: cached.commonFixes ? JSON.parse(cached.commonFixes) : [],
+      possibleCauses: (() => { try { return cached.possibleCauses ? JSON.parse(cached.possibleCauses) : []; } catch { return []; } })(),
+      commonFixes: (() => { try { return cached.commonFixes ? JSON.parse(cached.commonFixes) : []; } catch { return []; } })(),
       severity: cached.severity,
     };
   } else {

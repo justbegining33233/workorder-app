@@ -32,7 +32,7 @@ interface ShopBaysCardProps {
 
 export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
   const [bays, setBays] = useState<Bay[]>([]);
-  const [capacity, setCapacity] = useState<number>(0);
+  const [_capacity, setCapacity] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -99,7 +99,7 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
     }
   };
 
-  const formatTimeSpent = (minutes?: number) => {
+  const _formatTimeSpent = (minutes?: number) => {
     if (!minutes) return "0m";
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -109,7 +109,7 @@ export default function ShopBaysCard({ shopId }: ShopBaysCardProps) {
     return `${mins}m`;
   };
 
-  const getPriorityColor = (priority: string) => {
+  const _getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case "urgent":
         return "#ef4444";

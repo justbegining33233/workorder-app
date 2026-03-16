@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
         take: 20,
         orderBy: { createdAt: 'desc' }
       });
-    } catch (e) {
+    } catch {
       // PaymentHistory table might not exist yet
     }
 

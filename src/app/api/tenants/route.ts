@@ -11,16 +11,16 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
 
     if (id) {
-      const tenant = getTenantById(id);
+      const tenant = await getTenantById(id);
       if (!tenant) {
         return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
       }
       return NextResponse.json(tenant);
     }
 
-    const tenants = getAllTenants();
+    const tenants = await getAllTenants();
     return NextResponse.json(tenants);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch tenants' }, { status: 500 });
   }
 }
@@ -40,9 +40,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const tenant = createTenant(body);
+    const tenant = await createTenant(body);
     return NextResponse.json(tenant, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to create tenant' }, { status: 500 });
   }
 }
@@ -62,14 +62,14 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json().catch(() => null);
     if (!body) return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
 
-    const updatedTenant = updateTenant(id, body);
+    const updatedTenant = await updateTenant(id, body);
 
     if (!updatedTenant) {
       return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
     }
 
     return NextResponse.json(updatedTenant);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update tenant' }, { status: 500 });
   }
 }

@@ -8,7 +8,7 @@ import { createWorkOrderClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function InShopWorkOrderPage() {
-  const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
+  const { user: _user, isLoading: _isLoading } = useRequireAuth(['shop', 'manager', 'tech']);
   const router = useRouter();
   const [userRole, setUserRole] = useState('');
   const [userName, setUserName] = useState('');
@@ -47,7 +47,7 @@ export default function InShopWorkOrderPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const workOrder = createWorkOrderClient({
+    const _workOrder = createWorkOrderClient({
       vehicleType: 'personal-vehicle',
       serviceLocationType: 'in-shop',
       services: {

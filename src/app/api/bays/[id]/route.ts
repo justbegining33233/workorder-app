@@ -5,7 +5,7 @@ import { authenticateRequest } from '@/lib/auth';
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = authenticateRequest(req);
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
+  const _shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
   const { id } = await params;
 
   try {

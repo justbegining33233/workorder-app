@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -58,25 +58,53 @@ export default function NewAppointmentClient() {
   const [step, setStep] = useState(preselectedShopId ? 2 : 1);
   const [shops, setShops] = useState<Shop[]>([]);
   const [services, setServices] = useState<ShopService[]>([]);
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [_vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(false);
-  const [servicesLoading, setServicesLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [_servicesLoading, setServicesLoading] = useState(false);
+  const [_submitting, setSubmitting] = useState(false);
   const [bookingMsg, setBookingMsg] = useState<{type:'success'|'error';text:string}|null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [availability, setAvailability] = useState<AvailabilityData | null>(null);
+  const [_timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [_slotsLoading, setSlotsLoading] = useState(false);
+  const [_availability, setAvailability] = useState<AvailabilityData | null>(null);
 
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
   const [selectedService, setSelectedService] = useState<ShopService | null>(null);
-  const [selectedVehicle, setSelectedVehicle] = useState<string>('');
-  const [appointmentDate, setAppointmentDate] = useState('');
+  const [selectedVehicle, _setSelectedVehicle] = useState<string>('');
+  const [appointmentDate, _setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
-  const [notes, setNotes] = useState('');
+  const [notes, _setNotes] = useState('');
+  const [preVisitPhotos, setPreVisitPhotos] = useState<string[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploadingPhoto(true);
+    try {
+      for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'fixtray_uploads');
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'fixtray';
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPreVisitPhotos(prev => [...prev, data.secure_url]);
+        }
+      }
+    } catch (err) {
+      console.error('Photo upload failed:', err);
+    } finally {
+      setUploadingPhoto(false);
+      e.target.value = '';
+    }
+  };
   useEffect(() => {
     fetchVehicles();
     if (preselectedShopId) {
@@ -145,7 +173,7 @@ export default function NewAppointmentClient() {
     }
   };
 
-  const fetchAvailability = async (date: string) => {
+  const _fetchAvailability = async (date: string) => {
     if (!selectedShop || !date) return;
     try {
       setSlotsLoading(true);
@@ -191,12 +219,12 @@ export default function NewAppointmentClient() {
     setStep(2);
   };
 
-  const handleServiceSelect = (service: ShopService) => {
+  const _handleServiceSelect = (service: ShopService) => {
     setSelectedService(service);
     setStep(3);
   };
 
-  const handleSubmit = async () => {
+  const _handleSubmit = async () => {
     if (!selectedShop || !selectedService || !appointmentDate || !appointmentTime) {
       setBookingMsg({type:'error',text:'Please complete all required fields'});
       return;
@@ -218,7 +246,8 @@ export default function NewAppointmentClient() {
           serviceType: selectedService.serviceName,
           vehicleId: selectedVehicle || undefined,
           scheduledDate,
-          notes
+          notes,
+          preVisitPhotos
         })
       });
 
@@ -236,14 +265,14 @@ export default function NewAppointmentClient() {
     }
   };
 
-  const servicesByCategory = services.reduce((acc, service) => {
+  const _servicesByCategory = services.reduce((acc, service) => {
     const cat = service.category || 'Other';
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(service);
     return acc;
   }, {} as Record<string, ShopService[]>);
 
-  const formatDuration = (duration: number | null) => {
+  const _formatDuration = (duration: number | null) => {
     if (!duration) return '';
     if (duration < 60) return `${duration} min`;
     const hours = Math.floor(duration / 60);
@@ -251,7 +280,7 @@ export default function NewAppointmentClient() {
     return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  const _today = new Date().toISOString().split('T')[0];
 
   return (
     <div style={{ minHeight: '100vh', background: 'transparent' }}>
@@ -374,6 +403,39 @@ export default function NewAppointmentClient() {
                     {shop.completedJobs > 0 && (
                       <div style={{ fontSize: 12, color: '#22c55e' }}>✓ {shop.completedJobs} jobs completed</div>
                     )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {/* Pre-Visit Photo Upload */}
+        {step >= 3 && (
+          <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 20, marginTop: 24 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}>📸 Pre-Visit Photos (Optional)</h3>
+            <p style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 12 }}>Upload photos of your vehicle issue to help the shop prepare</p>
+            <label style={{ display: 'inline-block', padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600, opacity: uploadingPhoto ? 0.6 : 1 }}>
+              {uploadingPhoto ? 'Uploading...' : '📷 Add Photos'}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoUpload}
+                disabled={uploadingPhoto}
+                style={{ display: 'none' }}
+              />
+            </label>
+            {preVisitPhotos.length > 0 && (
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
+                {preVisitPhotos.map((url, i) => (
+                  <div key={i} style={{ position: 'relative' }}>
+                    <img src={url} alt={`Pre-visit ${i + 1}`} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)' }} />
+                    <button
+                      onClick={() => setPreVisitPhotos(prev => prev.filter((_, idx) => idx !== i))}
+                      style={{ position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: '50%', background: '#e5332a', color: 'white', border: 'none', cursor: 'pointer', fontSize: 12, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
               </div>

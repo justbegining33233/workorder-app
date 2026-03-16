@@ -1,10 +1,10 @@
-﻿/**
+/**
  * GET /api/cron/recurring-reminders
  * POST /api/cron/recurring-reminders
  *
  * Sends advance reminder emails for recurring work orders:
- *   - 14 days before nextRunAt: "Hey, your Oil Change is coming up in 2 weeks — would you like to schedule it?"
- *   -  7 days before nextRunAt: "Your Oil Change is ONE WEEK away — schedule now at [shop link]"
+ *   - 14 days before nextRunAt: "Hey, your Oil Change is coming up in 2 weeks � would you like to schedule it?"
+ *   -  7 days before nextRunAt: "Your Oil Change is ONE WEEK away � schedule now at [shop link]"
  *
  * Uses reminder14SentAt / reminder7SentAt to prevent duplicate emails.
  * Run this cron daily.
@@ -21,7 +21,7 @@ function addDays(date: Date, days: number): Date {
 
 async function processReminders() {
   const now = new Date();
-  // target dates ±12 hours
+  // target dates �12 hours
   const window12h = 12 * 60 * 60 * 1000;
 
   const target14 = addDays(now, 14);
@@ -31,7 +31,7 @@ async function processReminders() {
   const sent7:  string[] = [];
   const errors: string[] = [];
 
-  // â”€â”€ 14-day reminders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 14-day reminders ──────────────────────────────────────────────────────
   const due14 = await prisma.recurringWorkOrder.findMany({
     where: {
       active: true,
@@ -73,7 +73,7 @@ async function processReminders() {
     }
   }
 
-  // â”€â”€ 7-day reminders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 7-day reminders ───────────────────────────────────────────────────────
   const due7 = await prisma.recurringWorkOrder.findMany({
     where: {
       active: true,

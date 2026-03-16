@@ -24,14 +24,12 @@ export default function ConditionReportsPage() {
   const [reports, setReports] = useState<ConditionReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);
-  const [selected, setSelected] = useState<ConditionReport | null>(null);
+  const [_selected, setSelected] = useState<ConditionReport | null>(null);
   const [filter, setFilter] = useState<'all' | 'check_in' | 'check_out'>('all');
   const [form, setForm] = useState({ reportType: 'check_in', vehicleDesc: '', mileageIn: '', fuelLevelIn: '50', damageNotes: '', workOrderId: '', photos: [] as string[] });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const [photoUploading, setPhotoUploading] = useState(false);
-
-  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const load = async () => {
     setLoading(true);
@@ -40,6 +38,8 @@ export default function ConditionReportsPage() {
     if (r.ok) setReports(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const create = async () => {
     setFormError('');

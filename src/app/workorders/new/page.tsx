@@ -10,7 +10,7 @@ const VEHICLE_TYPES = ['Car', 'Truck', 'SUV', 'Van', 'Diesel Truck', 'Semi / 18-
 
 function NewRoadsideJobContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const _searchParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [shopId] = useState(() => typeof window !== 'undefined' ? localStorage.getItem('shopId') || '' : '');

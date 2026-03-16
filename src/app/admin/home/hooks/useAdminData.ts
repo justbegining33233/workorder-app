@@ -213,7 +213,7 @@ interface LiveMetrics {
 }
 
 export function useAdminData() {
-  const { user } = useRequireAuth(['admin', 'superadmin']);
+  const { user: _user } = useRequireAuth(['admin', 'superadmin']);
   const [mounted, setMounted] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [dataLoaded, setDataLoaded] = useState(false);

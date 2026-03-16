@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const rateLimitResponse = rateLimit(rateLimitConfigs.api)(request);
+    const rateLimitResponse = await rateLimit(rateLimitConfigs.api)(request);
     if (rateLimitResponse) return rateLimitResponse;
 
     const auth = requireRole(request, ['shop', 'manager', 'tech']);
@@ -48,7 +48,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const rateLimitResponse = rateLimit(rateLimitConfigs.api)(request);
+    const rateLimitResponse = await rateLimit(rateLimitConfigs.api)(request);
     if (rateLimitResponse) return rateLimitResponse;
 
     const auth = requireRole(request, ['shop', 'manager', 'tech']);
@@ -113,7 +113,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const rateLimitResponse = rateLimit(rateLimitConfigs.api)(request);
+    const rateLimitResponse = await rateLimit(rateLimitConfigs.api)(request);
     if (rateLimitResponse) return rateLimitResponse;
 
     const auth = requireRole(request, ['shop', 'manager']);

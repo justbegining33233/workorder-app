@@ -52,7 +52,7 @@ test.describe('Work Order App E2E Tests', () => {
 
   test('Shop login and dashboard access', async ({ page }) => {
     // Login via API
-    const shopData = await loginViaAPI(page, 'shop');
+    const _shopData = await loginViaAPI(page, 'shop');
 
     // Navigate to shop dashboard
     await page.goto(`${BASE}/shop/home`, { waitUntil: 'networkidle' });
@@ -67,7 +67,7 @@ test.describe('Work Order App E2E Tests', () => {
 
   test('Tech login and dashboard access', async ({ page }) => {
     // Login via API
-    const techData = await loginViaAPI(page, 'tech');
+    const _techData = await loginViaAPI(page, 'tech');
 
     // Navigate to tech dashboard
     await page.goto(`${BASE}/tech/home`, { waitUntil: 'networkidle' });

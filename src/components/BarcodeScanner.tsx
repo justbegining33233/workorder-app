@@ -26,38 +26,9 @@ export default function BarcodeScanner({ onScan, onClose, label = 'Scan a Barcod
     }
   }, []);
 
-  useEffect(() => {
-    const isSupportedAPI = 'BarcodeDetector' in window;
-    setSupported(isSupportedAPI);
-
-    if (isSupportedAPI) {
-      startCamera();
-    }
-
-    return () => stopStream();
-  }, []);
-
-  async function startCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
-      setScanning(true);
-      startDetection(stream);
-    } catch (err: any) {
-      setError(err.message || 'Camera access denied. Please allow camera permissions.');
-    }
-  }
-
-  function startDetection(stream: MediaStream) {
+  function startDetection(_stream: MediaStream) {
     if (!('BarcodeDetector' in window)) return;
 
-    // @ts-ignore — BarcodeDetector is a newer Web API
     const detector = new (window as any).BarcodeDetector({
       formats: ['qr_code', 'code_128', 'code_39', 'ean_8', 'ean_13', 'upc_a', 'upc_e', 'itf', 'codabar'],
     });
@@ -78,6 +49,34 @@ export default function BarcodeScanner({ onScan, onClose, label = 'Scan a Barcod
       }
     }, 300);
   }
+
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setScanning(true);
+      startDetection(stream);
+    } catch (err: any) {
+      setError(err.message || 'Camera access denied. Please allow camera permissions.');
+    }
+  }
+
+  useEffect(() => {
+    const isSupportedAPI = 'BarcodeDetector' in window;
+    setSupported(isSupportedAPI);
+
+    if (isSupportedAPI) {
+      startCamera();
+    }
+
+    return () => stopStream();
+  }, []);
 
   function handleManualSubmit() {
     if (!manualCode.trim()) return;

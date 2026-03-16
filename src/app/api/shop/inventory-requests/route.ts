@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 import { sendInventoryRequestNotification, sendInventoryApprovalNotification, sendLowStockAlert } from '@/lib/emailService';
 
 // GET - Get inventory requests

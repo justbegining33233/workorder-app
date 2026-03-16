@@ -26,7 +26,7 @@ export default function PasswordResetForm({ onClose }: Props) {
       });
       setStep('confirm');
       setStatus('If an account exists, a verification code was sent.');
-    } catch (err:any) {
+    } catch (_err:any) {
       setStatus('Failed to send verification code');
     } finally { setLoading(false); }
   };
@@ -50,7 +50,7 @@ export default function PasswordResetForm({ onClose }: Props) {
       } else {
         setStatus(data?.error || 'Failed to reset password');
       }
-    } catch (err:any) {
+    } catch (_err:any) {
       setStatus('Network error');
     } finally { setLoading(false); }
   };

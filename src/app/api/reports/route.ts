@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
             completedJobs: snapshot.completedJobs,
             pendingJobs:   snapshot.pendingJobs,
             avgJobValue:   snapshot.avgJobValue,
-            topServices:   JSON.parse(snapshot.topServicesJson),
+            topServices:   (() => { try { return JSON.parse(snapshot.topServicesJson); } catch { return []; } })(),
             revenueByMonth,
             techPerformance,
           },

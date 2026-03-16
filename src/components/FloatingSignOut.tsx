@@ -6,6 +6,14 @@ import { usePathname } from 'next/navigation';
 export default function FloatingSignOut() {
   const pathname = usePathname();
   const [visible, setVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     // Only show when logged in (not on login/auth pages)
@@ -14,9 +22,21 @@ export default function FloatingSignOut() {
     setVisible(!isAuthPage && hasToken);
   }, [pathname]);
 
-  if (!visible) return null;
+  // Hidden on mobile — MobileNav already has Sign Out
+  if (!visible || isMobile) return null;
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    try {
+      // Call logout API to clear httpOnly cookies
+      const csrfToken = document.cookie.match(/csrf_token=([^;]+)/)?.[1] || '';
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'x-csrf-token': csrfToken },
+      }).catch(() => {});
+    } catch {
+      // Continue with client-side cleanup even if API fails
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');

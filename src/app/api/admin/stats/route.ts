@@ -198,7 +198,7 @@ export async function GET(request: NextRequest) {
     // Revenue this month vs last month
     const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    const _endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
     const revenueThisMonth = await prisma.workOrder.aggregate({
       _sum: { amountPaid: true },

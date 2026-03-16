@@ -28,14 +28,14 @@ export default function BrandingPage() {
     businessName: '', address: '', phone: '', email: '', website: '',
   });
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     const token = localStorage.getItem('token');
     const r = await fetch('/api/branding', { headers: { Authorization: `Bearer ${token}` } });
     if (r.ok) { const d = await r.json(); if (d) setForm(p => ({ ...p, ...d })); }
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const save = async () => {
     setSaving(true);
@@ -132,7 +132,7 @@ export default function BrandingPage() {
           <div>
             <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, overflow: 'hidden', position: 'sticky', top: 24 }}>
               <div style={{ padding: '12px 16px', background: 'rgba(0,0,0,0.3)', fontSize: 12, color: '#9ca3af', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>Live Preview</div>
-              {/* Mock header */}
+              {/* Preview: branded header */}
               <div style={{ background: '#1a1a2e', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
                 {form.logoUrl ? <img src={form.logoUrl} alt="Logo" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} style={{ height: 36, borderRadius: 6 }} /> :
                   <div style={{ width: 40, height: 40, background: previewBg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🔧</div>}
@@ -141,7 +141,7 @@ export default function BrandingPage() {
                   {form.tagline && <div style={{ color: '#9ca3af', fontSize: 11 }}>{form.tagline}</div>}
                 </div>
               </div>
-              {/* Mock invoice section */}
+              {/* Preview: invoice section */}
               <div style={{ padding: 16, background: '#fff' }}>
                 <div style={{ background: previewBg, color: '#fff', borderRadius: 8, padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <span style={{ fontSize: 13, fontWeight: 700 }}>INVOICE #WO-001</span>
@@ -156,7 +156,7 @@ export default function BrandingPage() {
                   <div style={{ fontSize: 11, color: '#6b7280', borderTop: '1px solid #e5e7eb', paddingTop: 8, fontStyle: 'italic' }}>{form.footerText}</div>
                 )}
               </div>
-              {/* Mock pay button */}
+              {/* Preview: pay button */}
               <div style={{ padding: 16, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <button style={{ width: '100%', background: form.accentColor || '#f59e0b', color: '#fff', border: 'none', borderRadius: 8, padding: '11px 0', fontSize: 14, fontWeight: 700 }}>Pay Now</button>
               </div>

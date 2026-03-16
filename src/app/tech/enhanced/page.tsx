@@ -24,15 +24,6 @@ function TechPortalEnhancedContent() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    fetchWorkOrders();
-    // Simulate location updates
-    const interval = setInterval(() => {
-      setLocation({ lat: 40.7128 + Math.random() * 0.01, lng: -74.0060 + Math.random() * 0.01 });
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchWorkOrders = async () => {
     try {
       const res = await fetch('/api/workorders', { credentials: 'include' });
@@ -42,6 +33,15 @@ function TechPortalEnhancedContent() {
       console.error('Failed to fetch work orders:', error);
     }
   };
+
+  useEffect(() => {
+    fetchWorkOrders();
+    // Simulate location updates
+    const interval = setInterval(() => {
+      setLocation({ lat: 40.7128 + Math.random() * 0.01, lng: -74.0060 + Math.random() * 0.01 });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const features = [
     { id: 'assignments', icon: '📋', name: 'Assignments' },

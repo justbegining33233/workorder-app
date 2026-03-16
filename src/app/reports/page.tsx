@@ -6,13 +6,13 @@ import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ReportsAnalytics() {
-  const router = useRouter();
+  const _router = useRouter();
   const { user, isLoading } = useRequireAuth(['admin', 'superadmin', 'shop', 'manager']);
-  const [userName, setUserName] = useState('');
+  const [_userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
   const [dateRange, setDateRange] = useState('30days');
-  const [selectedMetric, setSelectedMetric] = useState('revenue');
-  const [reportLoading, setReportLoading] = useState(false);
+  const [_selectedMetric, _setSelectedMetric] = useState('revenue');
+  const [_reportLoading, setReportLoading] = useState(false);
 
   // Live data states
   const [stats, setStats] = useState({

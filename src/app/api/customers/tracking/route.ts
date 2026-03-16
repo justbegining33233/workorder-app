@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 import { getSocketServer } from '@/lib/socket-server';
 
 // GET /api/customers/tracking - Get real-time tech location for active work order
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const workOrderId = searchParams.get('workOrderId');
-    const customerId = searchParams.get('customerId');
+    const _customerId = searchParams.get('customerId');
 
     // Find active work orders for customer
     const where: any = {
@@ -150,6 +150,7 @@ export async function POST(request: Request) {
         }
       }
     } catch (err) {
+      console.error('[tracking] Failed to emit socket location update:', err);
     }
 
     return NextResponse.json(tracking);

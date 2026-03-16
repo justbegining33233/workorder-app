@@ -1,85 +1,82 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
+interface EstimateItem {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
 interface Estimate {
-  id: string;
+  id: string; // work order id
   status: 'pending' | 'accepted' | 'denied';
   service: string;
   price: number;
   shop: string;
   description: string;
   validUntil: string;
+  lineItems?: EstimateItem[];
 }
 
 export default function Estimates() {
   useRequireAuth(['customer']);
   const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState('my-estimates');
-  const [estimates, setEstimates] = useState<Estimate[]>([
-    {
-      id: '1',
-      status: 'pending',
-      service: 'Oil Change Service',
-      price: 89.99,
-      shop: 'Allentown 24/7 Auto & Diesel',
-      description: 'Complete oil change with synthetic oil, oil filter replacement, and multi-point inspection.',
-      validUntil: '2026-02-15T17:00:00.000Z'
-    },
-    {
-      id: '2',
-      status: 'pending',
-      service: 'Brake Pad Replacement',
-      price: 245.50,
-      shop: 'Allentown 24/7 Auto & Diesel',
-      description: 'Front brake pads and rotors replacement. Includes ceramic brake pads for better performance.',
-      validUntil: '2026-02-10T17:00:00.000Z'
-    },
-    {
-      id: '3',
-      status: 'accepted',
-      service: 'Tire Rotation & Balance',
-      price: 45.00,
-      shop: 'Allentown 24/7 Auto & Diesel',
-      description: 'Complete tire rotation, balance, and pressure check. Recommended every 5,000 miles.',
-      validUntil: '2026-01-25T17:00:00.000Z'
-    },
-    {
-      id: '4',
-      status: 'accepted',
-      service: 'Battery Replacement',
-      price: 189.99,
-      shop: 'Allentown 24/7 Auto & Diesel',
-      description: 'New heavy-duty battery with 3-year warranty. Includes testing and installation.',
-      validUntil: '2026-01-20T17:00:00.000Z'
-    },
-    {
-      id: '5',
-      status: 'denied',
-      service: 'Transmission Service',
-      price: 299.99,
-      shop: 'Allentown 24/7 Auto & Diesel',
-      description: 'Complete transmission fluid flush and filter replacement. Price too high for service needed.',
-      validUntil: '2026-01-15T17:00:00.000Z'
-    },
-    {
-      id: '6',
-      status: 'denied',
-      service: 'AC System Recharge',
-      price: 175.00,
-      shop: 'Allentown 24/7 Auto & Diesel',
-      description: 'AC system inspection, recharge, and leak test. Not needed at this time.',
-      validUntil: '2026-01-12T17:00:00.000Z'
-    }
-  ]);
+  const [estimates, setEstimates] = useState<Estimate[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
+  const [fetching, setFetching] = useState(true);
   const [estimateMsg, setEstimateMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+
+  const fetchEstimates = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch('/api/workorders?limit=100', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (!response.ok) return;
+      const data = await response.json();
+      const workOrders = data.workOrders || [];
+
+      // Map work orders with estimates to our Estimate format
+      const mapped: Estimate[] = workOrders
+        .filter((wo: any) => wo.estimate || wo.estimatedCost)
+        .map((wo: any) => {
+          const est = wo.estimate || {};
+          let status: 'pending' | 'accepted' | 'denied' = 'pending';
+          if (wo.status === 'denied-estimate') status = 'denied';
+          else if (['in-progress', 'assigned', 'closed', 'waiting-for-payment'].includes(wo.status)) status = 'accepted';
+
+          return {
+            id: wo.id,
+            status,
+            service: wo.issueDescription || 'Service',
+            price: est.total || wo.estimatedCost || 0,
+            shop: wo.shop?.shopName || 'Shop',
+            description: wo.issueDescription || '',
+            validUntil: wo.updatedAt || wo.createdAt,
+            lineItems: est.lineItems || [],
+          };
+        });
+
+      setEstimates(mapped);
+    } catch (error) {
+      console.error('Error fetching estimates:', error);
+    } finally {
+      setFetching(false);
+    }
+  }, []);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
-  }, []);
+    fetchEstimates();
+  }, [fetchEstimates]);
 
   const handleAccept = async (estimateId: string) => {
     setLoading(estimateId);
@@ -90,23 +87,19 @@ export default function Estimates() {
         return;
       }
 
-      const response = await fetch(`/api/customers/estimates/${estimateId}`, {
+      const response = await fetch(`/api/workorders/${estimateId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ action: 'accept' }),
+        body: JSON.stringify({ status: 'in-progress' }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Update local state to move estimate to approved
         setEstimates(prev => prev.map(est =>
-          est.id === estimateId
-            ? { ...est, status: 'accepted' as const }
-            : est
+          est.id === estimateId ? { ...est, status: 'accepted' as const } : est
         ));
         setEstimateMsg({type:'success',text:'Estimate accepted successfully!'});
       } else {
@@ -130,23 +123,19 @@ export default function Estimates() {
         return;
       }
 
-      const response = await fetch(`/api/customers/estimates/${estimateId}`, {
+      const response = await fetch(`/api/workorders/${estimateId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ action: 'deny' }),
+        body: JSON.stringify({ status: 'denied-estimate' }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Update local state to move estimate to denied
         setEstimates(prev => prev.map(est =>
-          est.id === estimateId
-            ? { ...est, status: 'denied' as const }
-            : est
+          est.id === estimateId ? { ...est, status: 'denied' as const } : est
         ));
         setEstimateMsg({type:'success',text:'Estimate denied successfully!'});
       } else {
@@ -303,6 +292,11 @@ export default function Estimates() {
           </div>
         </div>
         {/* Tab Content */}
+        {fetching ? (
+          <div style={{textAlign:'center', padding:60, color:'#9aa3b2'}}>
+            <div style={{fontSize:18, fontWeight:600, marginBottom:8}}>Loading estimates...</div>
+          </div>
+        ) : (<>
         {activeTab === 'my-estimates' && (
           <div>
             <h1 style={{fontSize:32, fontWeight:700, color:'#e5e7eb', marginBottom:32}}>My Estimates</h1>
@@ -593,6 +587,7 @@ export default function Estimates() {
             )}
           </div>
         )}
+        </>)}
 
         {/* Back to Dashboard */}
         <div style={{marginTop:32, textAlign:'center'}}>

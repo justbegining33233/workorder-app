@@ -11,7 +11,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const existing = await prisma.coreReturn.findFirst({ where: { id, shopId } });
     if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     const body = await req.json();
-    const item = await prisma.coreReturn.update({ where: { id }, data: body });
+    // Allowlist mutable fields — prevent shopId/id overwrite
+    const { partName, partNumber, vendor, coreValue, returnedAt, creditReceived, status, notes } = body;
+    const item = await prisma.coreReturn.update({
+      where: { id },
+      data: { partName, partNumber, vendor, coreValue, returnedAt, creditReceived, status, notes },
+    });
     return NextResponse.json(item);
   } catch (err) {
     console.error('core-returns PUT error:', err);

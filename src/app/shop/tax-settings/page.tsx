@@ -27,8 +27,6 @@ export default function TaxSettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [taxMsg, setTaxMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -36,6 +34,8 @@ export default function TaxSettingsPage() {
     if (r.ok) setRules(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const save = async () => {
     if (!form.name || !form.rate) { setFormError('Name and rate are required.'); return; }

@@ -20,24 +20,26 @@
   align-items: center;
   justify-content: center;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  /* Canvas renders the oil-on-water effect — just need a dark fallback */
+  /* Opaque dark base so canvas particles show — covers the body gradient */
   background: #020608;
   position: relative;
   overflow: hidden;
+  /* Isolate stacking context so canvas + card layer correctly */
+  isolation: isolate;
 }
 
 .sos-card {
   width: 100%;
-  max-width: 100%;
-  min-height: 100vh;
+  max-width: 480px;
+  max-height: 95dvh;
+  overflow-y: auto;
   /* Frosted dark glass — oil-slick shows through */
-  background: rgba(8, 13, 26, 0.75);
-  backdrop-filter: blur(22px) saturate(1.5);
-  -webkit-backdrop-filter: blur(22px) saturate(1.5);
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: hidden;
+  background: rgba(8, 13, 26, 0.32);
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.55);
   position: relative;
   z-index: 1;
   font-family: var(--font);

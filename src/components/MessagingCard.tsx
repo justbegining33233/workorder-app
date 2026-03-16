@@ -102,7 +102,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
     if (!selectedConversation) return;
     const interval = setInterval(() => fetchThread(selectedConversation), 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [selectedConversation?.contactId, selectedConversation?.contactRole]);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
     }
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [shopId, userId]);
 
   // Keep ref in sync with state so stale-closure polls can read the current selection

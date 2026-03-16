@@ -4,10 +4,16 @@ const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
 async function main() {
-  const username = 'admin1006';
-  const password = '10062001';
-  const email = 'admin1006@workorder.local';
+  const username = process.env.ADMIN_USERNAME || process.argv[2];
+  const password = process.env.ADMIN_PASSWORD || process.argv[3];
+  const email = process.env.ADMIN_EMAIL || process.argv[4] || 'admin@workorder.local';
   const isSuperAdmin = true;
+
+  if (!username || !password) {
+    console.error('Usage: ADMIN_USERNAME=xxx ADMIN_PASSWORD=xxx node scripts/create-super-admin.js');
+    console.error('   or: node scripts/create-super-admin.js <username> <password> [email]');
+    process.exit(1);
+  }
 
   const hashedPassword = await bcrypt.hash(password, 12);
 

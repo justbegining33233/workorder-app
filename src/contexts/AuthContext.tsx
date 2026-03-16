@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/auth/login', '/auth/register', '/auth/thank-you', '/auth/pending-approval', '/'];
+  const _publicRoutes = ['/auth/login', '/auth/register', '/auth/thank-you', '/auth/pending-approval', '/'];
 
   useEffect(() => {
     // Only run on client side
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const sc = mod.default;
             sc.connect(token as string);
           }).catch(e => console.warn('Failed to connect socket on auth check:', e));
-        } catch (e) {
+        } catch {
         }
       }
 
@@ -139,7 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       import('@/lib/socket-client').then(mod => {
         try {
           mod.default.connect(userData.token!);
-        } catch (e) {
+        } catch {
         }
       }).catch(e => console.warn('Failed to import socket client on login:', e));
     } else if (user && localStorage.getItem('token')) {
@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { default: socketClient } = await import('@/lib/socket-client');
       socketClient.disconnect();
-    } catch (e) {
+    } catch {
     }
 
     setUser(null);
@@ -204,19 +204,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuth() {
-  // If running on the server, avoid calling React hooks (useContext) during SSR
-  if (typeof window === 'undefined') {
-    return {
-      user: null,
-      isLoading: true,
-      login: () => {},
-      logout: () => {},
-      isAuthenticated: false,
-    };
-  }
-
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  // On the server or outside a provider, return a safe default
+  if (typeof window === 'undefined' || context === undefined) {
     return {
       user: null,
       isLoading: true,

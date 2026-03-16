@@ -33,8 +33,6 @@ export default function FleetPage() {
   const [showAddVehicle, setShowAddVehicle] = useState(false);
   const [vehicleForm, setVehicleForm] = useState({ make: '', model: '', year: '', vin: '', licensePlate: '', unitNumber: '' });
 
-  useEffect(() => { if (!user) return; fetch2(); }, [user]);
-
   const fetch2 = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -42,6 +40,8 @@ export default function FleetPage() {
     if (r.ok) setAccounts(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; fetch2(); }, [user]);
 
   const save = async () => {
     setFormError('');
@@ -85,7 +85,7 @@ export default function FleetPage() {
   if (isLoading) return <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
   if (!user) return null;
 
-  const totalCredit = accounts.reduce((s, a) => s + a.creditLimit, 0);
+  const _totalCredit = accounts.reduce((s, a) => s + a.creditLimit, 0);
   const outstanding = accounts.reduce((s, a) => s + a.invoices.filter(i => i.status !== 'paid').reduce((ss, i) => ss + (i.totalAmount - i.amountPaid), 0), 0);
 
   return (

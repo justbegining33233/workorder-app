@@ -31,27 +31,6 @@ export default function AdminTestPage() {
     totalRevenue: '$0',
   });
 
-  useEffect(() => {
-    if (user && !isLoading) {
-      checkSystemHealth();
-      fetchStats();
-    }
-  }, [user, isLoading]);
-
-  // Show loading state while checking authentication
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#3d3d3d] to-[#525252] flex items-center justify-center">
-        <div className="text-gray-300 text-lg">Loading...</div>
-      </div>
-    );
-  }
-
-  // If no user, the useRequireAuth hook will handle redirect
-  if (!user) {
-    return null;
-  }
-
   const checkSystemHealth = async () => {
     const endpoints = [
       { key: 'api', url: '/api/health' },
@@ -90,6 +69,27 @@ export default function AdminTestPage() {
       console.error('Failed to fetch stats:', e);
     }
   };
+
+  useEffect(() => {
+    if (user && !isLoading) {
+      checkSystemHealth();
+      fetchStats();
+    }
+  }, [user, isLoading]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#3d3d3d] to-[#525252] flex items-center justify-center">
+        <div className="text-gray-300 text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // If no user, the useRequireAuth hook will handle redirect
+  if (!user) {
+    return null;
+  }
 
   const systemModules: SystemModule[] = [
     {

@@ -23,12 +23,6 @@ function AdminPortalEnhancedContent() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    if (authLoading || !user) return;
-    fetchWorkOrders();
-    fetchTenants();
-  }, [user, authLoading]);
-
   const fetchWorkOrders = async () => {
     try {
       const res = await fetch('/api/workorders', { credentials: 'include' });
@@ -50,6 +44,12 @@ function AdminPortalEnhancedContent() {
       console.error('Failed to fetch tenants:', error);
     }
   };
+
+  useEffect(() => {
+    if (authLoading || !user) return;
+    fetchWorkOrders();
+    fetchTenants();
+  }, [user, authLoading]);
 
   const features = [
     { id: 'overview', icon: '🏢', name: 'System Overview' },
@@ -216,7 +216,7 @@ function OverviewTab({ workOrders, tenants }: { workOrders: WorkOrder[], tenants
   );
 }
 
-function TenantsTab({ tenants, onRefresh }: { tenants: any[], onRefresh: () => void }) {
+function TenantsTab({ tenants, onRefresh: _onRefresh }: { tenants: any[], onRefresh: () => void }) {
   return (
     <div>
       <div className="sos-title">Tenant Management</div>

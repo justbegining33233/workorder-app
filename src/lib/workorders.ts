@@ -1,4 +1,4 @@
-﻿import { WorkOrder, Message } from '@/types/workorder';
+import { WorkOrder, Message } from '@/types/workorder';
 
 // API-based functions for work orders
 const API_BASE = '/api/workorders';
@@ -128,7 +128,7 @@ function saveToStorage(orders: WorkOrder[]): void {
   }
 }
 
-function getDefaultWorkOrders(): WorkOrder[] {
+function _getDefaultWorkOrders(): WorkOrder[] {
   return [];
 }
 

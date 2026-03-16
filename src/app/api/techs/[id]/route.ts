@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 
@@ -56,7 +56,7 @@ export async function GET(
     }
 
     // Never return hourlyRate to techs (salary data)
-    const { hourlyRate, ...safeTech } = tech as typeof tech & { hourlyRate: number };
+    const { hourlyRate: _hourlyRate, ...safeTech } = tech as typeof tech & { hourlyRate: number };
     const payload = (decoded.role === 'shop' || decoded.role === 'manager' || decoded.role === 'admin')
       ? tech
       : safeTech;
@@ -115,7 +115,6 @@ export async function PUT(
     if (hourlyRate !== undefined) updateData.hourlyRate = parseFloat(hourlyRate);
     if (role !== undefined) updateData.role = role;
     if (available !== undefined) updateData.available = available;
-
 
     const tech = await prisma.tech.update({
       where: { id: params.id },

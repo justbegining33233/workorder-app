@@ -28,8 +28,6 @@ export default function ARAgingPage() {
   const [totalAR, setTotalAR] = useState(0);
   const [fetchError, setFetchError] = useState('');
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     setFetchError('');
@@ -44,6 +42,8 @@ export default function ARAgingPage() {
     } catch (err: any) { setFetchError(err?.message || 'Network error.'); }
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const bucketColor = (range: string) => {
     if (range.includes('0-30')) return { bg: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '#22c55e' };

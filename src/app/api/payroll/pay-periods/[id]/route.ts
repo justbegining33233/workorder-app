@@ -128,7 +128,7 @@ async function runPayroll(periodId: string, shopId: string, processedById: strin
   let totalGross = 0;
   let totalNet = 0;
   let totalTaxes = 0;
-  let totalDeductions = 0;
+  const totalDeductions = 0;
   let totalOvertimePay = 0;
 
   for (const tech of techs) {

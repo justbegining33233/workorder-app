@@ -212,7 +212,7 @@ function ShopSettingsPageContent() {
   const searchParams = useSearchParams();
   const { user, isLoading } = useRequireAuth(['shop']);
 
-  const [userName, setUserName] = useState('');
+  const [_userName, setUserName] = useState('');
   const [shopId, setShopId] = useState('');
   const [activeTab, setActiveTab] = useState('general');
   const [loading, setLoading] = useState(true);
@@ -282,8 +282,8 @@ function ShopSettingsPageContent() {
   const [pushStatus, setPushStatus] = useState('');
 
   // Stripe Connect payout account state
-  const [stripeConnected, setStripeConnected] = useState<boolean | null>(null);
-  const [stripeConnectMessage, setStripeConnectMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [_stripeConnected, setStripeConnected] = useState<boolean | null>(null);
+  const [_stripeConnectMessage, setStripeConnectMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Subscription/Billing state
   const [subscription, setSubscription] = useState<{
@@ -561,7 +561,7 @@ function ShopSettingsPageContent() {
         return;
       }
 
-      const registration = await navigator.serviceWorker.register('/sw.js');
+      const _registration = await navigator.serviceWorker.register('/sw.js');
       const readyRegistration = await navigator.serviceWorker.ready;
       const existingSubscription = await readyRegistration.pushManager.getSubscription();
       const subscription = existingSubscription || await readyRegistration.pushManager.subscribe({
@@ -709,7 +709,7 @@ function ShopSettingsPageContent() {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const _data = await response.json();
         setSubscription((prev) => prev ? { ...prev, cancelAtPeriodEnd: true, status: prev.status } : prev);
         setSettingsMsg({ type: 'success', text: 'Subscription cancellation scheduled. You retain access until the period ends.' });
         setTimeout(() => setSettingsMsg(null), 6000);
@@ -790,7 +790,7 @@ function ShopSettingsPageContent() {
           body: JSON.stringify({ shopId, serviceName: item.serviceName, category: item.category }),
         });
         if (res.ok) created += 1;
-      } catch (e) {
+      } catch {
         // ignore individual errors
       }
     }

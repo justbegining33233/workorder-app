@@ -1,6 +1,5 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
-import withPWA from "next-pwa";
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const nextConfig: NextConfig = {
@@ -15,8 +14,9 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options',    value: 'nosniff' },
           { key: 'Referrer-Policy',           value: 'strict-origin-when-cross-origin' },
           { key: 'X-XSS-Protection',          value: '1; mode=block' },
-          { key: 'Permissions-Policy',        value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Permissions-Policy',        value: 'camera=(self), microphone=(), geolocation=(self)' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: 'Content-Security-Policy',   value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://res.cloudinary.com; font-src 'self'; connect-src 'self' https://api.stripe.com https://*.sentry.io wss://*.fixtray.app wss://localhost:* ws://localhost:*; frame-src https://js.stripe.com https://hooks.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" },
         ],
       },
     ];
@@ -30,24 +30,13 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
-      {
-        protocol: 'https',
-        hostname: 'cdn.yourdomain.com',
-      },
     ],
     formats: ["image/webp", "image/avif"],
   },
   // Note: custom webpack function removed to avoid Turbopack/webpack detection
 };
 
-const pwaConfig = withPWA({
-  dest: 'public',
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
-});
-
-export default withSentryConfig(withPWA(nextConfig, pwaConfig), {
+export default withSentryConfig(nextConfig, {
   org: "fixtray",
   project: "javascript-nextjs",
   silent: !process.env.CI,
@@ -56,5 +45,4 @@ export default withSentryConfig(withPWA(nextConfig, pwaConfig), {
   sourcemaps: {
     deleteSourcemapsAfterUpload: true,
   },
-  disableLogger: true,
 });

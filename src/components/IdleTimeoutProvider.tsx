@@ -22,7 +22,7 @@ export default function IdleTimeoutProvider({ children }: { children: React.Reac
     stopCountdown();
     setShowWarning(false);
     logout();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [logout]);
 
   // Called by hook when 30s warning period starts

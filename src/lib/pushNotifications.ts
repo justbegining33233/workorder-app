@@ -1,4 +1,4 @@
-﻿// Web Push Notification Service for Browser Notifications
+// Web Push Notification Service for Browser Notifications
 
 let pushSubscription: PushSubscription | null = null;
 

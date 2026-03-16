@@ -222,7 +222,7 @@ export interface WorkOrder {
   partLaborBreakdown?: PartLaborBreakdown;
   
   // 8. Work Order Status
-  status: 'pending' | 'in-progress' | 'waiting-for-payment' | 'closed' | 'denied-estimate';
+  status: 'pending' | 'assigned' | 'in-progress' | 'en-route' | 'waiting-estimate' | 'waiting-for-payment' | 'closed' | 'denied-estimate';
   statusNotes?: string;
   scheduledDate?: Date;
   deniedAt?: Date;

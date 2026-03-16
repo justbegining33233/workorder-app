@@ -29,10 +29,8 @@ export default function DVIPage() {
   const [newForm, setNewForm] = useState({ vehicleDesc: '', mileage: '', workOrderId: '', notes: '' });
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState('');
-  const [sentId, setSentId] = useState('');
-  const [sendError, setSendError] = useState('');
-
-  useEffect(() => { if (!user) return; load(); }, [user]);
+  const [_sentId, setSentId] = useState('');
+  const [_sendError, setSendError] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -41,6 +39,8 @@ export default function DVIPage() {
     if (r.ok) setInspections(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const createInspection = async () => {
     setSaving(true);

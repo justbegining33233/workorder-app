@@ -34,8 +34,6 @@ export default function ReferralsPage() {
   const [formError, setFormError] = useState('');
   const [copied, setCopied] = useState('');
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -43,6 +41,8 @@ export default function ReferralsPage() {
     if (r.ok) setReferrals(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const create = async () => {
     if (!form.referredName.trim()) { setFormError('Referred customer name is required.'); return; }

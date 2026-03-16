@@ -120,7 +120,7 @@ export default function CommandCenterPage() {
         setLastUpdate(new Date());
         setError('');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load command center data');
     } finally {
       setLoading(false);

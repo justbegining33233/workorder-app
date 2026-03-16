@@ -139,7 +139,7 @@ export default function AdminRevenuePage() {
       } else {
         setError(data.error || 'Failed to load revenue data');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch revenue data');
     } finally {
       setLoading(false);

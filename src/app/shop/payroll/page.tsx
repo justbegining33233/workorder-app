@@ -130,7 +130,7 @@ export default function PayrollPage() {
       const shiftEnd = new Date(weekOf.getTime() + 6 * 86400000 + 86399999);
       const shiftR = await fetch(`/api/payroll/schedule?startDate=${weekOf.toISOString()}&endDate=${shiftEnd.toISOString()}`, { headers });
       if (shiftR.ok) setShifts(await shiftR.json());
-    } catch (err) {
+    } catch {
       setPayrollError('Failed to load payroll data');
     } finally {
       setLoading(false);

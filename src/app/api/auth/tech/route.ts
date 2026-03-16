@@ -3,8 +3,7 @@
 // evaluation issues (native binaries / environment differences).
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
-// @ts-ignore
-import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
+import { generateAccessToken, generateRandomToken, generateTempToken, refreshExpiryDate } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,6 +66,30 @@ export async function POST(request: NextRequest) {
     // Successful login - reset rate limit
     resetRateLimit(rateLimitKey);
 
+    // Check if shop requires 2FA for team members
+    const shopSettings = await prisma.shopSettings.findUnique({
+      where: { shopId: tech.shopId },
+      select: { require2FA: true },
+    });
+
+    if (shopSettings?.require2FA) {
+      // If tech has 2FA enabled, require challenge
+      if (tech.twoFactorEnabled) {
+        const tempToken = generateTempToken({ id: tech.id, type: '2fa_challenge', role: tech.role, shopId: tech.shopId });
+        return NextResponse.json({ requires2FA: true, tempToken }, { status: 200 });
+      }
+      // If tech hasn't set up 2FA yet, return setup-required flag
+      // The frontend will redirect them to set up TOTP
+      const tempToken = generateTempToken({ id: tech.id, type: '2fa_setup_required', role: tech.role, shopId: tech.shopId });
+      return NextResponse.json({ requires2FASetup: true, tempToken }, { status: 200 });
+    }
+
+    // If tech has 2FA enabled independently, still require challenge
+    if (tech.twoFactorEnabled) {
+      const tempToken = generateTempToken({ id: tech.id, type: '2fa_challenge', role: tech.role, shopId: tech.shopId });
+      return NextResponse.json({ requires2FA: true, tempToken }, { status: 200 });
+    }
+
     // Issue tokens
     const accessToken = generateAccessToken({ id: tech.id, email: tech.email, role: tech.role, shopId: tech.shopId });
 
@@ -86,8 +109,6 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const cookieValue = `${refresh.id}:${refreshRaw}`;
-
     const response = NextResponse.json({
       id: tech.id,
       email: tech.email,
@@ -101,31 +122,26 @@ export async function POST(request: NextRequest) {
       accessToken,
     }, { status: 200 });
 
-    response.cookies.set('refresh_id', refresh.id, {
+    const cookieOpts = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-    });
-    response.cookies.set('refresh_sig', refreshRaw, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-    });
+    };
+    response.cookies.set('refresh_id', refresh.id, cookieOpts);
+    response.cookies.set('refresh_sig', refreshRaw, cookieOpts);
     response.cookies.set('csrf_token', csrf, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
     });
     response.cookies.set('sos_auth', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: 60 * 15,
     });

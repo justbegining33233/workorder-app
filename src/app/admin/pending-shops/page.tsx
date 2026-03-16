@@ -22,7 +22,7 @@ type PendingShop = {
 };
 
 export default function PendingShops() {
-  const router = useRouter();
+  const _router = useRouter();
   const { user, isLoading } = useRequireAuth(['admin']);
   const [mounted, setMounted] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');

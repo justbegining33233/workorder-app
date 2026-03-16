@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcrypt';
-import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
-export async function POST(request: NextRequest) {
+
+export async function POST(_request: NextRequest) {
   try {
       return NextResponse.json({ error: 'deprecated - use /api/auth/reset/request and /api/auth/reset/confirm' }, { status: 410 });
   } catch (err: unknown) {

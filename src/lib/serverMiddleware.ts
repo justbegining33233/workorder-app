@@ -11,7 +11,7 @@ function parseJwtPayload(token: string): any | null {
     const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
     const json = Buffer.from(b64, 'base64').toString('utf8');
     return JSON.parse(json);
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -40,7 +40,7 @@ export async function tryRefreshAccessToken(req: NextRequest): Promise<string | 
       const accessToken = data.accessToken || data.token || null;
       return accessToken || null;
     }
-  } catch (err) {
+  } catch {
     // swallow errors so callers can handle anonymous flows
   }
 
@@ -57,7 +57,7 @@ export async function tryRefresh(req: NextRequest): Promise<NextResponse | null>
   res.cookies.set(AUTH_COOKIE, accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     path: '/',
     maxAge: 60 * 15,
   });
@@ -70,7 +70,7 @@ export function parseAccessTokenFromRequest(request: NextRequest) {
   try {
     const payload = verifyToken(token);
     return payload || null;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

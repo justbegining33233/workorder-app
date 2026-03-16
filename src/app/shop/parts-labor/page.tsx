@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
@@ -41,9 +40,8 @@ type LaborRate = {
 
 export default function PartsAndLabor() {
 
-  const router = useRouter();
   const { user, isLoading } = useRequireAuth(['shop']);
-  const [userName, setUserName] = useState('');
+  const [_userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState<'parts' | 'labor'>('parts');
   const [showAddPart, setShowAddPart] = useState(false);
   const [showAddLabor, setShowAddLabor] = useState(false);
@@ -57,11 +55,11 @@ export default function PartsAndLabor() {
   // Service list comes from shop services chosen at signup
   const [availableServices, setAvailableServices] = useState<{name: string; category: string}[]>([]);
   const [pendingServiceRates, setPendingServiceRates] = useState<Record<string, string>>({});
-  const [selectedGasServices, setSelectedGasServices] = useState<string[]>([]);
-  const [selectedDieselServices, setSelectedDieselServices] = useState<string[]>([]);
-  const [savingServices, setSavingServices] = useState(false);
+  const [selectedGasServices, _setSelectedGasServices] = useState<string[]>([]);
+  const [selectedDieselServices, _setSelectedDieselServices] = useState<string[]>([]);
+  const [_savingServices, setSavingServices] = useState(false);
   const [laborMsg, setLaborMsg] = useState<{type:'success'|'error'; text:string}|null>(null);
-  const [partMsg, setPartMsg] = useState<{type:'success'|'error'; text:string}|null>(null);
+  const [_partMsg, setPartMsg] = useState<{type:'success'|'error'; text:string}|null>(null);
   const [svcMsg, setSvcMsg] = useState<{type:'success'|'error'; text:string}|null>(null);
   const [deleteConfirmPartId, setDeleteConfirmPartId] = useState<string|null>(null);
   const [deleteConfirmLaborId, setDeleteConfirmLaborId] = useState<string|null>(null);
@@ -149,7 +147,7 @@ export default function PartsAndLabor() {
   }
 
   // Save selected services to API
-  const handleSaveServices = async () => {
+  const _handleSaveServices = async () => {
     setSavingServices(true);
     try {
       const csrf = getCsrf();
@@ -167,7 +165,7 @@ export default function PartsAndLabor() {
       } else {
         showSvc('error', 'Failed to update services');
       }
-    } catch (error) {
+    } catch {
       showSvc('error', 'Error updating services');
     }
     setSavingServices(false);
@@ -344,7 +342,7 @@ export default function PartsAndLabor() {
     return { text: 'IN STOCK', color: '#22c55e' };
   };
 
-  const partCategories = [...new Set(parts.map(p => p.category))];
+  const _partCategories = [...new Set(parts.map(p => p.category))];
 
   return (
     <div style={{minHeight:'100vh', background: 'transparent'}}>

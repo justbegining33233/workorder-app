@@ -1,4 +1,4 @@
-﻿import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
@@ -14,7 +14,13 @@ if (!_jwtSecret) {
 } else if (_jwtSecret.length < 32) {
   console.error(`[auth] WARNING: JWT_SECRET is too short (${_jwtSecret.length} chars). Minimum 32 recommended.`);
 }
-const JWT_SECRET = _jwtSecret || 'dev-only-insecure-secret-do-not-use-in-prod';
+function getJwtSecret(): string {
+  if (!_jwtSecret && process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET must be set in production');
+  }
+  return _jwtSecret || 'dev-only-insecure-secret-do-not-use-in-prod';
+}
+const JWT_SECRET = getJwtSecret();
 const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '24h';
 const DEFAULT_REFRESH_EXPIRES_DAYS = Number(process.env.REFRESH_EXPIRES_DAYS || '30');
 
@@ -48,7 +54,7 @@ export function verifyToken(token: string): any {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -96,7 +102,7 @@ export function getAuthToken(request: NextRequest): string | null {
   try {
     const sosAuthCookie = request.cookies.get('sos_auth')?.value;
     if (sosAuthCookie) return sosAuthCookie;
-  } catch (e) {
+  } catch {
     // If cookies API isn't available, fall back to parsing Cookie header
     const cookieHeader = request.headers.get('cookie') || '';
     const match = cookieHeader.match(/sos_auth=([^;]+)/);

@@ -11,7 +11,7 @@ export async function GET(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const template = getTemplateById(id);
+  const template = await getTemplateById(id);
   if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
   return NextResponse.json({ template });
@@ -26,7 +26,7 @@ export async function PUT(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const existing = getTemplateById(id);
+  const existing = await getTemplateById(id);
   if (!existing) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
   const shopId = auth.shopId ?? auth.id;
@@ -38,7 +38,7 @@ export async function PUT(
   if (!body || typeof body !== 'object') {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
-  const template = updateTemplate(id, body);
+  const template = await updateTemplate(id, body);
 
   return NextResponse.json({ template });
 }
@@ -52,7 +52,7 @@ export async function DELETE(
   if (auth instanceof NextResponse) return auth;
 
   const { id } = await params;
-  const existing = getTemplateById(id);
+  const existing = await getTemplateById(id);
   if (!existing) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
   const shopId = auth.shopId ?? auth.id;
@@ -60,6 +60,6 @@ export async function DELETE(
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  deleteTemplate(id);
+  await deleteTemplate(id);
   return NextResponse.json({ success: true });
 }

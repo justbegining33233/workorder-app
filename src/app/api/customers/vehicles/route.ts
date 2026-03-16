@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { make, model, year, vin, licensePlate, color, mileage } = body;
+    const { make, model, year, vin, licensePlate, _color, _mileage } = body;
 
     if (!make || !model || !year) {
       return NextResponse.json(

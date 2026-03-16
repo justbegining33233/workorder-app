@@ -108,7 +108,7 @@ export default function VendorManagementPage() {
     } catch (e: any) { setVendorError(e.message); }
     finally { setSaving(false); }
   };
-  const handleDeleteVendor = async (id: string, name: string) => {
+  const handleDeleteVendor = async (id: string, _name: string) => {
     try {
       await fetch(`/api/shop/vendors/${id}`, { method: 'DELETE', headers });
       setVendorSuccess('Vendor removed'); setDeleteVendorConfirm(null); loadVendors();

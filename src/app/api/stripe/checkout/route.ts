@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import stripe from '@/lib/stripe';
 import { STRIPE_PRODUCTS, StripePlan } from '@/lib/stripe';
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { plan, shopId, email, shopName } = body;
+    const { plan, shopId, email, _shopName } = body;
 
     // Ensure authenticated user can only create checkout for their own shop (prevent IDOR)
     const isAdmin = (decoded as any).role === 'admin' || (decoded as any).role === 'superadmin';

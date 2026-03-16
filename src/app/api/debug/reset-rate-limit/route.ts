@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     resetRateLimit(identifier);
     const status = getRateLimitStatus(identifier);
     return NextResponse.json({ success: true, identifier, status });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'internal error' }, { status: 500 });
   }
 }

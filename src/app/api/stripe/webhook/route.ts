@@ -1,8 +1,8 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import stripe from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
-import { sendPaymentReceiptEmail } from '@/lib/emailService';
+import { sendPaymentReceiptEmail, sendTrialEndingEmail, sendEmail } from '@/lib/emailService';
 import { pushPaymentConfirmed } from '@/lib/serverPush';
 
 export async function POST(request: NextRequest) {
@@ -93,7 +93,18 @@ export async function POST(request: NextRequest) {
             data: { status: 'suspended' },
           });
 
-          // Placeholder: notify super admin about cancellation completion
+          // Notify super admin about cancellation
+          const canceledShop = await prisma.shop.findFirst({
+            where: { subscription: { stripeSubscriptionId: subscription.id } },
+            select: { shopName: true, email: true },
+          });
+          if (canceledShop) {
+            sendEmail({
+              to: process.env.ADMIN_EMAIL || 'team@fixtray.com',
+              subject: `[FixTray] Subscription canceled: ${canceledShop.shopName}`,
+              html: `<p>Shop <strong>${canceledShop.shopName}</strong> (${canceledShop.email}) has had their subscription canceled and has been suspended.</p>`,
+            }).catch(console.error);
+          }
         }
         break;
       }
@@ -101,10 +112,12 @@ export async function POST(request: NextRequest) {
       // Payment successful
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice;
-        
-        // if (invoice.subscription) {
+        const subRef = invoice.parent?.subscription_details?.subscription ?? null;
+        const subId = typeof subRef === 'string' ? subRef : subRef?.id ?? null;
+
+        if (subId) {
           await prisma.subscription.updateMany({
-            where: { stripeSubscriptionId: 'unknown' }, // invoice.subscription as string
+            where: { stripeSubscriptionId: subId },
             data: {
               status: 'active',
               lastPaymentDate: new Date(),
@@ -116,46 +129,69 @@ export async function POST(request: NextRequest) {
           await prisma.paymentHistory.create({
             data: {
               stripeInvoiceId: invoice.id,
-              stripeSubscriptionId: 'unknown', // invoice.subscription as string
+              stripeSubscriptionId: subId,
               amount: invoice.amount_paid / 100,
               currency: invoice.currency,
               status: 'succeeded',
               paidAt: new Date(),
             },
           }).catch((err) => {
+            console.error('[WEBHOOK] Failed to log payment history:', err);
           });
-        // }
+        }
         break;
       }
 
       // Payment failed
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice;
-        
-        // if (invoice.subscription) {
+        const failedSubRef = invoice.parent?.subscription_details?.subscription ?? null;
+        const failedSubId = typeof failedSubRef === 'string' ? failedSubRef : failedSubRef?.id ?? null;
+
+        if (failedSubId) {
           await prisma.subscription.updateMany({
-            where: { stripeSubscriptionId: 'unknown' }, // invoice.subscription as string
+            where: { stripeSubscriptionId: failedSubId },
             data: {
               status: 'past_due',
             },
           });
-        // }
+
+          console.warn(`[WEBHOOK] Payment failed for subscription ${failedSubId}`);
+        }
         break;
       }
 
       // Trial ending soon (3 days before)
       case 'customer.subscription.trial_will_end': {
-        const subscription = event.data.object as Stripe.Subscription;
-        // TODO: Send email notification to customer
+        const trialSub = event.data.object as Stripe.Subscription;
+        const trialSubAny = trialSub as any;
+
+        // Find the shop with this subscription to send them a heads-up email
+        const subRecord = await prisma.subscription.findFirst({
+          where: { stripeSubscriptionId: trialSub.id },
+          include: { shop: { select: { email: true, shopName: true } } },
+        });
+
+        if (subRecord?.shop) {
+          const trialEnd = trialSubAny.trial_end
+            ? new Date(trialSubAny.trial_end * 1000)
+            : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // fallback: ~3 days from now
+
+          sendTrialEndingEmail(
+            subRecord.shop.email,
+            subRecord.shop.shopName,
+            trialEnd,
+          ).catch(console.error);
+        }
         break;
       }
 
-      // Checkout completed — handles both work-order payments and new shop registrations
+      // Checkout completed � handles both work-order payments and new shop registrations
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const { workOrderId, shopId, plan, registrationFlow } = session.metadata ?? {};
 
-        // ── Registration flow: shop owner completed Stripe Checkout ──────────
+        // -- Registration flow: shop owner completed Stripe Checkout ----------
         if (registrationFlow === 'true' && shopId && plan) {
 
           // Retrieve the subscription Stripe just created so we have real IDs
@@ -203,7 +239,7 @@ export async function POST(request: NextRequest) {
           break;
         }
 
-        // ── Work-order payment flow ───────────────────────────────────────────
+        // -- Work-order payment flow -------------------------------------------
         if (!workOrderId) break;
 
 
@@ -244,7 +280,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('🔴 [WEBHOOK] Error processing event:', error);
+    console.error('?? [WEBHOOK] Error processing event:', error);
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }

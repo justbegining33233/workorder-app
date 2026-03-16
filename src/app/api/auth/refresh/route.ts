@@ -1,7 +1,6 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 // Lazy-load prisma & bcrypt inside handler
-// @ts-ignore
-import { generateAccessToken } from '@/lib/auth';
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,6 +22,11 @@ export async function POST(request: NextRequest) {
     const record = await prisma.refreshToken.findUnique({ where: { id } });
     if (!record) return NextResponse.json({ error: 'Invalid refresh token' }, { status: 401 });
 
+    // Check if session has been revoked
+    if (record.revoked) {
+      return NextResponse.json({ error: 'Session has been revoked' }, { status: 401 });
+    }
+
     if (record.expiresAt < new Date()) {
       // expired - remove and reject
       await prisma.refreshToken.delete({ where: { id } }).catch(() => {});
@@ -38,13 +42,13 @@ export async function POST(request: NextRequest) {
         if (record.adminId) {
           await prisma.refreshToken.deleteMany({ where: { adminId: record.adminId } }).catch(() => {});
         } else if (record.metadata) {
-          // metadata is a JSON string — parse it to extract the owner ID for bulk revocation
+          // metadata is a JSON string � parse it to extract the owner ID for bulk revocation
           // Note: bulk LIKE-based revocation via String field is not reliable in all DBs;
           // the current token is deleted below regardless.
           const meta = JSON.parse(record.metadata) as { customerId?: string; shopId?: string; techId?: string };
           void meta; // parsed for future use; bulk revocation handled via single delete below
         }
-      } catch (e) {
+      } catch {
         // ignore errors during cleanup
       }
       return NextResponse.json({ error: 'Invalid refresh token' }, { status: 401 });
@@ -63,7 +67,7 @@ export async function POST(request: NextRequest) {
       data: {
         tokenHash: newHash,
         adminId: record.adminId || null,
-        metadata: JSON.stringify({ ...JSON.parse(record.metadata || '{}'), lastIp: origin, lastAgent: userAgent, csrfToken: csrf }),
+        metadata: JSON.stringify({ ...((() => { try { return JSON.parse(record.metadata || '{}'); } catch { return {}; } })()), lastIp: origin, lastAgent: userAgent, csrfToken: csrf }),
         expiresAt: newExpires,
       }
     });
@@ -78,7 +82,8 @@ export async function POST(request: NextRequest) {
       if (!admin) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
       payload = { id: admin.id, username: admin.username, role: 'admin' };
     } else if (record.metadata) {
-      const meta = JSON.parse(record.metadata) as { customerId?: string; shopId?: string; techId?: string };
+      let meta: { customerId?: string; shopId?: string; techId?: string } = {};
+      try { meta = JSON.parse(record.metadata) as typeof meta; } catch { return NextResponse.json({ error: 'Invalid session' }, { status: 401 }); }
       if (meta.customerId) {
         const c = await prisma.customer.findUnique({ where: { id: meta.customerId } });
         if (!c) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
@@ -98,18 +103,17 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({ accessToken });
     // set new refresh cookie
-    const cookieValue = `${newRecord.id}:${newRaw}`;
     response.cookies.set('refresh_id', newRecord.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((newExpires.getTime() - Date.now()) / 1000),
     });
     response.cookies.set('refresh_sig', newRaw, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((newExpires.getTime() - Date.now()) / 1000),
     });
@@ -117,7 +121,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('csrf_token', csrf, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: Math.floor((newExpires.getTime() - Date.now()) / 1000),
     });
@@ -125,7 +129,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('sos_auth', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 15,
     });

@@ -1,6 +1,6 @@
-﻿// Socket.io server configuration
+// Socket.io server configuration
 import { Server as NetServer } from 'http';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiResponse } from 'next';
 import { Server as ServerIO, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
@@ -20,11 +20,14 @@ interface AuthenticatedSocket extends Socket {
   username?: string;
 }
 
-const fallbackJwt = 'fixtray-default-secret';
-const JWT_SECRET = process.env.JWT_SECRET || fallbackJwt;
+const jwtSecret = process.env.JWT_SECRET;
 
-if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
-  console.error('FATAL: JWT_SECRET env var is not set. Using insecure fallback in production — set JWT_SECRET immediately.');
+if (!jwtSecret && process.env.NODE_ENV === 'production') {
+  throw new Error('FATAL: JWT_SECRET env var is required in production');
+}
+
+if (!jwtSecret) {
+  console.warn('WARNING: JWT_SECRET not set — socket auth will reject all tokens');
 }
 
 // Global variable to store the io instance
@@ -49,14 +52,18 @@ export const initSocketServer = (httpServer: any) => {
         return next(new Error('Authentication error'));
       }
 
-      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      if (!jwtSecret) {
+        return next(new Error('Server misconfigured'));
+      }
+
+      const decoded = jwt.verify(token, jwtSecret) as any;
       (socket as any).userId = decoded.id;
       (socket as any).role = decoded.role;
       (socket as any).shopId = decoded.shopId;
       socket.username = decoded.username;
 
       next();
-    } catch (error) {
+    } catch {
       next(new Error('Authentication error'));
     }
   });
@@ -79,7 +86,7 @@ export const initSocketServer = (httpServer: any) => {
     // Handle work order updates
     socket.on('work-order-update', (data) => {
       // Broadcast to relevant users
-      const { workOrderId, shopId, assignedTo } = data;
+      const { shopId, assignedTo } = data;
 
       // Notify shop admin
       if (shopId) {
@@ -102,7 +109,7 @@ export const initSocketServer = (httpServer: any) => {
 
     // Handle messaging
     socket.on('send-message', (data) => {
-      const { receiverId, receiverRole, message } = data;
+      const { receiverId, receiverRole } = data;
 
       const messageData = {
         ...data,
@@ -166,7 +173,7 @@ export const initSocketServer = (httpServer: any) => {
               });
             }
           }
-        } catch (err) {
+        } catch {
         }
       }
     });

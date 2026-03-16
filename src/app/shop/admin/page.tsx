@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ export default function ShopAdminPage() {
   const { user, isLoading } = useRequireAuth(['shop']);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
-  const [userName, setUserName] = useState('');
+  const [_userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [shopId, setShopId] = useState('');
   const [settings, setSettings] = useState<any>(null);
@@ -44,14 +44,14 @@ export default function ShopAdminPage() {
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
   const [poForm, setPoForm] = useState({ vendor: '', itemName: '', quantity: 1, unitCost: 0, workOrderId: '' });
   const [showPoModal, setShowPoModal] = useState(false);
-  const [workOrderSearch, setWorkOrderSearch] = useState('');
+  const [_workOrderSearch, _setWorkOrderSearch] = useState('');
   const [workOrderOptions, setWorkOrderOptions] = useState<any[]>([]);
   const [loadingWorkOrders, setLoadingWorkOrders] = useState(false);
   const [showLowStockOnly, setShowLowStockOnly] = useState(false);
 
   // Shop messages
-  const [shopMessages, setShopMessages] = useState<any[]>([]);
-  const [messageStats, setMessageStats] = useState<any>(null);
+  const [_shopMessages, setShopMessages] = useState<any[]>([]);
+  const [_messageStats, setMessageStats] = useState<any>(null);
   const [adminMsg, setAdminMsg] = useState<{type:'success'|'error';text:string}|null>(null);
 
   // Team management

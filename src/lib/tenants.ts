@@ -1,46 +1,41 @@
-import { Tenant } from '@/types/tenant';
+import prisma from '@/lib/prisma';
 
-// In-memory tenant store (replace with database in production)
-const tenants: Tenant[] = [];
-
-export function getAllTenants(): Tenant[] {
-  return tenants;
+export async function getAllTenants() {
+  return prisma.tenant.findMany({ orderBy: { createdAt: 'desc' } });
 }
 
-export function getTenantById(id: string): Tenant | undefined {
-  return tenants.find(t => t.id === id);
+export async function getTenantById(id: string) {
+  return prisma.tenant.findUnique({ where: { id } });
 }
 
-export function getTenantBySubdomain(subdomain: string): Tenant | undefined {
-  return tenants.find(t => t.subdomain === subdomain);
+export async function getTenantBySubdomain(subdomain: string) {
+  return prisma.tenant.findUnique({ where: { subdomain } });
 }
 
-export function createTenant(tenant: Omit<Tenant, 'id' | 'createdAt' | 'updatedAt'>): Tenant {
-  const newTenant: Tenant = {
-    ...tenant,
-    id: Date.now().toString(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-  tenants.push(newTenant);
-  return newTenant;
+export async function createTenant(data: {
+  companyName: string;
+  subdomain: string;
+  contactEmail: string;
+  contactPhone: string;
+  logo?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  plan?: string;
+  maxUsers?: number;
+  maxWorkOrders?: number;
+  timezone?: string;
+  currency?: string;
+}) {
+  return prisma.tenant.create({ data });
 }
 
-export function updateTenant(id: string, updates: Partial<Tenant>): Tenant | null {
-  const index = tenants.findIndex(t => t.id === id);
-  if (index === -1) return null;
-  
-  tenants[index] = {
-    ...tenants[index],
-    ...updates,
-    updatedAt: new Date(),
-  };
-  return tenants[index];
+export async function updateTenant(id: string, updates: Record<string, unknown>) {
+  return prisma.tenant.update({ where: { id }, data: updates });
 }
 
-export function deleteTenant(id: string): boolean {
-  const index = tenants.findIndex(t => t.id === id);
-  if (index === -1) return false;
-  tenants.splice(index, 1);
+export async function deleteTenant(id: string) {
+  await prisma.tenant.delete({ where: { id } });
   return true;
 }

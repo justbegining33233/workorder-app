@@ -7,7 +7,7 @@ import { useRequireAuth } from '@/contexts/AuthContext';
 export default function TechPhotos() {
   const { user, isLoading } = useRequireAuth(['tech']);
   const [photos, setPhotos] = useState<Array<{ id: string; url: string; filename?: string; caption?: string; workOrderId?: string }>>([]);
-  const [uploading, setUploading] = useState(false);
+  const [_uploading, setUploading] = useState(false);
   const [caption, setCaption] = useState('');
   const [workOrderInput, setWorkOrderInput] = useState('');
 
@@ -33,7 +33,7 @@ export default function TechPhotos() {
           const json = await res.json();
           setPhotos(json.photos || []);
         }
-      } catch (err) {
+      } catch {
       }
     })();
   }, [user]);

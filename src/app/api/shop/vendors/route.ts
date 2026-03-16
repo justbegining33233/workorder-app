@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   const shopId = auth.shopId ?? auth.id;
-  const vendors = getVendorsByShop(shopId);
+  const vendors = await getVendorsByShop(shopId);
 
   return NextResponse.json({ vendors });
 }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'name is required' }, { status: 400 });
   }
 
-  const vendor = createVendor(shopId, {
+  const vendor = await createVendor(shopId, {
     name,
     contactName: contactName ?? '',
     phone: phone ?? '',

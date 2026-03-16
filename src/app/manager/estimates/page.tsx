@@ -242,7 +242,7 @@ function ManagerEstimatesContent() {
               </div>
             ) : (
               <div style={{ display: 'grid', gap: 12 }}>
-                {estimate.lineItems.map((item, index) => (
+                {estimate.lineItems.map((item, _index) => (
                   <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '1fr 100px 120px 100px 40px', gap: 12, alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: 12, borderRadius: 8 }}>
                     <input
                       type="text"

@@ -89,10 +89,10 @@ export default function LiveTracking() {
         setError('No active work orders to track');
         setTrackingOrders([]);
       } else {
-        const errorText = await response.text();
+        const _errorText = await response.text();
         setError('Failed to load tracking data');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load tracking data');
     } finally {
       setLoading(false);
@@ -150,7 +150,7 @@ export default function LiveTracking() {
       } else {
         setTrackingMsg({type:'error',text:'Failed to send message. Please try again.'});
       }
-    } catch (error) {
+    } catch {
       setTrackingMsg({type:'error',text:'Failed to send message. Please try again.'});
     } finally {
       setMessageModal(prev => ({ ...prev, sending: false }));

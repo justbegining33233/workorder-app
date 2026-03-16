@@ -106,16 +106,20 @@ function DonutChart({ segments, size = 100 }: { segments: { value: number; color
   const total = segments.reduce((sum, s) => sum + s.value, 0);
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
-  let offset = 0;
+
+  const segmentsWithOffset = segments.reduce<{ segment: typeof segments[0]; offset: number }[]>((acc, segment) => {
+    const prevOffset = acc.length > 0 ? acc[acc.length - 1].offset + acc[acc.length - 1].segment.value / total : 0;
+    acc.push({ segment, offset: prevOffset });
+    return acc;
+  }, []);
 
   return (
     <div className="relative">
       <svg width={size} height={size} viewBox="0 0 100 100">
         <circle cx="50" cy="50" r={radius} fill="none" stroke="#27272A" strokeWidth="12" />
-        {segments.map((segment, i) => {
+        {segmentsWithOffset.map(({ segment, offset }, i) => {
           const strokeDasharray = `${(segment.value / total) * circumference} ${circumference}`;
           const rotation = offset * 360 - 90;
-          offset += segment.value / total;
           return (
             <circle
               key={i}
@@ -177,7 +181,7 @@ export function UsersTab({ users, liveMetrics }: UsersTabProps) {
   // Use live metrics from API if available, otherwise calculate from users array
   const totalUsers = liveMetrics?.totalUsers || users.length;
   const totalCustomers = liveMetrics?.totalCustomers || users.filter(u => u.role === 'customer').length;
-  const totalTechs = liveMetrics?.totalTechs || users.filter(u => u.role === 'tech' || u.role === 'manager').length;
+  const _totalTechs = liveMetrics?.totalTechs || users.filter(u => u.role === 'tech' || u.role === 'manager').length;
   const totalShopOwners = liveMetrics?.totalShopOwners || users.filter(u => u.role === 'shop' || u.role === 'admin').length;
   
   const newUsersThisMonthCount = liveMetrics?.newUsersThisMonth || 0;

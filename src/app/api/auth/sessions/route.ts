@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-// @ts-ignore
-import { authenticateRequest, verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 import { validateCsrf } from '@/lib/csrf';
 
 export async function GET(request: NextRequest) {

@@ -19,7 +19,7 @@ export default function ManagerHome() {
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [shopId, setShopId] = useState('');
-  const [shopName, setShopName] = useState('');
+  const [_shopName, setShopName] = useState('');
   const [inventoryRequests, setInventoryRequests] = useState<any[]>([]);
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [newRequest, setNewRequest] = useState({
@@ -202,7 +202,7 @@ export default function ManagerHome() {
      
   }, [user?.id, user?.name, user?.shopId]);
 
-  const handleSignOut = () => {
+  const _handleSignOut = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
     localStorage.removeItem('userId');

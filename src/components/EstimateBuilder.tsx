@@ -97,7 +97,7 @@ export default function EstimateBuilder({ workOrderId, onSave, onCancel, initial
             <div style={{ width: 40 }}></div>
           </div>
 
-          {lineItems.map((item, idx) => (
+          {lineItems.map((item, _idx) => (
             <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '3fr 1fr 1fr 1fr auto', gap: 12, marginBottom: 12 }}>
               <input
                 type="text"

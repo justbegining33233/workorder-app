@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import useRequireAuth from '@/lib/useRequireAuth';
 
@@ -91,7 +91,7 @@ export default function TechDVIPage() {
     setSaving(false);
   };
 
-  const sendToCustomer = async (id: string) => {
+  const _sendToCustomer = async (id: string) => {
     const token = localStorage.getItem('token');
     await fetch(`/api/dvi/${id}`, {
       method: 'PUT',

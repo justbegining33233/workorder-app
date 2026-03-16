@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SUBSCRIPTION_PLANS, type SubscriptionPlan, type SubscriptionFeatures } from '@/lib/subscription';
+import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';
 
 interface UpgradePromptProps {
   shopId: string;
@@ -51,7 +51,7 @@ export default function UpgradePrompt({
     }
   };
 
-  const getRecommendedPlanForFeature = (feature: string, currentPlan?: SubscriptionPlan): SubscriptionPlan => {
+  const getRecommendedPlanForFeature = (feature: string, _currentPlan?: SubscriptionPlan): SubscriptionPlan => {
     const plans: SubscriptionPlan[] = ['starter', 'growth', 'professional', 'business', 'enterprise'];
 
     // Find the lowest plan that includes this feature

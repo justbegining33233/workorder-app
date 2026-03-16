@@ -136,10 +136,10 @@ export default function OilSlickCanvas() {
       ref={ref}
       aria-hidden="true"
       style={{
-        position: "fixed",
+        position: "absolute",
         inset: 0,
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100%",
         zIndex: 0,
         display: "block",
         pointerEvents: "none",

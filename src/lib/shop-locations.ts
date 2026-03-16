@@ -1,92 +1,59 @@
-import { randomUUID } from 'crypto';
+import prisma from '@/lib/prisma';
 
-export interface ShopLocation {
-  id: string;
-  shopId: string;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  phone: string;
-  email: string;
-  isMain: boolean;
-  status: 'active' | 'inactive';
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
+export async function getLocationsByShop(shopId: string) {
+  return prisma.shopLocation.findMany({
+    where: { shopId },
+    orderBy: [{ isMain: 'desc' }, { name: 'asc' }],
+  });
 }
 
-// In-memory store — resets on server restart
-const locationStore = new Map<string, ShopLocation>();
-
-export function getLocationsByShop(shopId: string): ShopLocation[] {
-  return Array.from(locationStore.values())
-    .filter((l) => l.shopId === shopId)
-    .sort((a, b) => {
-      if (a.isMain) return -1;
-      if (b.isMain) return 1;
-      return a.name.localeCompare(b.name);
-    });
+export async function getLocationById(id: string) {
+  return prisma.shopLocation.findUnique({ where: { id } });
 }
 
-export function getLocationById(id: string): ShopLocation | undefined {
-  return locationStore.get(id);
-}
-
-export function createLocation(
+export async function createLocation(
   shopId: string,
-  data: Omit<ShopLocation, 'id' | 'shopId' | 'createdAt' | 'updatedAt'>
-): ShopLocation {
-  const now = new Date().toISOString();
-
-  // If this is the first location or isMain is requested, ensure only one main
+  data: {
+    name: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+    phone?: string;
+    email?: string;
+    isMain?: boolean;
+    status?: string;
+    notes?: string;
+  }
+) {
+  // If promoting to main, demote others first
   if (data.isMain) {
-    // Clear isMain from all others in same shop
-    for (const [key, loc] of locationStore.entries()) {
-      if (loc.shopId === shopId && loc.isMain) {
-        locationStore.set(key, { ...loc, isMain: false, updatedAt: now });
-      }
-    }
+    await prisma.shopLocation.updateMany({
+      where: { shopId, isMain: true },
+      data: { isMain: false },
+    });
   }
-
-  const location: ShopLocation = {
-    id: randomUUID(),
-    shopId,
-    ...data,
-    createdAt: now,
-    updatedAt: now,
-  };
-  locationStore.set(location.id, location);
-  return location;
+  return prisma.shopLocation.create({ data: { shopId, ...data } });
 }
 
-export function updateLocation(
+export async function updateLocation(
   id: string,
-  data: Partial<Omit<ShopLocation, 'id' | 'shopId' | 'createdAt'>>
-): ShopLocation | null {
-  const existing = locationStore.get(id);
-  if (!existing) return null;
-
-  // If promoting to main, demote others
+  data: Record<string, unknown>
+) {
+  // If promoting to main, demote others first
   if (data.isMain === true) {
-    const now = new Date().toISOString();
-    for (const [key, loc] of locationStore.entries()) {
-      if (loc.shopId === existing.shopId && loc.id !== id && loc.isMain) {
-        locationStore.set(key, { ...loc, isMain: false, updatedAt: now });
-      }
+    const existing = await prisma.shopLocation.findUnique({ where: { id } });
+    if (existing) {
+      await prisma.shopLocation.updateMany({
+        where: { shopId: existing.shopId, isMain: true, NOT: { id } },
+        data: { isMain: false },
+      });
     }
   }
-
-  const updated: ShopLocation = {
-    ...existing,
-    ...data,
-    updatedAt: new Date().toISOString(),
-  };
-  locationStore.set(id, updated);
-  return updated;
+  return prisma.shopLocation.update({ where: { id }, data });
 }
 
-export function deleteLocation(id: string): boolean {
-  return locationStore.delete(id);
+export async function deleteLocation(id: string) {
+  await prisma.shopLocation.delete({ where: { id } });
+  return true;
 }

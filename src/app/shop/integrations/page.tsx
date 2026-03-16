@@ -29,8 +29,6 @@ export default function IntegrationsPage() {
   const [formFields, setFormFields] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (!user) return; load(); }, [user]);
-
   const load = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -38,6 +36,8 @@ export default function IntegrationsPage() {
     if (r.ok) setConfigs(await r.json());
     setLoading(false);
   };
+
+  useEffect(() => { if (!user) return; load(); }, [user]);
 
   const openEdit = (key: string) => {
     const existing = configs.find(c => c.provider === key);

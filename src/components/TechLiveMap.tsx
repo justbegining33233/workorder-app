@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useRef } from 'react';
 
@@ -74,10 +74,9 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           const ph = parent.clientHeight;
           if (ph && ph > 0) el.style.height = ph + 'px';
         }
-      } catch (e) {}
+      } catch {}
 
       if (!mapRef.current) {
-        // @ts-ignore
         const map = L.map(el).setView([lat, lng], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors',
@@ -85,28 +84,28 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         mapRef.current = map;
 
         // Invalidate size multiple times to ensure Leaflet uses final container dimensions
-        setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 100);
-        setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 300);
-        setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 600);
+        setTimeout(() => { try { map.invalidateSize(); } catch {} }, 100);
+        setTimeout(() => { try { map.invalidateSize(); } catch {} }, 300);
+        setTimeout(() => { try { map.invalidateSize(); } catch {} }, 600);
 
         // Observe container size changes and window resize to reflow Leaflet
         try {
           // ResizeObserver to handle layout changes
           const ro = new ResizeObserver(() => {
-            try { map.invalidateSize(); } catch (e) {}
+            try { map.invalidateSize(); } catch {}
           });
           ro.observe(el);
           // Save on element for cleanup
           (map as any).__resizeObserver = ro;
 
-          const onResize = () => { try { map.invalidateSize(); } catch (e) {} };
+          const onResize = () => { try { map.invalidateSize(); } catch {} };
           window.addEventListener('resize', onResize);
           (map as any).__onResize = onResize;
-        } catch (e) {
+        } catch {
           // ResizeObserver may not be available in some environments; ignore
         }
       } else {
-        try { mapRef.current.setView([lat, lng], mapRef.current.getZoom()); } catch (e) {}
+        try { mapRef.current.setView([lat, lng], mapRef.current.getZoom()); } catch {}
       }
 
       if (initialLocation && initialLocation.latitude !== undefined) {
@@ -116,10 +115,10 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           if (techName) markerRef.current.bindPopup(techName).openPopup();
         } else {
           // keep the shop/workorder marker in place (do not overwrite with user location)
-          try { markerRef.current.setLatLng([initialLocation.latitude, initialLocation.longitude]); } catch (e) {}
+          try { markerRef.current.setLatLng([initialLocation.latitude, initialLocation.longitude]); } catch {}
         }
       }
-    }).catch(err => {
+    }).catch(() => {
     });
 
     // Handler for location updates; only update if workOrderId matches
@@ -133,14 +132,14 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         if (detail.clear) {
           if (detail.workOrderId === 'shop-location') {
             if (userMarkerRef.current) {
-              try { mapRef.current.removeLayer(userMarkerRef.current); } catch (e) {}
+              try { mapRef.current.removeLayer(userMarkerRef.current); } catch {}
               userMarkerRef.current = null;
             }
             return;
           }
 
           if (markerRef.current) {
-            try { mapRef.current.removeLayer(markerRef.current); } catch (e) {}
+            try { mapRef.current.removeLayer(markerRef.current); } catch {}
             markerRef.current = null;
           }
           return;
@@ -166,9 +165,8 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
               const ph = parent.clientHeight;
               if (ph && ph > 0) el.style.height = ph + 'px';
             }
-          } catch (e) {}
+          } catch {}
 
-          // @ts-ignore
           const map = L.map(el).setView([lat, lng], 13);
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors',
@@ -176,18 +174,18 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           mapRef.current = map;
 
           // Wait a tick and invalidate size to ensure it expands to fill container
-          setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 200);
+          setTimeout(() => { try { map.invalidateSize(); } catch {} }, 200);
         }
 
         // If this update is for the shop-location map (user sharing), use the user marker and DO NOT move the shop marker
         if (detail.workOrderId === 'shop-location') {
           if (!userMarkerRef.current) {
             userMarkerRef.current = L.marker([lat, lng], { title: 'You' }).addTo(mapRef.current);
-            try { userMarkerRef.current.bindPopup('You').openPopup(); } catch (e) {}
+            try { userMarkerRef.current.bindPopup('You').openPopup(); } catch {}
           } else {
-            try { userMarkerRef.current.setLatLng([lat, lng]); } catch (e) {}
+            try { userMarkerRef.current.setLatLng([lat, lng]); } catch {}
           }
-          // do not recenter the map â€” keep shop marker visible
+          // do not recenter the map — keep shop marker visible
           return;
         }
 
@@ -202,9 +200,8 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         // Center map smoothly for work-order updates
         try {
           mapRef.current.setView([lat, lng], mapRef.current.getZoom());
-        } catch (e) {}
-      } catch (err) {
-      }
+        } catch {}
+      } catch {}
     };
 
     // Marker layer management (roadcall, parts, user)
@@ -216,11 +213,10 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
       try {
         if (!mapRef.current) return;
         if (routeLayerRef.current) {
-          try { mapRef.current.removeLayer(routeLayerRef.current); } catch (e) {}
+          try { mapRef.current.removeLayer(routeLayerRef.current); } catch {}
           routeLayerRef.current = null;
         }
-      } catch (err) {
-      }
+      } catch {}
     };
 
     const drawRoute = (from: [number, number], to: [number, number]) => {
@@ -232,7 +228,7 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         const latlngs = [from, to];
         const poly = L.polyline(latlngs, { color: '#ef4444', weight: 4, opacity: 0.9, dashArray: '6,4' }).addTo(mapRef.current);
         routeLayerRef.current = poly;
-        try { mapRef.current.fitBounds(poly.getBounds(), { padding: [40, 40] }); } catch (e) {}
+        try { mapRef.current.fitBounds(poly.getBounds(), { padding: [40, 40] }); } catch {}
 
         // Estimate distance/ETA (straight-line) and show on popup at midpoint
         const toRad = (deg: number) => deg * Math.PI / 180;
@@ -246,12 +242,11 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         const avgMph = 30; // conservative estimate
         const etaMinutes = Math.round((distMi / avgMph) * 60);
         const mid = [(from[0]+to[0])/2, (from[1]+to[1])/2];
-        const popup = L.popup({ closeButton: true, autoClose: true })
+        L.popup({ closeButton: true, autoClose: true })
           .setLatLng(mid)
-          .setContent(`<div style="font-weight:700;color:#111;padding:6px;">Route â€¢ ${distMi.toFixed(1)} mi â€¢ ETA â‰ˆ ${etaMinutes} min</div>`)
+          .setContent(`<div style="font-weight:700;color:#111;padding:6px;">Route • ${distMi.toFixed(1)} mi • ETA ≈ ${etaMinutes} min</div>`)
           .openOn(mapRef.current);
-      } catch (err) {
-      }
+      } catch {}
     };
 
     const addMarkers = (type: string, markers: Array<{ latitude: number; longitude: number; title?: string; id?: string; popup?: string }>) => {
@@ -259,7 +254,7 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         const L = LRef.current;
         if (!L || !mapRef.current) return;
         const prev = markerLayersRef.get(type) || [];
-        prev.forEach((m: any) => { try { mapRef.current.removeLayer(m); } catch (e) {} });
+        prev.forEach((m: any) => { try { mapRef.current.removeLayer(m); } catch {} });
         const added: any[] = [];
         markers.forEach((m) => {
           const mk = L.marker([m.latitude, m.longitude]).addTo(mapRef.current);
@@ -287,8 +282,7 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           added.push(mk);
         });
         markerLayersRef.set(type, added);
-      } catch (err) {
-      }
+      } catch {}
     };
 
     const clearMarkers = (type?: string) => {
@@ -296,14 +290,13 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
         if (!mapRef.current) return;
         if (type) {
           const prev = markerLayersRef.get(type) || [];
-          prev.forEach((m: any) => { try { mapRef.current.removeLayer(m); } catch (e) {} });
+          prev.forEach((m: any) => { try { mapRef.current.removeLayer(m); } catch {} });
           markerLayersRef.delete(type);
         } else {
-          markerLayersRef.forEach((arr: any[]) => arr.forEach((m: any) => { try { mapRef.current.removeLayer(m); } catch (e) {} }));
+          markerLayersRef.forEach((arr: any[]) => arr.forEach((m: any) => { try { mapRef.current.removeLayer(m); } catch {} }));
           markerLayersRef.clear();
         }
-      } catch (err) {
-      }
+      } catch {}
     };
 
     const handleAddMarkersEvent = (e: any) => {
@@ -340,23 +333,23 @@ export default function TechLiveMap({ workOrderId, initialLocation, techName }: 
           // clear marker layers
           const mapAny = mapRef.current as any;
           if (mapAny && mapAny.markerLayers) {
-            try { mapAny.markerLayers.forEach((arr: any[]) => arr.forEach((m: any) => mapRef.current.removeLayer(m))); } catch (e) {}
-            try { mapAny.markerLayers.clear(); } catch (e) {}
+            try { mapAny.markerLayers.forEach((arr: any[]) => arr.forEach((m: any) => mapRef.current.removeLayer(m))); } catch {}
+            try { mapAny.markerLayers.clear(); } catch {}
           }
-        } catch (e) {}
+        } catch {}
         try {
           const map = mapRef.current as any;
           if (map.__resizeObserver) {
-            try { map.__resizeObserver.disconnect(); } catch (e) {}
+            try { map.__resizeObserver.disconnect(); } catch {}
             map.__resizeObserver = null;
           }
           if (map.__onResize) {
-            try { window.removeEventListener('resize', map.__onResize); } catch (e) {}
+            try { window.removeEventListener('resize', map.__onResize); } catch {}
             map.__onResize = null;
           }
-        } catch (e) {}
+        } catch {}
 
-        try { mapRef.current.remove(); } catch (e) {}
+        try { mapRef.current.remove(); } catch {}
         mapRef.current = null;
       }
 

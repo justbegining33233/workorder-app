@@ -146,7 +146,7 @@ export const SUBSCRIPTION_PLANS = {
 export type SubscriptionPlan = keyof typeof SUBSCRIPTION_PLANS;
 
 export type SubscriptionFeatures = typeof SUBSCRIPTION_PLANS.starter.features;
-function getNextPlanForUsers(currentPlan: SubscriptionPlan, userCount: number): SubscriptionPlan {
+function _getNextPlanForUsers(currentPlan: SubscriptionPlan, userCount: number): SubscriptionPlan {
   const plans: SubscriptionPlan[] = ['starter', 'growth', 'professional', 'business', 'enterprise'];
 
   for (const plan of plans) {
