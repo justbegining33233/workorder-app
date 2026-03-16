@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import { FaBan, FaCar, FaCheckCircle, FaExclamationTriangle, FaPencilAlt, FaWrench } from 'react-icons/fa';
+import { FaBan, FaCar, FaCheckCircle, FaClock, FaExclamationTriangle, FaPencilAlt, FaWrench } from 'react-icons/fa';
 
 interface WorkAuthorization {
   id: string;
@@ -157,7 +157,7 @@ export default function CustomerAuthorizationPage() {
 
       <div style={{ maxWidth: 560, margin: '0 auto', padding: '32px 20px' }}>
         {/* Status banners */}
-        {isExpired && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 10, padding: 14, marginBottom: 20, color: '#dc2626', fontWeight: 600 }}>⏰ This authorization has expired. Please contact the shop.</div>}
+        {isExpired && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 10, padding: 14, marginBottom: 20, color: '#dc2626', fontWeight: 600 }}><FaClock style={{marginRight:4}} /> This authorization has expired. Please contact the shop.</div>}
         {isAlreadySigned && <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 10, padding: 14, marginBottom: 20, color: '#16a34a', fontWeight: 600 }}><FaCheckCircle style={{marginRight:4}} /> This work has already been authorized by {auth?.signerName}.</div>}
         {isDeclined && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 10, padding: 14, marginBottom: 20, color: '#dc2626', fontWeight: 600 }}><FaBan style={{marginRight:4}} /> This authorization was declined.</div>}
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheckCircle, FaDollarSign, FaExclamationTriangle, FaUsers } from 'react-icons/fa';
+import { FaCheckCircle, FaDollarSign, FaExclamationTriangle, FaStopwatch, FaUsers } from 'react-icons/fa';
 import {
   LineChart,
   Line,
@@ -166,7 +166,7 @@ export default function AnalyticsPage() {
             </div>
 
             <div style={{ background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>⏱</div>
+              <div style={{ fontSize: 32, marginBottom: 8 }}><FaStopwatch style={{marginRight:4}} /></div>
               <div style={{ color: '#9aa3b2', fontSize: 13, marginBottom: 4 }}>Avg Completion Time</div>
               <div style={{ color: '#a855f7', fontSize: 28, fontWeight: 700 }}>
                 {analytics.summary.avgCompletionTime}h

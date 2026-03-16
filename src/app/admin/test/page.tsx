@@ -1,5 +1,5 @@
 'use client';
-import { FaBolt, FaSave } from 'react-icons/fa';
+import { FaBolt, FaClock, FaHourglassHalf, FaSave } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -150,7 +150,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Time & Payroll',
-      icon: '⏰',
+      icon: '<FaClock style={{marginRight:4}} />',
       description: 'Clock in/out, GPS, time entries, payroll, overtime',
       features: [
         { name: 'Clock In/Out', status: 'operational' },
@@ -599,7 +599,7 @@ export default function AdminTestPage() {
                 <h3 className="text-sm font-semibold text-[#E2E8F0] mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { href: '/admin/pending-shops', icon: '⏳', label: 'Pending', count: stats.pendingShops },
+                    { href: '/admin/pending-shops', icon: '<FaHourglassHalf style={{marginRight:4}} />', label: 'Pending', count: stats.pendingShops },
                     { href: '/admin/user-management', icon: '', label: 'Users' },
                     { href: '/admin/subscriptions', icon: '', label: 'Billing' },
                     { href: '/admin/platform-analytics', icon: '', label: 'Analytics' },

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
-import { FaCheckCircle, FaLightbulb, FaLink, FaPencilAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaHourglassHalf, FaLightbulb, FaLink, FaPencilAlt } from 'react-icons/fa';
 
 interface WorkAuthorization {
   id: string;
@@ -89,7 +89,7 @@ export default function WorkAuthorizationsPage() {
 
       {/* Stats */}
       <div style={{ padding: '24px 32px 0', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {[{ label: 'Total', value: auths.length, icon: '' }, { label: 'Signed', value: signed, icon: '' }, { label: 'Pending', value: pending, icon: '⏳' }].map(s => (
+        {[{ label: 'Total', value: auths.length, icon: '' }, { label: 'Signed', value: signed, icon: '' }, { label: 'Pending', value: pending, icon: '<FaHourglassHalf style={{marginRight:4}} />' }].map(s => (
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px 24px', minWidth: 120 }}>
             <div style={{ fontSize: 24 }}>{s.icon}</div>
             <div style={{ fontSize: 28, fontWeight: 800, margin: '4px 0' }}>{s.value}</div>

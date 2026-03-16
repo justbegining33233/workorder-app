@@ -1,5 +1,5 @@
 'use client';
-import { FaBuilding, FaCalendarAlt, FaCheck, FaComments, FaDollarSign, FaEnvelope, FaMapMarkerAlt, FaPhone, FaRegStar, FaStar, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
+import { FaBuilding, FaCalendarAlt, FaCheck, FaComments, FaDollarSign, FaEnvelope, FaHourglassHalf, FaMapMarkerAlt, FaPhone, FaRegStar, FaStar, FaStopwatch, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -223,7 +223,7 @@ export default function ShopDetailsPage({ params }: Props) {
                 gap:8
               }}
             >
-              {togglingFavorite ? '⏳' : (shop.isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
+              {togglingFavorite ? '<FaHourglassHalf style={{marginRight:4}} />' : (shop.isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
               {shop.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
           </div>
@@ -318,7 +318,7 @@ export default function ShopDetailsPage({ params }: Props) {
                         <span><FaDollarSign style={{marginRight:4}} /> ${service.price}</span>
                       )}
                       {service.duration && (
-                        <span>⏱ {service.duration} min</span>
+                        <span><FaStopwatch style={{marginRight:4}} /> {service.duration} min</span>
                       )}
                     </div>
                   </div>

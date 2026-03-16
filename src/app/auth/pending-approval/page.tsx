@@ -1,4 +1,4 @@
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck, FaHourglassHalf } from 'react-icons/fa';
 
 import Link from 'next/link';
 
@@ -21,7 +21,7 @@ export default function PendingApproval() {
         width: '100%',
         textAlign: 'center'
       }}>
-        <div style={{fontSize: '64px', marginBottom: '24px'}}>⏳</div>
+        <div style={{fontSize: '64px', marginBottom: '24px'}}><FaHourglassHalf style={{marginRight:4}} /></div>
         
         <h1 style={{
           fontSize: '32px',

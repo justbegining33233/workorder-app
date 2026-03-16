@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaChartBar, FaCreditCard, FaHeart, FaMapMarkerAlt, FaStar, FaStore, FaTimes, FaUser, FaUsers } from 'react-icons/fa';
+import { FaChartBar, FaCreditCard, FaHeart, FaHourglassHalf, FaMapMarkerAlt, FaStar, FaStore, FaTimes, FaUser, FaUsers } from 'react-icons/fa';
 
 type Customer = {
   id: string;
@@ -365,7 +365,7 @@ export default function ManageCustomers() {
         {/* Customer List */}
         {loading ? (
           <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
-            <div style={{fontSize:32, marginBottom:16}}>⏳</div>
+            <div style={{fontSize:32, marginBottom:16}}><FaHourglassHalf style={{marginRight:4}} /></div>
             <div>Loading customers...</div>
           </div>
         ) : filteredCustomers.length === 0 ? (

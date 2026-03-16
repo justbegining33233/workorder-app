@@ -7,7 +7,7 @@ import { useSocket } from '@/lib/socket';
 import OilSlickNavCanvas from '@/components/OilSlickNavCanvas';
 import ShopSwitcher from '@/components/ShopSwitcher';
 import GlobalSearch from '@/components/GlobalSearch';
-import { FaBell, FaCog, FaSignOutAlt, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaBell, FaCaretRight, FaCog, FaSignOutAlt, FaSquare, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 
 interface TopNavBarProps {
   onMenuToggle?: () => void;
@@ -576,7 +576,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                       opacity: loading ? 0.55 : 1,
                     }}
                   >
-                    <span style={{ fontSize: 11 }}>{isClockedIn ? '◼' : '▶'}</span>
+                    <span style={{ fontSize: 11 }}>{isClockedIn ? '<FaSquare style={{marginRight:4}} />' : '<FaCaretRight style={{marginRight:4}} />'}</span>
                     {isClockedIn ? 'Clock Out' : 'Clock In'}
                   </button>
                 )}

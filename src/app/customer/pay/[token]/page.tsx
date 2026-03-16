@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { FaCheckCircle, FaExclamationTriangle, FaLock, FaSmile, FaWrench } from 'react-icons/fa';
+import { FaCheckCircle, FaClock, FaExclamationTriangle, FaHourglassHalf, FaLock, FaSmile, FaWrench } from 'react-icons/fa';
 
 interface PaymentLink {
   id: string;
@@ -104,7 +104,7 @@ export default function CustomerPayPage() {
       </div>
 
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '32px 20px' }}>
-        {isExpired && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 10, padding: 14, marginBottom: 20, color: '#dc2626', fontWeight: 600 }}>⏰ This payment link has expired. Please contact the shop.</div>}
+        {isExpired && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 10, padding: 14, marginBottom: 20, color: '#dc2626', fontWeight: 600 }}><FaClock style={{marginRight:4}} /> This payment link has expired. Please contact the shop.</div>}
         {isAlreadyPaid && <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 10, padding: 14, marginBottom: 20, color: '#16a34a', fontWeight: 600 }}><FaCheckCircle style={{marginRight:4}} /> This invoice has already been paid. Thank you!</div>}
 
         {/* Invoice Summary */}
@@ -149,7 +149,7 @@ export default function CustomerPayPage() {
             {formError && <p style={{color:'#dc2626',fontSize:13,marginBottom:12,fontWeight:600}}>{formError}</p>}
             <button onClick={handlePay} disabled={paying}
               style={{ width: '100%', background: paying ? '#9ca3af' : '#e5332a', color: '#fff', border: 'none', borderRadius: 10, padding: '15px 0', fontSize: 16, fontWeight: 700, cursor: paying ? 'not-allowed' : 'pointer' }}>
-              {paying ? '⏳ Processing...' : `Pay $${Number(link?.amount).toFixed(2)}`}
+              {paying ? '<FaHourglassHalf style={{marginRight:4}} /> Processing...' : `Pay $${Number(link?.amount).toFixed(2)}`}
             </button>
 
             <p style={{ color: '#9ca3af', fontSize: 12, textAlign: 'center', marginTop: 12 }}>

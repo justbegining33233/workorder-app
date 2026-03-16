@@ -276,7 +276,7 @@ export default function WorkOrderDetailsPage() {
                   {workOrder.tracking ? (
                     <div style={{display:'flex', gap:16, alignItems:'center'}}>
                       <div style={{fontSize:14, color:'#e5e7eb'}}><FaMapMarkerAlt style={{marginRight:4}} /> Current Location: {workOrder.tracking.latitude.toFixed(4)}, {workOrder.tracking.longitude.toFixed(4)}</div>
-                      {workOrder.tracking.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>⏰ ETA: {new Date(workOrder.tracking.estimatedArrival).toLocaleTimeString()}</div>}
+                      {workOrder.tracking.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}><FaClock style={{marginRight:4}} /> ETA: {new Date(workOrder.tracking.estimatedArrival).toLocaleTimeString()}</div>}
                     </div>
                   ) : (
                     <div style={{fontSize:14, color:'#9aa3b2'}}>Live tracking not available for this job yet.</div>

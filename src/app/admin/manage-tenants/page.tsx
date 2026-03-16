@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaChartBar, FaClipboardList, FaCreditCard, FaMapMarkerAlt, FaStore, FaTimes } from 'react-icons/fa';
+import { FaBuilding, FaChartBar, FaClipboardList, FaCreditCard, FaHourglassHalf, FaMapMarkerAlt, FaStore, FaTimes } from 'react-icons/fa';
 
 type Tenant = {
   id: string;
@@ -338,7 +338,7 @@ export default function ManageTenants() {
 
         {loading ? (
           <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
-            <div style={{fontSize:32, marginBottom:16}}>⏳</div>
+            <div style={{fontSize:32, marginBottom:16}}><FaHourglassHalf style={{marginRight:4}} /></div>
             <div>Loading tenants...</div>
           </div>
         ) : tenants.length === 0 ? (

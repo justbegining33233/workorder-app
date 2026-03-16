@@ -12,7 +12,7 @@ import RealTimeWorkOrders from '@/components/RealTimeWorkOrders';
 import MobileLayout from '@/components/MobileLayout';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { FaBook, FaBox, FaCamera, FaCar, FaChartBar, FaCheckCircle, FaClipboardList, FaCog, FaComments, FaExclamationCircle, FaMapMarkerAlt, FaSearch, FaTools, FaUser, FaWrench } from 'react-icons/fa';
+import { FaBook, FaBox, FaCamera, FaCar, FaChartBar, FaCheckCircle, FaClipboardList, FaCog, FaComments, FaExclamationCircle, FaMapMarkerAlt, FaSearch, FaStopwatch, FaSyncAlt, FaTools, FaUser, FaWrench } from 'react-icons/fa';
 
 export default function TechHome() {
   const router = useRouter();
@@ -230,7 +230,7 @@ export default function TechHome() {
   const technicalTools = [
     { title: 'Diagnostic Tools', description: 'Run vehicle diagnostics and read error codes', icon: '<FaSearch style={{marginRight:4}} />', link: '/tech/diagnostics' },
     { title: 'Photo Upload', description: 'Upload photos and documentation', icon: '<FaCamera style={{marginRight:4}} />', link: '/tech/photos' },
-    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: '⏱', link: '/tech/timesheet' },
+    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: '<FaStopwatch style={{marginRight:4}} />', link: '/tech/timesheet' },
     { title: 'Customer Portal', description: 'Access customer vehicle history', icon: '<FaUser style={{marginRight:4}} />', link: '/tech/customers' },
   ];
 
@@ -874,7 +874,7 @@ export default function TechHome() {
                   </div>
                 </div>
                 <div style={{marginTop:12, fontSize:11, color:'#6b7280', textAlign:'center'}}>
-                  ⟳ Auto-refreshes every 30 seconds
+                  <FaSyncAlt style={{marginRight:4}} /> Auto-refreshes every 30 seconds
                 </div>
               </div>
             )}

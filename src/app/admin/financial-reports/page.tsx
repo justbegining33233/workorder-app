@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaChartBar, FaDollarSign, FaStore } from 'react-icons/fa';
+import { FaChartBar, FaDollarSign, FaHourglassHalf, FaStore } from 'react-icons/fa';
 
 type FinancialStats = {
   totalRevenue: string;
@@ -117,7 +117,7 @@ export default function FinancialReports() {
       <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
         {loading ? (
           <div style={{textAlign:'center', padding:48, color:'#9aa3b2'}}>
-            <div style={{fontSize:32, marginBottom:16}}>⏳</div>
+            <div style={{fontSize:32, marginBottom:16}}><FaHourglassHalf style={{marginRight:4}} /></div>
             <div>Loading financial data...</div>
           </div>
         ) : (

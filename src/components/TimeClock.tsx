@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FaCamera, FaCoffee, FaMapMarkerAlt, FaSignOutAlt, FaUnlock } from 'react-icons/fa';
+import { FaCamera, FaCaretRight, FaClock, FaCoffee, FaMapMarkerAlt, FaSignOutAlt, FaStopwatch, FaUnlock } from 'react-icons/fa';
 
 interface TimeClockProps {
   techId: string;
@@ -415,7 +415,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
           <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>
-            {onBreak ? '<FaCoffee style={{marginRight:4}} /> On Break' : isClockedIn ? '⏰ Clocked In' : '⏱ Time Clock'}
+            {onBreak ? '<FaCoffee style={{marginRight:4}} /> On Break' : isClockedIn ? '<FaClock style={{marginRight:4}} /> Clocked In' : '<FaStopwatch style={{marginRight:4}} /> Time Clock'}
           </div>
           <div style={{ fontSize: '20px', fontWeight: '600' }}>{techName || 'You'}</div>
         </div>
@@ -493,7 +493,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
               transition: 'all 0.2s',
             }}
           >
-            {loading ? 'Processing...' : onBreak ? '▶ End Break' : '<FaCoffee style={{marginRight:4}} /> Start Break'}
+            {loading ? 'Processing...' : onBreak ? '<FaCaretRight style={{marginRight:4}} /> End Break' : '<FaCoffee style={{marginRight:4}} /> Start Break'}
           </button>
         )}
       </div>

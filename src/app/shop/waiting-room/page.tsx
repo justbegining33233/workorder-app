@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import { FaBatteryFull, FaCheckCircle, FaExclamationTriangle, FaFlagCheckered, FaMobileAlt, FaOilCan, FaStar, FaWrench } from 'react-icons/fa';
+import { FaBatteryFull, FaCheckCircle, FaExclamationTriangle, FaFlagCheckered, FaHourglassHalf, FaMobileAlt, FaOilCan, FaStar, FaWrench } from 'react-icons/fa';
 
 interface WaitingRoomEntry {
   id: string;
@@ -21,7 +21,7 @@ interface WaitingRoomData {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  pending:     { label: 'Waiting', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', icon: '⏳' },
+  pending:     { label: 'Waiting', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', icon: '<FaHourglassHalf style={{marginRight:4}} />' },
   in_progress: { label: 'In Progress', color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', icon: '<FaWrench style={{marginRight:4}} />' },
   completed:   { label: 'Ready!', color: '#22c55e', bg: 'rgba(34,197,94,0.2)', icon: '<FaCheckCircle style={{marginRight:4}} />' },
   on_hold:     { label: 'On Hold', color: '#f97316', bg: 'rgba(249,115,22,0.15)', icon: '<FaExclamationTriangle style={{marginRight:4}} />' },
@@ -103,7 +103,7 @@ function WaitingRoomContent() {
 
           {waiting.length > 0 && (
             <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}>⏳ Waiting for Service</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 12 }}><FaHourglassHalf style={{marginRight:4}} /> Waiting for Service</div>
               {waiting.map(o => <StatusCard key={o.id} order={o} />)}
             </div>
           )}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBox, FaWrench } from 'react-icons/fa';
+import { FaBox, FaStopwatch, FaWrench } from 'react-icons/fa';
 
 // Category color palettes
 const CATEGORY_COLORS: Record<string, { accent: string; bandBg: string; rowBg: string }> = {
@@ -382,7 +382,7 @@ export default function PartsAndLabor() {
             onClick={() => setActiveTab('labor')}
             style={{flex:1, padding:'16px', background:activeTab === 'labor' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)', color:activeTab === 'labor' ? '#22c55e' : '#9aa3b2', border:`1px solid ${activeTab === 'labor' ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`, borderRadius:12, fontSize:16, fontWeight:700, cursor:'pointer'}}
           >
-            ⏱ Labor Rates ({laborRates.length})
+            <FaStopwatch style={{marginRight:4}} /> Labor Rates ({laborRates.length})
           </button>
         </div>
 

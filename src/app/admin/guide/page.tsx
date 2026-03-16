@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBell, FaCar, FaCloud, FaCreditCard, FaCrown, FaEnvelope, FaHardHat, FaMicroscope, FaMobileAlt, FaPencilAlt, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaBell, FaCar, FaClock, FaCloud, FaCreditCard, FaCrown, FaEnvelope, FaHardHat, FaMicroscope, FaMobileAlt, FaPencilAlt, FaUserTie, FaWrench } from 'react-icons/fa';
 
 interface Feature {
   name: string;
@@ -281,7 +281,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Time Tracking & Payroll',
-      icon: '⏰',
+      icon: '<FaClock style={{marginRight:4}} />',
       description: 'Employee time and payroll management',
       features: [
         { name: 'Clock In/Out', description: 'Technician time clock', status: 'ready', route: '/tech/timesheet', apiEndpoint: '/api/timeclock' },

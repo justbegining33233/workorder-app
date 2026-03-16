@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBolt, FaBullseye, FaChartBar, FaChartLine, FaCheckCircle, FaCreditCard, FaDollarSign, FaSyncAlt, FaTimesCircle, FaUniversity, FaWrench } from 'react-icons/fa';
+import { FaBolt, FaBullseye, FaChartBar, FaChartLine, FaCheckCircle, FaCreditCard, FaDollarSign, FaHourglassHalf, FaSyncAlt, FaTimesCircle, FaUniversity, FaWrench } from 'react-icons/fa';
 
 interface RevenueData {
   mrr: number;
@@ -330,7 +330,7 @@ export default function AdminRevenuePage() {
                   <div className="text-2xl font-bold text-yellow-400">{liveMetrics.trialingSubscriptions}</div>
                 </div>
                 <div className="w-10 h-10 bg-yellow-500/15 rounded-lg flex items-center justify-center">
-                  <span className="text-xl">⏳</span>
+                  <span className="text-xl"><FaHourglassHalf style={{marginRight:4}} /></span>
                 </div>
               </div>
             </div>
@@ -570,28 +570,28 @@ export default function AdminRevenuePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="w-12 h-12 bg-slate-800/70 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">1⃣</span>
+                <span className="text-2xl">1</span>
               </div>
               <div className="font-medium">Shop Subscribes</div>
               <div className="text-slate-400 text-sm">Shops choose a plan</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-slate-800/70 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">2⃣</span>
+                <span className="text-2xl">2</span>
               </div>
               <div className="font-medium">Stripe Collects</div>
               <div className="text-slate-400 text-sm">Secure payment processing</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-slate-800/70 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">3⃣</span>
+                <span className="text-2xl">3</span>
               </div>
               <div className="font-medium">Fees Deducted</div>
               <div className="text-slate-400 text-sm">~2.9% + $0.30 per txn</div>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl">4⃣</span>
+                <span className="text-2xl">4</span>
               </div>
               <div className="font-medium">You Get Paid</div>
               <div className="text-slate-400 text-sm">Deposited to your bank</div>

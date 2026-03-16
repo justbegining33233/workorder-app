@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
-import { FaCheckCircle, FaGift } from 'react-icons/fa';
+import { FaCheckCircle, FaGift, FaHourglassHalf } from 'react-icons/fa';
 
 interface Referral {
   id: string;
@@ -89,7 +89,7 @@ export default function ReferralsPage() {
       </div>
 
       <div style={{ padding: '24px 32px 0', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {[{ label: 'Total Referrals', value: stats.total, icon: '' }, { label: 'Converted', value: stats.converted, icon: '' }, { label: 'Pending', value: stats.pending, icon: '⏳' }, { label: 'Rewards Issued', value: `$${stats.value}`, icon: '' }].map(s => (
+        {[{ label: 'Total Referrals', value: stats.total, icon: '' }, { label: 'Converted', value: stats.converted, icon: '' }, { label: 'Pending', value: stats.pending, icon: '<FaHourglassHalf style={{marginRight:4}} />' }, { label: 'Rewards Issued', value: `$${stats.value}`, icon: '' }].map(s => (
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 20px', minWidth: 130 }}>
             <div style={{ fontSize: 22 }}>{s.icon}</div>
             <div style={{ fontSize: 26, fontWeight: 800, margin: '4px 0 2px' }}>{s.value}</div>

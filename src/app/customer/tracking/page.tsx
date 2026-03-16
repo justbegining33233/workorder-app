@@ -225,7 +225,7 @@ export default function LiveTracking() {
                       {order.location && order.location.latitude !== undefined && order.location.longitude !== undefined ? (
                         <div style={{display:'flex', gap:12, alignItems:'center'}}>
                           <div style={{fontSize:14, color:'#e5e7eb'}}><FaMapMarkerAlt style={{marginRight:4}} /> Current Location: {order.location.latitude!.toFixed(4)}, {order.location.longitude!.toFixed(4)}</div>
-                          {order.location.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}>⏰ ETA: {new Date(order.location.estimatedArrival).toLocaleTimeString()}</div>}
+                          {order.location.estimatedArrival && <div style={{fontSize:14, color:'#f59e0b'}}><FaClock style={{marginRight:4}} /> ETA: {new Date(order.location.estimatedArrival).toLocaleTimeString()}</div>}
                         </div>
                       ) : (
                         <div style={{fontSize:14, color:'#9aa3b2'}}>Live tracking not available for this job yet.</div>

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaCheck, FaMapMarkerAlt, FaPhone, FaRegStar, FaSearch, FaStar } from 'react-icons/fa';
+import { FaCheck, FaHourglassHalf, FaMapMarkerAlt, FaPhone, FaRegStar, FaSearch, FaStar } from 'react-icons/fa';
 
 interface Shop {
   id: string;
@@ -328,7 +328,7 @@ export default function FindShops() {
                             }
                           }}
                         >
-                          {togglingFavorites.has(shop.id) ? '⏳' : (isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
+                          {togglingFavorites.has(shop.id) ? '<FaHourglassHalf style={{marginRight:4}} />' : (isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
                         </span>
                         <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>
                           {shop.name}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaClipboardList, FaDollarSign, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
+import { FaClipboardList, FaDollarSign, FaStopwatch, FaTools, FaTrash, FaWrench } from 'react-icons/fa';
 
 interface WorkOrderTemplate {
   id: string;
@@ -152,7 +152,7 @@ export default function WorkOrderTemplatesPage() {
                 {t.description && <p style={{ color: '#64748b', fontSize: 13, marginBottom: 10 }}>{t.description}</p>}
                 <div style={{ display: 'flex', gap: 16, fontSize: 13, color: '#94a3b8' }}>
                   <span><FaDollarSign style={{marginRight:4}} /> ${t.estimatedCost.toFixed(2)}</span>
-                  <span>⏱ {t.laborHours}h</span>
+                  <span><FaStopwatch style={{marginRight:4}} /> {t.laborHours}h</span>
                 </div>
                 {(t.repairs.length > 0 || t.maintenance.length > 0) && (
                   <div style={{ marginTop: 10, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 10 }}>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaChartBar, FaCheck, FaClipboardList, FaCog, FaDollarSign, FaEnvelope, FaLock, FaSave, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
+import { FaBuilding, FaChartBar, FaCheck, FaClipboardList, FaCog, FaDollarSign, FaEnvelope, FaHourglassHalf, FaLock, FaSave, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 
 export default function AdminTools() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -62,7 +62,7 @@ export default function AdminTools() {
     { name: 'Financial Reports', description: 'Revenue, payouts, and financial analytics', icon: '<FaDollarSign style={{marginRight:4}} />', href: '/admin/financial-reports', color: '#f59e0b' },
     { name: 'User Management', description: 'Manage all platform users and roles', icon: '<FaWrench style={{marginRight:4}} />', href: '/admin/user-management', color: '#a855f7' },
     { name: 'Approved Shops', description: 'View all verified and active shop partners', icon: '<FaCheck style={{marginRight:4}} />', href: '/admin/accepted-shops', color: '#22c55e' },
-    { name: 'Pending Shops', description: 'Review and approve new shop applications', icon: '⏳', href: '/admin/pending-shops', color: '#e5332a' },
+    { name: 'Pending Shops', description: 'Review and approve new shop applications', icon: '<FaHourglassHalf style={{marginRight:4}} />', href: '/admin/pending-shops', color: '#e5332a' },
     { name: 'Activity Logs', description: 'Complete system activity history', icon: '<FaClipboardList style={{marginRight:4}} />', href: '/admin/activity-logs', color: '#3b82f6' },
     { name: 'System Settings', description: 'Configure platform settings and preferences', icon: '<FaCog style={{marginRight:4}} />', href: '/admin/system-settings', color: '#6b7280' },
     { name: 'Email Templates', description: 'Manage email notifications and templates', icon: '<FaEnvelope style={{marginRight:4}} />', href: '/admin/email-templates', color: '#8b5cf6' },

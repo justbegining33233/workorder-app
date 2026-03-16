@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBell, FaCar, FaCheckCircle, FaMapMarkerAlt, FaRoad, FaStore } from 'react-icons/fa';
+import { FaBell, FaCar, FaCheckCircle, FaMapMarkerAlt, FaRoad, FaStepForward, FaStore } from 'react-icons/fa';
 
 interface Approval {
   id: string;
@@ -173,7 +173,7 @@ export default function RecurringApprovals() {
                           transition: 'all 0.2s',
                         }}
                       >
-                        ⏭ Skip This Time
+                        <FaStepForward style={{marginRight:4}} /> Skip This Time
                       </button>
                     </div>
                   </div>
@@ -200,7 +200,7 @@ export default function RecurringApprovals() {
                         fontSize: 12,
                         fontWeight: 600,
                       }}>
-                        {done[approval.id] === 'confirmed' ? '<FaCheckCircle style={{marginRight:4}} /> Scheduled' : '⏭ Skipped'}
+                        {done[approval.id] === 'confirmed' ? '<FaCheckCircle style={{marginRight:4}} /> Scheduled' : '<FaStepForward style={{marginRight:4}} /> Skipped'}
                       </span>
                     </div>
                   ))}

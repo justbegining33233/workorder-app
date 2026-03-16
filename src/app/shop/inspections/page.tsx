@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
-import { FaCar, FaCheckCircle, FaExclamationTriangle, FaTag, FaTimesCircle } from 'react-icons/fa';
+import { FaCar, FaCheckCircle, FaExclamationTriangle, FaHourglassHalf, FaTag, FaTimesCircle } from 'react-icons/fa';
 
 interface StateInspection {
   id: string;
@@ -22,7 +22,7 @@ const RESULT_STYLE: Record<string, { bg: string; color: string; icon: string }> 
   pass:    { bg: 'rgba(34,197,94,0.15)',  color: '#22c55e', icon: '<FaCheckCircle style={{marginRight:4}} />' },
   fail:    { bg: 'rgba(229,51,42,0.15)',  color: '#e5332a', icon: '<FaTimesCircle style={{marginRight:4}} />' },
   waiver:  { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', icon: '<FaExclamationTriangle style={{marginRight:4}} />' },
-  pending: { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', icon: '⏳' },
+  pending: { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', icon: '<FaHourglassHalf style={{marginRight:4}} />' },
 };
 
 export default function StateInspectionsPage() {
@@ -135,7 +135,7 @@ export default function StateInspectionsPage() {
                   <option value="pass"><FaCheckCircle style={{marginRight:4}} /> Pass</option>
                   <option value="fail"><FaTimesCircle style={{marginRight:4}} /> Fail</option>
                   <option value="waiver"><FaExclamationTriangle style={{marginRight:4}} /> Waiver</option>
-                  <option value="pending">⏳ Pending</option>
+                  <option value="pending"><FaHourglassHalf style={{marginRight:4}} /> Pending</option>
                 </select>
               </div>
             </div>

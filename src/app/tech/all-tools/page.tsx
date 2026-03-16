@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBook, FaTools } from 'react-icons/fa';
+import { FaBook, FaStopwatch, FaTools } from 'react-icons/fa';
 
 export default function AllTechTools() {
   const { user, isLoading } = useRequireAuth(['tech']);
@@ -82,7 +82,7 @@ export default function AllTechTools() {
     {
       title: 'Time Tracking',
       description: 'Clock in/out, track billable hours, and submit timesheets',
-      icon: '⏱',
+      icon: '<FaStopwatch style={{marginRight:4}} />',
       link: '/tech/timesheet',
       category: 'Time Management'
     },

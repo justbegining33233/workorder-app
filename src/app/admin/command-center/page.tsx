@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBolt, FaChartBar, FaChartLine, FaCheck, FaDollarSign, FaExclamationTriangle, FaRegStar, FaStar } from 'react-icons/fa';
+import { FaBolt, FaChartBar, FaChartLine, FaCheck, FaCheckSquare, FaDollarSign, FaDotCircle, FaExclamationTriangle, FaRegCircle, FaRegStar, FaStar, FaSyncAlt } from 'react-icons/fa';
 
 interface CommandCenterData {
   timestamp: string;
@@ -190,10 +190,10 @@ export default function CommandCenterPage() {
 
   const tabs = [
     { id: 'business', label: 'Business', icon: '<FaDollarSign style={{marginRight:4}} />' },
-    { id: 'overview', label: 'Overview', icon: '◉' },
+    { id: 'overview', label: 'Overview', icon: '<FaDotCircle style={{marginRight:4}} />' },
     { id: 'operations', label: 'Operations', icon: '<FaBolt style={{marginRight:4}} />' },
-    { id: 'shops', label: 'Shops', icon: '▣' },
-    { id: 'team', label: 'Team', icon: '◎' },
+    { id: 'shops', label: 'Shops', icon: '<FaCheckSquare style={{marginRight:4}} />' },
+    { id: 'team', label: 'Team', icon: '<FaRegCircle style={{marginRight:4}} />' },
   ];
 
   return (
@@ -216,7 +216,7 @@ export default function CommandCenterPage() {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
-                    <span className="text-xl">⌘</span>
+                    <span className="text-xl">Cmd</span>
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-900 animate-pulse"></div>
                 </div>
@@ -248,7 +248,7 @@ export default function CommandCenterPage() {
                 onClick={fetchData}
                 className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all hover:scale-105"
               >
-                ↻
+                <FaSyncAlt style={{marginRight:4}} />
               </button>
               <div className="w-px h-8 bg-white/10"></div>
               <button
@@ -392,7 +392,7 @@ export default function CommandCenterPage() {
                 value={`${data?.businessMetrics?.retentionRate || 0}%`}
                 sublabel="rate"
                 color="green"
-                icon="↺"
+                icon=""
                 isString
               />
               <MetricCard
@@ -595,7 +595,7 @@ export default function CommandCenterPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
               {/* Work Order Pipeline */}
               <div className="lg:col-span-1">
-                <GlassCard title="Work Order Pipeline" icon="◉">
+                <GlassCard title="Work Order Pipeline" icon="">
                   <div className="space-y-3">
                     {data?.realTimeOps.workOrdersByStatus && Object.entries(data.realTimeOps.workOrdersByStatus).map(([status, count]) => (
                       <StatusBar key={status} status={status} count={count} total={Object.values(data.realTimeOps.workOrdersByStatus).reduce((a, b) => a + b, 0)} />
@@ -606,7 +606,7 @@ export default function CommandCenterPage() {
 
               {/* Subscription Distribution */}
               <div className="lg:col-span-1">
-                <GlassCard title="Subscriptions" icon="◈">
+                <GlassCard title="Subscriptions" icon="">
                   <div className="grid grid-cols-2 gap-3">
                     {data?.subscriptionHealth.byPlan && Object.entries(data.subscriptionHealth.byPlan).map(([plan, count]) => (
                       <div key={plan} className="p-3 rounded-xl bg-white/5 border border-white/5">
@@ -676,14 +676,14 @@ export default function CommandCenterPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                    <span className="text-4xl mb-2 opacity-20">◎</span>
+                    <span className="text-4xl mb-2 opacity-20"><FaRegCircle style={{marginRight:4}} /></span>
                     <span>No active employees</span>
                   </div>
                 )}
               </GlassCard>
 
               {/* Shop Health */}
-              <GlassCard title="Shop Health" icon="▣">
+              <GlassCard title="Shop Health" icon="">
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="p-4 rounded-xl bg-white/5 border border-white/5">
                     <div className="text-3xl font-bold">{data?.shopHealth.totalApproved || 0}</div>
@@ -719,7 +719,7 @@ export default function CommandCenterPage() {
 
         {activeTab === 'operations' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <GlassCard title="Work Order Status" icon="◉">
+            <GlassCard title="Work Order Status" icon="">
               <div className="space-y-4">
                 {data?.realTimeOps.workOrdersByStatus && Object.entries(data.realTimeOps.workOrdersByStatus).map(([status, count]) => (
                   <div key={status} className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
@@ -806,7 +806,7 @@ export default function CommandCenterPage() {
 
         {activeTab === 'shops' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <GlassCard title="Shop Overview" icon="▣">
+            <GlassCard title="Shop Overview" icon="">
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-6 rounded-xl bg-white/5 border border-white/5 text-center">
                   <div className="text-4xl font-bold mb-1">{data?.shopHealth.totalApproved || 0}</div>
@@ -827,7 +827,7 @@ export default function CommandCenterPage() {
               </div>
             </GlassCard>
 
-            <GlassCard title="Pending Approvals" icon="⏳">
+            <GlassCard title="Pending Approvals" icon="">
               {data?.shopHealth.pendingShops && data.shopHealth.pendingShops.length > 0 ? (
                 <div className="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
                   {data.shopHealth.pendingShops.map((shop: any, i: number) => (
@@ -877,7 +877,7 @@ export default function CommandCenterPage() {
 
         {activeTab === 'team' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <GlassCard title="Workforce Stats" icon="◎">
+            <GlassCard title="Workforce Stats" icon="">
               <div className="space-y-4">
                 <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex justify-between items-center">
                   <span className="text-slate-400">Total Technicians</span>
@@ -917,7 +917,7 @@ export default function CommandCenterPage() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-slate-500">
-                  <span className="text-5xl mb-3 opacity-20">◎</span>
+                  <span className="text-5xl mb-3 opacity-20"><FaRegCircle style={{marginRight:4}} /></span>
                   <span>No active employees</span>
                 </div>
               )}

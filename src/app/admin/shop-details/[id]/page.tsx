@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaCalendarAlt, FaCheck, FaCreditCard, FaExclamationTriangle, FaPhone, FaStar, FaTimesCircle } from 'react-icons/fa';
+import { FaBuilding, FaCalendarAlt, FaCheck, FaCreditCard, FaExclamationTriangle, FaHourglassHalf, FaPhone, FaStar, FaTimesCircle } from 'react-icons/fa';
 
 type ShopDetails = {
   id: string;
@@ -138,7 +138,7 @@ export default function ShopDetailsPage() {
     return (
       <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
+          <div style={{ fontSize: 48, marginBottom: 16 }}><FaHourglassHalf style={{marginRight:4}} /></div>
           <div>Loading shop details...</div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaArrowDown, FaBox, FaCheck, FaCheckCircle, FaExclamationTriangle, FaSave } from 'react-icons/fa';
+import { FaArrowDown, FaBox, FaCheck, FaCheckCircle, FaExclamationTriangle, FaHourglassHalf, FaSave } from 'react-icons/fa';
 
 export default function BackupRestore() {
   const { user, isLoading } = useRequireAuth(['admin']);
@@ -85,7 +85,7 @@ export default function BackupRestore() {
             )}
             <button onClick={handleDownload} disabled={downloading}
               style={{ background: downloading ? '#444' : '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontSize: 15, fontWeight: 700, cursor: downloading ? 'not-allowed' : 'pointer' }}>
-              {downloading ? '⏳ Preparing…' : '<FaArrowDown style={{marginRight:4}} /> Download Backup (JSON)'}
+              {downloading ? '<FaHourglassHalf style={{marginRight:4}} /> Preparing…' : '<FaArrowDown style={{marginRight:4}} /> Download Backup (JSON)'}
             </button>
           </div>
         </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBell, FaBolt, FaCalendarAlt, FaCar, FaDollarSign, FaSyncAlt, FaTrash, FaUser } from 'react-icons/fa';
+import { FaBell, FaBolt, FaCalendarAlt, FaCar, FaDollarSign, FaStopwatch, FaSyncAlt, FaTrash, FaUser } from 'react-icons/fa';
 
 interface RecurringSchedule {
   id: string;
@@ -402,7 +402,7 @@ export default function RecurringWorkOrders() {
                       )}
                       {s.estimatedCost && <span><FaDollarSign style={{marginRight:4}} /> ~${s.estimatedCost.toFixed(2)}</span>}
                       <span><FaCalendarAlt style={{marginRight:4}} /> Next: {formatDate(s.nextRunAt)}</span>
-                      {s.lastRunAt && <span>⏱ Last ran: {formatDate(s.lastRunAt)}</span>}
+                      {s.lastRunAt && <span><FaStopwatch style={{marginRight:4}} /> Last ran: {formatDate(s.lastRunAt)}</span>}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">

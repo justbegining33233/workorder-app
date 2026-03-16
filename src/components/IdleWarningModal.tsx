@@ -1,3 +1,4 @@
+import { FaStopwatch } from 'react-icons/fa';
 "use client";
 
 
@@ -20,7 +21,7 @@ export default function IdleWarningModal({ secondsLeft, onStay, onLogout }: Prop
         borderRadius: 14, padding: '32px 36px', maxWidth: 380, width: '90%',
         textAlign: 'center', boxShadow: '0 8px 40px rgba(229,51,42,0.3)',
       }}>
-        <div style={{ fontSize: 42, marginBottom: 12 }}>⏱</div>
+        <div style={{ fontSize: 42, marginBottom: 12 }}><FaStopwatch style={{marginRight:4}} /></div>
         <h2 style={{ color: '#fff', fontSize: 20, fontWeight: 700, margin: '0 0 10px' }}>
           Still there?
         </h2>

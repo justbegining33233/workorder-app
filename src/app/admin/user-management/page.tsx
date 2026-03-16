@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBuilding, FaEnvelope, FaUsers } from 'react-icons/fa';
+import { FaBuilding, FaEnvelope, FaHourglassHalf, FaUsers } from 'react-icons/fa';
 
 type User = {
   id: string;
@@ -186,7 +186,7 @@ export default function UserManagement() {
         {/* User List */}
         {loading ? (
           <div style={{textAlign:'center', padding:60, color:'#9aa3b2'}}>
-            <div style={{fontSize:48, marginBottom:16}}>⏳</div>
+            <div style={{fontSize:48, marginBottom:16}}><FaHourglassHalf style={{marginRight:4}} /></div>
             <div>Loading users...</div>
           </div>
         ) : filteredUsers.length === 0 ? (

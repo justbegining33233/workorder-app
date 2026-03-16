@@ -1,4 +1,5 @@
 'use client';
+import { FaClock } from 'react-icons/fa';
 
 import { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
@@ -222,7 +223,7 @@ export default function TechTimesheet() {
             <Link href="/tech/all-tools" style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:8, display:'inline-block'}}>
               ← Back to Tools
             </Link>
-            <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>⏰ Time Tracking</h1>
+            <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaClock style={{marginRight:4}} /> Time Tracking</h1>
             <p style={{fontSize:14, color:'#9aa3b2'}}>Track your work hours, breaks, and job time for payroll</p>
           </div>
           <div style={{textAlign:'right'}}>
