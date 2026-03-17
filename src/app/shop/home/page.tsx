@@ -28,13 +28,13 @@ interface Job {
 interface TeamMember {
   name: string;
   role: string;
-  avatar: string;
+  avatar: React.ReactNode;
   status: string;
   jobs: number;
 }
 
 type QuickAction = {
-  label: string;
+  label: React.ReactNode;
   href: string;
   tint: string;
   color: string;

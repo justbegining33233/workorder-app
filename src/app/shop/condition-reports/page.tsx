@@ -96,7 +96,7 @@ export default function ConditionReportsPage() {
       </div>
 
       <div style={{ padding: '20px 32px 0', display: 'flex', gap: 8 }}>
-        {[['all', 'All Reports'], ['check_in', <><FaKey style={{marginRight:4}} />Check-In</>], ['check_out', <><FaCar style={{marginRight:4}} />Check-Out</>]].map(([v, label]) => (
+        {([['all', 'All Reports'], ['check_in', <><FaKey style={{marginRight:4}} />Check-In</>], ['check_out', <><FaCar style={{marginRight:4}} />Check-Out</>]] as [string, React.ReactNode][]).map(([v, label]) => (
           <button key={v} onClick={() => setFilter(v as any)}
             style={{ background: filter === v ? '#e5332a' : 'rgba(255,255,255,0.06)', color: filter === v ? '#fff' : '#e5e7eb', border: `1px solid ${filter === v ? '#e5332a' : 'rgba(255,255,255,0.12)'}`, borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
             {label}
