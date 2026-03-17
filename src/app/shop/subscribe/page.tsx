@@ -1,5 +1,5 @@
-import { FaCheck } from 'react-icons/fa';
 "use client";
+import { FaCheck } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';

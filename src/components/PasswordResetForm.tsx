@@ -1,5 +1,5 @@
-import { FaTimes } from 'react-icons/fa';
 "use client";
+import { FaTimes } from 'react-icons/fa';
 import { useState } from 'react';
 
 type Props = { onClose?: () => void };

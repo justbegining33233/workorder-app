@@ -40,7 +40,7 @@ export default function SalesFunnel({ visits, trials, members, customers }: Sale
       <div className="relative z-10 flex items-center justify-between mb-4">
         <div>
           <p className="text-[11px] uppercase tracking-[0.08em] text-slate-400">Sales Funnel</p>
-          <h3 className="text-lg font-semibold text-white">Website <FaArrowRight style={{marginRight:4}} /> Trials -> Members -> Customers</h3>
+          <h3 className="text-lg font-semibold text-white">Website <FaArrowRight style={{marginRight:4}} /> Trials {'>'} Members {'>'} Customers</h3>
         </div>
         <StatusBadge label="Live" tone="success" pulse size="sm" />
       </div>

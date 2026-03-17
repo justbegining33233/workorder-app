@@ -599,7 +599,7 @@ export default function AdminRevenuePage() {
           </div>
           <div className="mt-4 p-4 bg-[#111827]/60 border border-[#1f2937] rounded-xl">
             <p className="text-slate-300 text-sm">
-              <strong><FaBolt style={{marginRight:4}} /> Setup Required:</strong> Go to <a href="https://dashboard.stripe.com/settings/payouts" target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Stripe Dashboard <FaArrowRight style={{marginRight:4}} /> Settings -> Payouts</a> to connect your bank account and set your payout schedule (daily, weekly, or monthly).
+              <strong><FaBolt style={{marginRight:4}} /> Setup Required:</strong> Go to <a href="https://dashboard.stripe.com/settings/payouts" target="_blank" rel="noopener noreferrer" className="text-emerald-300 hover:underline">Stripe Dashboard <FaArrowRight style={{marginRight:4}} /> Settings {'>'} Payouts</a> to connect your bank account and set your payout schedule (daily, weekly, or monthly).
             </p>
           </div>
         </div>
