@@ -347,7 +347,7 @@ export default function Estimates() {
                         opacity: loading === estimate.id ? 0.7 : 1
                       }}
                     >
-                      {loading === estimate.id ? 'Accepting...' : '<FaCheckCircle style={{marginRight:4}} /> Accept Estimate'}
+                      {loading === estimate.id ? 'Accepting...' : <><FaCheckCircle style={{marginRight:4}} /> Accept Estimate</>}
                     </button>
                     <button
                       onClick={() => handleDeny(estimate.id)}
@@ -365,7 +365,7 @@ export default function Estimates() {
                         opacity: loading === estimate.id ? 0.7 : 1
                       }}
                     >
-                      {loading === estimate.id ? 'Denying...' : '<FaTimesCircle style={{marginRight:4}} /> Deny Estimate'}
+                      {loading === estimate.id ? 'Denying...' : <><FaTimesCircle style={{marginRight:4}} /> Deny Estimate</>}
                     </button>
                   </div>
                 </div>

@@ -296,7 +296,7 @@ export default function ShopDetailsPage() {
               <div>
                 <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 4, textTransform: 'uppercase' }}>Profile Complete</div>
                 <div style={{ fontSize: 14, color: shop.profileComplete ? '#22c55e' : '#f59e0b' }}>
-                  {shop.profileComplete ? '<FaCheck style={{marginRight:4}} /> Complete' : '<FaExclamationTriangle style={{marginRight:4}} /> Incomplete'}
+                  {shop.profileComplete ? <><FaCheck style={{marginRight:4}} /> Complete</> : <><FaExclamationTriangle style={{marginRight:4}} /> Incomplete</>}
                 </div>
               </div>
             </div>

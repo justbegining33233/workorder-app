@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
 import { FaBatteryFull, FaLightbulb, FaOilCan, FaRecycle, FaSnowflake, FaSyncAlt, FaTint } from 'react-icons/fa';
 
@@ -13,7 +13,7 @@ interface EnvFee {
   unit?: string;
 }
 
-const FEE_ICONS: Record<string, string> = { oil: '<FaOilCan style={{marginRight:4}} />', tire: '<FaSyncAlt style={{marginRight:4}} />', refrigerant: '<FaSnowflake style={{marginRight:4}} />', battery: '<FaBatteryFull style={{marginRight:4}} />', coolant: '<FaTint style={{marginRight:4}} />', other: '<FaRecycle style={{marginRight:4}} />' };
+const FEE_ICONS: Record<string, ReactNode> = { oil: <FaOilCan style={{marginRight:4}} />, tire: <FaSyncAlt style={{marginRight:4}} />, refrigerant: <FaSnowflake style={{marginRight:4}} />, battery: <FaBatteryFull style={{marginRight:4}} />, coolant: <FaTint style={{marginRight:4}} />, other: <FaRecycle style={{marginRight:4}} /> };
 
 export default function EnvironmentalFeesPage() {
   const { user, isLoading } = useRequireAuth(['shop']);
@@ -100,7 +100,7 @@ export default function EnvironmentalFeesPage() {
               {fees.map(fee => (
                 <div key={fee.id} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${fee.isActive ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.08)'}`, borderRadius: 12, padding: 18 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                    <div style={{ fontSize: 28 }}>{FEE_ICONS[fee.feeType] || '<FaRecycle style={{marginRight:4}} />'}</div>
+                    <div style={{ fontSize: 28 }}>{FEE_ICONS[fee.feeType] || <FaRecycle style={{marginRight:4}} />}</div>
                     <span style={{ background: fee.isActive ? 'rgba(34,197,94,0.2)' : 'rgba(107,114,128,0.2)', color: fee.isActive ? '#22c55e' : '#9ca3af', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontWeight: 700 }}>{fee.isActive ? 'Active' : 'Disabled'}</span>
                   </div>
                   <div style={{ fontWeight: 700, fontSize: 15 }}>{fee.name}</div>

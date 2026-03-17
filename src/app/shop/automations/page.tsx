@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
 import { FaBolt, FaCalendarAlt, FaCog, FaDollarSign, FaEnvelope, FaMobileAlt, FaStar, FaSyncAlt } from 'react-icons/fa';
 
@@ -16,12 +16,12 @@ interface AutomationRule {
   _count?: { executions: number };
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  appointment_reminder: '<FaCalendarAlt style={{marginRight:4}} /> Appointment Reminder',
-  follow_up: '<FaSyncAlt style={{marginRight:4}} /> Follow-Up',
-  review_request: '<FaStar style={{marginRight:4}} /> Review Request',
-  overdue_invoice: '<FaDollarSign style={{marginRight:4}} /> Overdue Invoice',
-  custom: '<FaCog style={{marginRight:4}} /> Custom',
+const TYPE_LABELS: Record<string, ReactNode> = {
+  appointment_reminder: <><FaCalendarAlt style={{marginRight:4}} /> Appointment Reminder</>,
+  follow_up: <><FaSyncAlt style={{marginRight:4}} /> Follow-Up</>,
+  review_request: <><FaStar style={{marginRight:4}} /> Review Request</>,
+  overdue_invoice: <><FaDollarSign style={{marginRight:4}} /> Overdue Invoice</>,
+  custom: <><FaCog style={{marginRight:4}} /> Custom</>,
 };
 
 const TRIGGER_OPTIONS = [

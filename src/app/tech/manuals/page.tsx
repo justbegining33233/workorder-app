@@ -36,10 +36,10 @@ export default function TechManuals() {
         <h2 style={{fontSize:16, fontWeight:700, color:'#9aa3b2', marginBottom:12, textTransform:'uppercase', letterSpacing:1}}>Professional Services</h2>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:16, marginBottom:32}}>
           {[
-            { label: 'ALLDATA DIY', desc: 'Factory OEM repair info  -  wiring diagrams, torque specs, TSBs', icon: '<FaBook style={{marginRight:4}} />', href: 'https://alldatadiy.com', badge: 'Most Complete' },
+            { label: 'ALLDATA DIY', desc: 'Factory OEM repair info  -  wiring diagrams, torque specs, TSBs', icon: <FaBook style={{marginRight:4}} />, href: 'https://alldatadiy.com', badge: 'Most Complete' },
             { label: 'Mitchell 1 ProDemand', desc: 'OEM + SureTrack real-fix repair procedures', icon: '', href: 'https://mitchell1.com', badge: 'Industry Standard' },
             { label: 'Identifix Direct-Hit', desc: 'Confirmed fixes, OEM recalls, and tech hotline', icon: '', href: 'https://identifix.com', badge: 'Fixed-First-Time' },
-            { label: 'Autodata', desc: 'Timing, service intervals, labor times, wiring', icon: '<FaStopwatch style={{marginRight:4}} />', href: 'https://autodata-group.com', badge: '' },
+            { label: 'Autodata', desc: 'Timing, service intervals, labor times, wiring', icon: <FaStopwatch style={{marginRight:4}} />, href: 'https://autodata-group.com', badge: '' },
           ].map(s => (
             <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
               style={{background:'rgba(0,0,0,0.35)', border:'1px solid rgba(245,158,11,0.3)', borderRadius:12, padding:20, textDecoration:'none', display:'block', position:'relative'}}>
@@ -55,10 +55,10 @@ export default function TechManuals() {
         <h2 style={{fontSize:16, fontWeight:700, color:'#9aa3b2', marginBottom:12, textTransform:'uppercase', letterSpacing:1}}>Free Resources</h2>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:16, marginBottom:32}}>
           {[
-            { label: 'NHTSA TSB Search', desc: 'Official Technical Service Bulletins by VIN or YMME', icon: '<FaUniversity style={{marginRight:4}} />', href: 'https://www.nhtsa.gov/vehicle/latest/#/' },
+            { label: 'NHTSA TSB Search', desc: 'Official Technical Service Bulletins by VIN or YMME', icon: <FaUniversity style={{marginRight:4}} />, href: 'https://www.nhtsa.gov/vehicle/latest/#/' },
             { label: 'NHTSA Recall Search', desc: 'Check for open safety recalls by VIN', icon: '', href: 'https://www.nhtsa.gov/recalls' },
             { label: 'iATN TechHelp', desc: 'Free peer-to-peer tech discussion forums', icon: '', href: 'https://iatn.net' },
-            { label: 'YouTube - EricTheCarGuy', desc: 'Free visual repair walkthroughs', icon: '<FaCaretRight style={{marginRight:4}} />', href: 'https://youtube.com/@EricTheCarGuy' },
+            { label: 'YouTube - EricTheCarGuy', desc: 'Free visual repair walkthroughs', icon: <FaCaretRight style={{marginRight:4}} />, href: 'https://youtube.com/@EricTheCarGuy' },
             { label: 'Gates Timing Guide', desc: 'Timing belt intervals & kits by vehicle', icon: '', href: 'https://www.gates.com/en-us/resources/tools-and-resources/timing-drive-component-kits' },
             { label: 'FCA ServiceInfo (Mopar)', desc: 'Stellantis/Mopar factory service info', icon: '', href: 'https://www.fcaserviceinfo.com' },
           ].map(r => (

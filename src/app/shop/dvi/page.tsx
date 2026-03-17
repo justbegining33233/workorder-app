@@ -192,7 +192,7 @@ export default function DVIPage() {
             {selected.approvalToken && (
               <button onClick={() => copyLink(selected.approvalToken)}
                 style={{ width: '100%', background: 'rgba(59,130,246,0.2)', color: '#60a5fa', border: '1px solid #3b82f6', borderRadius: 8, padding: '10px 0', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16 }}>
-                {copied === selected.approvalToken ? '<FaCheckCircle style={{marginRight:4}} /> Link Copied!' : '<FaLink style={{marginRight:4}} /> Copy Customer Review Link'}
+                {copied === selected.approvalToken ? <><FaCheckCircle style={{marginRight:4}} /> Link Copied!</> : <><FaLink style={{marginRight:4}} /> Copy Customer Review Link</>}
               </button>
             )}
 

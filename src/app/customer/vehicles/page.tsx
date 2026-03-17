@@ -228,7 +228,7 @@ export default function CustomerVehiclesPage() {
             vehicles.map((vehicle) => (
               <div key={vehicle.id} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24 }}>
                 <div style={{ fontSize: 40, marginBottom: 16, textAlign: 'center' }}>
-                  {vehicle.vehicleType === 'semi-truck' ? '<FaTruck style={{marginRight:4}} />' : vehicle.vehicleType === 'trailer' ? '<FaTruck style={{marginRight:4}} />' : vehicle.vehicleType === 'equipment' ? '<FaBuilding style={{marginRight:4}} />' : '<FaCar style={{marginRight:4}} />'}
+                  {vehicle.vehicleType === 'semi-truck' ? <FaTruck style={{marginRight:4}} /> : vehicle.vehicleType === 'trailer' ? <FaTruck style={{marginRight:4}} /> : vehicle.vehicleType === 'equipment' ? <FaBuilding style={{marginRight:4}} /> : <FaCar style={{marginRight:4}} />}
                 </div>
                 
                 <h3 style={{ color: '#e5e7eb', fontSize: 20, fontWeight: 700, marginBottom: 4, textAlign: 'center' }}>

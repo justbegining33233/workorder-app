@@ -67,10 +67,10 @@ export default function ManagerDashboard() {
         setData(dashboardData);
       } else {
         const errorData = await response.json();
-        console.error('<FaTimesCircle style={{marginRight:4}} /> Failed to fetch dashboard data:', response.status, errorData);
+        console.error(<><FaTimesCircle style={{marginRight:4}} /> Failed to fetch dashboard data:</>, response.status, errorData);
       }
     } catch (error) {
-      console.error('<FaBolt style={{marginRight:4}} /> Error fetching dashboard:', error);
+      console.error(<><FaBolt style={{marginRight:4}} /> Error fetching dashboard:</>, error);
     } finally {
       setLoading(false);
     }

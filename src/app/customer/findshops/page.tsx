@@ -328,7 +328,7 @@ export default function FindShops() {
                             }
                           }}
                         >
-                          {togglingFavorites.has(shop.id) ? '<FaHourglassHalf style={{marginRight:4}} />' : (isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
+                          {togglingFavorites.has(shop.id) ? <FaHourglassHalf style={{marginRight:4}} /> : (isFavorite ? <FaStar style={{marginRight:4}} /> : <FaRegStar style={{marginRight:4}} />)}
                         </span>
                         <h3 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}>
                           {shop.name}

@@ -181,7 +181,7 @@ export default function EmployeeProfile() {
                   fontSize: 48,
                   margin: '0 auto 16px',
                 }}>
-                  {employee.role === 'manager' ? '<FaUserTie style={{marginRight:4}} />' : '<FaWrench style={{marginRight:4}} />'}
+                  {employee.role === 'manager' ? <FaUserTie style={{marginRight:4}} /> : <FaWrench style={{marginRight:4}} />}
                 </div>
                 <div style={{ color: '#e5e7eb', fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
                   {employee.firstName} {employee.lastName}
@@ -204,7 +204,7 @@ export default function EmployeeProfile() {
                     fontSize: 12,
                     fontWeight: 600,
                   }}>
-                    {employee.available ? '<FaCheck style={{marginRight:4}} /> Available' : '<FaRegCircle style={{marginRight:4}} /> Unavailable'}
+                    {employee.available ? <><FaCheck style={{marginRight:4}} /> Available</> : <><FaRegCircle style={{marginRight:4}} /> Unavailable</>}
                   </div>
                 </div>
 
@@ -340,7 +340,7 @@ export default function EmployeeProfile() {
                         fontWeight: 600,
                       }}
                     >
-                      {loading ? 'Saving...' : '<FaSave style={{marginRight:4}} /> Save Changes'}
+                      {loading ? 'Saving...' : <><FaSave style={{marginRight:4}} /> Save Changes</>}
                     </button>
                     <button
                       onClick={() => {
@@ -460,7 +460,7 @@ export default function EmployeeProfile() {
                   <div>
                     <div style={{ color: '#9aa3b2', fontSize: 11, textTransform: 'uppercase', marginBottom: 4 }}>Position</div>
                     <div style={{ color: '#e5e7eb', fontSize: 16 }}>
-                      {employee.role === 'manager' ? '<FaUserTie style={{marginRight:4}} /> Manager' : '<FaWrench style={{marginRight:4}} /> Technician'}
+                      {employee.role === 'manager' ? <><FaUserTie style={{marginRight:4}} /> Manager</> : <><FaWrench style={{marginRight:4}} /> Technician</>}
                     </div>
                   </div>
                 </div>

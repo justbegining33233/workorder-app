@@ -24,7 +24,7 @@ const TERMS = ['Net 30', 'Net 15', 'Net 60', 'COD', 'Prepaid', 'Credit Card'];
 const BLANK_V = { name: '', contactName: '', phone: '', email: '', website: '', category: 'parts', accountNumber: '', paymentTerms: 'Net 30', rating: '5', notes: '', isActive: true };
 const BLANK_ITEM: OrderItem = { itemName: '', sku: '', quantity: '1', unitCost: '' };
 
-const ratingStars = (r: number) => '<FaStar style={{marginRight:4}} />'.repeat(Math.round(r)) + '<FaRegStar style={{marginRight:4}} />'.repeat(5 - Math.round(r));
+const ratingStars = (r: number) => [...Array.from({length: Math.round(r)}, (_, i) => <FaStar key={i} />), ...Array.from({length: 5 - Math.round(r)}, (_, i) => <FaRegStar key={i} />)];
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   ordered:   { bg: 'rgba(59,130,246,0.2)',  text: '#60a5fa' },
   shipped:   { bg: 'rgba(245,158,11,0.2)',  text: '#fbbf24' },

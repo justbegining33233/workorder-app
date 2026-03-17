@@ -1,7 +1,7 @@
 'use client';
 import { FaArrowRight, FaBolt, FaClock, FaHourglassHalf, FaSave } from 'react-icons/fa';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
@@ -12,7 +12,7 @@ interface FeatureStatus {
 
 interface SystemModule {
   name: string;
-  icon: string;
+  icon: ReactNode;
   description: string;
   features: FeatureStatus[];
   route?: string;
@@ -150,7 +150,7 @@ export default function AdminTestPage() {
     },
     {
       name: 'Time & Payroll',
-      icon: '<FaClock style={{marginRight:4}} />',
+      icon: <FaClock style={{marginRight:4}} />,
       description: 'Clock in/out, GPS, time entries, payroll, overtime',
       features: [
         { name: 'Clock In/Out', status: 'operational' },
@@ -565,8 +565,8 @@ export default function AdminTestPage() {
                 {/* Services */}
                 <div className="space-y-2">
                   {[
-                    { key: 'api', label: 'API Server', icon: '<FaBolt style={{marginRight:4}} />' },
-                    { key: 'database', label: 'Database', icon: '<FaSave style={{marginRight:4}} />' },
+                    { key: 'api', label: 'API Server', icon: <FaBolt style={{marginRight:4}} /> },
+                    { key: 'database', label: 'Database', icon: <FaSave style={{marginRight:4}} /> },
                     { key: 'auth', label: 'Auth Service', icon: '' },
                   ].map((item) => (
                     <div 
@@ -599,7 +599,7 @@ export default function AdminTestPage() {
                 <h3 className="text-sm font-semibold text-[#E2E8F0] mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { href: '/admin/pending-shops', icon: '<FaHourglassHalf style={{marginRight:4}} />', label: 'Pending', count: stats.pendingShops },
+                    { href: '/admin/pending-shops', icon: <FaHourglassHalf style={{marginRight:4}} />, label: 'Pending', count: stats.pendingShops },
                     { href: '/admin/user-management', icon: '', label: 'Users' },
                     { href: '/admin/subscriptions', icon: '', label: 'Billing' },
                     { href: '/admin/platform-analytics', icon: '', label: 'Analytics' },

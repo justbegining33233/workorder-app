@@ -217,7 +217,7 @@ export default function TechDVIPage() {
         {dviError && <p style={{color:'#ef4444',fontSize:13,margin:'0 0 12px',fontWeight:600}}>{dviError}</p>}
         <button onClick={submit} disabled={saving}
           style={{ width: '100%', background: '#e5332a', color: '#fff', border: 'none', borderRadius: 10, padding: '14px 0', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}>
-          {saving ? 'Submitting...' : '<FaCheckCircle style={{marginRight:4}} /> Submit Inspection'}
+          {saving ? 'Submitting...' : <><FaCheckCircle style={{marginRight:4}} /> Submit Inspection</>}
         </button>
       </div>
     </div>

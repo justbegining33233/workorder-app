@@ -53,14 +53,14 @@ function AdminPortalEnhancedContent() {
   }, [user, authLoading]);
 
   const features = [
-    { id: 'overview', icon: '<FaBuilding style={{marginRight:4}} />', name: 'System Overview' },
-    { id: 'tenants', icon: '<FaStore style={{marginRight:4}} />', name: 'Tenant Management' },
-    { id: 'monitoring', icon: '<FaSatelliteDish style={{marginRight:4}} />', name: 'Live Monitoring' },
-    { id: 'financials', icon: '<FaDollarSign style={{marginRight:4}} />', name: 'Financials' },
-    { id: 'analytics', icon: '<FaChartBar style={{marginRight:4}} />', name: 'Analytics' },
-    { id: 'reviews', icon: '<FaStar style={{marginRight:4}} />', name: 'Reviews' },
-    { id: 'documents', icon: '<FaFileAlt style={{marginRight:4}} />', name: 'Documents' },
-    { id: 'settings', icon: '<FaCog style={{marginRight:4}} />', name: 'Settings' },
+    { id: 'overview', icon: <FaBuilding style={{marginRight:4}} />, name: 'System Overview' },
+    { id: 'tenants', icon: <FaStore style={{marginRight:4}} />, name: 'Tenant Management' },
+    { id: 'monitoring', icon: <FaSatelliteDish style={{marginRight:4}} />, name: 'Live Monitoring' },
+    { id: 'financials', icon: <FaDollarSign style={{marginRight:4}} />, name: 'Financials' },
+    { id: 'analytics', icon: <FaChartBar style={{marginRight:4}} />, name: 'Analytics' },
+    { id: 'reviews', icon: <FaStar style={{marginRight:4}} />, name: 'Reviews' },
+    { id: 'documents', icon: <FaFileAlt style={{marginRight:4}} />, name: 'Documents' },
+    { id: 'settings', icon: <FaCog style={{marginRight:4}} />, name: 'Settings' },
   ];
 
   if (authLoading) {
@@ -419,7 +419,7 @@ function ReviewsTab() {
             { rating: 5, text: 'Fast and reliable service.', tenant: 'Quick Fix', customer: 'Bob' },
           ].map((review, i) => (
             <div key={i} className="sos-item" style={{flexDirection:'column', alignItems:'flex-start'}}>
-              <div style={{marginBottom:8}}>{'<FaStar style={{marginRight:4}} />'.repeat(review.rating)}</div>
+              <div style={{marginBottom:8}}>{Array.from({length: review.rating}, (_, i) => <FaStar key={i} />)}</div>
               <div style={{fontSize:13, marginBottom:4}}>"{review.text}"</div>
               <div style={{fontSize:11, color:'#9aa3b2'}}>{review.customer} - {review.tenant}</div>
             </div>

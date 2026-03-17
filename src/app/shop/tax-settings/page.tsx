@@ -110,7 +110,7 @@ export default function TaxSettingsPage() {
                       </div>
                       <div style={{ fontSize: 13, color: '#9ca3af', marginTop: 4 }}>
                         {rule.state && `${rule.state}${rule.county ? ` · ${rule.county}` : ''} · `}
-                        {rule.appliesToParts && '<FaBox style={{marginRight:4}} /> Parts '}{rule.appliesToLabor && '<FaWrench style={{marginRight:4}} /> Labor '}{rule.appliesToFees && '<FaDollarSign style={{marginRight:4}} /> Fees'}
+                        {rule.appliesToParts && <><FaBox style={{marginRight:4}} /> Parts </>}{rule.appliesToLabor && <><FaWrench style={{marginRight:4}} /> Labor </>}{rule.appliesToFees && <><FaDollarSign style={{marginRight:4}} /> Fees</>}
                       </div>
                     </div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: '#60a5fa' }}>{rule.rate}%</div>

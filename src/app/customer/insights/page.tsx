@@ -44,9 +44,9 @@ export default function Insights() {
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend.includes('<FaArrowUp style={{marginRight:4}} />')) return '<FaChartLine style={{marginRight:4}} />';
-    if (trend.includes('<FaArrowDown style={{marginRight:4}} />')) return '<FaChartLine style={{marginRight:4}} />';
-    return '<FaArrowRight style={{marginRight:4}} />';
+    if (trend.includes('↑')) return <FaChartLine style={{marginRight:4}} />;
+    if (trend.includes('↓')) return <FaChartLine style={{marginRight:4}} />;
+    return <FaArrowRight style={{marginRight:4}} />;
   };
 
   return (

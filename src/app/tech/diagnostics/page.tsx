@@ -38,7 +38,7 @@ export default function TechDiagnostics() {
           {[
             { label: 'OBD Codes', desc: 'Full P/B/C/U code library with causes & fixes', icon: '', href: 'https://obd-codes.com' },
             { label: 'Engine Light Help', desc: 'Free OBD-II code lookup & repair guides', icon: '', href: 'https://engine-light-help.com' },
-            { label: 'NHTSA VIN Decoder', desc: 'Official VIN decode  -  year, make, model, specs', icon: '<FaIdCard style={{marginRight:4}} />', href: 'https://vpic.nhtsa.dot.gov/decoder/' },
+            { label: 'NHTSA VIN Decoder', desc: 'Official VIN decode  -  year, make, model, specs', icon: <FaIdCard style={{marginRight:4}} />, href: 'https://vpic.nhtsa.dot.gov/decoder/' },
             { label: 'CarMD', desc: 'Code severity ratings & repair cost estimates', icon: '', href: 'https://carmd.com' },
             { label: 'iATN TechHelp', desc: 'Peer tech help & diagnostic discussions', icon: '', href: 'https://iatn.net' },
             { label: 'TIS2Web / ACDelco TDS', desc: 'GM factory scan tool & programming', icon: '', href: 'https://tis2web.service.gm.com' },

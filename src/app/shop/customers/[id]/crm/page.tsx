@@ -273,7 +273,7 @@ export default function CustomerCRMPage({ params }: { params: Promise<{ id: stri
                 {data.reviews.map(r => (
                   <div key={r.id} style={{ padding: 12, background: 'rgba(255,255,255,0.03)', borderRadius: 8, marginBottom: 8 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ color: '#f59e0b' }}>{'<FaStar style={{marginRight:4}} />'.repeat(r.rating)}{'<FaRegStar style={{marginRight:4}} />'.repeat(5 - r.rating)}</span>
+                      <span style={{ color: '#f59e0b' }}>{Array.from({length: r.rating}, (_, i) => <FaStar key={i} />)}{Array.from({length: 5 - r.rating}, (_, i) => <FaRegStar key={i} />)}</span>
                       <span style={{ fontSize: 12, color: '#9aa3b2' }}>{new Date(r.createdAt).toLocaleDateString()}</span>
                     </div>
                     {r.comment && <div style={{ fontSize: 13, color: '#e5e7eb' }}>{r.comment}</div>}

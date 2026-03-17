@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import useRequireAuth from '@/lib/useRequireAuth';
 import { FaCar, FaCheckCircle, FaExclamationTriangle, FaHourglassHalf, FaTag, FaTimesCircle } from 'react-icons/fa';
 
@@ -18,11 +18,11 @@ interface StateInspection {
   vehicle?: { year?: number; make?: string; model?: string; vin?: string };
 }
 
-const RESULT_STYLE: Record<string, { bg: string; color: string; icon: string }> = {
-  pass:    { bg: 'rgba(34,197,94,0.15)',  color: '#22c55e', icon: '<FaCheckCircle style={{marginRight:4}} />' },
-  fail:    { bg: 'rgba(229,51,42,0.15)',  color: '#e5332a', icon: '<FaTimesCircle style={{marginRight:4}} />' },
-  waiver:  { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', icon: '<FaExclamationTriangle style={{marginRight:4}} />' },
-  pending: { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', icon: '<FaHourglassHalf style={{marginRight:4}} />' },
+const RESULT_STYLE: Record<string, { bg: string; color: string; icon: ReactNode }> = {
+  pass:    { bg: 'rgba(34,197,94,0.15)',  color: '#22c55e', icon: <FaCheckCircle style={{marginRight:4}} /> },
+  fail:    { bg: 'rgba(229,51,42,0.15)',  color: '#e5332a', icon: <FaTimesCircle style={{marginRight:4}} /> },
+  waiver:  { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', icon: <FaExclamationTriangle style={{marginRight:4}} /> },
+  pending: { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', icon: <FaHourglassHalf style={{marginRight:4}} /> },
 };
 
 export default function StateInspectionsPage() {

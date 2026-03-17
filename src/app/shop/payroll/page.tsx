@@ -485,7 +485,7 @@ export default function PayrollPage() {
                 </td>
                 <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600 }}>{fmtHrs(a.hoursWorked)}</td>
                 <td style={{ padding: '10px 16px', textAlign: 'center' }}><BadgeStatus status={a.status} /></td>
-                <td style={{ padding: '10px 16px', textAlign: 'center', fontSize: 18 }}>{a.approved ? '<FaCheckCircle style={{marginRight:4}} />' : '<FaRegSquare style={{marginRight:4}} />'}</td>
+                <td style={{ padding: '10px 16px', textAlign: 'center', fontSize: 18 }}>{a.approved ? <FaCheckCircle style={{marginRight:4}} /> : <FaRegSquare style={{marginRight:4}} />}</td>
               </tr>
             ))}
           </tbody>
@@ -645,7 +645,7 @@ export default function PayrollPage() {
             <div style={{ marginTop: 16, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {(p.status === 'open' || p.status === 'processing') && (
                 <button onClick={() => setRunPayrollConfirmId(p.id)} disabled={runningPayroll} style={{ padding: '8px 18px', background: runningPayroll ? '#9ca3af' : '#2563eb', color: '#fff', border: 'none', borderRadius: 8, cursor: runningPayroll ? 'not-allowed' : 'pointer', fontWeight: 600 }}>
-                  {runningPayroll ? '<FaHourglassHalf style={{marginRight:4}} /> Running...' : '<FaCaretRight style={{marginRight:4}} /> Run Payroll'}
+                  {runningPayroll ? <><FaHourglassHalf style={{marginRight:4}} /> Running...</> : <><FaCaretRight style={{marginRight:4}} /> Run Payroll</>}
                 </button>
               )}
               {p.status === 'processing' && (

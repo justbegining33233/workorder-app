@@ -128,7 +128,7 @@ function AdminHomeContent() {
   ];
 
   const quickLinks = [
-    { href: '/admin/command-center', label: '<FaSlidersH style={{marginRight:4}} /> Command Center', icon: 'command', highlight: true },
+    { href: '/admin/command-center', label: <><FaSlidersH style={{marginRight:4}} /> Command Center</>, icon: 'command', highlight: true },
     { href: '/admin/messages', label: ' Messages', icon: 'messages' },
     { href: '/admin/revenue', label: ' Revenue & Payouts', icon: 'money' },
     { href: '/admin/pending-shops', label: 'Pending Approvals', badge: pendingShops.length, icon: 'clock' },
@@ -140,15 +140,15 @@ function AdminHomeContent() {
     { href: '/admin/platform-analytics', label: ' Platform Analytics', icon: 'analytics' },
     { href: '/admin/financial-reports', label: ' Financial Reports', icon: 'finance' },
     { href: '/admin/email-templates', label: ' Email Templates', icon: 'email' },
-    { href: '/admin/coupons', label: '<FaTicketAlt style={{marginRight:4}} /> Coupons', icon: 'coupons' },
+    { href: '/admin/coupons', label: <><FaTicketAlt style={{marginRight:4}} /> Coupons</>, icon: 'coupons' },
     { href: '/admin/sessions', label: ' Active Sessions', icon: 'sessions' },
     { href: '/admin/security-settings', label: ' Security Settings', icon: 'security' },
     { href: '/admin/system-settings', label: ' System Settings', icon: 'settings' },
-    { href: '/admin/backup-restore', label: '<FaSave style={{marginRight:4}} /> Backup & Restore', icon: 'backup' },
+    { href: '/admin/backup-restore', label: <><FaSave style={{marginRight:4}} /> Backup & Restore</>, icon: 'backup' },
     { href: '/admin/admin-tools', label: ' Admin Tools', icon: 'tools' },
-    { href: '/admin/enhanced', label: '<FaStar style={{marginRight:4}} /> Enhanced Dashboard', icon: 'enhanced' },
-    { href: '/admin/guide', label: '<FaBook style={{marginRight:4}} /> Documentation', icon: 'book' },
-    { href: '/admin/test', label: '<FaStethoscope style={{marginRight:4}} /> Health Check', icon: 'health' },
+    { href: '/admin/enhanced', label: <><FaStar style={{marginRight:4}} /> Enhanced Dashboard</>, icon: 'enhanced' },
+    { href: '/admin/guide', label: <><FaBook style={{marginRight:4}} /> Documentation</>, icon: 'book' },
+    { href: '/admin/test', label: <><FaStethoscope style={{marginRight:4}} /> Health Check</>, icon: 'health' },
   ];
 
   const _signalItems = [

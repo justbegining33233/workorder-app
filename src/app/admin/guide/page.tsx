@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaArrowRight, FaBell, FaCar, FaCaretDown, FaClock, FaCloud, FaCreditCard, FaCrown, FaEnvelope, FaHardHat, FaInfoCircle, FaMicroscope, FaMobileAlt, FaPencilAlt, FaUserTie, FaWrench } from 'react-icons/fa';
@@ -16,7 +16,7 @@ interface Feature {
 
 interface FeatureCategory {
   name: string;
-  icon: string;
+  icon: ReactNode;
   description: string;
   features: Feature[];
 }
@@ -49,7 +49,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Admin Panel - Core',
-      icon: '<FaCrown style={{marginRight:4}} />',
+      icon: <FaCrown style={{marginRight:4}} />,
       description: 'Platform administration and management',
       features: [
         { name: 'Admin Dashboard', description: 'Overview of platform stats', status: 'ready', route: '/admin/home' },
@@ -147,7 +147,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Shop Management - Specialized',
-      icon: '<FaMicroscope style={{marginRight:4}} />',
+      icon: <FaMicroscope style={{marginRight:4}} />,
       description: 'Specialized shop services and features',
       features: [
         { name: 'AR Aging Reports', description: 'Accounts receivable aging', status: 'ready', route: '/shop/ar-aging', apiEndpoint: '/api/ar-aging' },
@@ -268,7 +268,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Manager Dashboard',
-      icon: '<FaUserTie style={{marginRight:4}} />',
+      icon: <FaUserTie style={{marginRight:4}} />,
       description: 'Team management and oversight features',
       features: [
         { name: 'Manager Home', description: 'Manager landing page with quick actions', status: 'ready', route: '/manager/home' },
@@ -281,7 +281,7 @@ export default function AppGuidePage() {
     },
     {
       name: 'Time Tracking & Payroll',
-      icon: '<FaClock style={{marginRight:4}} />',
+      icon: <FaClock style={{marginRight:4}} />,
       description: 'Employee time and payroll management',
       features: [
         { name: 'Clock In/Out', description: 'Technician time clock', status: 'ready', route: '/tech/timesheet', apiEndpoint: '/api/timeclock' },
@@ -433,7 +433,7 @@ export default function AppGuidePage() {
     // ---------------------------------------------
     {
       name: 'Tech Management (Shop/Admin)',
-      icon: '<FaHardHat style={{marginRight:4}} />',
+      icon: <FaHardHat style={{marginRight:4}} />,
       description: 'Manage technician profiles, assignments, and tracking from shop or admin level',
       features: [
         { name: 'List Technicians', description: 'View all technicians across a shop', status: 'ready', apiEndpoint: '/api/techs' },
@@ -537,7 +537,7 @@ export default function AppGuidePage() {
     // ---------------------------------------------
     {
       name: 'Customer Vehicles',
-      icon: '<FaCar style={{marginRight:4}} />',
+      icon: <FaCar style={{marginRight:4}} />,
       description: 'Full vehicle management for customer accounts',
       features: [
         { name: 'Vehicle List', description: 'View all vehicles on customer account', status: 'ready', route: '/customer/vehicles', apiEndpoint: '/api/customers/vehicles' },
@@ -553,7 +553,7 @@ export default function AppGuidePage() {
     // ---------------------------------------------
     {
       name: 'Work Authorizations & Recurring',
-      icon: '<FaPencilAlt style={{marginRight:4}} />',
+      icon: <FaPencilAlt style={{marginRight:4}} />,
       description: 'Customer-signed work authorizations and recurring job approvals',
       features: [
         { name: 'Create Work Authorization', description: 'Generate authorization for customer to sign', status: 'ready', route: '/shop/work-authorizations', apiEndpoint: '/api/work-authorizations' },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { useParams } from 'next/navigation';
 import { FaCheckCircle, FaExclamationTriangle, FaSearch } from 'react-icons/fa';
 
@@ -36,9 +36,9 @@ const conditionBg: Record<string, string> = {
   yellow: 'rgba(245,158,11,0.1)',
   red: 'rgba(229,51,42,0.1)',
 };
-const conditionLabel: Record<string, string> = {
-  green: '<FaCheckCircle style={{marginRight:4}} /> Good',
-  yellow: '<FaExclamationTriangle style={{marginRight:4}} /> Attention',
+const conditionLabel: Record<string, ReactNode> = {
+  green: <><FaCheckCircle style={{marginRight:4}} /> Good</>,
+  yellow: <><FaExclamationTriangle style={{marginRight:4}} /> Attention</>,
   red: ' Urgent',
 };
 
@@ -160,7 +160,7 @@ export default function CustomerDVIPage() {
             <p style={{ color: '#9ca3af', fontSize: 14, margin: '0 0 16px' }}>By approving, you authorize the shop to proceed with the recommended repairs.</p>
             <button onClick={handleApprove} disabled={approving}
               style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 32px', fontSize: 15, fontWeight: 700, cursor: approving ? 'not-allowed' : 'pointer' }}>
-              {approving ? 'Approving...' : '<FaCheckCircle style={{marginRight:4}} /> Approve Services'}
+              {approving ? 'Approving...' : <><FaCheckCircle style={{marginRight:4}} /> Approve Services</>}
             </button>
             {error && <div style={{ color: '#ef4444', fontSize: 13, marginTop: 10 }}>{error}</div>}
           </div>

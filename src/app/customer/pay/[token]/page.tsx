@@ -149,7 +149,7 @@ export default function CustomerPayPage() {
             {formError && <p style={{color:'#dc2626',fontSize:13,marginBottom:12,fontWeight:600}}>{formError}</p>}
             <button onClick={handlePay} disabled={paying}
               style={{ width: '100%', background: paying ? '#9ca3af' : '#e5332a', color: '#fff', border: 'none', borderRadius: 10, padding: '15px 0', fontSize: 16, fontWeight: 700, cursor: paying ? 'not-allowed' : 'pointer' }}>
-              {paying ? '<FaHourglassHalf style={{marginRight:4}} /> Processing...' : `Pay $${Number(link?.amount).toFixed(2)}`}
+              {paying ? <><FaHourglassHalf style={{marginRight:4}} /> Processing...</> : `Pay $${Number(link?.amount).toFixed(2)}`}
             </button>
 
             <p style={{ color: '#9ca3af', fontSize: 12, textAlign: 'center', marginTop: 12 }}>

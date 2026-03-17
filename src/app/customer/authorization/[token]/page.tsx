@@ -207,7 +207,7 @@ export default function CustomerAuthorizationPage() {
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <button onClick={sign} disabled={submitting}
                 style={{ flex: 2, background: '#e5332a', color: '#fff', border: 'none', borderRadius: 8, padding: '13px 0', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
-                {submitting ? 'Submitting...' : '<FaPencilAlt style={{marginRight:4}} /> Authorize Work'}
+                {submitting ? 'Submitting...' : <><FaPencilAlt style={{marginRight:4}} /> Authorize Work</>}
               </button>
               <button onClick={() => setDeclineConfirm(true)} disabled={submitting}
                 style={{ flex: 1, background: '#fff', color: '#6b7280', border: '1px solid #d1d5db', borderRadius: 8, padding: '13px 0', fontSize: 14, cursor: 'pointer' }}>

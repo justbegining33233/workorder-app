@@ -75,14 +75,14 @@ export default function AllTechTools() {
     {
       title: 'Service Manuals',
       description: 'Access technical documentation, repair guides, and service procedures',
-      icon: '<FaBook style={{marginRight:4}} />',
+      icon: <FaBook style={{marginRight:4}} />,
       link: '/tech/manuals',
       category: 'Resources'
     },
     {
       title: 'Time Tracking',
       description: 'Clock in/out, track billable hours, and submit timesheets',
-      icon: '<FaStopwatch style={{marginRight:4}} />',
+      icon: <FaStopwatch style={{marginRight:4}} />,
       link: '/tech/timesheet',
       category: 'Time Management'
     },

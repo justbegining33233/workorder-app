@@ -487,7 +487,7 @@ export default function ShopHome() {
                     )}
                     {pendingWorkOrders.map(order => {
                       const style = priorityStyles[order.priority] || priorityStyles.Medium;
-                      const destinationOptions = [...bays.map(b => ({ id: b.id, label: b.name })), { id: 'roadcall', label: '<FaTruck style={{marginRight:4}} /> Roadcall' }];
+                      const destinationOptions = [...bays.map(b => ({ id: b.id, label: b.name })), { id: 'roadcall', label: <><FaTruck style={{marginRight:4}} /> Roadcall</> }];
                       const selected = selectedDestinations[order.id] || destinationOptions[0]?.id || 'roadcall';
                       return (
                         <div key={order.id} style={{background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:10, padding:12, display:'flex', flexDirection:'column', gap:8}}>
@@ -555,7 +555,7 @@ export default function ShopHome() {
                             <FaCircle style={{marginRight:4}} /> {member.status}
                           </span>
                           <span style={{padding:'2px 8px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', borderRadius:8, fontSize:10, fontWeight:600}}>
-                            {member.role === 'tech' ? '<FaWrench style={{marginRight:4}} /> Tech' : '<FaUserTie style={{marginRight:4}} /> Manager'}
+                            {member.role === 'tech' ? <><FaWrench style={{marginRight:4}} /> Tech</> : <><FaUserTie style={{marginRight:4}} /> Manager</>}
                           </span>
                         </div>
                       </div>

@@ -436,7 +436,7 @@ export default function AdminSubscriptionsPage() {
                                 borderRadius: 6,
                                 fontSize: 14,
                               }}>
-                                {tech.role === 'manager' ? '<FaUserTie style={{marginRight:4}} />' : '<FaWrench style={{marginRight:4}} />'} {tech.firstName} {tech.lastName} ({tech.role})
+                                {tech.role === 'manager' ? <FaUserTie style={{marginRight:4}} /> : <FaWrench style={{marginRight:4}} />} {tech.firstName} {tech.lastName} ({tech.role})
                               </div>
                             ))}
                           </div>

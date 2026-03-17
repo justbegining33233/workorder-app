@@ -154,7 +154,7 @@ export default function RecurringApprovals() {
                           transition: 'all 0.2s',
                         }}
                       >
-                        {acting === approval.id ? 'Processing...' : '<FaCheckCircle style={{marginRight:4}} /> Yes, Schedule Me In'}
+                        {acting === approval.id ? 'Processing...' : <><FaCheckCircle style={{marginRight:4}} /> Yes, Schedule Me In</>}
                       </button>
                       <button
                         onClick={() => respond(approval.id, 'skip')}
@@ -200,7 +200,7 @@ export default function RecurringApprovals() {
                         fontSize: 12,
                         fontWeight: 600,
                       }}>
-                        {done[approval.id] === 'confirmed' ? '<FaCheckCircle style={{marginRight:4}} /> Scheduled' : '<FaStepForward style={{marginRight:4}} /> Skipped'}
+                        {done[approval.id] === 'confirmed' ? <><FaCheckCircle style={{marginRight:4}} /> Scheduled</> : <><FaStepForward style={{marginRight:4}} /> Skipped</>}
                       </span>
                     </div>
                   ))}

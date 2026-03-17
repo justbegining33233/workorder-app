@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { FaBatteryFull, FaCheckCircle, FaExclamationTriangle, FaFlagCheckered, FaHourglassHalf, FaMobileAlt, FaOilCan, FaStar, FaWrench } from 'react-icons/fa';
@@ -20,19 +20,19 @@ interface WaitingRoomData {
   promos?: string[];
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  pending:     { label: 'Waiting', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', icon: '<FaHourglassHalf style={{marginRight:4}} />' },
-  in_progress: { label: 'In Progress', color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', icon: '<FaWrench style={{marginRight:4}} />' },
-  completed:   { label: 'Ready!', color: '#22c55e', bg: 'rgba(34,197,94,0.2)', icon: '<FaCheckCircle style={{marginRight:4}} />' },
-  on_hold:     { label: 'On Hold', color: '#f97316', bg: 'rgba(249,115,22,0.15)', icon: '<FaExclamationTriangle style={{marginRight:4}} />' },
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: ReactNode }> = {
+  pending:     { label: 'Waiting', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', icon: <FaHourglassHalf style={{marginRight:4}} /> },
+  in_progress: { label: 'In Progress', color: '#60a5fa', bg: 'rgba(96,165,250,0.15)', icon: <FaWrench style={{marginRight:4}} /> },
+  completed:   { label: 'Ready!', color: '#22c55e', bg: 'rgba(34,197,94,0.2)', icon: <FaCheckCircle style={{marginRight:4}} /> },
+  on_hold:     { label: 'On Hold', color: '#f97316', bg: 'rgba(249,115,22,0.15)', icon: <FaExclamationTriangle style={{marginRight:4}} /> },
 };
 
 const PROMOS = [
   ' Summer Tire Special  -  $15 off any set of 4 tires this month!',
-  '<FaOilCan style={{marginRight:4}} /> Oil change + tire rotation package  -  only $59.99!',
-  '<FaStar style={{marginRight:4}} /> Refer a friend and get $25 off your next service',
-  '<FaMobileAlt style={{marginRight:4}} /> Text us your VIN for an instant maintenance report',
-  '<FaBatteryFull style={{marginRight:4}} /> Free battery test with any service this week',
+  <><FaOilCan style={{marginRight:4}} /> Oil change + tire rotation package  -  only $59.99!</>,
+  <><FaStar style={{marginRight:4}} /> Refer a friend and get $25 off your next service</>,
+  <><FaMobileAlt style={{marginRight:4}} /> Text us your VIN for an instant maintenance report</>,
+  <><FaBatteryFull style={{marginRight:4}} /> Free battery test with any service this week</>,
 ];
 
 function WaitingRoomContent() {

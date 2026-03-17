@@ -189,11 +189,11 @@ export default function CommandCenterPage() {
                      (data?.communication.unreadAdminMessages || 0);
 
   const tabs = [
-    { id: 'business', label: 'Business', icon: '<FaDollarSign style={{marginRight:4}} />' },
-    { id: 'overview', label: 'Overview', icon: '<FaDotCircle style={{marginRight:4}} />' },
-    { id: 'operations', label: 'Operations', icon: '<FaBolt style={{marginRight:4}} />' },
-    { id: 'shops', label: 'Shops', icon: '<FaCheckSquare style={{marginRight:4}} />' },
-    { id: 'team', label: 'Team', icon: '<FaRegCircle style={{marginRight:4}} />' },
+    { id: 'business', label: 'Business', icon: <FaDollarSign style={{marginRight:4}} /> },
+    { id: 'overview', label: 'Overview', icon: <FaDotCircle style={{marginRight:4}} /> },
+    { id: 'operations', label: 'Operations', icon: <FaBolt style={{marginRight:4}} /> },
+    { id: 'shops', label: 'Shops', icon: <FaCheckSquare style={{marginRight:4}} /> },
+    { id: 'team', label: 'Team', icon: <FaRegCircle style={{marginRight:4}} /> },
   ];
 
   return (
@@ -242,7 +242,7 @@ export default function CommandCenterPage() {
                     : 'bg-white/5 text-slate-400 border border-white/10'
                 }`}
               >
-                {autoRefresh ? '<FaCircle style={{marginRight:4}} /> Live' : '<FaRegCircle style={{marginRight:4}} /> Paused'}
+                {autoRefresh ? <><FaCircle style={{marginRight:4}} /> Live</> : <><FaRegCircle style={{marginRight:4}} /> Paused</>}
               </button>
               <button
                 onClick={fetchData}
@@ -340,7 +340,7 @@ export default function CommandCenterPage() {
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <span className={`flex items-center gap-1 ${(data?.businessMetrics?.momGrowth || 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(data?.businessMetrics?.momGrowth || 0) >= 0 ? '<FaArrowUp style={{marginRight:4}} />' : '<FaArrowDown style={{marginRight:4}} />'} {Math.abs(data?.businessMetrics?.momGrowth || 0)}% MoM
+                      {(data?.businessMetrics?.momGrowth || 0) >= 0 ? <FaArrowUp style={{marginRight:4}} /> : <FaArrowDown style={{marginRight:4}} />} {Math.abs(data?.businessMetrics?.momGrowth || 0)}% MoM
                     </span>
                     <span className="text-slate-500">|</span>
                     <span className="text-slate-400">{data?.businessMetrics?.totalActiveSubscriptions || 0} active subs</span>
@@ -777,7 +777,7 @@ export default function CommandCenterPage() {
               <div className="flex items-center gap-6 mb-6">
                 <div className="text-center">
                   <div className="text-5xl font-bold text-yellow-400">{data?.reviews.averageRating || 0}</div>
-                  <div className="text-yellow-400 mt-1">{'<FaStar style={{marginRight:4}} />'.repeat(Math.round(data?.reviews.averageRating || 0))}</div>
+                  <div className="text-yellow-400 mt-1">{Array.from({length: Math.round(data?.reviews.averageRating || 0)}, (_, i) => <FaStar key={i} />)}</div>
                 </div>
                 <div className="flex-1">
                   <div className="text-slate-500 text-sm">Based on</div>
@@ -791,7 +791,7 @@ export default function CommandCenterPage() {
                     {data.reviews.recentBadReviews.slice(0, 3).map((review: any, i: number) => (
                       <div key={i} className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                         <div className="flex justify-between mb-1">
-                          <span className="text-red-400 text-sm">{'<FaStar style={{marginRight:4}} />'.repeat(review.rating)}{'<FaRegStar style={{marginRight:4}} />'.repeat(5 - review.rating)}</span>
+                          <span className="text-red-400 text-sm">{Array.from({length: review.rating}, (_, i) => <FaStar key={i} />)}{Array.from({length: 5 - review.rating}, (_, i) => <FaRegStar key={i} />)}</span>
                           <span className="text-xs text-slate-500">{review.shop}</span>
                         </div>
                         {review.comment && <div className="text-xs text-slate-400 truncate">{review.comment}</div>}

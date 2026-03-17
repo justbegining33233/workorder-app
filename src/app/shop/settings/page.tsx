@@ -1271,7 +1271,7 @@ function ShopSettingsPageContent() {
                     alignItems: 'center'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <span style={{ fontSize: 20 }}>{paymentMessage.type === 'success' ? '<FaCheckCircle style={{marginRight:4}} />' : '<FaTimesCircle style={{marginRight:4}} />'}</span>
+                      <span style={{ fontSize: 20 }}>{paymentMessage.type === 'success' ? <FaCheckCircle style={{marginRight:4}} /> : <FaTimesCircle style={{marginRight:4}} />}</span>
                       <span style={{ color: paymentMessage.type === 'success' ? '#22c55e' : '#ef4444', fontWeight: 500 }}>
                         {paymentMessage.text}
                       </span>
@@ -1357,7 +1357,7 @@ function ShopSettingsPageContent() {
                           gap:8
                         }}
                       >
-                        {billingLoading ? '...' : '<FaCreditCard style={{marginRight:4}} /> Manage Billing'}
+                        {billingLoading ? '...' : <><FaCreditCard style={{marginRight:4}} /> Manage Billing</>}
                       </button>
                       <button
                         onClick={cancelSubscription}
@@ -1523,7 +1523,7 @@ function ShopSettingsPageContent() {
                         whiteSpace:'nowrap',
                       }}
                     >
-                      {connectLoading ? 'Loading...' : '<FaLink style={{marginRight:4}} /> Connect Stripe'}
+                      {connectLoading ? 'Loading...' : <><FaLink style={{marginRight:4}} /> Connect Stripe</>}
                     </button>
                   </div>
                 </div>
@@ -1941,7 +1941,7 @@ function ShopSettingsPageContent() {
                   fontSize:12, 
                   fontWeight:600
                 }}>
-                  {selectedService.category === 'diesel' ? '<FaTruck style={{marginRight:4}} /> Diesel / Heavy-Duty' : '<FaCar style={{marginRight:4}} /> Gas / Automotive'}
+                  {selectedService.category === 'diesel' ? <><FaTruck style={{marginRight:4}} /> Diesel / Heavy-Duty</> : <><FaCar style={{marginRight:4}} /> Gas / Automotive</>}
                 </span>
               </div>
               <button onClick={() => setShowEditServiceModal(false)} style={{background:'transparent', border:'none', color:'#9aa3b2', fontSize:24, cursor:'pointer', padding:0}}>×</button>

@@ -15,7 +15,7 @@ export default function TwoFactorSettingsPage() {
   const [secret, setSecret] = useState<string | null>(null);
   const [tokenInput, setTokenInput] = useState('');
   const [fetching, setFetching] = useState(false);
-  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [statusMsg, setStatusMsg] = useState<import('react').ReactNode>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -64,7 +64,7 @@ export default function TwoFactorSettingsPage() {
       setQrCode(null);
       setSecret(null);
       setTokenInput('');
-      setStatusMsg('<FaCheckCircle style={{marginRight:4}} /> Two-Factor Authentication is now enabled on your account.');
+      setStatusMsg(<><FaCheckCircle style={{marginRight:4}} /> Two-Factor Authentication is now enabled on your account.</>);
     } catch (e: any) {
       setErrorMsg(e.message);
     } finally {
@@ -225,7 +225,7 @@ export default function TwoFactorSettingsPage() {
             <div>
               {!enabled ? (
                 <button onClick={handleSetup} disabled={fetching} style={{ width: '100%', padding: '13px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
-                  {fetching ? 'Generating...' : '<FaLock style={{marginRight:4}} /> Enable Two-Factor Authentication'}
+                  {fetching ? 'Generating...' : <><FaLock style={{marginRight:4}} /> Enable Two-Factor Authentication</>}
                 </button>
               ) : (
                 <button onClick={() => { setStep('disable'); setTokenInput(''); setErrorMsg(null); }} style={{ width: '100%', padding: '13px', borderRadius: 10, border: '1px solid rgba(239,68,68,0.4)', background: 'rgba(239,68,68,0.1)', color: '#fca5a5', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>

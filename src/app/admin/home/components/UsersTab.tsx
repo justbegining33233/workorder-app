@@ -170,8 +170,8 @@ function ActivityHeatmap({ data }: { data: number[][] }) {
   );
 }
 
-const ROLE_CONFIG: Record<string, { name: string; icon: string; color: string; bgColor: string }> = {
-  admin: { name: 'Admin', icon: '<FaCrown style={{marginRight:4}} />', color: '#EF4444', bgColor: 'bg-[#EF4444]/10' },
+const ROLE_CONFIG: Record<string, { name: string; icon: React.ReactNode; color: string; bgColor: string }> = {
+  admin: { name: 'Admin', icon: <FaCrown style={{marginRight:4}} />, color: '#EF4444', bgColor: 'bg-[#EF4444]/10' },
   shop: { name: 'Shop Owner', icon: '', color: '#3B82F6', bgColor: 'bg-[#3B82F6]/10' },
   tech: { name: 'Technician', icon: '', color: '#22C55E', bgColor: 'bg-[#22C55E]/10' },
   manager: { name: 'Manager', icon: '', color: '#F97316', bgColor: 'bg-[#F97316]/10' },

@@ -223,7 +223,7 @@ export default function ShopDetailsPage({ params }: Props) {
                 gap:8
               }}
             >
-              {togglingFavorite ? '<FaHourglassHalf style={{marginRight:4}} />' : (shop.isFavorite ? '<FaStar style={{marginRight:4}} />' : '<FaRegStar style={{marginRight:4}} />')}
+              {togglingFavorite ? <FaHourglassHalf style={{marginRight:4}} /> : (shop.isFavorite ? <FaStar style={{marginRight:4}} /> : <FaRegStar style={{marginRight:4}} />)}
               {shop.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
           </div>

@@ -41,7 +41,7 @@ export default function TechInventory() {
             { label: 'NAPA Online', desc: 'Parts lookup & ordering', icon: '', href: 'https://napaonline.com', ext: true },
             { label: 'AutoZone Pro', desc: 'Commercial account parts lookup', icon: '', href: 'https://autozonepro.com', ext: true },
             { label: "O'Reilly Fleet", desc: 'Fleet & commercial ordering', icon: '', href: 'https://oreillyauto.com', ext: true },
-            { label: 'OEMPartsPro', desc: 'Factory OEM diagrams & part numbers', icon: '<FaRulerCombined style={{marginRight:4}} />', href: 'https://oempartspro.com', ext: true },
+            { label: 'OEMPartsPro', desc: 'Factory OEM diagrams & part numbers', icon: <FaRulerCombined style={{marginRight:4}} />, href: 'https://oempartspro.com', ext: true },
           ].map(card => (
             <a
               key={card.label}

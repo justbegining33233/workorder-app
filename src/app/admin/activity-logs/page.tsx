@@ -93,10 +93,10 @@ export default function ActivityLogs() {
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'success': return '<FaCheck style={{marginRight:4}} />';
-      case 'info': return '<FaInfoCircle style={{marginRight:4}} />';
-      case 'warning': return '<FaExclamationTriangle style={{marginRight:4}} />';
-      case 'error': return '<FaTimes style={{marginRight:4}} />';
+      case 'success': return <FaCheck style={{marginRight:4}} />;
+      case 'info': return <FaInfoCircle style={{marginRight:4}} />;
+      case 'warning': return <FaExclamationTriangle style={{marginRight:4}} />;
+      case 'error': return <FaTimes style={{marginRight:4}} />;
       default: return '-';
     }
   };

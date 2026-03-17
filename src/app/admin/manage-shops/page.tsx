@@ -247,21 +247,21 @@ export default function ManageShops() {
                         <button onClick={() => handleStatusChange(shop.id, 'approved')} disabled={actionLoading === shop.id} style={{
                           padding:'10px 20px', background:'#22c55e', color:'white', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', opacity: actionLoading === shop.id ? 0.6 : 1,
                         }}>
-                          {actionLoading === shop.id ? 'Updating...' : '<FaCheck style={{marginRight:4}} /> Approve'}
+                          {actionLoading === shop.id ? 'Updating...' : <><FaCheck style={{marginRight:4}} /> Approve</>}
                         </button>
                       )}
                       {shop.status !== 'suspended' && (
                         <button onClick={() => handleStatusChange(shop.id, 'suspended')} disabled={actionLoading === shop.id} style={{
                           padding:'10px 20px', background:'#ef4444', color:'white', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', opacity: actionLoading === shop.id ? 0.6 : 1,
                         }}>
-                          {actionLoading === shop.id ? 'Updating...' : '<FaBan style={{marginRight:4}} /> Suspend'}
+                          {actionLoading === shop.id ? 'Updating...' : <><FaBan style={{marginRight:4}} /> Suspend</>}
                         </button>
                       )}
                       {shop.status === 'suspended' && (
                         <button onClick={() => handleStatusChange(shop.id, 'pending')} disabled={actionLoading === shop.id} style={{
                           padding:'10px 20px', background:'#f59e0b', color:'white', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', opacity: actionLoading === shop.id ? 0.6 : 1,
                         }}>
-                          {actionLoading === shop.id ? 'Updating...' : '<FaSyncAlt style={{marginRight:4}} /> Reactivate to Pending'}
+                          {actionLoading === shop.id ? 'Updating...' : <><FaSyncAlt style={{marginRight:4}} /> Reactivate to Pending</>}
                         </button>
                       )}
                     </div>

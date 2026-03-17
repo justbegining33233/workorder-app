@@ -200,7 +200,7 @@ export default function LoanersPage() {
       {modalLoaner && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
           <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, width: 440, maxWidth: '90%' }}>
-            <h3 style={{ margin: '0 0 6px', fontSize: 18 }}>{modalMode === 'checkout' ? '<FaArrowUp style={{marginRight:4}} /> Check Out' : '<FaArrowDown style={{marginRight:4}} /> Check In'}: {modalLoaner.year} {modalLoaner.make} {modalLoaner.model}</h3>
+            <h3 style={{ margin: '0 0 6px', fontSize: 18 }}>{modalMode === 'checkout' ? <><FaArrowUp style={{marginRight:4}} /> Check Out</> : <><FaArrowDown style={{marginRight:4}} /> Check In</>}: {modalLoaner.year} {modalLoaner.make} {modalLoaner.model}</h3>
             <p style={{ color: '#9ca3af', fontSize: 13, marginTop: 0, marginBottom: 20 }}>Record condition before {modalMode === 'checkout' ? 'lending' : 'returning'}</p>
 
             {modalMode === 'checkout' ? (

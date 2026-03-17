@@ -176,7 +176,7 @@ export default function AcceptedShops() {
                 {/* Rank Badge */}
                 {index < 3 && (
                   <div style={{position:'absolute', top:16, right:16, padding:'6px 12px', background:index === 0 ? 'linear-gradient(135deg, #fbbf24, #f59e0b)' : index === 1 ? 'linear-gradient(135deg, #9ca3af, #6b7280)' : 'linear-gradient(135deg, #cd7f32, #b87333)', color:'white', borderRadius:8, fontSize:12, fontWeight:700}}>
-                  {index === 0 ? '<FaMedal style={{marginRight:4}} /> #1' : index === 1 ? '<FaMedal style={{marginRight:4}} /> #2' : '<FaMedal style={{marginRight:4}} /> #3'}
+                  {index === 0 ? <><FaMedal style={{marginRight:4}} /> #1</> : index === 1 ? <><FaMedal style={{marginRight:4}} /> #2</> : <><FaMedal style={{marginRight:4}} /> #3</>}
                 </div>
                 )}
 

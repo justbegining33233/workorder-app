@@ -299,7 +299,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'favorites', 
-      icon: '<FaHeart style={{marginRight:4}} />', 
+      icon: <FaHeart style={{marginRight:4}} />, 
       name: 'Favorite Shops', 
       desc: 'Quick access to preferred shops', 
       detail: `${stats.favoriteCount} saved favorite${stats.favoriteCount !== 1 ? 's' : ''}`, 
@@ -332,7 +332,7 @@ export default function CustomerDashboard() {
     },
     { 
       id: 'recurring-approvals', 
-      icon: '<FaSyncAlt style={{marginRight:4}} />', 
+      icon: <FaSyncAlt style={{marginRight:4}} />, 
       name: 'Recurring Approvals', 
       desc: 'Confirm or skip scheduled recurring services', 
       detail: 'Review pending recurring service requests', 

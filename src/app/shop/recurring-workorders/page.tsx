@@ -391,7 +391,7 @@ export default function RecurringWorkOrders() {
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         s.requiresApproval ? 'bg-yellow-500/20 text-yellow-400' : 'bg-purple-500/20 text-purple-400'
                       }`}>
-                        {s.requiresApproval ? '<FaBell style={{marginRight:4}} /> Needs approval' : '<FaBolt style={{marginRight:4}} /> Auto-create'}
+                        {s.requiresApproval ? <><FaBell style={{marginRight:4}} /> Needs approval</> : <><FaBolt style={{marginRight:4}} /> Auto-create</>}
                       </span>
                     </div>
                     <div className="text-sm text-slate-400 mb-2">{s.issueDescription}</div>

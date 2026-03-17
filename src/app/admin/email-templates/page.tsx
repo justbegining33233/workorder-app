@@ -32,14 +32,14 @@ export default function EmailTemplates() {
   }
 
   const templates = [
-    { id: 'welcome', name: 'Welcome Email', description: 'Sent to new users upon registration', icon: '<FaHandPointRight style={{marginRight:4}} />' },
-    { id: 'shop-approved', name: 'Shop Approved', description: 'Notification when shop is approved', icon: '<FaCheckCircle style={{marginRight:4}} />' },
-    { id: 'shop-denied', name: 'Shop Denied', description: 'Notification when shop application is denied', icon: '<FaTimesCircle style={{marginRight:4}} />' },
-    { id: 'workorder-created', name: 'Work Order Created', description: 'Sent when new work order is created', icon: '<FaWrench style={{marginRight:4}} />' },
-    { id: 'workorder-assigned', name: 'Work Order Assigned', description: 'Sent to technician when assigned', icon: '<FaHardHat style={{marginRight:4}} />' },
-    { id: 'workorder-completed', name: 'Work Order Completed', description: 'Sent when work order is completed', icon: '<FaCheck style={{marginRight:4}} />' },
-    { id: 'payment-received', name: 'Payment Received', description: 'Confirmation of payment received', icon: '<FaDollarSign style={{marginRight:4}} />' },
-    { id: 'password-reset', name: 'Password Reset', description: 'Password reset request email', icon: '<FaKey style={{marginRight:4}} />' },
+    { id: 'welcome', name: 'Welcome Email', description: 'Sent to new users upon registration', icon: <FaHandPointRight style={{marginRight:4}} /> },
+    { id: 'shop-approved', name: 'Shop Approved', description: 'Notification when shop is approved', icon: <FaCheckCircle style={{marginRight:4}} /> },
+    { id: 'shop-denied', name: 'Shop Denied', description: 'Notification when shop application is denied', icon: <FaTimesCircle style={{marginRight:4}} /> },
+    { id: 'workorder-created', name: 'Work Order Created', description: 'Sent when new work order is created', icon: <FaWrench style={{marginRight:4}} /> },
+    { id: 'workorder-assigned', name: 'Work Order Assigned', description: 'Sent to technician when assigned', icon: <FaHardHat style={{marginRight:4}} /> },
+    { id: 'workorder-completed', name: 'Work Order Completed', description: 'Sent when work order is completed', icon: <FaCheck style={{marginRight:4}} /> },
+    { id: 'payment-received', name: 'Payment Received', description: 'Confirmation of payment received', icon: <FaDollarSign style={{marginRight:4}} /> },
+    { id: 'password-reset', name: 'Password Reset', description: 'Password reset request email', icon: <FaKey style={{marginRight:4}} /> },
   ];
 
   return (

@@ -321,7 +321,7 @@ export default function ScheduleSettingsPage() {
               width: '100%'
             }}
           >
-            {saving ? 'Saving...' : '<FaSave style={{marginRight:4}} /> Save Schedule Settings'}
+            {saving ? 'Saving...' : <><FaSave style={{marginRight:4}} /> Save Schedule Settings</>}
           </button>
         </div>
 

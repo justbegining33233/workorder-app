@@ -89,7 +89,7 @@ export default function ReferralsPage() {
       </div>
 
       <div style={{ padding: '24px 32px 0', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {[{ label: 'Total Referrals', value: stats.total, icon: '' }, { label: 'Converted', value: stats.converted, icon: '' }, { label: 'Pending', value: stats.pending, icon: '<FaHourglassHalf style={{marginRight:4}} />' }, { label: 'Rewards Issued', value: `$${stats.value}`, icon: '' }].map(s => (
+        {[{ label: 'Total Referrals', value: stats.total, icon: '' }, { label: 'Converted', value: stats.converted, icon: '' }, { label: 'Pending', value: stats.pending, icon: <FaHourglassHalf style={{marginRight:4}} /> }, { label: 'Rewards Issued', value: `$${stats.value}`, icon: '' }].map(s => (
           <div key={s.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 20px', minWidth: 130 }}>
             <div style={{ fontSize: 22 }}>{s.icon}</div>
             <div style={{ fontSize: 26, fontWeight: 800, margin: '4px 0 2px' }}>{s.value}</div>
@@ -125,7 +125,7 @@ export default function ReferralsPage() {
                       <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.color}`, borderRadius: 20, padding: '3px 12px', fontSize: 12, fontWeight: 700, textTransform: 'capitalize' }}>{ref.status}</span>
                       <button onClick={() => copyCode(ref.referralCode)}
                         style={{ background: 'rgba(96,165,250,0.15)', color: '#60a5fa', border: '1px solid #3b82f6', borderRadius: 7, padding: '5px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'monospace' }}>
-                        {copied === ref.referralCode ? '<FaCheckCircle style={{marginRight:4}} />' : ref.referralCode}
+                        {copied === ref.referralCode ? <FaCheckCircle style={{marginRight:4}} /> : ref.referralCode}
                       </button>
                     </div>
                   </div>

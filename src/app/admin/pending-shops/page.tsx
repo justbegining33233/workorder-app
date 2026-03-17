@@ -491,7 +491,7 @@ export default function PendingShops() {
                   opacity: approving ? 0.7 : 1
                 }}
               >
-                {approving ? 'Approving...' : '<FaCheck style={{marginRight:4}} /> Yes, Approve Shop'}
+                {approving ? 'Approving...' : <><FaCheck style={{marginRight:4}} /> Yes, Approve Shop</>}
               </button>
               <button 
                 onClick={() => {

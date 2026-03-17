@@ -31,7 +31,7 @@ export default function Reviews() {
   };
 
   const renderStars = (rating: number) => {
-    return '<FaStar style={{marginRight:4}} />'.repeat(rating);
+    return Array.from({length: rating}, (_, i) => <FaStar key={i} />);
   };
 
   return (

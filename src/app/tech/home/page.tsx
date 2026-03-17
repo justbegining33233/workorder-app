@@ -208,30 +208,30 @@ export default function TechHome() {
   };
 
   const jobCreationTools = [
-    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: '<FaCar style={{marginRight:4}} />', link: '/workorders/new' },
-    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: '<FaWrench style={{marginRight:4}} />', link: '/workorders/inshop' },
+    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: <FaCar style={{marginRight:4}} />, link: '/workorders/new' },
+    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: <FaWrench style={{marginRight:4}} />, link: '/workorders/inshop' },
   ];
 
   const jobManagementTools = [
-    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: '<FaClipboardList style={{marginRight:4}} />', link: '/workorders/list?status=in-progress' },
-    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: '<FaChartBar style={{marginRight:4}} />', link: '/workorders/list?status=closed' },
+    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: <FaClipboardList style={{marginRight:4}} />, link: '/workorders/list?status=in-progress' },
+    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: <FaChartBar style={{marginRight:4}} />, link: '/workorders/list?status=closed' },
   ];
 
   const fieldTools = [
-    { title: 'Share Location', description: 'Share your real-time GPS location', icon: '<FaMapMarkerAlt style={{marginRight:4}} />', link: '/tech/share-location' },
-    { title: 'Messages', description: 'View and respond to messages', icon: '<FaComments style={{marginRight:4}} />', link: '/tech/messages', badge: messageUnreadCount },
+    { title: 'Share Location', description: 'Share your real-time GPS location', icon: <FaMapMarkerAlt style={{marginRight:4}} />, link: '/tech/share-location' },
+    { title: 'Messages', description: 'View and respond to messages', icon: <FaComments style={{marginRight:4}} />, link: '/tech/messages', badge: messageUnreadCount },
   ];
 
   const resourceTools = [
-    { title: 'Parts Inventory', description: 'Check parts availability and track inventory', icon: '<FaCog style={{marginRight:4}} />', link: '/tech/inventory' },
-    { title: 'Service Manuals', description: 'Access technical documentation and guides', icon: '<FaBook style={{marginRight:4}} />', link: '/tech/manuals' },
+    { title: 'Parts Inventory', description: 'Check parts availability and track inventory', icon: <FaCog style={{marginRight:4}} />, link: '/tech/inventory' },
+    { title: 'Service Manuals', description: 'Access technical documentation and guides', icon: <FaBook style={{marginRight:4}} />, link: '/tech/manuals' },
   ];
 
   const technicalTools = [
-    { title: 'Diagnostic Tools', description: 'Run vehicle diagnostics and read error codes', icon: '<FaSearch style={{marginRight:4}} />', link: '/tech/diagnostics' },
-    { title: 'Photo Upload', description: 'Upload photos and documentation', icon: '<FaCamera style={{marginRight:4}} />', link: '/tech/photos' },
-    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: '<FaStopwatch style={{marginRight:4}} />', link: '/tech/timesheet' },
-    { title: 'Customer Portal', description: 'Access customer vehicle history', icon: '<FaUser style={{marginRight:4}} />', link: '/tech/customers' },
+    { title: 'Diagnostic Tools', description: 'Run vehicle diagnostics and read error codes', icon: <FaSearch style={{marginRight:4}} />, link: '/tech/diagnostics' },
+    { title: 'Photo Upload', description: 'Upload photos and documentation', icon: <FaCamera style={{marginRight:4}} />, link: '/tech/photos' },
+    { title: 'Time Tracking', description: 'Clock in/out and track billable hours', icon: <FaStopwatch style={{marginRight:4}} />, link: '/tech/timesheet' },
+    { title: 'Customer Portal', description: 'Access customer vehicle history', icon: <FaUser style={{marginRight:4}} />, link: '/tech/customers' },
   ];
 
   return (
@@ -868,7 +868,7 @@ export default function TechHome() {
                     <div style={{display:'flex', justifyContent:'space-between'}}>
                       <span style={{fontSize:13, color:'#9aa3b2'}}>Status:</span>
                       <span style={{fontSize:13, fontWeight:600, color: techProfile.available ? '#22c55e' : '#ef4444'}}>
-                        {techProfile.available ? '<FaCircle style={{marginRight:4}} /> Active' : '<FaRegCircle style={{marginRight:4}} /> Inactive'}
+                        {techProfile.available ? <><FaCircle style={{marginRight:4}} /> Active</> : <><FaRegCircle style={{marginRight:4}} /> Inactive</>}
                       </span>
                     </div>
                   </div>

@@ -132,7 +132,7 @@ export default function ShopReviewsPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, marginBottom: 24 }}>
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 24, textAlign: 'center' }}>
             <div style={{ fontSize: 56, fontWeight: 900, color: '#fbbf24', lineHeight: 1 }}>{avgRating}</div>
-            <div style={{ color: '#fbbf24', fontSize: 22, marginTop: 4 }}>{'<FaStar style={{marginRight:4}} />'.repeat(Math.round(Number(avgRating) || 0))}</div>
+            <div style={{ color: '#fbbf24', fontSize: 22, marginTop: 4 }}>{Array.from({length: Math.round(Number(avgRating))}, (_, i) => <FaStar key={i} />)}</div>
             <div style={{ color: '#9aa3b2', fontSize: 13, marginTop: 8 }}>{reviews.length} review{reviews.length !== 1 ? 's' : ''}</div>
           </div>
           <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 24 }}>
@@ -187,7 +187,7 @@ export default function ShopReviewsPage() {
                     </div>
                   </div>
                   <div style={{ fontSize: 20, color: '#fbbf24' }}>
-                    {'<FaStar style={{marginRight:4}} />'.repeat(review.rating)}{'<FaRegStar style={{marginRight:4}} />'.repeat(5 - review.rating)}
+                    {Array.from({length: review.rating}, (_, i) => <FaStar key={i} />)}{Array.from({length: 5 - review.rating}, (_, i) => <FaRegStar key={i} />)}
                   </div>
                 </div>
 

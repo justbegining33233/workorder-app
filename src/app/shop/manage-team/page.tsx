@@ -288,7 +288,7 @@ export default function ManageTeamPage() {
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                     <div style={{flex:1}}>
                       <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:12}}>
-                        <span style={{fontSize:32}}>{member.role === 'tech' ? '<FaWrench style={{marginRight:4}} />' : '<FaUserTie style={{marginRight:4}} />'}</span>
+                        <span style={{fontSize:32}}>{member.role === 'tech' ? <FaWrench style={{marginRight:4}} /> : <FaUserTie style={{marginRight:4}} />}</span>
                         <div>
                           <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:4}}>{member.name}</h3>
                           <div style={{display:'flex', gap:8}}>
