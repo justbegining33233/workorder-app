@@ -67,7 +67,7 @@ function WorkOrderListPageContent() {
 
   const fromParam = searchParams?.get('from') || '';
   const backHref = fromParam === 'admin' ? '/shop/admin' : '/shop/home';
-  const backLabel = fromParam === 'admin' ? '<FaArrowLeft style={{marginRight:4}} /> Back to Shop Admin' : '<- Back to Shop Dashboard';
+  const backLabel = fromParam === 'admin' ? <><FaArrowLeft style={{marginRight:4}} /> Back to Shop Admin</> : <><FaArrowLeft style={{marginRight:4}} /> Back to Shop Dashboard</>;
 
   return (
     <div className="sos-wrap">
@@ -162,7 +162,7 @@ function WorkOrderListPageContent() {
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px'
                     }}>
-                      {serviceType === 'roadside' ? '<FaCar style={{marginRight:4}} /> Roadside' : '<FaBuilding style={{marginRight:4}} /> In-Shop'}
+                      {serviceType === 'roadside' ? <><FaCar style={{marginRight:4}} /> Roadside</> : <><FaBuilding style={{marginRight:4}} /> In-Shop</>}
                     </span>
                   </div>
                   <div>

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaComments, FaExclamationTriangle, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 
@@ -48,7 +49,7 @@ interface CustomerMessagingCardProps {
 
 // --- Constants ---------------------------------------------------------------
 
-const ROLE_ICON: Record<string, string> = { shop: "<FaStore style={{marginRight:4}} />", manager: "<FaUserTie style={{marginRight:4}} />", tech: "<FaWrench style={{marginRight:4}} />" };
+const ROLE_ICON: Record<string, React.ReactNode> = { shop: <FaStore />, manager: <FaUserTie />, tech: <FaWrench /> };
 const ROLE_LABEL: Record<string, string> = { shop: "Shop", manager: "Manager", tech: "Tech" };
 const ROLE_COLOR: Record<string, string> = { shop: "#f59e0b", manager: "#8b5cf6", tech: "#10b981" };
 
@@ -315,7 +316,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
             </div>
           ) : (
             filteredConversations.map((conv) => {
-              const icon = ROLE_ICON[conv.contactRole] ?? "<FaUser style={{marginRight:4}} />";
+              const icon = ROLE_ICON[conv.contactRole] ?? <FaUser />;
               const color = ROLE_COLOR[conv.contactRole] ?? "#9ca3af";
               const isActive = selected?.contactId === conv.contactId && selected?.contactRole === conv.contactRole;
               return (
@@ -413,7 +414,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
             <>
               {/* Thread header */}
               <div style={{ padding: "10px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 8, background: "rgba(0,0,0,0.2)" }}>
-                <span style={{ fontSize: 18 }}>{ROLE_ICON[selected.contactRole] ?? "<FaUser style={{marginRight:4}} />"}</span>
+                <span style={{ fontSize: 18 }}>{ROLE_ICON[selected.contactRole] ?? <FaUser />}</span>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#e5e7eb" }}>{selected.contactName}</div>
                   <div style={{ fontSize: 11, color: ROLE_COLOR[selected.contactRole] ?? "#9ca3af", fontWeight: 600 }}>

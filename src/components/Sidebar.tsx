@@ -352,7 +352,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
             onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {collapsed ? '<FaArrowRight style={{marginRight:4}} />' : '<FaArrowLeft style={{marginRight:4}} />'}
+            {collapsed ? <FaArrowRight /> : <FaArrowLeft />}
           </button>
         </div>
 

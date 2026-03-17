@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaComments, FaExclamationTriangle, FaShieldAlt, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 
@@ -45,7 +46,7 @@ interface MessagingCardProps {
 
 // --- Constants ----------------------------------------------------------------
 
-const ROLE_ICON: Record<string, string> = { customer: '<FaUser style={{marginRight:4}} />', tech: '<FaWrench style={{marginRight:4}} />', manager: '<FaUserTie style={{marginRight:4}} />', shop: '<FaStore style={{marginRight:4}} />', admin: '<FaShieldAlt style={{marginRight:4}} />' };
+const ROLE_ICON: Record<string, React.ReactNode> = { customer: <FaUser />, tech: <FaWrench />, manager: <FaUserTie />, shop: <FaStore />, admin: <FaShieldAlt /> };
 const ROLE_LABEL: Record<string, string> = { customer: 'Customer', tech: 'Tech', manager: 'Manager', shop: 'Shop', admin: 'Admin' };
 const ROLE_COLOR: Record<string, string> = { customer: '#3b82f6', tech: '#10b981', manager: '#8b5cf6', shop: '#f59e0b', admin: '#ef4444' };
 
@@ -297,7 +298,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
             </div>
           ) : (
             filteredConversations.map((conv) => {
-              const icon = ROLE_ICON[conv.contactRole] ?? '<FaUser style={{marginRight:4}} />';
+              const icon = ROLE_ICON[conv.contactRole] ?? <FaUser />;
               const color = ROLE_COLOR[conv.contactRole] ?? '#9ca3af';
               const isActive = selectedConversation?.contactId === conv.contactId && selectedConversation?.contactRole === conv.contactRole;
               return (
@@ -390,7 +391,7 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
             <>
               {/* Thread header */}
               <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,0,0,0.15)' }}>
-                <span style={{ fontSize: 18 }}>{ROLE_ICON[selectedConversation.contactRole] ?? '<FaUser style={{marginRight:4}} />'}</span>
+                <span style={{ fontSize: 18 }}>{ROLE_ICON[selectedConversation.contactRole] ?? <FaUser />}</span>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#e5e7eb' }}>{selectedConversation.contactName}</div>
                   <div style={{ fontSize: 11, color: ROLE_COLOR[selectedConversation.contactRole] ?? '#9ca3af', fontWeight: 600 }}>

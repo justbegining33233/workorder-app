@@ -831,7 +831,7 @@ export default function ShopRegistrationForm() {
                 </button>
               )}
               <button type="submit" className="btn-primary" disabled={loading}>
-                {loading ? 'Submitting...' : step === 5 ? 'Complete Registration' : 'Next <FaArrowRight style={{marginRight:4}} />'}
+                {loading ? 'Submitting...' : step === 5 ? 'Complete Registration' : <><FaArrowRight style={{marginRight:4}} /> Next</>}
               </button>
             </div>
           </div>

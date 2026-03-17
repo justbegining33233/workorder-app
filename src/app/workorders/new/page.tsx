@@ -267,7 +267,7 @@ function NewRoadsideJobContent() {
                       display: 'flex', alignItems: 'center', gap: 8,
                     }}
                   >
-                    <span>{selected ? '<FaCheckCircle style={{marginRight:4}} />' : '<FaRegCircle style={{marginRight:4}} />'}</span>
+                    <span>{selected ? <FaCheckCircle /> : <FaRegCircle />}</span>
                     {svc.name}
                   </button>
                 );
@@ -303,7 +303,7 @@ function NewRoadsideJobContent() {
                 cursor: locating ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap',
               }}
             >
-              {locating ? 'Locating...' : '<FaSatelliteDish style={{marginRight:4}} /> Use My Location'}
+              {locating ? 'Locating...' : <><FaSatelliteDish style={{marginRight:4}} /> Use My Location</>}
             </button>
           </div>
           {form.locationLat && (
@@ -332,7 +332,7 @@ function NewRoadsideJobContent() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
               {mediaFiles.map((file, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#111827', border: '1px solid #1f2937', borderRadius: 8, padding: '6px 12px', fontSize: 13, color: '#9aa3b2' }}>
-                  <span>{file.type.startsWith('video') ? '<FaVideo style={{marginRight:4}} />' : '<FaCamera style={{marginRight:4}} />'}</span>
+                  <span>{file.type.startsWith('video') ? <FaVideo /> : <FaCamera />}</span>
                   <span style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
                   <button type="button" onClick={() => removeFile(i)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', fontSize: 16 }}>×</button>
                 </div>
@@ -367,7 +367,7 @@ function NewRoadsideJobContent() {
               cursor: submitting ? 'not-allowed' : 'pointer',
             }}
           >
-            {submitting ? 'Creating Work Order...' : '<FaCar style={{marginRight:4}} /> Create Roadside Work Order'}
+            {submitting ? 'Creating Work Order...' : <><FaCar style={{marginRight:4}} /> Create Roadside Work Order</>}
           </button>
           <button
             type="button"

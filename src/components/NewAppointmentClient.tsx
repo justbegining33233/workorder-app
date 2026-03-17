@@ -312,7 +312,7 @@ export default function NewAppointmentClient() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 14, fontWeight: 700
                 }}>
-                  {step > s.num ? '<FaCheck style={{marginRight:4}} />' : s.num}
+                  {step > s.num ? <FaCheck /> : s.num}
                 </div>
                 <span style={{ color: step >= s.num ? '#e5e7eb' : '#6b7280', fontSize: 13, fontWeight: 600 }}>{s.label}</span>
               </div>
@@ -350,7 +350,7 @@ export default function NewAppointmentClient() {
                     fontSize: 15, fontWeight: 700, cursor: searchTerm.trim() ? 'pointer' : 'not-allowed'
                   }}
                 >
-                  {loading ? '...' : '<FaSearch style={{marginRight:4}} /> Search'}
+                  {loading ? '...' : <><FaSearch style={{marginRight:4}} /> Search</>}
                 </button>
               </div>
               <div style={{ marginTop: 8, fontSize: 13, color: '#6b7280' }}>
@@ -416,7 +416,7 @@ export default function NewAppointmentClient() {
             <h3 style={{ fontSize: 16, fontWeight: 700, color: '#e5e7eb', marginBottom: 12 }}><FaCamera style={{marginRight:4}} /> Pre-Visit Photos (Optional)</h3>
             <p style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 12 }}>Upload photos of your vehicle issue to help the shop prepare</p>
             <label style={{ display: 'inline-block', padding: '10px 20px', background: '#3b82f6', color: 'white', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 600, opacity: uploadingPhoto ? 0.6 : 1 }}>
-              {uploadingPhoto ? 'Uploading...' : '<FaCamera style={{marginRight:4}} /> Add Photos'}
+              {uploadingPhoto ? 'Uploading...' : <><FaCamera style={{marginRight:4}} /> Add Photos</>}
               <input
                 type="file"
                 accept="image/*"

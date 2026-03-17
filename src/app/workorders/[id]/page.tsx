@@ -951,7 +951,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
                         disabled={emailingInvoice}
                         style={{flex:1, padding:'8px', background:'#3b82f6', color:'white', border:'none', borderRadius:6, cursor:'pointer', fontSize:12, fontWeight:600, opacity: emailingInvoice ? 0.6 : 1}}
                       >
-                        {emailingInvoice ? 'Sending...' : '<FaEnvelope style={{marginRight:4}} /> Email Invoice'}
+                        {emailingInvoice ? 'Sending...' : <><FaEnvelope style={{marginRight:4}} /> Email Invoice</>}
                       </button>
                       <a
                         href={`/api/workorders/${id}/invoice`}

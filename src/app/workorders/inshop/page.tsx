@@ -224,7 +224,7 @@ export default function InShopWorkOrderPage() {
                       textAlign:'left'
                     }}
                   >
-                    {formData.services.includes(option.value) ? '<FaCheck style={{marginRight:4}} /> ' : ''}{option.label}
+                    {formData.services.includes(option.value) && <FaCheck style={{marginRight:4}} />}{option.label}
                   </button>
                 ))}
               </div>

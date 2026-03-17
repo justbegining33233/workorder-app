@@ -694,7 +694,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
           disabled={loading}
           style={{padding:'12px 32px', background:'#e5332a', color:'white', border:'none', borderRadius:8, cursor: loading ? 'not-allowed' : 'pointer', fontSize:14, fontWeight:600, marginLeft:'auto'}}
         >
-          {step === totalSteps ? (loading ? 'Saving...' : 'Create Work Order') : 'Next <FaArrowRight style={{marginRight:4}} />'}
+          {step === totalSteps ? (loading ? 'Saving...' : 'Create Work Order') : <><FaArrowRight style={{marginRight:4}} /> Next</>}
         </button>
       </div>
       {formMsg && (

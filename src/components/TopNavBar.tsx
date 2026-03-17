@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -199,12 +200,12 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
   };
 
   const getRoleBadge = () => {
-    const roles: Record<string, { icon: string; label: string; color: string }> = {
-      shop: { icon: '<FaStore style={{marginRight:4}} />', label: 'Shop Owner', color: '#3b82f6' },
-      manager: { icon: '<FaUserTie style={{marginRight:4}} />', label: 'Manager', color: '#f59e0b' },
-      tech: { icon: '<FaWrench style={{marginRight:4}} />', label: 'Tech', color: '#10b981' },
-      admin: { icon: '<FaCog style={{marginRight:4}} />', label: 'Admin', color: '#8b5cf6' },
-      customer: { icon: '<FaUser style={{marginRight:4}} />', label: 'Customer', color: '#6b7280' },
+    const roles: Record<string, { icon: React.ReactNode; label: string; color: string }> = {
+      shop: { icon: <FaStore />, label: 'Shop Owner', color: '#3b82f6' },
+      manager: { icon: <FaUserTie />, label: 'Manager', color: '#f59e0b' },
+      tech: { icon: <FaWrench />, label: 'Tech', color: '#10b981' },
+      admin: { icon: <FaCog />, label: 'Admin', color: '#8b5cf6' },
+      customer: { icon: <FaUser />, label: 'Customer', color: '#6b7280' },
     };
 
     const role = roles[userRole] || { icon: '', label: 'User', color: '#6b7280' };
@@ -576,7 +577,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                       opacity: loading ? 0.55 : 1,
                     }}
                   >
-                    <span style={{ fontSize: 11 }}>{isClockedIn ? '<FaSquare style={{marginRight:4}} />' : '<FaCaretRight style={{marginRight:4}} />'}</span>
+                    <span style={{ fontSize: 11 }}>{isClockedIn ? <FaSquare /> : <FaCaretRight />}</span>
                     {isClockedIn ? 'Clock Out' : 'Clock In'}
                   </button>
                 )}

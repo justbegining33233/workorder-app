@@ -1,14 +1,15 @@
 'use client';
 
+import React from 'react';
 import { WorkOrder } from '@/types/workorder';
 import Link from 'next/link';
 import { FaCar, FaTruck, FaWrench } from 'react-icons/fa';
 
-const vehicleTypeLabels: Record<string, string> = {
-  'semi-truck': '<FaTruck style={{marginRight:4}} /> Semi Truck',
-  'trailer': '<FaTruck style={{marginRight:4}} /> Trailer',
-  'equipment': '<FaWrench style={{marginRight:4}} /> Equipment',
-  'personal-vehicle': '<FaCar style={{marginRight:4}} /> Personal Vehicle',
+const vehicleTypeLabels: Record<string, React.ReactNode> = {
+  'semi-truck': <><FaTruck style={{marginRight:4}} /> Semi Truck</>,
+  'trailer': <><FaTruck style={{marginRight:4}} /> Trailer</>,
+  'equipment': <><FaWrench style={{marginRight:4}} /> Equipment</>,
+  'personal-vehicle': <><FaCar style={{marginRight:4}} /> Personal Vehicle</>,
 };
 
 const statusColors = {
