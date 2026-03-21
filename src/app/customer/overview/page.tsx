@@ -71,7 +71,7 @@ export default function CustomerOverview() {
     window.location.href = '/auth/login';
   };
 
-  const userName = (user as any)?.name || localStorage.getItem('userName') || '';
+  const userName = (user as any)?.name || (typeof window !== 'undefined' ? localStorage.getItem('userName') : '') || '';
 
   return (
     <div style={{minHeight:'100vh', background: 'transparent'}}>
