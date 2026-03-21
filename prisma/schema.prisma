@@ -384,6 +384,7 @@ model WorkOrder {
   @@index([shopId])
   @@index([assignedTechId])
   @@index([status])
+  @@index([paymentStatus])
   @@map("work_orders")
 }
 

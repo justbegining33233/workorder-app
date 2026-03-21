@@ -98,7 +98,7 @@ export default function BarcodeScanner({ onScan, onClose, label = 'Scan a Barcod
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ color: '#f1f5f9', fontSize: 18, fontWeight: 700, margin: 0 }}><FaCamera style={{marginRight:4}} /> {label}</h2>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
+          <button aria-label="Close" onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
         </div>
 
         {supported === false && (

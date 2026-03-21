@@ -274,7 +274,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
       <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <h3 style={{ margin: 0, color: "#e5e7eb", fontSize: 16, fontWeight: 700 }}>{header}</h3>
-          <p style={{ margin: 0, color: "#9ca3af", fontSize: 12 }}>Chat with shops, managers &amp; techs</p>
+          <p style={{ margin: 0, color: "#9ca3af", fontSize: 12 }}>Chat with shops, managers & techs</p>
         </div>
         <button
           onClick={() => { setShowCompose(true); setSelected(null); fetchAvailableContacts(); }}
@@ -478,7 +478,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
                 Select a conversation on the left<br />or click <strong style={{ color: "#e5332a" }}>+ New</strong> to start one.
               </div>
               <div style={{ fontSize: 11, color: "#374151", marginTop: 4, textAlign: "center" }}>
-                You can message shops, managers &amp; techs when you have an open work order, a road call request, or a booked appointment.
+                You can message shops, managers & techs when you have an open work order, a road call request, or a booked appointment.
               </div>
             </div>
           )}
@@ -487,7 +487,7 @@ export default function CustomerMessagingCard({ header = "Messages", initialShop
       {custMsgMsg && (
         <div style={{position:'fixed',bottom:24,right:24,background:custMsgMsg.type==='success'?'#dcfce7':'#fde8e8',color:custMsgMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
           {custMsgMsg.text}
-          <button onClick={()=>setCustMsgMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+          <button aria-label="Dismiss" onClick={()=>setCustMsgMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
         </div>
       )}
     </div>

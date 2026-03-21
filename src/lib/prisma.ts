@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { encryptField, isEncrypted } from './encryption';
 
 // Lazy Prisma initialization — do NOT throw at module import time.
 // If DATABASE_URL is missing the exported object is a Proxy that throws only
@@ -35,9 +36,23 @@ function buildClient(): PrismaClient {
         for (const key of Object.keys(obj)) {
           const val = obj[key];
           if (typeof val !== 'string' || !val) continue;
-          if (key.toLowerCase() !== 'password') continue;
-          if (val.startsWith('$2')) continue; // already bcrypt-hashed, skip
-          obj[key] = await bcrypt.hash(val, rounds);
+
+          // Auto-hash passwords
+          if (key.toLowerCase() === 'password') {
+            if (val.startsWith('$2')) continue; // already bcrypt-hashed, skip
+            obj[key] = await bcrypt.hash(val, rounds);
+            continue;
+          }
+
+          // Auto-encrypt bankAccountInfo
+          if (key === 'bankAccountInfo') {
+            if (isEncrypted(val)) continue; // already encrypted, skip
+            try {
+              obj[key] = encryptField(val);
+            } catch {
+              // If encryption key is not set, skip (dev mode without TOTP_ENCRYPTION_KEY)
+            }
+          }
         }
       }
 

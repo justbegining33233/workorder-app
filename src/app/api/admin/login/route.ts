@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
     // Generate JWT token
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
-      console.error('FATAL: JWT_SECRET is not set — admin token signed with insecure fallback!');
+      console.error('FATAL: JWT_SECRET is not set — refusing to sign admin token');
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
     const token = jwt.sign(
       {
@@ -63,8 +64,8 @@ export async function POST(request: NextRequest) {
         role: 'admin',
         isSuperAdmin: admin.isSuperAdmin,
       },
-      jwtSecret || 'fallback-secret',
-      { expiresIn: '7d' }
+      jwtSecret,
+      { expiresIn: '24h' }
     );
 
     return NextResponse.json({

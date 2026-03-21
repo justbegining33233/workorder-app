@@ -64,7 +64,7 @@ export default function Home() {
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-4">
           <Link href="/auth/login" className="rounded-xl px-7 py-3 text-sm font-semibold transition hover:opacity-90" style={primaryBtn}>Start free</Link>
-          <Link href="/auth/login" className="rounded-xl px-7 py-3 text-sm font-semibold transition" style={ghostBtn}>Book a demo</Link>
+          <Link href="/contact" className="rounded-xl px-7 py-3 text-sm font-semibold transition" style={ghostBtn}>Book a demo</Link>
         </div>
         <div className="mt-14 grid w-full grid-cols-3 gap-4">
           {[
@@ -121,7 +121,7 @@ export default function Home() {
         <div className="flex flex-col items-center text-center gap-3">
           <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Features</p>
           <h2 className="text-3xl font-semibold text-white">Built for relentless teams.</h2>
-          <Link href="#" className="text-sm font-semibold transition" style={{ color: "#ff948d" }} onMouseOver={e => (e.currentTarget.style.color = "#ffb3ad")} onMouseOut={e => (e.currentTarget.style.color = "#ff948d")}>Explore all features &rarr;</Link>
+          <Link href="/features" className="text-sm font-semibold transition" style={{ color: "#ff948d" }} onMouseOver={e => (e.currentTarget.style.color = "#ffb3ad")} onMouseOut={e => (e.currentTarget.style.color = "#ff948d")}>Explore all features &rarr;</Link>
         </div>
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {features.map((f) => (

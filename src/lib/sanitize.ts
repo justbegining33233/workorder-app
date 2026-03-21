@@ -1,16 +1,13 @@
-// XSS sanitization utilities
+// XSS sanitization utilities — powered by DOMPurify
+import DOMPurify from 'isomorphic-dompurify';
 
-// Basic HTML sanitization - removes script tags and dangerous attributes
+// Sanitize HTML using DOMPurify — strips scripts, event handlers, and dangerous content
 export function sanitizeHtml(dirty: string): string {
   if (!dirty) return '';
-  
-  return dirty
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
-    .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/data:text\/html/gi, '');
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'span'],
+    ALLOWED_ATTR: ['href', 'target', 'rel'],
+  });
 }
 
 // Sanitize string by escaping HTML special characters
@@ -85,5 +82,5 @@ export function sanitizeSqlLike(str: string): string {
 
 // Strip all HTML tags
 export function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, '');
+  return DOMPurify.sanitize(html, { ALLOWED_TAGS: [] });
 }

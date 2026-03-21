@@ -5,8 +5,7 @@ import type { ReactNode } from "react";
 import OilSlickCanvas from "@/components/OilSlickCanvas";
 
 const navLinks = [
-  { href: "#features", label: "Features" },
-  { href: "#roles", label: "Roles" },
+  { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" }
 ];
@@ -117,8 +116,8 @@ export default function MarketingShell({ children }: MarketingShellProps) {
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Support</p>
             <ul className="mt-4 space-y-2 text-sm" style={{ color: "#cbd5e1" }}>
-              <li><Link href="/auth/login" className="hover:text-white">Help Center</Link></li>
-              <li><Link href="/auth/login" className="hover:text-white">Book a demo</Link></li>
+              <li><Link href="/contact" className="hover:text-white">Help Center</Link></li>
+              <li><Link href="/contact" className="hover:text-white">Book a demo</Link></li>
             </ul>
           </div>
         </div>

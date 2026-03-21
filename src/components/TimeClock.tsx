@@ -516,7 +516,7 @@ export default function TimeClock({ techId, shopId, techName }: TimeClockProps) 
       {clockMsg && (
         <div style={{position:'fixed',bottom:24,right:24,background:clockMsg.type==='success'?'#dcfce7':'#fde8e8',color:clockMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
           {clockMsg.text}
-          <button onClick={()=>setClockMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+          <button aria-label="Dismiss" onClick={()=>setClockMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
         </div>
       )}
     </div>

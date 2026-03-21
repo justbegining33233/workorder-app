@@ -53,7 +53,7 @@ export interface RateLimitConfig {
 export const rateLimitConfigs = {
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    maxRequests: 5,
+    maxRequests: 15,
     message: 'Too many authentication attempts, please try again later',
   },
   api: {

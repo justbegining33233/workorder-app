@@ -700,7 +700,7 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
       {formMsg && (
         <div style={{position:'fixed',bottom:24,right:24,background:formMsg.type==='success'?'#dcfce7':'#fde8e8',color:formMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
           {formMsg.text}
-          <button onClick={()=>setFormMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+          <button aria-label="Dismiss" onClick={()=>setFormMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
         </div>
       )}
     </form>

@@ -54,8 +54,7 @@ export default function ContactPage() {
           <div className="rounded-3xl border border-slate-800/70 bg-slate-950/70 p-8">
             <h2 className="text-2xl font-semibold text-white">Contact details</h2>
             <ul className="mt-6 space-y-4 text-sm text-slate-300">
-              <li><span className="text-slate-500">Email:</span> team@fixtray.com</li>
-              <li><span className="text-slate-500">Phone:</span> +1 (555) 013-4827</li>
+              <li><span className="text-slate-500">Email:</span> support@fixtray.app</li>
               <li><span className="text-slate-500">Availability:</span> Mon-Fri, 8am-6pm</li>
             </ul>
           </div>

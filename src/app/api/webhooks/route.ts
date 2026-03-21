@@ -59,8 +59,13 @@ export async function POST(request: NextRequest) {
     // Validate URL
     try {
       const parsed = new URL(url);
-      if (!['https:', 'http:'].includes(parsed.protocol)) {
-        return NextResponse.json({ error: 'URL must use HTTPS or HTTP' }, { status: 400 });
+      if (parsed.protocol !== 'https:') {
+        return NextResponse.json({ error: 'Webhook URL must use HTTPS' }, { status: 400 });
+      }
+      // Block internal/private network targets to prevent SSRF
+      const hostname = parsed.hostname.toLowerCase();
+      if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname.startsWith('10.') || hostname.startsWith('192.168.') || hostname.startsWith('172.') || hostname.endsWith('.internal') || hostname.endsWith('.local')) {
+        return NextResponse.json({ error: 'Webhook URL must not target internal networks' }, { status: 400 });
       }
     } catch {
       return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });

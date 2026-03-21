@@ -4,6 +4,11 @@ import { requireAuth } from '@/lib/middleware';
 import { resetRateLimit, getRateLimitStatus } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
+  // Block debug endpoints entirely in production
+  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
 

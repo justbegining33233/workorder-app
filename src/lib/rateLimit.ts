@@ -60,7 +60,7 @@ export interface RateLimitResult {
 // ---------------------------------------------------------------------------
 export async function checkRateLimit(
   identifier: string,
-  options: RateLimitOptions = { maxRequests: 5, windowMs: 15 * 60 * 1000 },
+  options: RateLimitOptions = { maxRequests: 15, windowMs: 15 * 60 * 1000 },
 ): Promise<RateLimitResult> {
   const windowSecs = Math.ceil(options.windowMs / 1000);
   const resetTime = Date.now() + options.windowMs;

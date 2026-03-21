@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const auth = authenticateRequest(req);
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
-  if (!shopId) return NextResponse.json({ error: 'No shop context' }, { status: 400 });
+  if (!shopId) return NextResponse.json({ error: 'No shop' }, { status: 400 });
 
   try {
     const bays = await prisma.bay.findMany({ where: { shopId }, orderBy: { name: 'asc' } });
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   const auth = authenticateRequest(req);
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const shopId = auth.role === 'shop' ? auth.id : (auth as any).shopId;
-  if (!shopId) return NextResponse.json({ error: 'No shop context' }, { status: 400 });
+  if (!shopId) return NextResponse.json({ error: 'No shop' }, { status: 400 });
 
   try {
     const body = await req.json();

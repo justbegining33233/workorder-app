@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
           { key: 'X-XSS-Protection',          value: '1; mode=block' },
           { key: 'Permissions-Policy',        value: 'camera=(self), microphone=(), geolocation=(self)' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-          { key: 'Content-Security-Policy',   value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://res.cloudinary.com; font-src 'self'; connect-src 'self' https://api.stripe.com https://*.sentry.io wss://*.fixtray.app wss://localhost:* ws://localhost:*; frame-src https://js.stripe.com https://hooks.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" },
+          { key: 'Content-Security-Policy',   value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://res.cloudinary.com; font-src 'self'; connect-src 'self' https://api.stripe.com https://*.sentry.io wss://*.fixtray.app wss://localhost:* ws://localhost:*; frame-src https://js.stripe.com https://hooks.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" },
         ],
       },
     ];
@@ -34,6 +34,13 @@ const nextConfig: NextConfig = {
     formats: ["image/webp", "image/avif"],
   },
   // Note: custom webpack function removed to avoid Turbopack/webpack detection
+  // Use memory cache in dev to avoid filling C: drive with .next cache
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.cache = { type: 'memory' };
+    }
+    return config;
+  },
 };
 
 export default withSentryConfig(nextConfig, {
