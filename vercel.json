@@ -1,0 +1,21 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/keepalive",
+      "schedule": "*/5 * * * *"
+    }
+  ],
+  "functions": {
+    "src/app/api/shop/payroll/route.ts": { "maxDuration": 60 },
+    "src/app/api/messages/route.ts": { "maxDuration": 30 },
+    "src/app/api/shop/team/route.ts": { "maxDuration": 30 },
+    "src/app/api/shop/messages/route.ts": { "maxDuration": 30 },
+    "src/app/api/shop/stats/route.ts": { "maxDuration": 30 },
+    "src/app/api/shop/settings/route.ts": { "maxDuration": 30 },
+    "src/app/api/shops/settings/route.ts": { "maxDuration": 30 }
+  }
+}

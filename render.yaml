@@ -1,0 +1,26 @@
+# Render.com Deployment Configuration for FixTray Socket Server
+# See: https://render.com/docs/yaml-spec
+#
+# IMPORTANT: Set these environment variables in the Render dashboard:
+#   JWT_SECRET      — must match Vercel JWT_SECRET exactly
+#   ALLOWED_ORIGINS — "https://fixtray.app,https://www.fixtray.app"
+#
+# After deploying, copy the URL from Render and set it in Vercel as:
+#   NEXT_PUBLIC_SOCKET_URL = https://your-app.onrender.com
+
+services:
+  - type: web
+    name: fixtray-socket-server
+    runtime: node
+    buildCommand: npm install
+    startCommand: node socket-server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        sync: false   # set manually in Render dashboard
+      - key: ALLOWED_ORIGINS
+        value: "https://fixtray.app,https://www.fixtray.app"

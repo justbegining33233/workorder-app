@@ -1,0 +1,364 @@
+/* SOS — Clean professional dark theme */
+:root {
+  --sos-bg:         #080e1c;
+  --sos-surface:    rgba(10, 16, 32, 0.72);
+  --sos-card:       rgba(12, 18, 36, 0.88);
+  --sos-text:       #f1f5f9;
+  --sos-text-muted: #94a3b8;
+  --sos-accent:     #e5332a;
+  --sos-accent-2:   #ff6b5e;
+  --sos-border:     rgba(255,255,255,0.08);
+  --sos-border-strong: rgba(255,255,255,0.13);
+  --font:           'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+}
+
+/* body/html background is handled globally via globals.css */
+
+.sos-wrap {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  /* Opaque dark base so canvas particles show — covers the body gradient */
+  background: #020608;
+  position: relative;
+  overflow: hidden;
+  /* Isolate stacking context so canvas + card layer correctly */
+  isolation: isolate;
+}
+
+.sos-card {
+  width: 100%;
+  max-width: 480px;
+  max-height: 95dvh;
+  overflow-y: auto;
+  /* Frosted dark glass — oil-slick shows through */
+  background: rgba(8, 13, 26, 0.32);
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.55);
+  position: relative;
+  z-index: 1;
+  font-family: var(--font);
+}
+
+.sos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.02);
+}
+
+.sos-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sos-brand .mark {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-size: 20px;
+  color: var(--sos-accent);
+  font-family: var(--font);
+}
+
+.sos-brand .sub {
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--sos-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.sos-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(229,51,42,0.14);
+  color: #ffb3ad;
+  border: 1px solid rgba(229,51,42,0.28);
+}
+
+.sos-content {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0;
+}
+
+.sos-pane {
+  padding: 26px 28px;
+}
+
+.sos-pane + .sos-pane {
+  border-left: 1px solid var(--sos-border);
+}
+
+.sos-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--sos-text);
+  font-family: var(--font);
+}
+
+.sos-desc {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--sos-text-muted);
+  line-height: 1.6;
+}
+
+.sos-tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 16px;
+  border: 1px solid var(--sos-border);
+  background: rgba(255,255,255,0.03);
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.sos-tab {
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--sos-text-muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+  transition: color 0.15s, background 0.15s;
+}
+
+.sos-tab.active {
+  color: var(--sos-text);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--sos-border-strong);
+  font-weight: 600;
+}
+
+.sos-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.sos-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--sos-text-muted);
+  font-family: var(--font);
+}
+
+.sos-input, .sos-select {
+  width: 100%;
+  padding: 10px 13px;
+  border-radius: 9px;
+  border: 1px solid var(--sos-border-strong);
+  background: rgba(255,255,255,0.05);
+  color: var(--sos-text);
+  font-size: 13.5px;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.sos-input:focus, .sos-select:focus {
+  border-color: var(--sos-accent);
+  background: rgba(229,51,42,0.06);
+  box-shadow: 0 0 0 3px rgba(229,51,42,0.12);
+}
+.sos-input::placeholder { color: rgba(148,163,184,0.45); }
+
+.sos-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-primary {
+  background: var(--sos-accent);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(229,51,42,0.35);
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-outline {
+  background: rgba(255,255,255,0.05);
+  color: var(--sos-text);
+  border: 1px solid var(--sos-border-strong);
+  padding: 10px 14px;
+  border-radius: 9px;
+  font-family: var(--font);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-outline:hover { background: rgba(255,255,255,0.09); }
+
+.sos-list {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.sos-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--sos-border);
+  background: rgba(255,255,255,0.04);
+  transition: background 0.12s;
+}
+.sos-item:hover { background: rgba(255,255,255,0.07); }
+
+.sos-footer {
+  padding: 18px 28px;
+  border-top: 1px solid var(--sos-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sos-tagline {
+  font-size: 12px;
+  color: var(--sos-text-muted);
+}
+
+.accent-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--sos-accent) 0%, var(--sos-accent-2) 100%);
+  opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .sos-content { 
+    grid-template-columns: 1fr; 
+  }
+  .sos-pane + .sos-pane { 
+    border-left: none; 
+    border-top: 1px solid var(--sos-border); 
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .sos-wrap {
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  .sos-card {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  .sos-header {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .sos-brand .mark {
+    font-size: 20px;
+  }
+
+  .sos-brand .sub {
+    font-size: 11px;
+  }
+
+  .sos-pane {
+    padding: 20px 20px;
+  }
+
+  .sos-title {
+    font-size: 20px;
+  }
+
+  .sos-desc {
+    font-size: 14px;
+  }
+
+  .sos-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sos-tab {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+
+  .sos-footer {
+    padding: 16px 20px;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .sos-actions {
+    flex-direction: column;
+  }
+
+  .sos-actions button,
+  .sos-actions a {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sos-wrap {
+    padding: 0;
+  }
+
+  .sos-card {
+    border-radius: 0;
+  }
+
+  .sos-header {
+    padding: 12px 16px;
+  }
+
+  .sos-pane {
+    padding: 16px;
+  }
+
+  .sos-title {
+    font-size: 18px;
+  }
+
+  .sos-brand .mark {
+    font-size: 18px;
+  }
+
+  .btn-primary,
+  .btn-outline {
+    padding: 12px;
+    font-size: 14px;
+  }
+}

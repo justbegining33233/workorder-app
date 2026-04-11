@@ -1,0 +1,65 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { requireRole } from '@/lib/auth';
+import { getLocationById, updateLocation, deleteLocation } from '@/lib/shop-locations';
+
+// GET /api/shop/locations/[id]
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const auth = requireRole(request, ['shop', 'manager']);
+  if (auth instanceof NextResponse) return auth;
+
+  const { id } = await params;
+  const location = await getLocationById(id);
+  if (!location) return NextResponse.json({ error: 'Location not found' }, { status: 404 });
+
+  return NextResponse.json({ location });
+}
+
+// PUT /api/shop/locations/[id]
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const auth = requireRole(request, ['shop', 'manager']);
+  if (auth instanceof NextResponse) return auth;
+
+  const { id } = await params;
+  const existing = await getLocationById(id);
+  if (!existing) return NextResponse.json({ error: 'Location not found' }, { status: 404 });
+
+  const shopId = auth.shopId ?? auth.id;
+  if (existing.shopId !== shopId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body !== 'object') {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+  const location = await updateLocation(id, body);
+
+  return NextResponse.json({ location });
+}
+
+// DELETE /api/shop/locations/[id]
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const auth = requireRole(request, ['shop', 'manager']);
+  if (auth instanceof NextResponse) return auth;
+
+  const { id } = await params;
+  const existing = await getLocationById(id);
+  if (!existing) return NextResponse.json({ error: 'Location not found' }, { status: 404 });
+
+  const shopId = auth.shopId ?? auth.id;
+  if (existing.shopId !== shopId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  await deleteLocation(id);
+  return NextResponse.json({ success: true });
+}

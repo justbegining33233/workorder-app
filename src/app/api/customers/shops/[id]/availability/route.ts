@@ -1,0 +1,137 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { requireRole } from '@/lib/auth';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const auth = requireRole(request, ['customer']);
+  if (auth instanceof NextResponse) return auth;
+
+  try {
+    const resolvedParams = await params;
+    const shopId = resolvedParams.id;
+    const { searchParams } = new URL(request.url);
+    const date = searchParams.get('date');
+    const duration = parseInt(searchParams.get('duration') || '60');
+
+
+    if (!date) {
+      return NextResponse.json({ error: 'Date parameter is required' }, { status: 400 });
+    }
+
+    // Parse date and get day of week (0 = Sunday, 6 = Saturday)
+    const appointmentDate = new Date(date);
+    const dayOfWeek = appointmentDate.getDay();
+
+    // Get shop with schedule
+    const shop = await prisma.shop.findUnique({
+      where: { id: shopId },
+      include: {
+        schedules: true
+      }
+    });
+
+
+    if (!shop) {
+      return NextResponse.json({ error: 'Shop not found' }, { status: 404 });
+    }
+
+    const schedule = shop.schedules.find(s => s.dayOfWeek === dayOfWeek);
+
+    // Check if shop is open on this day
+    if (!schedule || !schedule.isOpen) {
+      return NextResponse.json({
+        available: false,
+        reason: 'Shop is closed on this day',
+        shopName: shop.shopName,
+        capacity: shop.capacity,
+        slotDuration: shop.slotDuration,
+        slots: []
+      });
+    }
+
+    // Get existing appointments for this date
+    const startOfDay = new Date(appointmentDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(appointmentDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existingAppointments = await prisma.appointment.findMany({
+      where: {
+        shopId,
+        scheduledDate: {
+          gte: startOfDay,
+          lte: endOfDay
+        },
+        status: {
+          in: ['confirmed', 'scheduled', 'pending']
+        }
+      },
+      include: {
+        vehicle: true
+      }
+    });
+
+
+    // Generate time slots
+    const slots = [];
+    const [openHour, openMinute] = schedule.openTime.split(':').map(Number);
+    const [closeHour, closeMinute] = schedule.closeTime.split(':').map(Number);
+
+    const openTime = openHour * 60 + openMinute;
+    const closeTime = closeHour * 60 + closeMinute;
+    const slotDuration = shop.slotDuration || 30;
+
+
+    for (let time = openTime; time + duration <= closeTime; time += slotDuration) {
+      const slotStart = new Date(appointmentDate);
+      slotStart.setHours(Math.floor(time / 60), time % 60, 0, 0);
+
+      const slotEnd = new Date(slotStart);
+      slotEnd.setMinutes(slotStart.getMinutes() + duration);
+
+      // Count overlapping appointments
+      let bookedCount = 0;
+      for (const appt of existingAppointments) {
+        const apptStart = new Date(appt.scheduledDate);
+        // Use the requested duration as the appointment duration estimate
+        const apptDuration = duration;
+        const apptEnd = new Date(apptStart);
+        apptEnd.setMinutes(apptStart.getMinutes() + apptDuration);
+
+        // Check if slots overlap
+        if (slotStart < apptEnd && slotEnd > apptStart) {
+          bookedCount++;
+        }
+      }
+
+      const available = bookedCount < (shop.capacity || 1);
+      const timeString = slotStart.toTimeString().substring(0, 5); // HH:MM format
+
+      slots.push({
+        time: timeString,
+        available,
+        bookedCount
+      });
+    }
+
+
+    return NextResponse.json({
+      available: slots.some(slot => slot.available),
+      shopName: shop.shopName,
+      capacity: shop.capacity,
+      slotDuration: shop.slotDuration,
+      businessHours: {
+        open: schedule.openTime,
+        close: schedule.closeTime
+      },
+      slots
+    });
+
+  } catch (error) {
+    console.error('Error fetching availability:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

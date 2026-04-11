@@ -1,0 +1,128 @@
+import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
+
+const nextConfig: NextConfig = {
+  // Performance optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
+  typedRoutes: true,
+  // Disable pages router since we're using app router
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  // Compression configuration
+  compress: true,
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Frame-Options',           value: 'DENY' },
+          { key: 'X-Content-Type-Options',    value: 'nosniff' },
+          { key: 'Referrer-Policy',           value: 'strict-origin-when-cross-origin' },
+          { key: 'X-XSS-Protection',          value: '1; mode=block' },
+          { key: 'Permissions-Policy',        value: 'camera=(self), microphone=(), geolocation=(self)' },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          // Performance headers
+          { key: 'X-DNS-Prefetch-Control',    value: 'on' },
+          { key: 'X-Download-Options',        value: 'noopen' },
+          // Enterprise headers
+          { key: 'X-Enterprise-Version',      value: '10.0.0' },
+          { key: 'X-Compliance-Level',        value: 'enterprise' },
+          { key: 'X-Feature-Flags',           value: 'enabled' },
+        ],
+      },
+      // Static assets caching
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/public/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400' },
+        ],
+      },
+      // API versioning headers
+      {
+        source: '/api/(.*)',
+        headers: [
+          { key: 'X-API-Version',             value: 'v1' },
+          { key: 'X-API-Supported-Versions',  value: 'v1' },
+          { key: 'X-Rate-Limit',              value: '1000' },
+          { key: 'X-Rate-Limit-Window',       value: '3600' },
+          { key: 'Cache-Control',             value: 'no-cache, no-store, must-revalidate' },
+        ],
+      },
+    ];
+  },
+  // Prevent Next.js from bundling optional server-side packages that are
+  // dynamically imported at runtime only (e.g. email/SMS providers).
+  serverExternalPackages: ['resend', 'twilio'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
+    formats: ["image/webp", "image/avif"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+  // Bundle analysis and optimization
+  webpack: (config, { dev, isServer }) => {
+    // Production optimizations
+    if (!dev && !isServer) {
+      config.optimization.splitChunks.chunks = 'all';
+      config.optimization.splitChunks.cacheGroups = {
+        ...config.optimization.splitChunks.cacheGroups,
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: 10,
+        },
+        recharts: {
+          test: /[\\/]node_modules[\\/]recharts[\\/]/,
+          name: 'recharts',
+          chunks: 'all',
+          priority: 20,
+        },
+        sentry: {
+          test: /[\\/]node_modules[\\/]@sentry[\\/]/,
+          name: 'sentry',
+          chunks: 'all',
+          priority: 15,
+        },
+      };
+    }
+
+    // Development optimizations
+    if (dev) {
+      config.cache = { type: 'memory' };
+    }
+
+    return config;
+  },
+};
+
+export default withSentryConfig(withNextIntl(nextConfig), {
+  org: "fixtray",
+  project: "javascript-nextjs",
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+});
