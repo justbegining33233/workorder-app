@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import {
   ShopFormData,
   ShopType,
@@ -378,7 +379,7 @@ export default function ShopRegistrationForm() {
           window.location.href = data.checkoutUrl;
         } else {
           // Fallback: Stripe wasn't configured  -  go to thank-you page
-          router.push('/auth/thank-you');
+          router.push('/auth/thank-you' as Route);
         }
       } else {
         const errorData = await res.json();

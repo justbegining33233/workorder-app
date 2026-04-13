@@ -31,7 +31,7 @@ export default function OnboardingWrapper({ children }: { children: React.ReactN
   if (showOnboarding && user) {
     return (
       <UserOnboarding
-        userRole={user.role}
+        userRole={user.role as 'shop' | 'customer' | 'tech' | 'admin' | 'manager' | 'superadmin'}
         onComplete={handleOnboardingComplete}
         onSkip={handleOnboardingSkip}
       />

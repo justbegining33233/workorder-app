@@ -9,7 +9,6 @@ const config: CapacitorConfig = {
   // It must point to an existing folder — capacitor-fallback contains a
   // minimal offline splash that shows while the remote app loads.
   webDir: 'capacitor-fallback',
-  bundledWebRuntime: false,
   server: isLocalDev
     ? {
         // For local dev: point to your dev machine's IP

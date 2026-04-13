@@ -2,6 +2,7 @@
 
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaArrowRight, FaBell, FaCar, FaCaretDown, FaClock, FaCloud, FaCreditCard, FaCrown, FaEnvelope, FaHardHat, FaInfoCircle, FaMicroscope, FaMobileAlt, FaPencilAlt, FaUserTie, FaWrench } from 'react-icons/fa';
 
@@ -751,7 +752,7 @@ export default function AppGuidePage() {
                             </div>
                             {feature.route && (
                               <Link
-                                href={feature.route}
+                                href={feature.route as Route}
                                 className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-300 text-xs transition-colors whitespace-nowrap"
                               >
                                 Open <FaArrowRight style={{marginRight:4}} />

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaChartBar, FaChartLine, FaClipboardList, FaCog, FaCreditCard, FaDollarSign, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
@@ -16,7 +17,7 @@ export default function AdminDashboardPage() {
   // Super admins should land on the enhanced portal, not the legacy dashboard
   useEffect(() => {
     if (!authLoading && user?.isSuperAdmin) {
-      router.replace('/admin/enhanced');
+      router.replace('/admin/enhanced' as Route);
     }
   }, [authLoading, user, router]);
 
@@ -41,7 +42,7 @@ export default function AdminDashboardPage() {
         const data = await response.json();
         setStats(data);
       } else if (response.status === 401) {
-        router.push('/admin/login');
+        router.push('/admin/login' as Route);
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -52,7 +53,7 @@ export default function AdminDashboardPage() {
 
   const handleLogout = () => {
     localStorage.clear();
-    router.push('/admin/login');
+    router.push('/admin/login' as Route);
   };
 
   if (authLoading) {

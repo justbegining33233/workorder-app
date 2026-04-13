@@ -62,7 +62,7 @@ export default function SearchAndFilter({
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [location, setLocation] = useState('');
 
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const searchTimeoutRef = useRef<NodeJS.Timeout>(undefined);
   const filterRef = useRef<HTMLDivElement>(null);
   const sortRef = useRef<HTMLDivElement>(null);
 

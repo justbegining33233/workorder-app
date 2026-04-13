@@ -3,6 +3,7 @@ import { FaArrowLeft } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
@@ -41,7 +42,7 @@ export default function CouponManagementPage() {
         const data = await response.json();
         setCoupons(data.coupons || []);
       } else if (response.status === 401) {
-        router.push('/admin/login');
+        router.push('/admin/login' as Route);
       }
     } catch (error) {
       console.error('Error fetching coupons:', error);
@@ -98,7 +99,7 @@ export default function CouponManagementPage() {
 
   const handleLogout = () => {
     localStorage.clear();
-    router.push('/admin/login');
+    router.push('/admin/login' as Route);
   };
 
   if (authLoading) {

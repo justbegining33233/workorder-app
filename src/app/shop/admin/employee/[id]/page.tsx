@@ -3,6 +3,7 @@ import { FaArrowLeft, FaCheck, FaEdit, FaEnvelope, FaMobileAlt, FaRegCircle, FaS
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
@@ -24,7 +25,7 @@ export default function EmployeeProfile() {
     const id = localStorage.getItem('shopId') || '';
 
     if (admin !== 'true') {
-      router.push('/shop/home');
+      router.push('/shop/home' as Route);
       return;
     }
 
@@ -69,15 +70,15 @@ export default function EmployeeProfile() {
           });
         } else {
           console.error('Employee not found');
-          router.push('/shop/admin?tab=team');
+          router.push('/shop/admin?tab=team' as Route);
         }
       } else {
         console.error('Failed to fetch employee data');
-        router.push('/shop/admin?tab=team');
+        router.push('/shop/admin?tab=team' as Route);
       }
     } catch (error) {
       console.error('Error fetching employee:', error);
-      router.push('/shop/admin?tab=team');
+      router.push('/shop/admin?tab=team' as Route);
     } finally {
       setLoading(false);
     }

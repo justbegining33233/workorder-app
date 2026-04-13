@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { FaCheckCircle } from 'react-icons/fa';
 
@@ -16,7 +17,7 @@ function SuccessContent() {
       setCountdown(c => {
         if (c <= 1) {
           clearInterval(timer);
-          router.push(`/customer/workorders/${workOrderId}`);
+          router.push(`/customer/workorders/${workOrderId}` as Route);
         }
         return c - 1;
       });

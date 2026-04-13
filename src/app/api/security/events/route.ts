@@ -134,11 +134,11 @@ export async function GET(request: NextRequest) {
       queryParams
     );
 
-    const events = eventsResult.rows.map(event => ({
+    const events = eventsResult.rows.map((event: Record<string, unknown>) => ({
       id: event.id,
       userId: event.user_id,
       eventType: event.event_type,
-      details: event.details ? JSON.parse(event.details) : null,
+      details: event.details ? JSON.parse(event.details as string) : null,
       severity: event.severity,
       ipAddress: event.ip_address,
       userAgent: event.user_agent,
@@ -195,7 +195,7 @@ async function checkForSecurityThreats(userId: string | undefined, eventType: st
         [userId]
       );
 
-      const knownIPs = recentLogins.rows.map(row => row.ip_address);
+      const knownIPs = recentLogins.rows.map((row: Record<string, unknown>) => row.ip_address);
       if (!knownIPs.includes(details.ipAddress)) {
         // Log suspicious login location
         await query(

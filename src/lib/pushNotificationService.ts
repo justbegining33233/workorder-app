@@ -8,7 +8,7 @@ export interface PushNotificationPayload {
   data?: {
     workOrderId?: string;
     customerId?: string;
-    type?: 'workorder' | 'message' | 'reminder' | 'system';
+    type?: 'workorder' | 'message' | 'reminder' | 'system' | 'payment';
     actionUrl?: string;
   };
   sound?: string;

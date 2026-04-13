@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { FaArrowRight, FaClipboardList, FaDollarSign, FaHardHat, FaStore } from 'react-icons/fa';
 
 interface SubscriptionData {
@@ -772,7 +773,7 @@ function ActionItem({ label, value, type, action, href }: { label: string; value
         <span className="text-sm text-[#FAFAFA]">{label}</span>
       </div>
       {href ? (
-        <Link href={href} className={`text-xs font-medium ${colors[type].text} hover:underline`}>
+        <Link href={href as Route} className={`text-xs font-medium ${colors[type].text} hover:underline`}>
           {action} <FaArrowRight style={{marginRight:4}} />
         </Link>
       ) : (

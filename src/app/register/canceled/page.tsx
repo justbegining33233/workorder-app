@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -39,7 +40,7 @@ function CanceledContent() {
 
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link
-            href="/shop/register"
+            href={"/shop/register" as Route}
             style={{ display: 'inline-block', background: '#2563eb', color: '#fff', padding: '12px 24px', borderRadius: 8, fontWeight: 600, textDecoration: 'none', fontSize: 15 }}
           >
             Try Again

@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     // Feature flag check
     const advancedFiltering = await featureFlags.isEnabled('advanced_filtering', {
       userId: auth.id,
-      userRole: auth.role
+      role: auth.role
     });
 
     const { searchParams } = new URL(request.url);
@@ -183,12 +183,11 @@ export async function GET(request: NextRequest) {
     };
 
     // Cache the result
-    await queryCache.set(cacheKey, result, 300); // Cache for 5 minutes
+    await queryCache.set(cacheKey, result, undefined, 300); // Cache for 5 minutes
 
     // Log performance metrics
     const duration = Date.now() - startTime;
-    logger.performance('Work orders fetch completed', {
-      duration,
+    logger.performance('Work orders fetch completed', duration, {
       userId: auth.id,
       role: auth.role,
       resultCount: workOrders.length,

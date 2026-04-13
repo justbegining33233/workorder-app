@@ -141,7 +141,7 @@ class ServiceRegistry {
             serviceName,
             instanceId: instance.id
           });
-          this.updateHealth(serviceName, instance.id, 'unknown');
+          this.updateHealth(serviceName, instance.id, 'unhealthy');
         }
       }
     }
@@ -151,12 +151,15 @@ class ServiceRegistry {
     try {
       // In a real implementation, this would make an HTTP health check
       // For now, simulate based on some logic
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
       const response = await fetch(`http://${instance.host}:${instance.port}/health`, {
-        timeout: 5000,
+        signal: controller.signal,
         headers: {
           'User-Agent': 'ServiceMesh-HealthCheck'
         }
       });
+      clearTimeout(timeoutId);
 
       return response.ok;
     } catch (error) {
@@ -442,7 +445,7 @@ class DistributedTracer {
         name: span.name,
         serviceName: span.service,
         startTimeUnixNano: span.startTime.getTime() * 1000000,
-        endTimeUnixNano: span.endTime?.getTime() * 1000000,
+        endTimeUnixNano: span.endTime ? span.endTime.getTime() * 1000000 : undefined,
         attributes: Object.entries(span.tags).map(([key, value]) => ({
           key,
           value: { stringValue: String(value) }

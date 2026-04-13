@@ -117,7 +117,7 @@ class CompressionMiddleware {
       const compressed = await this.compress(body, encoding);
 
       // Create new response with compressed body
-      const compressedResponse = new NextResponse(compressed, {
+      const compressedResponse = new NextResponse(new Uint8Array(compressed), {
         status: response.status,
         statusText: response.statusText,
         headers: {
@@ -139,6 +139,21 @@ class CompressionMiddleware {
 
 // Export singleton instance
 export const compressionMiddleware = new CompressionMiddleware();
+
+// Alias used by workorders/route.ts and enterprise.ts
+export const compression = {
+  addCompressionHeaders(response: NextResponse): void {
+    response.headers.set('Vary', 'Accept-Encoding');
+  },
+  configure(options: { threshold?: number; level?: number; enabled?: boolean }): void {
+    if (options.threshold !== undefined) (compressionMiddleware as any).options.threshold = options.threshold;
+    if (options.level !== undefined) (compressionMiddleware as any).options.level = options.level;
+    if (options.enabled !== undefined) (compressionMiddleware as any).options.enabled = options.enabled;
+  },
+  getStats(): Record<string, unknown> {
+    return compressionStats.getStats();
+  },
+};
 
 // Next.js middleware for compression
 export async function withCompression(

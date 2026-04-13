@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaArrowRight, FaBolt, FaBullseye, FaChartBar, FaChartLine, FaCheckCircle, FaCreditCard, FaDollarSign, FaHourglassHalf, FaSyncAlt, FaTimesCircle, FaUniversity, FaWrench } from 'react-icons/fa';
@@ -128,7 +129,7 @@ export default function AdminRevenuePage() {
         }
       });
       if (res.status === 401 || res.status === 403) {
-        router.push('/auth/login');
+        router.push('/auth/login' as Route);
         return;
       }
       const data = await res.json();

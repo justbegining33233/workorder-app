@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import '@/styles/sos-theme.css';
 
 export default function ThankYouPage() {
@@ -28,22 +29,22 @@ export default function ThankYouPage() {
       const userRole = localStorage.getItem('userRole');
       switch(userRole) {
         case 'customer':
-          router.push('/customer/home');
+          router.push('/customer/home' as Route);
           break;
         case 'shop':
-          router.push('/shop/home');
+          router.push('/shop/home' as Route);
           break;
         case 'tech':
-          router.push('/tech/home');
+          router.push('/tech/home' as Route);
           break;
         case 'manager':
-          router.push('/manager/home');
+          router.push('/manager/home' as Route);
           break;
         case 'admin':
-          router.push('/admin/home');
+          router.push('/admin/home' as Route);
           break;
         default:
-          router.push('/dashboard');
+          router.push('/' as Route);
       }
     }
   }, [countdown, router]);
@@ -71,9 +72,9 @@ export default function ThankYouPage() {
                     case 'tech': return '/tech/home';
                     case 'manager': return '/manager/home';
                     case 'admin': return '/admin/home';
-                    default: return '/dashboard';
+                    default: return '/';
                   }
-                })()}
+                })() as Route}
                 className="btn-primary"
               >Go to Dashboard</Link>
               <Link href="/" className="btn-outline">Back to Home</Link>

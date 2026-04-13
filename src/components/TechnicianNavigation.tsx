@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -109,7 +110,7 @@ export default function TechnicianNavigation({
               {navigationItems.slice(0, 4).map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as Route}
                   className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive(item.href)
                       ? 'bg-blue-50 text-blue-600'
@@ -152,7 +153,7 @@ export default function TechnicianNavigation({
 
               {/* Quick Actions */}
               <Link
-                href="/tech/jobs"
+                href={"/tech/jobs" as Route}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 View Jobs
@@ -164,7 +165,7 @@ export default function TechnicianNavigation({
                   <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                     <FaUser className="w-4 h-4 text-gray-600" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">{user?.firstName || 'Technician'}</span>
+                  <span className="text-sm font-medium text-gray-700">{user?.name || 'Technician'}</span>
                 </button>
               </div>
             </div>
@@ -178,7 +179,7 @@ export default function TechnicianNavigation({
           {navigationItems.slice(0, 4).map((item, index) => (
             <Link
               key={item.name}
-              href={item.href}
+              href={item.href as Route}
               className={`flex flex-col items-center justify-center space-y-1 ${
                 isActive(item.href) ? 'text-blue-500' : 'text-gray-600'
               }`}
@@ -221,7 +222,7 @@ export default function TechnicianNavigation({
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as Route}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 p-3 rounded-lg ${
                     isActive(item.href) ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-50'

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaArrowRight, FaBook, FaStopwatch, FaTools } from 'react-icons/fa';
 
@@ -154,7 +155,7 @@ export default function AllTechTools() {
           {filteredTools.map(tool => (
             <Link 
               key={tool.title} 
-              href={tool.link}
+              href={tool.link as Route}
               style={{textDecoration:'none', display:'block', height:'100%'}}
             >
               <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24, cursor:'pointer', transition:'all 0.3s', height:'100%', display:'flex', flexDirection:'column'}}>

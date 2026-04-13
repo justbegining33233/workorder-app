@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * Execute a raw SQL query using Prisma
@@ -9,7 +10,7 @@ import { prisma } from './prisma';
 export async function query(queryString: string, params: any[] = []): Promise<any> {
   try {
     // Use Prisma's $queryRaw for raw SQL queries
-    const result = await prisma.$queryRaw(queryString, ...params);
+    const result = await prisma.$queryRaw(Prisma.raw(`${queryString}`));
     return { rows: result };
   } catch (error) {
     console.error('Database query error:', error);
@@ -25,7 +26,7 @@ export async function query(queryString: string, params: any[] = []): Promise<an
  */
 export async function execute(queryString: string, params: any[] = []): Promise<any> {
   try {
-    const result = await prisma.$executeRaw(queryString, ...params);
+    const result = await prisma.$executeRaw(Prisma.raw(`${queryString}`));
     return { rowCount: result };
   } catch (error) {
     console.error('Database execute error:', error);

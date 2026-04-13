@@ -4,6 +4,7 @@ import { FaBook, FaSave, FaSlidersH, FaStar, FaStethoscope, FaTicketAlt } from '
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useRequireAuth, useAuth } from '@/contexts/AuthContext';
 import { DashboardTab } from './components/DashboardTabClean';
 import { SubscriptionsTab } from './components/SubscriptionsTab';
@@ -54,7 +55,7 @@ function AdminHomeContent() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       params.set('section', sectionId);
-      router.replace(`?${params.toString()}`, { scroll: false });
+      router.replace(`?${params.toString()}` as Route, { scroll: false });
     }
   };
 
@@ -208,23 +209,23 @@ function AdminHomeContent() {
                 { label: 'Customers', action: () => handleSectionSelect('users'), key: 'U' },
                 { label: 'Revenue', action: () => handleSectionSelect('subscriptions'), key: 'R' },
                 { label: 'Shops', action: () => handleSectionSelect('hierarchy'), key: 'S' },
-                { label: 'Pending Approvals', action: () => { router.push('/admin/pending-shops'); setSearchOpen(false); }, key: 'P' },
-                { label: 'Accepted Shops', action: () => { router.push('/admin/accepted-shops'); setSearchOpen(false); }, key: '' },
-                { label: 'Manage Shops', action: () => { router.push('/admin/manage-shops'); setSearchOpen(false); }, key: '' },
-                { label: 'Manage Customers', action: () => { router.push('/admin/manage-customers'); setSearchOpen(false); }, key: '' },
-                { label: 'User Management', action: () => { router.push('/admin/user-management'); setSearchOpen(false); }, key: '' },
-                { label: 'Manage Tenants', action: () => { router.push('/admin/manage-tenants'); setSearchOpen(false); }, key: '' },
-                { label: 'Platform Analytics', action: () => { router.push('/admin/platform-analytics'); setSearchOpen(false); }, key: '' },
-                { label: 'Financial Reports', action: () => { router.push('/admin/financial-reports'); setSearchOpen(false); }, key: '' },
-                { label: 'Email Templates', action: () => { router.push('/admin/email-templates'); setSearchOpen(false); }, key: '' },
-                { label: 'Coupons', action: () => { router.push('/admin/coupons'); setSearchOpen(false); }, key: '' },
-                { label: 'Active Sessions', action: () => { router.push('/admin/sessions'); setSearchOpen(false); }, key: '' },
-                { label: 'Security Settings', action: () => { router.push('/admin/security-settings'); setSearchOpen(false); }, key: '' },
-                { label: 'System Settings', action: () => { router.push('/admin/system-settings'); setSearchOpen(false); }, key: '' },
-                { label: 'Backup & Restore', action: () => { router.push('/admin/backup-restore'); setSearchOpen(false); }, key: '' },
-                { label: 'Admin Tools', action: () => { router.push('/admin/admin-tools'); setSearchOpen(false); }, key: '' },
-                { label: 'Enhanced Dashboard', action: () => { router.push('/admin/enhanced'); setSearchOpen(false); }, key: '' },
-                { label: 'System Status', action: () => { router.push('/admin/test'); setSearchOpen(false); }, key: 'T' },
+                { label: 'Pending Approvals', action: () => { router.push('/admin/pending-shops' as Route); setSearchOpen(false); }, key: 'P' },
+                { label: 'Accepted Shops', action: () => { router.push('/admin/accepted-shops' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Manage Shops', action: () => { router.push('/admin/manage-shops' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Manage Customers', action: () => { router.push('/admin/manage-customers' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'User Management', action: () => { router.push('/admin/user-management' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Manage Tenants', action: () => { router.push('/admin/manage-tenants' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Platform Analytics', action: () => { router.push('/admin/platform-analytics' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Financial Reports', action: () => { router.push('/admin/financial-reports' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Email Templates', action: () => { router.push('/admin/email-templates' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Coupons', action: () => { router.push('/admin/coupons' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Active Sessions', action: () => { router.push('/admin/sessions' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Security Settings', action: () => { router.push('/admin/security-settings' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'System Settings', action: () => { router.push('/admin/system-settings' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Backup & Restore', action: () => { router.push('/admin/backup-restore' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Admin Tools', action: () => { router.push('/admin/admin-tools' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'Enhanced Dashboard', action: () => { router.push('/admin/enhanced' as Route); setSearchOpen(false); }, key: '' },
+                { label: 'System Status', action: () => { router.push('/admin/test' as Route); setSearchOpen(false); }, key: 'T' },
               ].map((item, i) => (
                 <button
                   key={i}
@@ -332,7 +333,7 @@ function AdminHomeContent() {
                 {actionButtons.map((action) => (
                   <Link
                     key={action.href}
-                    href={action.href}
+                    href={action.href as Route}
                     className="rounded-full bg-gradient-to-r from-[#f97316] to-[#fb923c] text-white text-sm px-3 py-2 no-underline shadow-md shadow-[#f97316]/30 hover:brightness-110 transition"
                   >
                     {action.label}
@@ -380,7 +381,7 @@ function AdminHomeContent() {
                     {quickLinks.map((link) => (
                       <Link
                         key={link.href}
-                        href={link.href}
+                        href={link.href as Route}
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm no-underline transition-all hover:bg-white/10 ${
                           link.highlight
                             ? 'bg-gradient-to-r from-[#f97316]/20 to-[#fb923c]/10 border-[#f97316]/30 text-orange-300'

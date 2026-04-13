@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import type { Route } from 'next';
 import { FaHistory, FaClock } from 'react-icons/fa';
 
 interface RecentlyViewedItem {
@@ -139,7 +140,7 @@ export default function RecentlyViewed({ maxItems = 5, showInSidebar = false }: 
           {recentItems.slice(0, 3).map((item) => (
             <button
               key={item.id}
-              onClick={() => router.push(item.href)}
+              onClick={() => router.push(item.href as Route)}
               style={{
                 width: '100%',
                 padding: '8px 8px',
@@ -217,7 +218,7 @@ export default function RecentlyViewed({ maxItems = 5, showInSidebar = false }: 
         {recentItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => router.push(item.href)}
+            onClick={() => router.push(item.href as Route)}
             style={{
               padding: '10px 12px',
               background: 'rgba(255,255,255,0.02)',

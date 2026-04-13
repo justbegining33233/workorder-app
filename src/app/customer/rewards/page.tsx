@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface Reward {
@@ -51,7 +52,7 @@ export default function Rewards() {
   const handleSignOut = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
-    router.push('/auth/login');
+    router.push('/auth/login' as Route);
   };
 
   return (

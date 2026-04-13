@@ -36,7 +36,7 @@ function WorkOrderListPageContent() {
       case 'tech': return '/tech/home';
       case 'manager': return '/tech/home';
       case 'customer': return '/customer/home';
-      default: return '/dashboard';
+      default: return '/';
     }
   };
 

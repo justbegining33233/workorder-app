@@ -40,7 +40,7 @@ export default function UserOnboarding({ userRole, onComplete, onSkip }: UserOnb
     const commonSteps: OnboardingStep[] = [
       {
         id: 'welcome',
-        title: `Welcome to FixTray, ${user?.firstName || 'User'}!`,
+        title: `Welcome to FixTray, ${user?.name || 'User'}!`,
         description: 'Let\'s take a quick tour to help you get started with your account.',
         icon: <FaLightbulb className="w-6 h-6 text-yellow-500" />,
         action: 'Click Next to continue'

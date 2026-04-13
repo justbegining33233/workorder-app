@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaCalendarAlt, FaComments, FaMapMarkerAlt } from 'react-icons/fa';
@@ -213,7 +214,7 @@ export default function CustomerAppointmentsPage() {
               <p style={{ fontSize: 14, color: '#9aa3b2' }}>Book and manage your service appointments</p>
             </div>
             <button
-              onClick={() => router.push('/customer/appointments/new')}
+              onClick={() => router.push('/customer/appointments/new' as Route)}
               style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
             >
               + Book Appointment
@@ -231,7 +232,7 @@ export default function CustomerAppointmentsPage() {
               <h3 style={{ color: '#e5e7eb', fontSize: 20, marginBottom: 8 }}>No Appointments Yet</h3>
               <p style={{ color: '#9aa3b2', fontSize: 14, marginBottom: 20 }}>Book your first appointment to get started</p>
               <button
-                onClick={() => router.push('/customer/appointments/new')}
+                onClick={() => router.push('/customer/appointments/new' as Route)}
                 style={{ padding: '12px 24px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
               >
                 Book Appointment

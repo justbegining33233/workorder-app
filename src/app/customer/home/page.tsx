@@ -2,12 +2,13 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 
 export default function CustomerHome() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/customer/dashboard');
+    router.replace('/customer/dashboard' as Route);
   }, [router]);
 
   return (

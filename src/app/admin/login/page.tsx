@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { FaLock } from 'react-icons/fa';
 
 export default function AdminLoginPage() {
@@ -42,9 +43,9 @@ export default function AdminLoginPage() {
 
         // Redirect to super-admin portal if flagged, otherwise admin dashboard
         if (data.admin?.isSuperAdmin) {
-          router.push('/admin/home');
+          router.push('/admin/home' as Route);
         } else {
-          router.push('/admin/dashboard');
+          router.push('/admin/dashboard' as Route);
         }
       } else {
         setError(data.error || 'Login failed');

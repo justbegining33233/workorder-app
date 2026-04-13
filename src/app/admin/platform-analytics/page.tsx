@@ -1,24 +1,26 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 // Dynamically import heavy chart components
-const DynamicRevenueChart = dynamic(() => Promise.resolve(RevenueChart), {
+const DynamicRevenueChart = dynamic(() => import('@/components/AnalyticsCharts').then(mod => ({ default: mod.RevenueChart })), {
   loading: () => <div className="h-64 flex items-center justify-center text-gray-400">Loading chart...</div>
 });
-const DynamicCompletionTimesChart = dynamic(() => Promise.resolve(CompletionTimesChart), {
+const DynamicCompletionTimesChart = dynamic(() => import('@/components/AnalyticsCharts').then(mod => ({ default: mod.CompletionTimesChart })), {
   loading: () => <div className="h-64 flex items-center justify-center text-gray-400">Loading chart...</div>
 });
-const DynamicTechPerformanceChart = dynamic(() => Promise.resolve(TechPerformanceChart), {
+const DynamicTechPerformanceChart = dynamic(() => import('@/components/AnalyticsCharts').then(mod => ({ default: mod.TechPerformanceChart })), {
   loading: () => <div className="h-64 flex items-center justify-center text-gray-400">Loading chart...</div>
 });
-const DynamicStatusDistributionChart = dynamic(() => Promise.resolve(StatusDistributionChart), {
+const DynamicStatusDistributionChart = dynamic(() => import('@/components/AnalyticsCharts').then(mod => ({ default: mod.StatusDistributionChart })), {
   loading: () => <div className="h-64 flex items-center justify-center text-gray-400">Loading chart...</div>
 });
-const DynamicMonthlyTrendsChart = dynamic(() => Promise.resolve(MonthlyTrendsChart), {
+const DynamicMonthlyTrendsChart = dynamic(() => import('@/components/AnalyticsCharts').then(mod => ({ default: mod.MonthlyTrendsChart })), {
   loading: () => <div className="h-64 flex items-center justify-center text-gray-400">Loading chart...</div>
 });
 import { FaArrowDown, FaArrowLeft, FaArrowUp, FaChartBar, FaChartLine } from 'react-icons/fa';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function PlatformAnalytics() {
   const { user, isLoading } = useRequireAuth(['admin']);

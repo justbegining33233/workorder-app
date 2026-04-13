@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Biometric login error:', error);
 
     // Log error event
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
       const body = await request.json().catch(() => ({}));
       await query(
         'INSERT INTO security_events (event_type, details, severity, created_at) VALUES ($1, $2, $3, NOW())',
-        ['biometric_login_error', { error: error.message, userId: body.userId }, 'medium']
+        ['biometric_login_error', { error: error instanceof Error ? error.message : String(error), userId: body.userId }, 'medium']
       );
     } catch {
       // Ignore logging error
@@ -193,7 +193,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       biometricEnabled,
-      registeredDevices: devicesResult.rows.map(device => ({
+      registeredDevices: devicesResult.rows.map((device: Record<string, unknown>) => ({
         deviceId: device.device_id,
         deviceName: device.device_name,
         biometryType: device.biometry_type,

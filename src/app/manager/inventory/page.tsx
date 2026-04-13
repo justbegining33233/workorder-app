@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import UpgradePrompt from '@/components/UpgradePrompt';
 import { FaArrowLeft, FaBox, FaExclamationTriangle } from 'react-icons/fa';
@@ -73,7 +74,7 @@ export default function ManagerInventory() {
               onUpgrade={(plan) => {
                 // Handle upgrade logic here
                 console.log('Upgrading to plan:', plan);
-                router.push('/shop/subscription');
+                router.push('/shop/subscription' as Route);
               }}
             />
           </div>

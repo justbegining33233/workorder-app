@@ -160,11 +160,11 @@ async function getRegionsStatus() {
 }
 
 async function getFeaturesStatus() {
-  const stats = featureFlags.getStats();
+  const flags = featureFlags.getAllFlags();
 
   return NextResponse.json({
     status: 'success',
-    data: stats
+    data: { flags, totalFlags: flags.length, enabledFlags: flags.filter(f => f.enabled).length }
   });
 }
 
@@ -239,11 +239,7 @@ async function updateFeatureFlag(params: any) {
   }
 
   try {
-    await featureFlags.setFlag(flagName, {
-      enabled: enabled ?? true,
-      rolloutPercentage: rolloutPercentage ?? 100,
-      conditions: []
-    });
+    featureFlags.setFlag(flagName, enabled ?? true, rolloutPercentage ?? 100);
 
     return NextResponse.json({
       status: 'success',
@@ -259,9 +255,9 @@ async function clearCache(params: any) {
 
   try {
     if (pattern) {
-      await queryCache.clearPattern(pattern);
+      await queryCache.invalidate(pattern);
     } else {
-      await queryCache.clearAll();
+      await queryCache.invalidateAll();
     }
 
     return NextResponse.json({

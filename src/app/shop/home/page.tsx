@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { FaBolt, FaBox, FaBoxes, FaBuilding, FaBullhorn, FaCalendarAlt, FaChartBar, FaCircle, FaClipboardList, FaCodeBranch, FaCog, FaComments, FaCreditCard, FaDesktop, FaEdit, FaGift, FaHeartbeat, FaIndustry, FaListAlt, FaLock, FaMapMarkerAlt, FaPaintBrush, FaPlug, FaReceipt, FaRoad, FaScroll, FaShoppingCart, FaStar, FaStore, FaSyncAlt, FaTools, FaTruck, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
@@ -247,7 +248,7 @@ export default function ShopHome() {
   const _handleSignOut = () => {
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
-    router.push('/auth/login');
+    router.push('/auth/login' as Route);
   };
 
   const handleAddMember = async () => {
@@ -296,7 +297,7 @@ export default function ShopHome() {
       });
       if (r.ok) {
         // Redirect to purchase orders page so user can complete the PO
-        router.push('/shop/purchase-orders');
+        router.push('/shop/purchase-orders' as Route);
       }
     } catch {
       // Silently ignore  -  non-critical path
@@ -304,7 +305,7 @@ export default function ShopHome() {
   };
 
   const _handleOpenWorkorder = (orderId: string) => {
-    router.push(`/workorders/${orderId}`);
+    router.push(`/workorders/${orderId}` as Route);
   };
 
   const handleAssign = async (orderId: string, destinationId: string) => {
@@ -402,7 +403,7 @@ export default function ShopHome() {
             return (
               <Link
                 key={action.href}
-                href={action.href}
+                href={action.href as Route}
                 style={{
                   padding:'10px 14px',
                   background:action.tint,

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { WorkOrder, Message } from '@/types/workorder';
@@ -342,7 +343,7 @@ export default function WorkOrderDetail({ params }: { params: Promise<{ id: stri
     try {
       const deleted = deleteWorkOrderClient(id);
       if (deleted) {
-        router.push('/workorders/list');
+        router.push('/workorders/list' as Route);
       } else {
         throw new Error('Failed to delete');
       }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import type { ReactNode } from "react";
 import OilSlickCanvas from "@/components/OilSlickCanvas";
 
@@ -50,7 +51,7 @@ export default function MarketingShell({ children }: MarketingShellProps) {
 
           <nav className="hidden items-center gap-6 text-sm md:flex" style={{ color: "#94a3b8" }}>
             {navLinks.map((item) => (
-              <Link key={item.href} href={item.href} className="transition hover:text-white">
+              <Link key={item.href} href={item.href as Route} className="transition hover:text-white">
                 {item.label}
               </Link>
             ))}

@@ -67,6 +67,7 @@ class EnterpriseIntegration {
       port: parseInt(process.env.API_PORT || '3000'),
       health: 'healthy',
       metadata: { version: '1.0.0' },
+      lastHealthCheck: new Date(),
       weight: 100
     });
 
@@ -78,6 +79,7 @@ class EnterpriseIntegration {
       port: parseInt(process.env.DB_PORT || '5432'),
       health: 'healthy',
       metadata: { type: 'postgresql' },
+      lastHealthCheck: new Date(),
       weight: 100
     });
 
@@ -89,6 +91,7 @@ class EnterpriseIntegration {
       port: parseInt(process.env.REDIS_PORT || '6379'),
       health: 'healthy',
       metadata: { type: 'redis' },
+      lastHealthCheck: new Date(),
       weight: 100
     });
 
@@ -117,23 +120,11 @@ class EnterpriseIntegration {
 
   private async initializeFeatureFlags(): Promise<void> {
     // Initialize feature flags with default values
-    await featureFlags.setFlag('new_dashboard', {
-      enabled: true,
-      rolloutPercentage: 100,
-      conditions: []
-    });
+    await featureFlags.setFlag('new_dashboard', true, 100);
 
-    await featureFlags.setFlag('advanced_analytics', {
-      enabled: false,
-      rolloutPercentage: 0,
-      conditions: []
-    });
+    await featureFlags.setFlag('advanced_analytics', false, 0);
 
-    await featureFlags.setFlag('beta_features', {
-      enabled: false,
-      rolloutPercentage: 10, // 10% of users
-      conditions: []
-    });
+    await featureFlags.setFlag('beta_features', false, 10);
   }
 
   private setupApiVersioning(): void {
@@ -173,16 +164,17 @@ class EnterpriseIntegration {
       serviceMesh: serviceMesh.getStats(),
       regions: regionManager.getStats(),
       replication: dataReplicationManager.getReplicationStatus(),
-      cache: queryCache.getStats(),
-      features: featureFlags.getStats()
+      cache: await queryCache.getStats(),
+      features: featureFlags.getAllFlags()
     };
 
     // Determine overall health
     const unhealthyComponents = Object.values(components).filter(component => {
       if (typeof component === 'object' && component !== null) {
-        return component.overall === 'non_compliant' ||
-               component.status === 'error' ||
-               component.activeRegions === 0;
+        const c = component as Record<string, unknown>;
+        return c.overall === 'non_compliant' ||
+               c.status === 'error' ||
+               c.activeRegions === 0;
       }
       return false;
     });
@@ -228,9 +220,9 @@ class EnterpriseIntegration {
         },
         serviceMesh: serviceMesh.getStats(),
         multiRegion: regionManager.getStats(),
-        featureFlags: featureFlags.getStats(),
+        featureFlags: featureFlags.getAllFlags(),
         apiVersioning: apiVersioning.getStats(),
-        queryCache: queryCache.getStats(),
+        queryCache: { memoryCacheSize: 0 },
         compression: compression.getStats(),
         i18n: {
           supportedLocales: ['en', 'es'],

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '../../../contexts/AuthContext';
 import { FaArrowLeft, FaClipboardList } from 'react-icons/fa';
@@ -154,7 +155,7 @@ function ManagerEstimatesContent() {
       });
 
       if (response.ok) {
-        router.push(`/workorders/${workOrderId}`);
+        router.push(`/workorders/${workOrderId}` as Route);
       } else {
         setEstimateMsg({type:'error',text:'Failed to submit estimate'});
       }

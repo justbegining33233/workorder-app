@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -123,7 +124,7 @@ export default function ShopNavigation({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link href="/shop/dashboard" className="flex items-center space-x-2">
+            <Link href={"/shop/home" as Route} className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">F</span>
               </div>
@@ -136,7 +137,7 @@ export default function ShopNavigation({
               {navigationItems.slice(0, 5).map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as Route}
                   className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive(item.href)
                       ? 'bg-green-50 text-green-600'
@@ -181,7 +182,7 @@ export default function ShopNavigation({
 
               {/* Quick Actions */}
               <Link
-                href="/shop/jobs"
+                href={"/shop/jobs" as Route}
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 View Jobs
@@ -193,7 +194,7 @@ export default function ShopNavigation({
                   <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                     <FaUser className="w-4 h-4 text-gray-600" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">{user?.firstName || 'Shop Owner'}</span>
+                  <span className="text-sm font-medium text-gray-700">{user?.name || 'Shop Owner'}</span>
                 </button>
               </div>
             </div>
@@ -207,7 +208,7 @@ export default function ShopNavigation({
           {navigationItems.slice(0, 4).map((item, index) => (
             <Link
               key={item.name}
-              href={item.href}
+              href={item.href as Route}
               className={`flex flex-col items-center justify-center space-y-1 ${
                 isActive(item.href) ? 'text-green-500' : 'text-gray-600'
               }`}
@@ -250,7 +251,7 @@ export default function ShopNavigation({
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as Route}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 p-3 rounded-lg ${
                     isActive(item.href) ? 'bg-green-50 text-green-600' : 'text-gray-700 hover:bg-gray-50'

@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -151,7 +152,7 @@ export default function ManagerNavigation({
               {navigationItems.slice(0, 5).map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as Route}
                   className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive(item.href)
                       ? 'bg-purple-50 text-purple-600'
@@ -196,7 +197,7 @@ export default function ManagerNavigation({
 
               {/* Quick Actions */}
               <Link
-                href="/manager/jobs"
+                href={"/manager/jobs" as Route}
                 className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 Monitor Jobs
@@ -208,7 +209,7 @@ export default function ManagerNavigation({
                   <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                     <FaUser className="w-4 h-4 text-gray-600" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">{user?.firstName || 'Manager'}</span>
+                  <span className="text-sm font-medium text-gray-700">{user?.name || 'Manager'}</span>
                 </button>
               </div>
             </div>
@@ -222,7 +223,7 @@ export default function ManagerNavigation({
           {navigationItems.slice(0, 4).map((item, index) => (
             <Link
               key={item.name}
-              href={item.href}
+              href={item.href as Route}
               className={`flex flex-col items-center justify-center space-y-1 ${
                 isActive(item.href) ? 'text-purple-500' : 'text-gray-600'
               }`}
@@ -265,7 +266,7 @@ export default function ManagerNavigation({
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as Route}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 p-3 rounded-lg ${
                     isActive(item.href) ? 'bg-purple-50 text-purple-600' : 'text-gray-700 hover:bg-gray-50'

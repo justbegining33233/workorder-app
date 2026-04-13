@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { FaChevronRight, FaHome } from 'react-icons/fa';
 
@@ -98,7 +99,7 @@ export default function Breadcrumbs() {
                 </span>
               ) : (
                 <Link
-                  href={crumb.href}
+                  href={crumb.href as Route}
                   style={{
                     color: '#9ca3af',
                     textDecoration: 'none',

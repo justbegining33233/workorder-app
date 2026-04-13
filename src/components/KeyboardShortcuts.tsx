@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import type { Route } from 'next';
 import { FaKeyboard } from 'react-icons/fa';
 
 interface KeyboardShortcut {
@@ -51,7 +52,7 @@ export default function KeyboardShortcuts({ shortcuts = [] }: KeyboardShortcutsP
         key: 'n',
         ctrl: true,
         description: 'New work order',
-        action: () => router.push('/workorders/new'),
+        action: () => router.push('/workorders/new' as Route),
       });
     }
 
@@ -75,25 +76,25 @@ export default function KeyboardShortcuts({ shortcuts = [] }: KeyboardShortcutsP
           key: '1',
           alt: true,
           description: 'All orders',
-          action: () => router.push('/workorders/list'),
+          action: () => router.push('/workorders/list' as Route),
         },
         {
           key: '2',
           alt: true,
           description: 'Pending orders',
-          action: () => router.push('/workorders/list?status=pending'),
+          action: () => router.push('/workorders/list?status=pending' as Route),
         },
         {
           key: '3',
           alt: true,
           description: 'In progress',
-          action: () => router.push('/workorders/list?status=in-progress'),
+          action: () => router.push('/workorders/list?status=in-progress' as Route),
         },
         {
           key: '4',
           alt: true,
           description: 'Completed orders',
-          action: () => router.push('/workorders/list?status=completed'),
+          action: () => router.push('/workorders/list?status=completed' as Route),
         }
       );
     }

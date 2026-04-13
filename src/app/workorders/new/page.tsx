@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { createWorkOrderClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -133,7 +134,7 @@ function NewRoadsideJobContent() {
       },
     });
 
-    router.push('/workorders/list?from=admin');
+    router.push('/workorders/list?from=admin' as Route);
   };
 
   const inputStyle: React.CSSProperties = {

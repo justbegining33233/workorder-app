@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { FaArrowLeft, FaArrowRight, FaBell, FaBolt, FaBoxes, FaBuilding, FaBullhorn, FaBullseye, FaCalendarAlt, FaCamera, FaCar, FaCaretDown, FaChartBar, FaChevronDown, FaChevronLeft, FaChevronRight, FaChevronUp, FaClipboardList, FaClock, FaCodeBranch, FaCog, FaCogs, FaComments, FaCreditCard, FaDesktop, FaDownload, FaEdit, FaEnvelope, FaGift, FaHeartbeat, FaHome, FaIndustry, FaKey, FaLeaf, FaListAlt, FaLock, FaMapMarkerAlt, FaMoneyBill, FaPaintBrush, FaPlug, FaPrint, FaReceipt, FaRecycle, FaRoad, FaScroll, FaSearch, FaShoppingCart, FaSignOutAlt, FaStar, FaStore, FaSyncAlt, FaTools, FaUser, FaUserTie, FaUsers } from 'react-icons/fa';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import RecentlyViewed from './RecentlyViewed';
 
@@ -414,7 +415,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
                       return (
                         <Link
                           key={idx}
-                          href={item.href}
+                          href={item.href as Route}
                           onClick={(e) => handleItemClick(e, item.href)}
                           style={{
                             display: 'flex',
@@ -468,7 +469,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
                       return (
                         <Link
                           key={idx}
-                          href={item.href}
+                          href={item.href as Route}
                           onClick={(e) => handleItemClick(e, item.href)}
                           title={item.label}
                           style={{

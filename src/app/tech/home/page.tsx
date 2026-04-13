@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import TimeClock from '@/components/TimeClock';
 import TechLiveMap from '@/components/TechLiveMap';
 import TopNavBar from '@/components/TopNavBar';
@@ -204,7 +205,7 @@ export default function TechHome() {
     localStorage.removeItem('userId');
     localStorage.removeItem('shopId');
     localStorage.removeItem('token');
-    router.push('/auth/login');
+    router.push('/auth/login' as Route);
   };
 
   const jobCreationTools = [
@@ -308,7 +309,7 @@ export default function TechHome() {
                           </div>
                         </div>
                         <Link
-                          href={`/workorders/${job.id}`}
+                          href={`/workorders/${job.id}` as Route}
                           style={{
                             padding:'6px 12px',
                             background:'#3b82f6',
@@ -669,7 +670,7 @@ export default function TechHome() {
               {activeTab === 'job-creation' && (
                 <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {jobCreationTools.map(tool => (
-                    <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
+                    <Link key={tool.title} href={tool.link as Route} style={{textDecoration:'none'}}>
                       <div style={{
                         background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                         border:'1px solid rgba(255,255,255,0.15)',
@@ -702,7 +703,7 @@ export default function TechHome() {
               {activeTab === 'job-management' && (
                 <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {jobManagementTools.map(tool => (
-                    <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
+                    <Link key={tool.title} href={tool.link as Route} style={{textDecoration:'none'}}>
                       <div style={{
                         background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                         border:'1px solid rgba(255,255,255,0.15)',
@@ -735,7 +736,7 @@ export default function TechHome() {
               {activeTab === 'field-tools' && (
                 <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {fieldTools.map(tool => (
-                    <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
+                    <Link key={tool.title} href={tool.link as Route} style={{textDecoration:'none'}}>
                       <div style={{
                         background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                         border:'1px solid rgba(255,255,255,0.15)',
@@ -775,7 +776,7 @@ export default function TechHome() {
               {activeTab === 'resources' && (
                 <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {resourceTools.map(tool => (
-                    <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
+                    <Link key={tool.title} href={tool.link as Route} style={{textDecoration:'none'}}>
                       <div style={{
                         background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                         border:'1px solid rgba(255,255,255,0.15)',
@@ -808,7 +809,7 @@ export default function TechHome() {
               {activeTab === 'technical' && (
                 <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))', gap: isMobile ? 12 : 20}}>
                   {technicalTools.map(tool => (
-                    <Link key={tool.title} href={tool.link} style={{textDecoration:'none'}}>
+                    <Link key={tool.title} href={tool.link as Route} style={{textDecoration:'none'}}>
                       <div style={{
                         background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                         border:'1px solid rgba(255,255,255,0.15)',

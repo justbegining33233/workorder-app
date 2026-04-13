@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaCrown, FaUserTie, FaWrench } from 'react-icons/fa';
@@ -87,7 +88,7 @@ export default function AdminSubscriptionsPage() {
 
   const handleLogout = () => {
     localStorage.clear();
-    router.push('/admin/login');
+    router.push('/admin/login' as Route);
   };
 
   const getStatusColor = (status: string) => {

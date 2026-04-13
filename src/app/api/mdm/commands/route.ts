@@ -150,10 +150,10 @@ export async function GET(request: NextRequest) {
       [deviceDbId]
     );
 
-    const commands = commandsResult.rows.map(cmd => ({
+    const commands = commandsResult.rows.map((cmd: Record<string, unknown>) => ({
       id: cmd.id,
       command: cmd.command,
-      parameters: cmd.parameters ? JSON.parse(cmd.parameters) : null,
+      parameters: cmd.parameters ? JSON.parse(cmd.parameters as string) : null,
       createdAt: cmd.created_at,
       createdBy: cmd.created_by,
     }));

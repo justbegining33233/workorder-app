@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaChartBar, FaCreditCard, FaHeart, FaHourglassHalf, FaMapMarkerAlt, FaStar, FaStore, FaTimes, FaUser, FaUsers } from 'react-icons/fa';
@@ -449,7 +450,7 @@ export default function ManageCustomers() {
                     View Details
                   </button>
                   <button 
-                    onClick={() => router.push(`/admin/shop-details/${customer.id}`)}
+                    onClick={() => router.push(`/admin/shop-details/${customer.id}` as Route)}
                     style={{padding:'12px 24px', background:'rgba(139,92,246,0.2)', color:'#8b5cf6', border:'1px solid rgba(139,92,246,0.3)', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer'}}
                   >
                     Shop Details

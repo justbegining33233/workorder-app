@@ -1,6 +1,6 @@
 'use client';
 
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, PluginListenerHandle } from '@capacitor/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation, Position, PositionOptions } from '@capacitor/geolocation';
 import { PushNotifications, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
@@ -8,7 +8,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Network } from '@capacitor/network';
 import { Device, DeviceInfo } from '@capacitor/device';
-import { BarcodeScanner, ScanResult } from '@capacitor/barcode-scanner';
+import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHintALLOption, type CapacitorBarcodeScannerScanResult } from '@capacitor/barcode-scanner';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { Motion, MotionEventResult } from '@capacitor/motion';
 
@@ -55,13 +55,13 @@ class NativeMobileService {
   private deviceInfo: DeviceInfo | null = null;
   private networkStatus: any = null;
   private locationWatchId: string | null = null;
-  private motionWatchId: string | null = null;
+  private motionWatchId: PluginListenerHandle | null = null;
 
   // Event callbacks
-  private onLocationUpdate?: (location: LocationData) => void;
-  private onNetworkChange?: (status: any) => void;
-  private onPushNotification?: (notification: PushNotificationSchema) => void;
-  private onMotionChange?: (motion: MotionEventResult) => void;
+  onLocationUpdate?: (location: LocationData) => void;
+  onNetworkChange?: (status: any) => void;
+  onPushNotification?: (notification: PushNotificationSchema) => void;
+  onMotionChange?: (motion: MotionEventResult) => void;
 
   constructor() {
     this.initialize();
@@ -147,13 +147,13 @@ class NativeMobileService {
     }
   }
 
-  async scanBarcode(): Promise<ScanResult | null> {
+  async scanBarcode(): Promise<CapacitorBarcodeScannerScanResult | null> {
     if (!this.isNative) {
       throw new Error('Barcode scanner is only available on native platforms');
     }
 
     try {
-      const result = await BarcodeScanner.scan();
+      const result = await CapacitorBarcodeScanner.scanBarcode({ hint: CapacitorBarcodeScannerTypeHintALLOption.ALL });
       return result;
     } catch (error) {
       console.error('Barcode scan failed:', error);
@@ -302,7 +302,7 @@ class NativeMobileService {
         body: JSON.stringify({
           token,
           platform: Capacitor.getPlatform(),
-          deviceId: this.deviceInfo?.uuid,
+          deviceId: (this.deviceInfo as unknown as Record<string, unknown>)?.identifier ?? '',
         }),
       });
 
@@ -358,7 +358,7 @@ class NativeMobileService {
           id: parseInt(notification.id),
           title: notification.title,
           body: notification.body,
-          data: notification.data,
+          extra: notification.data,
           schedule: notification.schedule ? { at: notification.schedule } : undefined,
           sound: 'default',
           smallIcon: 'ic_stat_icon_config_sample',
@@ -421,7 +421,7 @@ class NativeMobileService {
               directory: Directory.Data,
             });
 
-            const data = JSON.parse(atob(content.data));
+            const data = JSON.parse(atob(content.data as string));
             workOrders.push(data);
           } catch (error) {
             console.warn('Failed to read work order file:', file.name, error);
@@ -495,7 +495,7 @@ class NativeMobileService {
 
   async stopMotionTracking(): Promise<void> {
     if (this.motionWatchId) {
-      await Motion.removeListener({ id: this.motionWatchId });
+      await this.motionWatchId.remove();
       this.motionWatchId = null;
     }
   }
@@ -510,7 +510,7 @@ class NativeMobileService {
     }
   }
 
-  async triggerNotificationHaptic(type: NotificationType = NotificationType.SUCCESS): Promise<void> {
+  async triggerNotificationHaptic(type: NotificationType = NotificationType.Success): Promise<void> {
     if (!this.isNative) return;
 
     try {

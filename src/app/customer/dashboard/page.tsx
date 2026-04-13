@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import TopNavBar from '../../../components/TopNavBar';
 import RealTimeWorkOrders from '../../../components/RealTimeWorkOrders';
 import { useRequireAuth, useAuth } from '../../../contexts/AuthContext';
@@ -512,7 +513,7 @@ export default function CustomerDashboard() {
               {discoverFeatures.map(feature => {
                 const recentItems = feature.getData();
                 return (
-              <Link key={feature.id} href={feature.link} style={{textDecoration:'none'}}>
+              <Link key={feature.id} href={feature.link as Route} style={{textDecoration:'none'}}>
                 <div style={{
                   background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                   border:'1px solid rgba(255,255,255,0.15)',
@@ -577,7 +578,7 @@ export default function CustomerDashboard() {
             {activeFeatures.map(feature => {
               const recentItems = feature.getData();
               return (
-              <Link key={feature.id} href={feature.link} style={{textDecoration:'none'}}>
+              <Link key={feature.id} href={feature.link as Route} style={{textDecoration:'none'}}>
                 <div style={{
                   background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                   border:'1px solid rgba(255,255,255,0.15)',
@@ -641,7 +642,7 @@ export default function CustomerDashboard() {
             {accountFeatures.map(feature => {
               const recentItems = feature.getData();
               return (
-              <Link key={feature.id} href={feature.link} style={{textDecoration:'none'}}>
+              <Link key={feature.id} href={feature.link as Route} style={{textDecoration:'none'}}>
                 <div style={{
                   background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                   border:'1px solid rgba(255,255,255,0.15)',
@@ -705,7 +706,7 @@ export default function CustomerDashboard() {
             {recordsFeatures.map(feature => {
               const recentItems = feature.getData();
               return (
-              <Link key={feature.id} href={feature.link} style={{textDecoration:'none'}}>
+              <Link key={feature.id} href={feature.link as Route} style={{textDecoration:'none'}}>
                 <div style={{
                   background:'linear-gradient(145deg, rgba(42,42,42,0.9) 0%, rgba(32,32,32,0.9) 100%)',
                   border:'1px solid rgba(255,255,255,0.15)',

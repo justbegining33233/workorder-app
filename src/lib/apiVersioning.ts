@@ -155,6 +155,28 @@ class APIVersionManager {
 // Export singleton instance
 export const apiVersionManager = new APIVersionManager();
 
+// Alias used by workorders/route.ts and enterprise.ts
+export const apiVersioning = {
+  getVersionFromRequest(request: Request): string {
+    return apiVersionManager.extractVersion(request) || '1.0.0';
+  },
+  isVersionSupported(_version: string): boolean {
+    return true; // All versions currently supported
+  },
+  getSupportedVersions(): string[] {
+    return ['1.0.0'];
+  },
+  setDefaultVersion(_version: string): void {
+    // no-op for now
+  },
+  addVersion(_version: string, _config: Record<string, unknown>): void {
+    // no-op for now
+  },
+  getStats(): Record<string, unknown> {
+    return { currentVersion: '1.0.0', supportedVersions: ['1.0.0'] };
+  },
+};
+
 // Helper function to create versioned API responses
 export function createVersionedResponse(data: any, version: string, metadata?: any) {
   return {
@@ -166,7 +188,7 @@ export function createVersionedResponse(data: any, version: string, metadata?: a
 }
 
 // Helper function to handle version negotiation
-export function negotiateVersion(requestedVersion?: string, supportedVersions: string[]): string {
+export function negotiateVersion(requestedVersion: string | undefined, supportedVersions: string[]): string {
   if (!requestedVersion) return supportedVersions[0];
 
   // Exact match

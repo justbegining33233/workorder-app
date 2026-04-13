@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaBuilding, FaCalendarAlt, FaCheck, FaCreditCard, FaExclamationTriangle, FaHourglassHalf, FaPhone, FaStar, FaTimesCircle } from 'react-icons/fa';
@@ -79,7 +80,7 @@ export default function ShopDetailsPage() {
             setError('Shop not found');
           } else if (res.status === 401) {
             setError('Session expired. Please log in again.');
-            router.push('/auth/login');
+            router.push('/auth/login' as Route);
           } else {
             setError('Failed to load shop details');
           }

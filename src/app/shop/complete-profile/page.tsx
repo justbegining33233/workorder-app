@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FaArrowRight, FaCreditCard, FaLink, FaQuestionCircle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import useRequireAuth from '@/lib/useRequireAuth';
 
@@ -389,7 +390,7 @@ export default function CompleteProfile() {
               {stripeLoading ? 'Connecting...' : <><FaLink style={{marginRight:8}} />Connect with Stripe</>}
             </button>
             <button
-              onClick={() => { router.push('/shop/home'); }}
+              onClick={() => { router.push('/shop/home' as Route); }}
               style={{
                 display:'block',
                 width:'100%',

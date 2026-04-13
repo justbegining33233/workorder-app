@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { verifyToken } from '@/lib/auth-client';
 
 interface LoginUserData {
@@ -194,7 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     setUser(null);
-    router.push('/auth/login');
+    router.push('/auth/login' as Route);
   };
 
   const completeOnboarding = () => {
@@ -225,6 +226,7 @@ export function useAuth() {
       login: () => {},
       logout: () => {},
       isAuthenticated: false,
+      completeOnboarding: () => {},
     };
   }
   return context;
@@ -247,14 +249,14 @@ export function useRequireAuth(requiredRoles?: string[]) {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/auth/login');
+      router.push('/auth/login' as Route);
       return;
     }
 
     if (!isLoading && user && requiredRoles && !requiredRoles.includes(user.role)) {
       // Redirect to the user's own section, not to login
       const home = ROLE_HOME_MAP[user.role] ?? '/auth/login';
-      router.push(home);
+      router.push(home as Route);
     }
   }, [user, isLoading, requiredRoles]); // Remove router from dependencies
 

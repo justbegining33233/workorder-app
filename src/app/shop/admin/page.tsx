@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -102,7 +103,7 @@ export default function ShopAdminPage() {
     if (isLoading) return;
     const isManager = user?.role === 'manager';
     if (user && !user.isShopAdmin && !isManager) {
-      router.replace('/shop/home');
+      router.replace('/shop/home' as Route);
       return;
     }
 
@@ -113,13 +114,13 @@ export default function ShopAdminPage() {
 
     // Only shop owners need isShopAdmin flag; managers bypass this check
     if (admin !== 'true' && !isManager) {
-      router.push('/shop/home');
+      router.push('/shop/home' as Route);
       return;
     }
 
     // Only shop owners need a complete profile; managers don't set up the shop
     if (!profileComplete && !isManager) {
-      router.push('/shop/complete-profile');
+      router.push('/shop/complete-profile' as Route);
       return;
     }
 

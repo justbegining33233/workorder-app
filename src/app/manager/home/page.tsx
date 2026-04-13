@@ -3,6 +3,7 @@ import { FaBox, FaCalendarAlt, FaChartBar, FaClipboardList, FaDollarSign, FaExcl
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import TimeClock from '@/components/TimeClock';
 import MessagingCard from '@/components/MessagingCard';
@@ -209,7 +210,7 @@ export default function ManagerHome() {
     localStorage.removeItem('userId');
     localStorage.removeItem('shopId');
     localStorage.removeItem('token');
-    router.push('/auth/login');
+    router.push('/auth/login' as Route);
   };
 
   const handleSubmitRequest = async () => {

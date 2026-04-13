@@ -3,6 +3,7 @@ import { FaTimes } from 'react-icons/fa';
 
 import { useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import type { Route } from 'next';
 import {
   IconHome, IconOrders, IconMessages, IconTeam, IconCalendar,
   IconWrench, IconClock, IconSettings, IconInventory, IconDollar,
@@ -161,7 +162,7 @@ export default function MobileNav({ role }: MobileNavProps) {
             return (
               <button
                 key={item.path}
-                onClick={() => { router.push(item.path); setDrawerOpen(false); }}
+                onClick={() => { router.push(item.path as Route); setDrawerOpen(false); }}
                 style={{
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', gap: 6,
@@ -234,7 +235,7 @@ export default function MobileNav({ role }: MobileNavProps) {
           return (
             <button
               key={item.path}
-              onClick={() => router.push(item.path)}
+              onClick={() => router.push(item.path as Route)}
               style={{
                 flex: 1,
                 display: 'flex', flexDirection: 'column',

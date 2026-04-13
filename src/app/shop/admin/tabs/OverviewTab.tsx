@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { Route } from 'next';
 import { FaBox, FaUser, FaClipboardList, FaCog, FaExclamationTriangle, FaUsers, FaChartBar, FaEnvelope, FaRedo, FaTools, FaPlusCircle, FaStore, FaKey, FaMapMarkerAlt } from 'react-icons/fa';
 import MessagingCard from '@/components/MessagingCard';
 
@@ -382,7 +383,7 @@ export default function OverviewTab({
               { href: '/shop/services', bg: 'rgba(245,158,11,0.2)', border: 'rgba(245,158,11,0.3)', color: '#f59e0b', icon: <FaTools />, label: 'Services', sub: 'Configure offered services' },
               { href: '/shop/new-inshop-job', bg: 'rgba(229,51,42,0.2)', border: 'rgba(229,51,42,0.3)', color: '#e5332a', icon: <FaPlusCircle />, label: 'New In-Shop Job', sub: 'Create a walk-in work order' },
             ].map(({ href, bg, border, color, icon, label, sub }) => (
-              <Link key={href} href={href} style={{ textDecoration: 'none' }}>
+              <Link key={href} href={href as Route} style={{ textDecoration: 'none' }}>
                 <button style={{ width: '100%', padding: 16, background: bg, border: `1px solid ${border}`, borderRadius: 8, color, fontSize: 14, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: 20 }}>{icon}</span>
                   <div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaCalendarAlt, FaCamera, FaCheck, FaFrown, FaMapMarkerAlt, FaSearch, FaStar, FaTag } from 'react-icons/fa';
@@ -253,7 +254,7 @@ export default function NewAppointmentClient() {
       });
 
       if (res.ok) {
-        router.push('/customer/appointments?success=true');
+        router.push('/customer/appointments?success=true' as Route);
       } else {
         const error = await res.json();
         setBookingMsg({type:'error',text:error.error || 'Failed to book appointment'});

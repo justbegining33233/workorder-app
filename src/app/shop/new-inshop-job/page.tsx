@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -89,7 +90,7 @@ export default function ShopNewInShopJob() {
         console.error('Failed to create work order', err);
         return;
       }
-      router.push('/shop/home');
+      router.push('/shop/home' as Route);
     } catch (err) {
       console.error('Error creating work order', err);
     }

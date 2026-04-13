@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import PasswordResetForm from '@/components/PasswordResetForm';
 import { getCsrfToken } from '@/lib/clientCsrf';
 import { useAuth } from '@/contexts/AuthContext';
@@ -55,7 +56,7 @@ export default function LoginClient() {
           const adminData = await adminResponse.json();
           login({ token: adminData.accessToken, role: 'admin', name: adminData.username, id: adminData.id, isSuperAdmin: adminData.isSuperAdmin });
           setLoading(false);
-          router.push('/admin/home');
+          router.push('/admin/home' as Route);
           return;
         }
         if (adminResponse.status >= 500) serverError = true;
@@ -68,7 +69,7 @@ export default function LoginClient() {
           const techData = await techResponse.json();
           login({ token: techData.accessToken, role: techData.role, name: techData.name, id: techData.id, shopId: techData.shopId });
           setLoading(false);
-          if (techData.role === 'tech') router.push('/tech/home'); else if (techData.role === 'manager') router.push('/manager/home');
+          if (techData.role === 'tech') router.push('/tech/home' as Route); else if (techData.role === 'manager') router.push('/manager/home' as Route);
           return;
         }
         if (techResponse.status >= 500) serverError = true;
@@ -84,7 +85,7 @@ export default function LoginClient() {
           login({ token: shopAccount.accessToken, role: 'shop', name: shopAccount.shopName, id: shopAccount.id, shopId: shopAccount.id, isShopAdmin: true, shopProfileComplete: profileComplete });
           setLoading(false);
           const nextRoute = profileComplete ? '/shop/admin' : '/shop/complete-profile';
-          router.push(nextRoute);
+          router.push(nextRoute as Route);
           return;
         }
         if (shopResponse.status >= 500) serverError = true;
@@ -100,7 +101,7 @@ export default function LoginClient() {
           const id = customerData.id || (customerData.user && customerData.user.id);
           login({ token, role: 'customer', name: name || 'Customer', id: id || '' });
           setLoading(false);
-          router.push('/customer/dashboard');
+          router.push('/customer/dashboard' as Route);
           return;
         }
         if (customerResponse.status >= 500) serverError = true;
@@ -165,7 +166,7 @@ export default function LoginClient() {
       localStorage.setItem('shopCredentials', JSON.stringify(shopCredentials));
       try {
         const response = await fetch('/api/shops/pending', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ shopName: shopSignupForm.shopName, ownerName: shopSignupForm.ownerName || shopSignupForm.shopName, email: shopSignupForm.email, phone: shopSignupForm.phone, address: shopSignupForm.address, city: shopSignupForm.city, state: shopSignupForm.state, zipCode: shopSignupForm.zip, location: `${shopSignupForm.city}, ${shopSignupForm.state}`, businessLicense: 'Pending verification', insurancePolicy: 'Pending verification', services: 0, status: 'pending', username: shopSignupForm.username, password: shopSignupForm.password }) });
-        if (response.ok) { setTimeout(() => { router.push('/auth/pending-approval'); setLoading(false); }, 1000); } else { setRegMsg({type:'error',text:'Failed to submit shop registration. Please try again.'}); setLoading(false); }
+        if (response.ok) { setTimeout(() => { router.push('/auth/pending-approval' as Route); setLoading(false); }, 1000); } else { setRegMsg({type:'error',text:'Failed to submit shop registration. Please try again.'}); setLoading(false); }
       } catch { setRegMsg({type:'error',text:'Error submitting registration. Please try again.'}); setLoading(false); }
     } else {
       try {
@@ -191,7 +192,7 @@ export default function LoginClient() {
         const firstName = nameParts[0] || signupForm.fullName;
         const lastName = nameParts.slice(1).join(' ') || 'User';
         const response = await fetch('/api/customers/register', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken }, body: JSON.stringify({ email: signupForm.email, username: signupForm.username || signupForm.email.split('@')[0], password: signupForm.password, firstName, lastName }) });
-        if (response.ok) { await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you'); setLoading(false); }, 1000); } else { const errorData = await response.json(); setRegMsg({type:'error',text:errorData.error || 'Failed to create customer account. Please try again.'}); setLoading(false); }
+        if (response.ok) { await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you' as Route); setLoading(false); }, 1000); } else { const errorData = await response.json(); setRegMsg({type:'error',text:errorData.error || 'Failed to create customer account. Please try again.'}); setLoading(false); }
       } catch { setRegMsg({type:'error',text:'Error creating account. Please try again.'}); setLoading(false); }
     }
   };

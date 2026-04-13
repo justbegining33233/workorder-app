@@ -507,7 +507,7 @@ export const biometricAuth = {
   },
 
   // Get stored credentials
-  getCredentials(): { userId: string; deviceToken: string } | null {
+  getCredentials(): { userId: string; deviceToken: string; timestamp: number } | null {
     try {
       const stored = localStorage.getItem('biometric_credentials');
       return stored ? JSON.parse(stored) : null;

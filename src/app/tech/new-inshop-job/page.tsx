@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { MaintenanceType } from '../../../types/workorder';
 import { createWorkOrderClient } from '@/lib/workordersClient';
@@ -74,7 +75,7 @@ export default function NewInShopJob() {
       createdBy: formData.customerName || userName,
     });
     
-    router.push('/workorders/list');
+    router.push('/workorders/list' as Route);
   };
 
   const toggleService = (service: string) => {

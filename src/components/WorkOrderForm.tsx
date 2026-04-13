@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { WorkOrderFormData, VehicleType, RepairType, MaintenanceType, TireServiceType } from '@/types/workorder';
 import { FaArrowLeft, FaArrowRight, FaCheck, FaMapMarkerAlt, FaCamera } from 'react-icons/fa';
 import BarcodeScanner from './BarcodeScanner';
@@ -264,13 +265,13 @@ export default function WorkOrderForm({ initialData, onSubmit, initialServiceLoc
       } else {
         // Redirect based on user role
         if (userRole === 'customer') {
-          router.push('/customer/home');
+          router.push('/customer/home' as Route);
         } else if (userRole === 'tech') {
-          router.push('/tech/home');
+          router.push('/tech/home' as Route);
         } else if (userRole === 'manager') {
-          router.push('/manager/home');
+          router.push('/manager/home' as Route);
         } else {
-          router.push('/');
+          router.push('/' as Route);
         }
         router.refresh();
       }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaArrowRight, FaBuilding, FaChartBar, FaCheck, FaClipboardList, FaCog, FaDollarSign, FaEnvelope, FaHourglassHalf, FaLock, FaSave, FaStore, FaUsers, FaWrench } from 'react-icons/fa';
 
@@ -86,7 +87,7 @@ export default function AdminTools() {
       <div style={{maxWidth:1400, margin:'0 auto', padding:32}}>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:20}}>
           {tools.map((tool, idx) => (
-            <Link key={idx} href={tool.href} style={{textDecoration:'none'}}>
+            <Link key={idx} href={tool.href as Route} style={{textDecoration:'none'}}>
               <div style={{background:'rgba(0,0,0,0.3)', border:`1px solid ${tool.color}50`, borderRadius:12, padding:24, cursor:'pointer', transition:'all 0.3s', height:'100%'}}>
                 <div style={{fontSize:40, marginBottom:16}}>{tool.icon}</div>
                 <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:8}}>{tool.name}</h3>

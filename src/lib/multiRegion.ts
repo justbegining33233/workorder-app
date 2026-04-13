@@ -373,7 +373,7 @@ class RegionManager {
 
       } catch (error) {
         logger.error('Region health check error', error, { regionId });
-        region.status = 'unknown';
+        region.status = 'offline';
         region.lastHealthCheck = new Date();
       }
     }
@@ -697,8 +697,8 @@ class DisasterRecoveryManager {
 
       if (!testResult.success) {
         result.success = false;
-        result.issues.push(testResult.issue);
-        result.recommendations.push(testResult.recommendation);
+        if (testResult.issue) result.issues.push(testResult.issue);
+        if (testResult.recommendation) result.recommendations.push(testResult.recommendation);
       }
     }
 

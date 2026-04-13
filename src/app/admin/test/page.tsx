@@ -3,6 +3,7 @@ import { FaArrowRight, FaBolt, FaClock, FaHourglassHalf, FaSave } from 'react-ic
 
 import { useState, useEffect, ReactNode } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 interface FeatureStatus {
@@ -328,7 +329,7 @@ export default function AdminTestPage() {
             {navigationItems.map((item) => (
               <Link
                 key={item.id}
-                href={item.href}
+                href={item.href as Route}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group relative no-underline ${
                   item.active
                     ? 'bg-[#3B82F6]/10 text-[#3B82F6]'
@@ -355,7 +356,7 @@ export default function AdminTestPage() {
                 {quickLinks.map((link) => (
                   <Link
                     key={link.href}
-                    href={link.href}
+                    href={link.href as Route}
                     className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#E2E8F0] transition-all duration-150 no-underline"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-[#475569]" />
@@ -498,7 +499,7 @@ export default function AdminTestPage() {
                           {/* Link */}
                           {module.route && (
                             <Link 
-                              href={module.route}
+                              href={module.route as Route}
                               onClick={(e) => e.stopPropagation()}
                               className="px-2 py-1 text-[#3B82F6] hover:bg-[#3B82F6]/10 text-xs font-medium rounded transition-colors duration-150 no-underline flex-shrink-0"
                             >
@@ -610,7 +611,7 @@ export default function AdminTestPage() {
                   ].map((link, i) => (
                     <Link
                       key={i}
-                      href={link.href}
+                      href={link.href as Route}
                       className="flex items-center gap-2.5 p-2.5 bg-[#1E293B]/30 hover:bg-[#1E293B] border border-[#1F2937] hover:border-[#334155] rounded-lg transition-colors duration-150 relative no-underline"
                     >
                       <span className="text-base">{link.icon}</span>

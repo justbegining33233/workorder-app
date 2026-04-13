@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { FaCar, FaSearch, FaUser, FaWrench } from 'react-icons/fa';
 
 interface SearchResults {
@@ -64,7 +65,7 @@ export default function GlobalSearch() {
   const navigate = (path: string) => {
     setOpen(false);
     setQuery('');
-    router.push(path);
+    router.push(path as Route);
   };
 
   const hasResults = results && (results.customers.length > 0 || results.workOrders.length > 0 || results.vehicles.length > 0);

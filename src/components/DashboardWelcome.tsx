@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   FaArrowRight,
@@ -50,7 +51,7 @@ export default function DashboardWelcome({
   const getRoleConfig = (role: string) => {
     const configs = {
       customer: {
-        greeting: `Welcome back, ${userName || user?.firstName || 'Customer'}!`,
+        greeting: `Welcome back, ${userName || user?.name || 'Customer'}!`,
         subtitle: 'Manage your vehicles and service requests',
         quickActions: [
           {
@@ -80,7 +81,7 @@ export default function DashboardWelcome({
         ]
       },
       tech: {
-        greeting: `Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, ${userName || user?.firstName || 'Technician'}!`,
+        greeting: `Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, ${userName || user?.name || 'Technician'}!`,
         subtitle: 'Ready to tackle your service calls?',
         quickActions: [
           {
@@ -110,7 +111,7 @@ export default function DashboardWelcome({
         ]
       },
       manager: {
-        greeting: `Hello, ${userName || user?.firstName || 'Manager'}!`,
+        greeting: `Hello, ${userName || user?.name || 'Manager'}!`,
         subtitle: 'Monitor your team and operations',
         quickActions: [
           {
@@ -140,7 +141,7 @@ export default function DashboardWelcome({
         ]
       },
       admin: {
-        greeting: `Welcome, ${userName || user?.firstName || 'Administrator'}!`,
+        greeting: `Welcome, ${userName || user?.name || 'Administrator'}!`,
         subtitle: 'System administration and monitoring',
         quickActions: [
           {
@@ -170,7 +171,7 @@ export default function DashboardWelcome({
         ]
       },
       shop: {
-        greeting: `Good day, ${userName || user?.firstName || 'Shop Owner'}!`,
+        greeting: `Good day, ${userName || user?.name || 'Shop Owner'}!`,
         subtitle: 'Manage your business and customer relationships',
         quickActions: [
           {
@@ -200,7 +201,7 @@ export default function DashboardWelcome({
         ]
       },
       superadmin: {
-        greeting: `Greetings, ${userName || user?.firstName || 'Super Admin'}!`,
+        greeting: `Greetings, ${userName || user?.name || 'Super Admin'}!`,
         subtitle: 'Enterprise platform management',
         quickActions: [
           {
@@ -231,7 +232,7 @@ export default function DashboardWelcome({
       }
     };
 
-    return configs[role] || configs.customer;
+    return configs[role as keyof typeof configs] || configs.customer;
   };
 
   const config = getRoleConfig(userRole);
@@ -262,7 +263,7 @@ export default function DashboardWelcome({
         {visibleActions.map((action) => (
           <Link
             key={action.title}
-            href={action.href}
+            href={action.href as Route}
             className="group relative bg-white rounded-xl p-4 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
           >
             <div className="flex items-start justify-between mb-3">

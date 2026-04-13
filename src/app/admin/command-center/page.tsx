@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp, FaBolt, FaChartBar, FaChartLine, FaCheck, FaCheckSquare, FaCircle, FaDollarSign, FaDotCircle, FaExclamationTriangle, FaExternalLinkAlt, FaRegCircle, FaRegStar, FaStar, FaSyncAlt } from 'react-icons/fa';
@@ -157,7 +158,7 @@ export default function CommandCenterPage() {
 
   const handleSignOut = () => {
     localStorage.clear();
-    router.push('/auth/login');
+    router.push('/auth/login' as Route);
   };
 
   if (authLoading || loading) {

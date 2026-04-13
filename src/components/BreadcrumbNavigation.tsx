@@ -5,6 +5,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { FaHome, FaChevronRight } from 'react-icons/fa';
 
 interface BreadcrumbItem {
@@ -145,7 +146,7 @@ export default function BreadcrumbNavigation({
             </span>
           ) : (
             <Link
-              href={item.href}
+              href={item.href as Route}
               className="text-gray-600 hover:text-gray-900 transition-colors flex items-center space-x-1"
             >
               {index === 0 && showHome && <FaHome className="w-3 h-3" />}

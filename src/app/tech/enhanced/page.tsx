@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
@@ -76,7 +77,7 @@ function TechPortalEnhancedContent() {
               onClick={() => {
                 localStorage.removeItem('userRole');
                 localStorage.removeItem('userName');
-                router.push('/auth/login');
+                router.push('/auth/login' as Route);
               }}
               className="btn-outline"
             >

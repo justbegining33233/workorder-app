@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { FaArrowLeft, FaArrowRight, FaBell, FaBox, FaBuilding, FaCalendarAlt, FaCar, FaCheck, FaCheckCircle, FaClipboardList, FaClock, FaCog, FaComments, FaCreditCard, FaExclamationCircle, FaExclamationTriangle, FaLink, FaSignOutAlt, FaStar, FaTimes, FaTimesCircle, FaTrash, FaTruck, FaWrench } from 'react-icons/fa';
 import { useRouter, useSearchParams } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
@@ -362,11 +363,11 @@ function ShopSettingsPageContent() {
     if (payment === 'success') {
       setActiveTab('billing');
       setPaymentMessage({ type: 'success', text: 'Payment successful! Your subscription has been updated.' });
-      router.replace('/shop/settings', { scroll: false });
+      router.replace('/shop/settings' as Route, { scroll: false });
     } else if (payment === 'canceled') {
       setActiveTab('billing');
       setPaymentMessage({ type: 'error', text: 'Payment was canceled. Your subscription has not been changed.' });
-      router.replace('/shop/settings', { scroll: false });
+      router.replace('/shop/settings' as Route, { scroll: false });
     }
 
     // Handle Stripe Connect OAuth return
@@ -375,11 +376,11 @@ function ShopSettingsPageContent() {
       setActiveTab('billing');
       setStripeConnected(true);
       setStripeConnectMessage({ type: 'success', text: 'Payout account connected! You\'ll now receive payments directly to your Stripe account.' });
-      router.replace('/shop/settings', { scroll: false });
+      router.replace('/shop/settings' as Route, { scroll: false });
     } else if (stripeConnect === 'error') {
       setActiveTab('billing');
       setStripeConnectMessage({ type: 'error', text: 'Failed to connect payout account. Please try again.' });
-      router.replace('/shop/settings', { scroll: false });
+      router.replace('/shop/settings' as Route, { scroll: false });
     }
      
   }, [router, searchParams]);
@@ -896,7 +897,7 @@ function ShopSettingsPageContent() {
               localStorage.removeItem('userName');
               localStorage.removeItem('shopId');
               localStorage.removeItem('userId');
-              router.push('/auth/login');
+              router.push('/auth/login' as Route);
             }}
             style={{
               padding:'10px 20px',

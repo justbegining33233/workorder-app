@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowDown, FaArrowLeft, FaArrowUp, FaChartBar, FaDownload, FaStar } from 'react-icons/fa';
 
@@ -97,7 +98,7 @@ export default function ReportsAnalytics() {
       case 'tech': return '/tech/home';
       case 'manager': return '/tech/home';
       case 'customer': return '/customer/home';
-      default: return '/dashboard';
+      default: return '/';
     }
   };
 
@@ -112,7 +113,7 @@ export default function ReportsAnalytics() {
     <div style={{minHeight:'100vh', background: 'transparent'}}>
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1600, margin:'0 auto'}}>
-          <Link href={getDashboardLink()} style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
+          <Link href={getDashboardLink() as Route} style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>

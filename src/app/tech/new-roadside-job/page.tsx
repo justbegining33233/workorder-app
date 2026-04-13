@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaArrowLeft, FaCar } from 'react-icons/fa';
@@ -36,7 +37,7 @@ export default function NewRoadsideJob() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/tech/home');
+    router.push('/tech/home' as Route);
   };
 
   return (

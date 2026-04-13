@@ -4,6 +4,7 @@ import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { useSocket } from '@/lib/socket';
 import OilSlickNavCanvas from '@/components/OilSlickNavCanvas';
 import ShopSwitcher from '@/components/ShopSwitcher';
@@ -25,7 +26,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
   const [isClockedIn, setIsClockedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [navMsg, setNavMsg] = useState<{type:'success'|'error';text:string}|null>(null);
-  const [notifications, setNotifications] = useState<Array<{ id: string; title: string; body: string; time: string; read?: boolean; type?: string }>>([]);
+  const [notifications, setNotifications] = useState<Array<{ id: string; title: string; body: string; time: string; read?: boolean; type?: string; icon?: string }>>([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -177,7 +178,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       }
 
       // Add system notifications
-      const systemNotifications = [
+      const systemNotifications: Array<{ id: string; type: string; title: string; message: string; time: string }> = [
         // You can add system-wide notifications here
         // For example: maintenance notices, feature updates, etc.
       ];
@@ -352,14 +353,14 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     // Handle different notification types
     switch (n.type) {
       case 'messages':
-        router.push(getMessagesLink());
+        router.push(getMessagesLink() as Route);
         break;
       case 'workorders':
         const workOrderId = n.id.replace('wo-', '');
-        router.push(`/workorders/${workOrderId}`);
+        router.push(`/workorders/${workOrderId}` as Route);
         break;
       default:
-        router.push(getMessagesLink());
+        router.push(getMessagesLink() as Route);
     }
   };
 

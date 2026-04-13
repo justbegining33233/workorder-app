@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { MaintenanceType } from '../../../types/workorder';
 import { createWorkOrderClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
@@ -41,7 +42,7 @@ export default function InShopWorkOrderPage() {
       case 'shop': return '/shop/home';
       case 'tech': return '/tech/home';
       case 'manager': return '/tech/home';
-      default: return '/dashboard';
+      default: return '/';
     }
   };
 
@@ -73,7 +74,7 @@ export default function InShopWorkOrderPage() {
       createdBy: formData.customerName || userName,
     });
     
-    router.push('/workorders/list');
+    router.push('/workorders/list' as Route);
   };
 
   const toggleService = (service: string) => {
@@ -95,7 +96,7 @@ export default function InShopWorkOrderPage() {
     <div style={{minHeight:'100vh', background: 'transparent'}}>
       <div style={{background:'rgba(0,0,0,0.3)', borderBottom:'1px solid rgba(245,158,11,0.3)', padding:'20px 32px'}}>
         <div style={{maxWidth:1200, margin:'0 auto'}}>
-          <Link href={getDashboardLink()} style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
+          <Link href={getDashboardLink() as Route} style={{color:'#3b82f6', textDecoration:'none', fontSize:14, fontWeight:600, marginBottom:16, display:'inline-block'}}>
             <FaArrowLeft style={{marginRight:4}} /> Back to Dashboard
           </Link>
           <h1 style={{fontSize:28, fontWeight:700, color:'#e5e7eb', marginBottom:8}}><FaBuilding style={{marginRight:4}} /> New In-Shop Job</h1>
@@ -275,7 +276,7 @@ export default function InShopWorkOrderPage() {
           </div>
 
           <div style={{display:'flex', gap:12}}>
-            <Link href={getDashboardLink()} style={{flex:1}}>
+            <Link href={getDashboardLink() as Route} style={{flex:1}}>
               <button type="button" style={{width:'100%', padding:'16px', background:'rgba(255,255,255,0.1)', color:'#e5e7eb', border:'1px solid rgba(255,255,255,0.2)', borderRadius:8, fontSize:16, fontWeight:600, cursor:'pointer'}}>
                 Cancel
               </button>

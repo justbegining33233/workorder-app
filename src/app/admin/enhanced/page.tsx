@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import Link from 'next/link';
 import { WorkOrder } from '../../../types/workorder';
 import NotificationBell from '../../../components/NotificationBell';
@@ -90,7 +91,7 @@ function AdminPortalEnhancedContent() {
             <button
               onClick={() => {
                 localStorage.clear();
-                router.push('/admin/login');
+                router.push('/admin/login' as Route);
               }}
               className="btn-outline"
             >
