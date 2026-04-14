@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { verifyToken } from '@/lib/auth-client';
 
@@ -37,6 +37,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthContextType['user']>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const scheduleRefresh = (token: string) => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!payload.exp) return;
+      const msUntilExpiry = payload.exp * 1000 - Date.now();
+      if (msUntilExpiry <= 0) return;
+      // Refresh 5 minutes before expiry, but at least 30s from now
+      const refreshIn = Math.max(msUntilExpiry - 5 * 60 * 1000, 30_000);
+      refreshTimerRef.current = setTimeout(async () => {
+        try {
+          const res = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.accessToken) {
+              localStorage.setItem('token', data.accessToken);
+              scheduleRefresh(data.accessToken);
+            }
+          }
+        } catch { /* network error â€” will retry on next visibility change */ }
+      }, refreshIn);
+    } catch { /* invalid token format */ }
+  };
 
   // Public routes that don't require authentication
   const _publicRoutes = ['/auth/login', '/auth/register', '/auth/thank-you', '/auth/pending-approval', '/'];
@@ -57,7 +82,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    };
   }, []); // Remove pathname dependency to prevent re-checking on every route change
 
   const checkAuth = () => {
@@ -104,6 +132,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }).catch(e => console.warn('Failed to connect socket on auth check:', e));
         } catch {
         }
+
+        scheduleRefresh(token);
       }
 
       if (role && name && id) {
@@ -121,7 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Removed automatic redirect - let individual pages handle auth requirements
       }
     } catch (error) {
-      console.error('âŒ [AUTH CHECK] Auth check error:', error);
+      console.error('Ã¢Å’ [AUTH CHECK] Auth check error:', error);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -135,6 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // If logging in with existing user data, try to refresh the token
     if (userData.token) {
       localStorage.setItem('token', userData.token);
+      scheduleRefresh(userData.token);
       // Initialize socket client on login (non-blocking)
       import('@/lib/socket-client').then(mod => {
         try {
@@ -181,6 +212,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('isShopAdmin');
     localStorage.removeItem('shopProfileComplete');
     localStorage.removeItem('token');
+    if (refreshTimerRef.current) { clearTimeout(refreshTimerRef.current); refreshTimerRef.current = null; }
 
     try {
       const { default: socketClient } = await import('@/lib/socket-client');
@@ -221,7 +253,7 @@ export function useAuth() {
 /** Where each role belongs  -  must mirror src/middleware.ts */
 const ROLE_HOME_MAP: Record<string, string> = {
   admin:      '/admin/home',
-  superadmin: '/admin/home',
+  superadmin: '/superadmin/dashboard',
   shop:       '/shop/home',
   manager:    '/shop/home',
   tech:       '/tech/home',

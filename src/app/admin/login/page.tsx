@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/admin/login', {
+      const response = await fetch('/api/auth/admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -29,19 +29,19 @@ export default function AdminLoginPage() {
 
       if (response.ok) {
         // Store admin credentials
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('token', data.accessToken);
         localStorage.setItem('userRole', 'admin');
         // Keep legacy admin keys and populate shared user keys for AuthContext
-        localStorage.setItem('adminId', data.admin.id);
-        localStorage.setItem('adminUsername', data.admin.username);
-        localStorage.setItem('isSuperAdmin', data.admin.isSuperAdmin.toString());
+        localStorage.setItem('adminId', data.id);
+        localStorage.setItem('adminUsername', data.username);
+        localStorage.setItem('isSuperAdmin', data.isSuperAdmin.toString());
 
         // Also set shared user keys so the AuthContext picks up the admin as an authenticated user
-        localStorage.setItem('userId', data.admin.id);
-        localStorage.setItem('userName', data.admin.username);
+        localStorage.setItem('userId', data.id);
+        localStorage.setItem('userName', data.username);
 
         // Redirect to super-admin portal if flagged, otherwise admin dashboard
-        if (data.admin?.isSuperAdmin) {
+        if (data.isSuperAdmin) {
           router.push('/admin/home');
         } else {
           router.push('/admin/dashboard');

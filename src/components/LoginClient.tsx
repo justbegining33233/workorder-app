@@ -29,6 +29,8 @@ export default function LoginClient() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showReset, setShowReset] = useState(false);
   const [regMsg, setRegMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+  const [twoFAState, setTwoFAState] = useState<{ tempToken: string; pendingRole: string } | null>(null);
+  const [totpCode, setTotpCode] = useState('');
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,79 +43,107 @@ export default function LoginClient() {
 
     setLoading(true);
     try {
+      const creds = { username: loginForm.username, password: loginForm.password };
+      const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include' as RequestCredentials };
+
+      // Fire all auth endpoints in parallel instead of sequential waterfall
+      const results = await Promise.allSettled([
+        fetch('/api/auth/admin', { ...opts, body: JSON.stringify(creds) }).then(async r => ({ role: 'admin', status: r.status, ok: r.ok, data: r.ok ? await r.json() : null })),
+        fetch('/api/auth/tech', { ...opts, body: JSON.stringify(creds) }).then(async r => ({ role: 'tech', status: r.status, ok: r.ok, data: r.ok ? await r.json() : null })),
+        fetch('/api/auth/shop', { ...opts, body: JSON.stringify(creds) }).then(async r => ({ role: 'shop', status: r.status, ok: r.ok, data: r.ok ? await r.json() : null })),
+        fetch('/api/auth/customer', { ...opts, body: JSON.stringify({ email: loginForm.username, password: loginForm.password }) }).then(async r => ({ role: 'customer', status: r.status, ok: r.ok, data: r.ok ? await r.json() : null })),
+      ]);
+
       let serverError = false;
 
-      // Admin
-      try {
-        let adminResponse = await fetch('/api/auth/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
-        if (adminResponse.status === 404) {
-          try {
-            adminResponse = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
-          } catch { /* ignore */ }
+      for (const result of results) {
+        if (result.status === 'rejected') { serverError = true; continue; }
+        const { role, status, ok, data } = result.value;
+        if (status >= 500) { serverError = true; continue; }
+        if (!ok || !data) continue;
+
+        // Handle 2FA challenge
+        if (data.requires2FA || data.requires2FASetup) {
+          setTwoFAState({ tempToken: data.tempToken, pendingRole: role });
+          setLoading(false);
+          return;
         }
-        if (adminResponse.ok) {
-          const adminData = await adminResponse.json();
-          login({ token: adminData.accessToken, role: 'admin', name: adminData.username, id: adminData.id, isSuperAdmin: adminData.isSuperAdmin });
+
+        // Successful login — route by role
+        if (role === 'admin') {
+          login({ token: data.accessToken, role: 'admin', name: data.username, id: data.id, isSuperAdmin: data.isSuperAdmin });
           setLoading(false);
           router.push('/admin/home');
           return;
         }
-        if (adminResponse.status >= 500) serverError = true;
-      } catch { serverError = true; }
-
-      // Tech/Manager
-      try {
-        const techResponse = await fetch('/api/auth/tech', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
-        if (techResponse.ok) {
-          const techData = await techResponse.json();
-          login({ token: techData.accessToken, role: techData.role, name: techData.name, id: techData.id, shopId: techData.shopId });
+        if (role === 'tech') {
+          login({ token: data.accessToken, role: data.role, name: data.name, id: data.id, shopId: data.shopId });
           setLoading(false);
-          if (techData.role === 'tech') router.push('/tech/home'); else if (techData.role === 'manager') router.push('/manager/home');
+          router.push(data.role === 'manager' ? '/manager/home' : '/tech/home');
           return;
         }
-        if (techResponse.status >= 500) serverError = true;
-      } catch { serverError = true; }
-
-      // Shop
-      try {
-        const shopResponse = await fetch('/api/auth/shop', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: loginForm.username, password: loginForm.password }), credentials: 'include' });
-        if (shopResponse.ok) {
-          const shopAccount = await shopResponse.json();
-          const profileComplete = !!shopAccount.profileComplete;
+        if (role === 'shop') {
+          const profileComplete = !!data.profileComplete;
           if (!profileComplete && typeof window !== 'undefined') localStorage.removeItem('shopProfileComplete');
-          login({ token: shopAccount.accessToken, role: 'shop', name: shopAccount.shopName, id: shopAccount.id, shopId: shopAccount.id, isShopAdmin: true, shopProfileComplete: profileComplete });
+          login({ token: data.accessToken, role: 'shop', name: data.shopName, id: data.id, shopId: data.id, isShopAdmin: true, shopProfileComplete: profileComplete });
           setLoading(false);
-          const nextRoute = profileComplete ? '/shop/admin' : '/shop/complete-profile';
-          router.push(nextRoute);
+          router.push(profileComplete ? '/shop/admin' : '/shop/complete-profile');
           return;
         }
-        if (shopResponse.status >= 500) serverError = true;
-      } catch { serverError = true; }
-
-      // Customer
-      try {
-        const customerResponse = await fetch('/api/auth/customer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: loginForm.username, password: loginForm.password }), credentials: 'include' });
-        if (customerResponse.ok) {
-          const customerData = await customerResponse.json();
-          const token = customerData.token || customerData.accessToken || customerData.access_token;
-          const name = customerData.fullName || `${customerData.firstName || ''} ${customerData.lastName || ''}`.trim();
-          const id = customerData.id || (customerData.user && customerData.user.id);
+        if (role === 'customer') {
+          const token = data.token || data.accessToken || data.access_token;
+          const name = data.fullName || `${data.firstName || ''} ${data.lastName || ''}`.trim();
+          const id = data.id || (data.user && data.user.id);
           login({ token, role: 'customer', name: name || 'Customer', id: id || '' });
           setLoading(false);
           router.push('/customer/dashboard');
           return;
         }
-        if (customerResponse.status >= 500) serverError = true;
-      } catch { serverError = true; }
+      }
 
       if (serverError) {
-        setErrors({ username: 'Server error  -  please try again in a moment.' });
+        setErrors({ username: 'Server error - please try again in a moment.' });
       } else {
         setErrors({ username: 'Invalid username or password' });
       }
       setLoading(false);
     } catch {
       setErrors({ username: 'An error occurred during login. Please try again.' });
+      setLoading(false);
+    }
+  };
+
+  const handle2FASubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!twoFAState) return;
+    setErrors({});
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/2fa/challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tempToken: twoFAState.tempToken, token: totpCode }),
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrors({ totp: data.error || 'Invalid code' });
+        setLoading(false);
+        return;
+      }
+      if (twoFAState.pendingRole === 'shop') {
+        const profileComplete = !!data.profileComplete;
+        login({ token: data.accessToken, role: 'shop', name: data.shopName, id: data.id, shopId: data.id, isShopAdmin: true, shopProfileComplete: profileComplete });
+        router.push(profileComplete ? '/shop/admin' : '/shop/complete-profile');
+      } else {
+        login({ token: data.accessToken, role: data.role || twoFAState.pendingRole, name: data.name, id: data.id, shopId: data.shopId });
+        router.push(data.role === 'manager' ? '/manager/home' : '/tech/home');
+      }
+      setTwoFAState(null);
+      setTotpCode('');
+      setLoading(false);
+    } catch {
+      setErrors({ totp: 'An error occurred. Please try again.' });
       setLoading(false);
     }
   };
@@ -215,7 +245,7 @@ export default function LoginClient() {
               <button className={`sos-tab ${activeTab === 'login' ? 'active' : ''}`} onClick={() => { setActiveTab('login'); setErrors({}); }}>Sign In</button>
               <button className={`sos-tab ${activeTab === 'signup' ? 'active' : ''}`} onClick={() => { setActiveTab('signup'); setErrors({}); }}>Create Account</button>
             </div>
-            {activeTab === 'login' && (
+            {activeTab === 'login' && !twoFAState && (
               <form onSubmit={handleLoginSubmit} className="sos-form" autoComplete="off">
                 <div className="sos-field">
                   <label>Username</label>
@@ -234,6 +264,22 @@ export default function LoginClient() {
                   <button type="button" onClick={toggleReset} className="btn-link" style={{fontSize:13}}>{showReset ? 'Hide password reset' : 'Forgot / Reset password'}</button>
                 </div>
                 {showReset && (<PasswordResetForm onClose={() => setShowReset(false)} />)}
+              </form>
+            )}
+            {activeTab === 'login' && twoFAState && (
+              <form onSubmit={handle2FASubmit} className="sos-form" autoComplete="off">
+                <div className="sos-field">
+                  <label>Two-Factor Authentication</label>
+                  <p style={{color:'#b8beca', fontSize:13, marginBottom:12}}>Enter the 6-digit code from your authenticator app.</p>
+                  <input type="text" value={totpCode} onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))} className="sos-input" placeholder="000000" autoComplete="one-time-code" inputMode="numeric" maxLength={6} />
+                  {errors.totp && (<p style={{color:'#ff948d', fontSize:12, marginTop:4}}>{errors.totp}</p>)}
+                </div>
+                <div className="sos-actions">
+                  <button type="submit" disabled={loading || totpCode.length !== 6} className="btn-primary" style={{width:'100%'}}>{loading ? 'Verifying...' : 'Verify Code'}</button>
+                </div>
+                <div style={{marginTop:8, textAlign:'center'}}>
+                  <button type="button" onClick={() => { setTwoFAState(null); setTotpCode(''); setErrors({}); }} className="btn-link" style={{fontSize:13}}>Back to login</button>
+                </div>
               </form>
             )}
             {activeTab === 'signup' && (

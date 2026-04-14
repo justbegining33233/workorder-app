@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 
-// ─── Role definitions ────────────────────────────────────────────────────────
+// â”€â”€â”€ Role definitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /** Which roles may access each top-level route prefix */
 const ROUTE_ROLES: Record<string, string[]> = {
   '/admin':      ['admin', 'superadmin'],
+  '/superadmin': ['superadmin'],
   '/shop':       ['shop',    'superadmin'],
   '/tech':       ['tech',    'superadmin'],
   '/customer':   ['customer','superadmin'],
@@ -16,14 +17,14 @@ const ROUTE_ROLES: Record<string, string[]> = {
 /** Where to send a logged-in user based on their role */
 const ROLE_HOME: Record<string, string> = {
   admin:      '/admin/home',
-  superadmin: '/admin/home',
+  superadmin: '/superadmin/dashboard',
   shop:       '/shop/home',
   manager:    '/manager/home',
   tech:       '/tech/home',
   customer:   '/customer/dashboard',
 };
 
-// ─── JWT signature verification (Web Crypto API — Edge-compatible) ───────────
+// â”€â”€â”€ JWT signature verification (Web Crypto API â€” Edge-compatible) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function verifyJwt(token: string): Promise<Record<string, unknown> | null> {
   try {
@@ -58,7 +59,7 @@ async function verifyJwt(token: string): Promise<Record<string, unknown> | null>
 
     if (!valid) return null;
 
-    // Signature valid — decode payload
+    // Signature valid â€” decode payload
     const payloadBase64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
     return JSON.parse(atob(payloadBase64));
   } catch {
@@ -66,7 +67,7 @@ async function verifyJwt(token: string): Promise<Record<string, unknown> | null>
   }
 }
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Middleware â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -79,7 +80,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(prefix)
   );
 
-  // Not a protected route — pass through
+  // Not a protected route â€” pass through
   if (!entry) return NextResponse.next();
 
   const [, allowedRoles] = entry;
@@ -89,7 +90,7 @@ export async function middleware(request: NextRequest) {
     request.cookies.get('sos_auth')?.value ??
     request.headers.get('authorization')?.replace('Bearer ', '');
 
-  // No token → send to login, preserving the intended destination
+  // No token â†’ send to login, preserving the intended destination
   if (!token) {
     const loginUrl = new URL('/auth/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
@@ -99,16 +100,16 @@ export async function middleware(request: NextRequest) {
   const payload = await verifyJwt(token);
   const role = payload?.role as string | undefined;
 
-  // Unreadable token → send to login
+  // Unreadable token â†’ send to login
   if (!role) {
     const loginUrl = new URL('/auth/login', request.url);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Role is permitted for this route → let through
+  // Role is permitted for this route â†’ let through
   if (allowedRoles.includes(role)) return NextResponse.next();
 
-  // Wrong role → bounce to their own dashboard (not to login)
+  // Wrong role â†’ bounce to their own dashboard (not to login)
   const home = ROLE_HOME[role] ?? '/auth/login';
   return NextResponse.redirect(new URL(home, request.url));
 }

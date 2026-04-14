@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ export default function AdminDashboardPage() {
   // Super admins should land on the enhanced portal, not the legacy dashboard
   useEffect(() => {
     if (!authLoading && user?.isSuperAdmin) {
-      router.replace('/admin/enhanced');
+      router.replace('/superadmin/dashboard');
     }
   }, [authLoading, user, router]);
 

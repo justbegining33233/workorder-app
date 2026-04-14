@@ -16,7 +16,10 @@ interface JWTPayload {
 // (expiry, role) in the UI to avoid a full round-trip.
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.decode(token) as JWTPayload;
+    const decoded = jwt.decode(token) as JWTPayload;
+    if (!decoded) return null;
+    if (decoded.exp && decoded.exp * 1000 < Date.now()) return null;
+    return decoded;
   } catch {
     return null;
   }

@@ -1,4 +1,5 @@
-/**
+]
+|/**
  * encryption.ts
  * General-purpose AES-256-GCM encryption for sensitive fields.
  * Uses the same TOTP_ENCRYPTION_KEY env var as two-factor.ts.
