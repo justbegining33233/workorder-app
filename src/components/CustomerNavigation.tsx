@@ -46,7 +46,7 @@ export default function CustomerNavigation({ unreadMessages = 0, activeOrders = 
     },
     {
       name: 'My Orders',
-      href: '/customer/orders',
+      href: '/customer/workorders',
       icon: FaClipboardList,
       badge: activeOrders > 0 ? activeOrders : undefined,
       description: 'Track your service requests'
@@ -133,7 +133,7 @@ export default function CustomerNavigation({ unreadMessages = 0, activeOrders = 
 
               {/* Quick Actions */}
               <Link
-                href={"/customer/orders/new" as Route}
+                href={"/customer/appointments/new" as Route}
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 New Service Request

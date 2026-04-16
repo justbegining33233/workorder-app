@@ -51,7 +51,7 @@ export default function ShopNavigation({
   const navigationItems = [
     {
       name: 'Dashboard',
-      href: '/shop/dashboard',
+      href: '/shop/home',
       icon: FaHome,
       description: 'Business overview'
     },
@@ -69,14 +69,14 @@ export default function ShopNavigation({
     },
     {
       name: 'Jobs',
-      href: '/shop/jobs',
+      href: '/workorders/list',
       icon: FaClipboardList,
       badge: pendingJobs > 0 ? pendingJobs : undefined,
       description: 'Service requests'
     },
     {
       name: 'Revenue',
-      href: '/shop/revenue',
+      href: '/shop/reports',
       icon: FaDollarSign,
       badge: revenueAlerts > 0 ? revenueAlerts : undefined,
       description: 'Financial reports'
@@ -90,13 +90,13 @@ export default function ShopNavigation({
     },
     {
       name: 'Schedule',
-      href: '/shop/schedule',
+      href: '/shop/calendar',
       icon: FaCalendarAlt,
       description: 'Appointment booking'
     },
     {
       name: 'Messages',
-      href: '/shop/messages',
+      href: '/shop/customer-messages',
       icon: FaComments,
       badge: unreadMessages > 0 ? unreadMessages : undefined,
       description: 'Customer communications'
@@ -182,7 +182,7 @@ export default function ShopNavigation({
 
               {/* Quick Actions */}
               <Link
-                href={"/shop/jobs" as Route}
+                href={"/workorders/list" as Route}
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 View Jobs

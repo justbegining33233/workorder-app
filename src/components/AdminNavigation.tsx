@@ -56,34 +56,34 @@ export default function AdminNavigation({
     },
     {
       name: 'Users',
-      href: '/admin/users',
+      href: '/admin/user-management',
       icon: FaUsers,
       badge: pendingUsers > 0 ? pendingUsers : undefined,
       description: 'User management'
     },
     {
       name: 'Security',
-      href: '/admin/security',
+      href: '/admin/security-settings',
       icon: FaShieldAlt,
       badge: securityIssues > 0 ? securityIssues : undefined,
       description: 'Security settings'
     },
     {
       name: 'System',
-      href: '/admin/system',
+      href: '/admin/system-settings',
       icon: FaServer,
       badge: systemAlerts > 0 ? systemAlerts : undefined,
       description: 'System configuration'
     },
     {
       name: 'Analytics',
-      href: '/admin/analytics',
+      href: '/admin/platform-analytics',
       icon: FaChartBar,
       description: 'Performance metrics'
     },
     {
       name: 'Database',
-      href: '/admin/database',
+      href: '/admin/backup-restore',
       icon: FaDatabase,
       badge: maintenanceTasks > 0 ? maintenanceTasks : undefined,
       description: 'Database management'

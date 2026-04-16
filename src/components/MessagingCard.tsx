@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { FaComments, FaExclamationTriangle, FaShieldAlt, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
+import { useSocket } from '@/lib/socket';
 
 // --- Types --------------------------------------------------------------------
 
@@ -61,6 +62,7 @@ const TABS: { key: TabKey; label: string }[] = [
 // --- Component ----------------------------------------------------------------
 
 export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
+  const { on, off } = useSocket();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const selectedConversationRef = useRef<Conversation | null>(null);
@@ -99,10 +101,10 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [threadMessages]);
 
-  // Poll the active thread every 5 s for new messages from the other party
+  // Poll the active thread every 30s as fallback; socket events trigger immediate refresh
   useEffect(() => {
     if (!selectedConversation) return;
-    const interval = setInterval(() => fetchThread(selectedConversation), 5000);
+    const interval = setInterval(() => fetchThread(selectedConversation), 30000);
     return () => clearInterval(interval);
      
   }, [selectedConversation?.contactId, selectedConversation?.contactRole]);
@@ -111,10 +113,22 @@ export default function MessagingCard({ userId, shopId }: MessagingCardProps) {
     if (shopId && userId) {
       fetchMessages();
     }
-    const interval = setInterval(fetchMessages, 5000);
+    const interval = setInterval(fetchMessages, 30000);
     return () => clearInterval(interval);
      
   }, [shopId, userId]);
+
+  // Listen for real-time new-message events from Socket.IO
+  useEffect(() => {
+    const handleNewMessage = () => {
+      fetchMessages();
+      if (selectedConversationRef.current) {
+        fetchThread(selectedConversationRef.current);
+      }
+    };
+    on('new-message', handleNewMessage);
+    return () => { off('new-message', handleNewMessage); };
+  }, [on, off]);
 
   // Keep ref in sync with state so stale-closure polls can read the current selection
   useEffect(() => {

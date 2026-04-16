@@ -220,6 +220,7 @@ export async function PUT(
         vehicleId: data.vehicleId,
         estimatedCost: data.estimatedCost,
         amountPaid: data.amountPaid,
+        estimate: data.estimate,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
         completedAt: data.completedAt ? new Date(data.completedAt) : (data.status === 'closed' ? new Date() : undefined),
       },

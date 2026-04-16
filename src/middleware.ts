@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 /** Which roles may access each top-level route prefix */
 const ROUTE_ROLES: Record<string, string[]> = {
   '/admin':      ['admin', 'superadmin'],
+  '/superadmin': ['superadmin'],
   '/shop':       ['shop',    'superadmin'],
   '/tech':       ['tech',    'superadmin'],
   '/customer':   ['customer','superadmin'],
@@ -16,7 +17,7 @@ const ROUTE_ROLES: Record<string, string[]> = {
 /** Where to send a logged-in user based on their role */
 const ROLE_HOME: Record<string, string> = {
   admin:      '/admin/home',
-  superadmin: '/admin/home',
+  superadmin: '/superadmin/dashboard',
   shop:       '/shop/home',
   manager:    '/manager/home',
   tech:       '/tech/home',

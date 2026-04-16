@@ -17,7 +17,7 @@ export default function AdminDashboardPage() {
   // Super admins should land on the enhanced portal, not the legacy dashboard
   useEffect(() => {
     if (!authLoading && user?.isSuperAdmin) {
-      router.replace('/admin/enhanced' as Route);
+      router.replace('/superadmin/dashboard' as Route);
     }
   }, [authLoading, user, router]);
 

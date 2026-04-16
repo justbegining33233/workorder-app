@@ -1,0 +1,151 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import type { Route } from 'next';
+import { useRequireAuth } from '@/contexts/AuthContext';
+import {
+  FaBuilding, FaSearch, FaChartBar, FaUsers, FaCheckCircle,
+  FaExclamationTriangle, FaArrowLeft,
+} from 'react-icons/fa';
+
+type Tenant = {
+  id: string;
+  name?: string;
+  shopName?: string;
+  ownerName?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  totalJobs?: number;
+  completedJobs?: number;
+  totalRevenue?: number;
+  teamMembers?: number;
+  healthScore?: number;
+  rating?: number;
+  createdAt?: string;
+  subscription?: { plan: string; status: string; isActive: boolean } | null;
+};
+
+export default function SuperAdminTenants() {
+  const { user, isLoading } = useRequireAuth(['superadmin']);
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [search, setSearch] = useState('');
+  const [filterPlan, setFilterPlan] = useState('all');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isLoading || !user) return;
+    const token = localStorage.getItem('token');
+    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+    fetch('/api/admin/tenants', { headers, credentials: 'include' })
+      .then(r => r.ok ? r.json() : { tenants: [] })
+      .then(data => {
+        const t = Array.isArray(data) ? data : data?.tenants || [];
+        setTenants(t);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [user, isLoading]);
+
+  if (isLoading || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500" />
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
+  const filtered = tenants.filter(t => {
+    const name = (t.name || t.shopName || '').toLowerCase();
+    const owner = (t.ownerName || '').toLowerCase();
+    const matchSearch = !search || name.includes(search.toLowerCase()) || owner.includes(search.toLowerCase());
+    const matchPlan = filterPlan === 'all' || (t.subscription?.plan || 'free').toLowerCase() === filterPlan;
+    return matchSearch && matchPlan;
+  });
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8 pt-20 md:pt-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <Link href={"/superadmin/dashboard" as Route} className="p-2 hover:bg-gray-100 rounded-lg">
+            <FaArrowLeft className="w-4 h-4 text-gray-500" />
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Tenant Management</h1>
+            <p className="text-gray-500 mt-1">{tenants.length} registered shops</p>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="relative flex-1">
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search shops or owners..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+            />
+          </div>
+          <select
+            value={filterPlan}
+            onChange={e => setFilterPlan(e.target.value)}
+            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 text-gray-700"
+          >
+            <option value="all">All Plans</option>
+            <option value="free">Free</option>
+            <option value="starter">Starter</option>
+            <option value="professional">Professional</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+
+        {/* Tenant Grid */}
+        {filtered.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+            <FaBuilding className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500 text-lg">No shops found</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map(t => (
+              <div key={t.id} className="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
+                    <FaBuilding className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 truncate">{t.shopName || t.name || 'Unnamed'}</p>
+                    <p className="text-xs text-gray-500 truncate">{t.ownerName || t.email || '—'}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <FaUsers className="w-3 h-3" /> {t.teamMembers ?? 0} members
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <FaChartBar className="w-3 h-3" /> {t.totalJobs ?? 0} jobs
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                    t.subscription?.isActive ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    {t.subscription?.plan || 'Free'}
+                  </span>
+                  {t.createdAt && (
+                    <span className="text-xs text-gray-400">Joined {new Date(t.createdAt).toLocaleDateString()}</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

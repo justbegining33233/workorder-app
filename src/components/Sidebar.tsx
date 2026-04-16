@@ -63,7 +63,7 @@ const shopGroups: MenuGroup[] = [
       { icon: <FaUsers />, label: 'Manage Team',  href: '/shop/manage-team' },
       { icon: <FaLock />, label: 'Permissions',  href: '/shop/settings/permissions' },
       { icon: <FaMoneyBill />, label: 'Payroll',      href: '/shop/payroll' },
-      { icon: <FaClock />, label: 'Time Clock',   href: '/shop/admin#timeclock' },
+      { icon: <FaClock />, label: 'Time Clock',   href: '/shop/timeclock' },
       { icon: <FaCalendarAlt />, label: 'Schedule',     href: '/shop/settings/schedule' },
     ]
   },
@@ -168,11 +168,11 @@ const managerGroups: MenuGroup[] = [
     icon: <FaUsers />,
     defaultOpen: false,
     items: [
-      { icon: <FaUsers />, label: 'Manage Team',  href: '/manager/manage-team' },
+      { icon: <FaUsers />, label: 'Manage Team',  href: '/manager/team' },
       { icon: <FaLock />, label: 'Permissions',  href: '/manager/settings/permissions' },
       { icon: <FaMoneyBill />, label: 'Payroll',      href: '/manager/payroll' },
-      { icon: <FaClock />, label: 'Time Clock',   href: '/manager/home#timeclock' },
-      { icon: <FaBoxes />, label: 'Inventory',    href: '/manager/home#inventory' },
+      { icon: <FaClock />, label: 'Time Clock',   href: '/manager/timeclock' },
+      { icon: <FaBoxes />, label: 'Inventory',    href: '/manager/inventory' },
     ]
   },
   {
@@ -195,7 +195,7 @@ const techGroups: MenuGroup[] = [
     defaultOpen: true,
     items: [
       { icon: <FaHome />, label: 'Home',      href: '/tech/home' },
-      { icon: <FaClipboardList />, label: 'My Jobs',   href: '/tech/home#jobs' },
+      { icon: <FaClipboardList />, label: 'My Jobs',   href: '/workorders/list' },
       { icon: <FaComments />, label: 'Messages',  href: '/tech/messages' },
     ],
   },
@@ -204,7 +204,7 @@ const techGroups: MenuGroup[] = [
     icon: <FaClock />,
     defaultOpen: true,
     items: [
-      { icon: <FaClock />, label: 'Time Clock',       href: '/tech/home#timeclock' },
+      { icon: <FaClock />, label: 'Time Clock',       href: '/tech/timeclock' },
       { icon: <FaListAlt />,  label: 'All Work Orders',  href: '/workorders/list' },
       { icon: <FaIndustry />,  label: 'New In-Shop Job',  href: '/tech/new-inshop-job' },
       { icon: <FaRoad />,  label: 'New Roadside Job', href: '/tech/new-roadside-job' },

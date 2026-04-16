@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { FaStar } from 'react-icons/fa';
@@ -18,12 +18,43 @@ interface HistoryItem {
 export default function History() {
   useRequireAuth(['customer']);
   const [userName, setUserName] = useState('');
-  const [history] = useState<HistoryItem[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchHistory = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await fetch('/api/workorders?status=closed', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const orders = data.workOrders ?? data ?? [];
+        const mapped: HistoryItem[] = orders.map((wo: any) => ({
+          id: wo.id,
+          service: wo.issueDescription || 'Service',
+          shop: wo.shop?.shopName || 'Shop',
+          vehicle: wo.vehicle ? `${wo.vehicle.year || ''} ${wo.vehicle.make || ''} ${wo.vehicle.model || ''}`.trim() : 'Vehicle',
+          date: wo.completedAt ? new Date(wo.completedAt).toLocaleDateString() : new Date(wo.updatedAt).toLocaleDateString(),
+          cost: wo.amountPaid || wo.estimatedCost || 0,
+          rating: wo.review?.rating || 0,
+          status: wo.status,
+        }));
+        setHistory(mapped);
+      }
+    } catch (err) {
+      console.error('Error fetching history:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const name = localStorage.getItem('userName') || '';
     setUserName(name);
-  }, []);
+    fetchHistory();
+  }, [fetchHistory]);
 
   const handleSignOut = () => {
     localStorage.removeItem('userRole');
@@ -121,11 +152,13 @@ export default function History() {
           ))}
         </div>
 
-        {history.length === 0 && (
+        {loading ? (
+          <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>Loading service history...</div>
+        ) : history.length === 0 ? (
           <div style={{textAlign:'center', padding:40, color:'#9aa3b2'}}>
-            No service history available.
+            No completed services yet. Your service history will appear here once work orders are completed.
           </div>
-        )}
+        ) : null}
 
         {/* Back to Dashboard */}
         <div style={{marginTop:32, textAlign:'center'}}>

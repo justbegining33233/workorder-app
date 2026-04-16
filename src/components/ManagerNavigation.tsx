@@ -66,7 +66,7 @@ export default function ManagerNavigation({
     },
     {
       name: 'Work Orders',
-      href: '/manager/work-orders',
+      href: '/workorders/list',
       icon: FaList,
       description: 'Work order management'
     },
@@ -79,7 +79,7 @@ export default function ManagerNavigation({
     },
     {
       name: 'Jobs',
-      href: '/manager/jobs',
+      href: '/manager/assignments',
       icon: FaClipboardList,
       badge: urgentJobs > 0 ? urgentJobs : undefined,
       description: 'Monitor service calls'
@@ -197,7 +197,7 @@ export default function ManagerNavigation({
 
               {/* Quick Actions */}
               <Link
-                href={"/manager/jobs" as Route}
+                href={"/manager/assignments" as Route}
                 className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 Monitor Jobs

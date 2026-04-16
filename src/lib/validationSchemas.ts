@@ -20,6 +20,19 @@ export const workOrderUpdateSchema = z.object({
   completedAt: z.string().datetime().nullable().optional(),
   notes: z.string().max(2000).optional(),
   statusReason: z.string().optional(),
+  estimate: z.object({
+    lineItems: z.array(z.object({
+      description: z.string().max(500),
+      quantity: z.number().min(0),
+      unitPrice: z.number().min(0),
+      total: z.number().min(0),
+    })).optional(),
+    subtotal: z.number().min(0).optional(),
+    taxRate: z.number().min(0).max(100).optional(),
+    tax: z.number().min(0).optional(),
+    total: z.number().min(0).optional(),
+    notes: z.string().max(2000).optional(),
+  }).optional(),
 }).strict(); // Reject unknown fields
 
 // User Update Schemas

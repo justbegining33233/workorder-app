@@ -235,7 +235,7 @@ export function useAuth() {
 /** Where each role belongs  -  must mirror src/middleware.ts */
 const ROLE_HOME_MAP: Record<string, string> = {
   admin:      '/admin/home',
-  superadmin: '/admin/home',
+  superadmin: '/superadmin/dashboard',
   shop:       '/shop/home',
   manager:    '/shop/home',
   tech:       '/tech/home',
