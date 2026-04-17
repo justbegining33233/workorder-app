@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { FaCalendarAlt, FaUser, FaClock, FaPlus } from 'react-icons/fa';
+import { useRequireAuth } from '@/contexts/AuthContext';
+import TopNavBar from '@/components/TopNavBar';
+import Sidebar from '@/components/Sidebar';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import { FaCalendarAlt, FaUser, FaClock } from 'react-icons/fa';
 
 interface ScheduleEntry {
   id: string;
@@ -14,7 +17,8 @@ interface ScheduleEntry {
 }
 
 export default function ManagerSchedulePage() {
-  const { user } = useAuth();
+  const { user, isLoading } = useRequireAuth(['manager']);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [schedules, setSchedules] = useState<ScheduleEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [weekOffset, setWeekOffset] = useState(0);
@@ -34,7 +38,8 @@ export default function ManagerSchedulePage() {
   const fetchSchedules = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/shop/team');
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/shop/team', { headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
         const team = await res.json();
         const entries: ScheduleEntry[] = (Array.isArray(team) ? team : team.technicians ?? []).map(
@@ -56,70 +61,73 @@ export default function ManagerSchedulePage() {
     }
   }, []);
 
-  useEffect(() => { fetchSchedules(); }, [fetchSchedules]);
+  useEffect(() => { if (user) fetchSchedules(); }, [user, fetchSchedules]);
+
+  if (isLoading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (!user) return null;
 
   const weekDates = getWeekDates();
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team Schedule</h1>
-          <p className="text-gray-500">Manage technician schedules and shifts</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setWeekOffset(w => w - 1)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">&larr; Prev</button>
-          <button onClick={() => setWeekOffset(0)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Today</button>
-          <button onClick={() => setWeekOffset(w => w + 1)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Next &rarr;</button>
-        </div>
-      </div>
-
-      {/* Week Grid */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="grid grid-cols-8 border-b border-gray-200 bg-gray-50">
-          <div className="px-4 py-3 text-sm font-medium text-gray-500">Technician</div>
-          {weekDates.map((d, i) => (
-            <div key={i} className="px-2 py-3 text-center">
-              <p className="text-xs text-gray-500">{dayNames[i]}</p>
-              <p className="text-sm font-medium text-gray-900">{d.getDate()}</p>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
+      <Sidebar role="manager" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <TopNavBar onMenuToggle={() => setSidebarOpen(o => !o)} showMenuButton />
+        <main style={{ flex: 1, padding: 24, maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+          <Breadcrumbs />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '16px 0 24px', flexWrap: 'wrap', gap: 12 }}>
+            <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb' }}>Team Schedule</h1>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => setWeekOffset(w => w - 1)} style={{ padding: '8px 14px', borderRadius: 8, background: 'rgba(0,0,0,0.3)', color: '#9aa3b2', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontSize: 14 }}>&larr; Prev</button>
+              <button onClick={() => setWeekOffset(0)} style={{ padding: '8px 14px', borderRadius: 8, background: 'rgba(0,0,0,0.3)', color: '#9aa3b2', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontSize: 14 }}>Today</button>
+              <button onClick={() => setWeekOffset(w => w + 1)} style={{ padding: '8px 14px', borderRadius: 8, background: 'rgba(0,0,0,0.3)', color: '#9aa3b2', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontSize: 14 }}>Next &rarr;</button>
             </div>
-          ))}
-        </div>
-        {schedules.length === 0 ? (
-          <div className="p-10 text-center text-gray-400">
-            <FaCalendarAlt className="w-10 h-10 mx-auto mb-3 opacity-40" />
-            <p>No team members found</p>
           </div>
-        ) : (
-          schedules.map(s => (
-            <div key={s.id} className="grid grid-cols-8 border-b border-gray-100 hover:bg-gray-50">
-              <div className="px-4 py-3 flex items-center gap-2">
-                <FaUser className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-900 truncate">{s.techName}</span>
-              </div>
-              {weekDates.map((d, i) => {
-                const isToday = new Date().toDateString() === d.toDateString();
-                return (
-                  <div key={i} className={`px-2 py-3 text-center ${isToday ? 'bg-purple-50' : ''}`}>
-                    <div className="flex items-center justify-center gap-1">
-                      <FaClock className="w-3 h-3 text-gray-300" />
-                      <span className="text-xs text-gray-500">{s.startTime}-{s.endTime}</span>
-                    </div>
+
+          {loading ? (
+            <div style={{ textAlign: 'center', color: '#9aa3b2', padding: 40 }}>Loading...</div>
+          ) : (
+            <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' }}>
+              {/* Header row */}
+              <div style={{ display: 'grid', gridTemplateColumns: '180px repeat(7, 1fr)', borderBottom: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.03)' }}>
+                <div style={{ padding: '12px 16px', color: '#6b7280', fontSize: 13, fontWeight: 500 }}>Technician</div>
+                {weekDates.map((d, i) => (
+                  <div key={i} style={{ padding: '12px 8px', textAlign: 'center' }}>
+                    <div style={{ color: '#6b7280', fontSize: 11 }}>{dayNames[i]}</div>
+                    <div style={{ color: '#e5e7eb', fontSize: 14, fontWeight: 600 }}>{d.getDate()}</div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+              {schedules.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#6b7280', padding: 40 }}>
+                  <FaCalendarAlt style={{ fontSize: 40, marginBottom: 12, opacity: 0.4 }} />
+                  <p>No team members found</p>
+                </div>
+              ) : (
+                schedules.map(s => (
+                  <div key={s.id} style={{ display: 'grid', gridTemplateColumns: '180px repeat(7, 1fr)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <FaUser style={{ color: '#6b7280', fontSize: 14 }} />
+                      <span style={{ color: '#e5e7eb', fontSize: 14 }}>{s.techName}</span>
+                    </div>
+                    {weekDates.map((d, i) => {
+                      const isToday = new Date().toDateString() === d.toDateString();
+                      return (
+                        <div key={i} style={{ padding: '12px 8px', textAlign: 'center', background: isToday ? 'rgba(59,130,246,0.08)' : 'transparent' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                            <FaClock style={{ color: '#6b7280', fontSize: 10 }} />
+                            <span style={{ color: '#9aa3b2', fontSize: 12 }}>{s.startTime}-{s.endTime}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))
+              )}
             </div>
-          ))
-        )}
+          )}
+        </main>
       </div>
     </div>
   );

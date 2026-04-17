@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRequireAuth } from '@/contexts/AuthContext';
+import TopNavBar from '@/components/TopNavBar';
+import Sidebar from '@/components/Sidebar';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { FaChartBar, FaUsers, FaClock, FaDollarSign, FaDownload } from 'react-icons/fa';
 
 interface ReportData {
@@ -13,7 +16,8 @@ interface ReportData {
 }
 
 export default function ManagerReportsPage() {
-  const { user } = useAuth();
+  const { user, isLoading } = useRequireAuth(['manager']);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState('30');
@@ -21,9 +25,10 @@ export default function ManagerReportsPage() {
   const fetchReports = useCallback(async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       const endDate = new Date().toISOString();
       const startDate = new Date(Date.now() - parseInt(dateRange) * 86400000).toISOString();
-      const res = await fetch(`/api/analytics?startDate=${startDate}&endDate=${endDate}`);
+      const res = await fetch(`/api/analytics?startDate=${startDate}&endDate=${endDate}`, { headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
         const json = await res.json();
         setData({
@@ -41,109 +46,90 @@ export default function ManagerReportsPage() {
     }
   }, [dateRange]);
 
-  useEffect(() => { fetchReports(); }, [fetchReports]);
+  useEffect(() => { if (user) fetchReports(); }, [user, fetchReports]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
-      </div>
-    );
-  }
+  if (isLoading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (!user) return null;
+
+  const cards = [
+    { icon: <FaChartBar />, label: 'Total Work Orders', value: data?.totalWorkOrders ?? 0, color: '#3b82f6' },
+    { icon: <FaUsers />, label: 'Completed', value: data?.completedWorkOrders ?? 0, color: '#22c55e' },
+    { icon: <FaDollarSign />, label: 'Revenue', value: `$${(data?.totalRevenue ?? 0).toLocaleString()}`, color: '#f59e0b' },
+    { icon: <FaClock />, label: 'Avg Completion', value: data?.avgCompletionTime ?? 'N/A', color: '#f97316' },
+  ];
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Performance Reports</h1>
-          <p className="text-gray-500">Analytics and performance metrics for your team</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
-          >
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-            <option value="90">Last 90 days</option>
-          </select>
-          <a
-            href={`/api/analytics/export?format=csv&startDate=${new Date(Date.now() - parseInt(dateRange) * 86400000).toISOString()}&endDate=${new Date().toISOString()}`}
-            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700"
-            download
-          >
-            <FaDownload className="w-4 h-4" /> Export CSV
-          </a>
-        </div>
-      </div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
+      <Sidebar role="manager" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <TopNavBar onMenuToggle={() => setSidebarOpen(o => !o)} showMenuButton />
+        <main style={{ flex: 1, padding: 24, maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+          <Breadcrumbs />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '16px 0 24px', flexWrap: 'wrap', gap: 12 }}>
+            <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb' }}>Performance Reports</h1>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <select value={dateRange} onChange={e => setDateRange(e.target.value)} style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(0,0,0,0.3)', color: '#e5e7eb', border: '1px solid rgba(255,255,255,0.1)', fontSize: 14 }}>
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+              </select>
+              <a
+                href={`/api/analytics/export?format=csv&startDate=${new Date(Date.now() - parseInt(dateRange) * 86400000).toISOString()}&endDate=${new Date().toISOString()}`}
+                download
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: '#3b82f6', color: '#fff', fontSize: 13, textDecoration: 'none', cursor: 'pointer' }}
+              >
+                <FaDownload /> Export CSV
+              </a>
+            </div>
+          </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg"><FaChartBar className="w-5 h-5 text-blue-600" /></div>
-            <div>
-              <p className="text-sm text-gray-500">Total Work Orders</p>
-              <p className="text-2xl font-bold">{data?.totalWorkOrders ?? 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg"><FaUsers className="w-5 h-5 text-green-600" /></div>
-            <div>
-              <p className="text-sm text-gray-500">Completed</p>
-              <p className="text-2xl font-bold">{data?.completedWorkOrders ?? 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-100 rounded-lg"><FaDollarSign className="w-5 h-5 text-yellow-600" /></div>
-            <div>
-              <p className="text-sm text-gray-500">Revenue</p>
-              <p className="text-2xl font-bold">${(data?.totalRevenue ?? 0).toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg"><FaClock className="w-5 h-5 text-orange-600" /></div>
-            <div>
-              <p className="text-sm text-gray-500">Avg Completion</p>
-              <p className="text-2xl font-bold">{data?.avgCompletionTime ?? 'N/A'}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+          {loading ? (
+            <div style={{ textAlign: 'center', color: '#9aa3b2', padding: 40 }}>Loading...</div>
+          ) : (
+            <>
+              {/* Summary Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
+                {cards.map((c, i) => (
+                  <div key={i} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 10, background: `${c.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.color, fontSize: 18 }}>{c.icon}</div>
+                    <div>
+                      <div style={{ color: '#6b7280', fontSize: 13 }}>{c.label}</div>
+                      <div style={{ color: '#e5e7eb', fontSize: 22, fontWeight: 700 }}>{c.value}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-      {/* Tech Performance Table */}
-      {(data?.techPerformance?.length ?? 0) > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="p-5 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Technician Performance</h2>
-          </div>
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="text-left px-5 py-3 text-sm font-medium text-gray-500">Technician</th>
-                <th className="text-left px-5 py-3 text-sm font-medium text-gray-500">Completed</th>
-                <th className="text-left px-5 py-3 text-sm font-medium text-gray-500">Avg Time</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {data!.techPerformance.map((t, i) => (
-                <tr key={i} className="hover:bg-gray-50">
-                  <td className="px-5 py-3 text-sm text-gray-900">{t.name}</td>
-                  <td className="px-5 py-3 text-sm text-gray-600">{t.completed}</td>
-                  <td className="px-5 py-3 text-sm text-gray-600">{t.avgTime}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              {/* Tech Performance */}
+              {(data?.techPerformance?.length ?? 0) > 0 && (
+                <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, overflow: 'hidden' }}>
+                  <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <h2 style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 600 }}>Technician Performance</h2>
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
+                        <th style={{ textAlign: 'left', padding: '12px 20px', color: '#6b7280', fontSize: 13, fontWeight: 500 }}>Technician</th>
+                        <th style={{ textAlign: 'left', padding: '12px 20px', color: '#6b7280', fontSize: 13, fontWeight: 500 }}>Completed</th>
+                        <th style={{ textAlign: 'left', padding: '12px 20px', color: '#6b7280', fontSize: 13, fontWeight: 500 }}>Avg Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data!.techPerformance.map((t, i) => (
+                        <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                          <td style={{ padding: '12px 20px', color: '#e5e7eb', fontSize: 14 }}>{t.name}</td>
+                          <td style={{ padding: '12px 20px', color: '#9aa3b2', fontSize: 14 }}>{t.completed}</td>
+                          <td style={{ padding: '12px 20px', color: '#9aa3b2', fontSize: 14 }}>{t.avgTime}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
