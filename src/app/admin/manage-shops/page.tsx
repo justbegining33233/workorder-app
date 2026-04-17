@@ -93,7 +93,8 @@ export default function ManageShops() {
     }
   };
 
-  if (isLoading || !user) return null;
+  if (isLoading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (!user) return null;
 
   const filtered = shops.filter(s => {
     if (statusFilter !== 'all' && s.status !== statusFilter) return false;

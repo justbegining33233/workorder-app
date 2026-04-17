@@ -218,7 +218,8 @@ function WorkOrderListPageContent() {
 
 export default function WorkOrderListPage() {
   const { user, isLoading } = useRequireAuth(['shop', 'manager', 'tech', 'superadmin']);
-  if (isLoading || !user) return null;
+  if (isLoading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (!user) return null;
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <WorkOrderListPageContent />

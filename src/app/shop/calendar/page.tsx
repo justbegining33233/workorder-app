@@ -101,7 +101,8 @@ export default function ShopCalendar() {
     if (!isLoading && user) fetchEvents();
   }, [isLoading, user, fetchEvents]);
 
-  if (isLoading || !user) return null;
+  if (isLoading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (!user) return null;
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
