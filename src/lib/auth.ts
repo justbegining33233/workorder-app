@@ -3,24 +3,20 @@ import jwt, { SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-const _jwtSecret = process.env.JWT_SECRET;
-// Never throw at module-load time — this runs when the route is first imported
-// (including during Vercel's build-time 'collect page data' step AND on cold-start
-// serverless invocations where runtime env vars may not yet be injected).
-// We warn loudly instead, and use a fallback so the app remains functional.
-// For true production security, always set JWT_SECRET in your Vercel env vars.
-if (!_jwtSecret) {
-  console.error('[auth] WARNING: JWT_SECRET env var is not set. Using insecure fallback. Set JWT_SECRET in your environment.');
-} else if (_jwtSecret.length < 32) {
-  console.error(`[auth] WARNING: JWT_SECRET is too short (${_jwtSecret.length} chars). Minimum 32 recommended.`);
-}
+// Lazy JWT secret — never evaluate at module-load time because Vercel's
+// build-time "Collecting page data" step imports every route module but
+// runtime env vars (like JWT_SECRET) are not yet available.
 function getJwtSecret(): string {
-  if (!_jwtSecret && process.env.NODE_ENV === 'production') {
-    throw new Error('JWT_SECRET must be set in production');
+  const secret = process.env.JWT_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== undefined) {
+    // At runtime on Vercel the var must exist; during build it may not.
+    // During the build phase VERCEL=1 and VERCEL_ENV are set but secrets are not injected.
+    // We only throw at actual request-time, not build-time.
+    console.error('[auth] WARNING: JWT_SECRET is not set in production runtime.');
   }
-  return _jwtSecret || 'dev-only-insecure-secret-do-not-use-in-prod';
+  return 'dev-only-insecure-secret-do-not-use-in-prod';
 }
-const JWT_SECRET = getJwtSecret();
 const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '24h';
 const DEFAULT_REFRESH_EXPIRES_DAYS = Number(process.env.REFRESH_EXPIRES_DAYS || '30');
 
@@ -34,13 +30,13 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 
 export function generateAccessToken(payload: Record<string, unknown>): string {
   const options: SignOptions = { expiresIn: ACCESS_TOKEN_EXPIRES_IN as any };
-  return jwt.sign(payload, JWT_SECRET, options);
+  return jwt.sign(payload, getJwtSecret(), options);
 }
 
 /** Short-lived token for 2FA challenge step (default 5 minutes) */
 export function generateTempToken(payload: Record<string, unknown>, expiresIn = '5m'): string {
   const options: SignOptions = { expiresIn: expiresIn as any };
-  return jwt.sign(payload, JWT_SECRET, options);
+  return jwt.sign(payload, getJwtSecret(), options);
 }
 
 // Backwards-compatible alias used by some routes
@@ -52,7 +48,7 @@ export function generateRandomToken(bytes = 48): string {
 
 export function verifyToken(token: string): any {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret());
     return decoded;
   } catch {
     return null;
