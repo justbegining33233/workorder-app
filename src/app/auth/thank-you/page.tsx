@@ -27,6 +27,12 @@ export default function ThankYouPage() {
   useEffect(() => {
     if (countdown === 0) {
       const userRole = localStorage.getItem('userRole');
+      const token = localStorage.getItem('token');
+      // If no token the user just registered — send them to login to sign in
+      if (!token) {
+        router.push('/auth/login' as Route);
+        return;
+      }
       switch(userRole) {
         case 'customer':
           router.push('/customer/home' as Route);

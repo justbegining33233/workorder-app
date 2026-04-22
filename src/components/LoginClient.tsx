@@ -192,7 +192,7 @@ export default function LoginClient() {
         const firstName = nameParts[0] || signupForm.fullName;
         const lastName = nameParts.slice(1).join(' ') || 'User';
         const response = await fetch('/api/customers/register', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken }, body: JSON.stringify({ email: signupForm.email, username: signupForm.username || signupForm.email.split('@')[0], password: signupForm.password, firstName, lastName }) });
-        if (response.ok) { await response.json(); localStorage.setItem('userRole', accountType || 'customer'); localStorage.setItem('userName', signupForm.fullName); setTimeout(() => { router.push('/auth/thank-you' as Route); setLoading(false); }, 1000); } else { const errorData = await response.json(); setRegMsg({type:'error',text:errorData.error || 'Failed to create customer account. Please try again.'}); setLoading(false); }
+        if (response.ok) { setRegMsg({type:'success',text:'Account created! You can now sign in below.'}); setActiveTab('login'); setLoginForm(f => ({...f, username: signupForm.email})); setLoading(false); } else { const errorData = await response.json(); setRegMsg({type:'error',text:errorData.error || 'Failed to create customer account. Please try again.'}); setLoading(false); }
       } catch { setRegMsg({type:'error',text:'Error creating account. Please try again.'}); setLoading(false); }
     }
   };

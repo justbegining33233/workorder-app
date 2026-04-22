@@ -57,12 +57,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Block unverified accounts
+    // Auto-verify any legacy unverified accounts on successful login
     if (customer.emailVerified === false) {
-      return NextResponse.json(
-        { error: 'Please verify your email address before logging in. Check your inbox for the verification link.' },
-        { status: 403 }
-      );
+      await prisma.customer.update({ where: { id: customer.id }, data: { emailVerified: true } }).catch(() => {});
     }
 
     // Successful login - reset rate limit

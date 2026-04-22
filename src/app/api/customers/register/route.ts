@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(data.password);
     
-// Create customer (emailVerified defaults to false — must click link)
+// Create customer with email pre-verified (no verification step required)
     const customer = await prisma.customer.create({
       data: {
         email: data.email,
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         lastName: data.lastName,
         phone: data.phone,
         company: data.company,
-        emailVerified: false,
+        emailVerified: true,
       },
     });
 
