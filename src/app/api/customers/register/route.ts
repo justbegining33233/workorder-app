@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validatePublicCsrf } from '@/lib/csrf';
 import prisma from '@/lib/prisma';
 import { hashPassword } from '@/lib/auth';
-import { sendWelcomeEmail, sendVerificationEmail } from '@/lib/emailService';
-import { generateTokenHex, hashTokenSha256 } from '@/lib/verification';
+import { sendWelcomeEmail } from '@/lib/emailService';
 import { z } from 'zod';
 
 const registerSchema = z.object({
@@ -67,20 +66,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Create a 24-hour email verification token
-    const rawToken = generateTokenHex(32);
-    const tokenHash = hashTokenSha256(rawToken);
-    await prisma.verificationToken.create({
-      data: {
-        userId: customer.id,
-        type: 'email_verify',
-        tokenHash,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      },
-    });
-
-    // Send verification email (don't await — don't block response)
-    sendVerificationEmail(customer.email, customer.firstName, rawToken).catch(console.error);
     // Also send welcome email
     sendWelcomeEmail(customer.email, customer.firstName).catch(console.error);
     

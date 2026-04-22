@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 import { customerLoginSchema } from '@/lib/validation';
-import { sanitizeObject } from '@/lib/sanitize';
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
 
 // POST /api/auth/customer
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const sanitizedBody = sanitizeObject(body);
+    // Keep this route free of DOM/HTML sanitizer dependencies to avoid
+    // serverless ESM/CJS runtime incompatibilities.
+    const sanitizedBody = {
+      email: typeof body?.email === 'string' ? body.email.trim() : body?.email,
+      password: typeof body?.password === 'string' ? body.password : body?.password,
+    };
 
     // Validate input
     const validationResult = customerLoginSchema.safeParse(sanitizedBody);
@@ -19,7 +23,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password } = validationResult.data;
+    const { email: rawEmail, password } = validationResult.data;
+    const email = rawEmail.trim().toLowerCase();
 
     // Rate limiting - prevent brute force attacks
     const clientIP = getClientIP(request);
