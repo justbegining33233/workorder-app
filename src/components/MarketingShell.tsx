@@ -34,7 +34,10 @@ export default function MarketingShell({ children }: MarketingShellProps) {
           background: "rgba(8, 13, 26, 0.82)",
         }}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div
+          className="flex items-center justify-between px-6 py-4"
+          style={{ width: "100%", maxWidth: 1152, marginLeft: "auto", marginRight: "auto" }}
+        >
           <Link href="/" className="flex items-center gap-2">
             <span
               style={{
@@ -80,7 +83,7 @@ export default function MarketingShell({ children }: MarketingShellProps) {
         </div>
       </header>
 
-      <main className="relative" style={{ zIndex: 1 }}>
+      <main className="relative" style={{ zIndex: 1 }} data-marketing-main>
         {children}
       </main>
 
@@ -92,7 +95,10 @@ export default function MarketingShell({ children }: MarketingShellProps) {
           background: "rgba(8, 13, 26, 0.82)",
         }}
       >
-        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 text-center md:grid-cols-4 md:text-left">
+        <div
+          className="grid max-w-6xl gap-8 px-6 py-12 text-center md:grid-cols-4 md:text-left"
+          style={{ width: "100%", maxWidth: 1152, marginLeft: "auto", marginRight: "auto" }}
+        >
           <div>
             <p style={{ fontWeight: 800, color: "#e5332a", fontSize: 18 }}>FixTray</p>
             <p className="mt-3 text-sm" style={{ color: "#94a3b8" }}>
@@ -122,11 +128,19 @@ export default function MarketingShell({ children }: MarketingShellProps) {
             </ul>
           </div>
         </div>
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-4 px-6 py-6 text-center text-xs" style={{ color: "#64748b" }}>
-            <span>© 2026 FixTray. All rights reserved.</span>
-            <span>Built for multi-shop operations and modern service teams.</span>
-          </div>
+        <div
+          className="flex flex-wrap items-center justify-center gap-4 px-6 py-6 text-center text-xs"
+          style={{
+            width: "100%",
+            maxWidth: 1152,
+            marginLeft: "auto",
+            marginRight: "auto",
+            color: "#64748b",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+          }}
+        >
+          <span>© 2026 FixTray. All rights reserved.</span>
+          <span>Built for multi-shop operations and modern service teams.</span>
         </div>
       </footer>
     </div>

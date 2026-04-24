@@ -8,6 +8,8 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import RecentlyViewed from './RecentlyViewed';
+import { isPathAllowedForPlan } from '@/lib/subscription-access';
+import type { SubscriptionPlan } from '@/lib/subscription';
 
 interface MenuItem {
   icon: ReactNode;
@@ -233,8 +235,24 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentHash, setCurrentHash] = useState('');
+  const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
 
   const groups = role === 'shop' ? shopGroups : role === 'manager' ? managerGroups : techGroups;
+  const isPlanLoading = subscriptionPlan === null;
+  const filteredGroups = groups
+    .map((group) => {
+      if (isPlanLoading) {
+        return {
+          ...group,
+          items: [],
+        };
+      }
+      return {
+        ...group,
+        items: group.items.filter((item) => isPathAllowedForPlan(item.href, subscriptionPlan)),
+      };
+    })
+    .filter((group) => group.items.length > 0);
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(groups.map(g => [g.label, g.defaultOpen ?? false]))
@@ -252,6 +270,36 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchPlan = async () => {
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const response = await fetch('/api/auth/subscription-gate', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          credentials: 'include',
+        });
+
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data?.plan) setSubscriptionPlan(data.plan as SubscriptionPlan);
+      } catch {
+        // Keep default navigation if plan check fails.
+      }
+    };
+
+    void fetchPlan();
+  }, []);
+
+  useEffect(() => {
+    setOpenGroups(prev => {
+      const next: Record<string, boolean> = {};
+      for (const group of filteredGroups) {
+        next[group.label] = prev[group.label] ?? (group.defaultOpen ?? false);
+      }
+      return next;
+    });
+  }, [subscriptionPlan, role]);
 
   const isActive = (href: string) => {
     if (href.includes('#')) {
@@ -360,7 +408,7 @@ export default function Sidebar({ role, isOpen = true, onClose, onSelectTab, act
 
         {/* Nav Groups */}
         <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
-          {groups.map((group) => {
+          {filteredGroups.map((group) => {
             const isGroupOpen = collapsed ? false : (openGroups[group.label] ?? group.defaultOpen);
             const hasActiveItem = group.items.some(item => isActive(item.href));
 

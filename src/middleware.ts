@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isPathAllowedForPlan, getRequiredFeatureForPath } from '@/lib/subscription-access';
+import type { SubscriptionPlan } from '@/lib/subscription';
 
 // ─── Role definitions ────────────────────────────────────────────────────────
 
@@ -23,6 +25,8 @@ const ROLE_HOME: Record<string, string> = {
   tech:       '/tech/home',
   customer:   '/customer/dashboard',
 };
+
+const SHOP_SUBSCRIPTION_EXEMPT_PATHS = ['/shop/subscribe', '/shop/settings'];
 
 // ─── JWT signature verification (Web Crypto API — Edge-compatible) ───────────
 
@@ -61,7 +65,15 @@ async function verifyJwt(token: string): Promise<Record<string, unknown> | null>
 
     // Signature valid — decode payload
     const payloadBase64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(payloadBase64));
+    const payload = JSON.parse(atob(payloadBase64)) as Record<string, unknown>;
+
+    // Respect token expiration when present.
+    const exp = payload.exp;
+    if (typeof exp === 'number' && Date.now() >= exp * 1000) {
+      return null;
+    }
+
+    return payload;
   } catch {
     return null;
   }
@@ -107,7 +119,67 @@ export async function middleware(request: NextRequest) {
   }
 
   // Role is permitted for this route → let through
-  if (allowedRoles.includes(role)) return NextResponse.next();
+  if (allowedRoles.includes(role)) {
+    // Shop owners must have an active/trialing subscription before using shop app routes.
+    if (role === 'shop') {
+      const isExempt = SHOP_SUBSCRIPTION_EXEMPT_PATHS.some((p) => pathname.startsWith(p));
+
+      if (!isExempt) {
+        try {
+          const checkUrl = new URL('/api/auth/subscription-gate', request.url);
+          const gateResponse = await fetch(checkUrl.toString(), {
+            method: 'GET',
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+            cache: 'no-store',
+          });
+
+          if (!gateResponse.ok) {
+            const subscribeUrl = new URL('/shop/subscribe', request.url);
+            subscribeUrl.searchParams.set('reason', 'subscription_required');
+            return NextResponse.redirect(subscribeUrl);
+          }
+
+          const gate = (await gateResponse.json()) as { allowed?: boolean; reason?: string; plan?: SubscriptionPlan | null };
+          if (!gate.allowed) {
+            const subscribeUrl = new URL('/shop/subscribe', request.url);
+            subscribeUrl.searchParams.set('reason', String(gate.reason ?? 'subscription_required'));
+            subscribeUrl.searchParams.set('redirect', pathname);
+            return NextResponse.redirect(subscribeUrl);
+          }
+
+          // Route-level feature lock by subscription plan.
+          if (gate.plan && ['shop', 'manager', 'tech'].includes(role)) {
+            const allowedByPlan = isPathAllowedForPlan(pathname, gate.plan);
+            if (!allowedByPlan) {
+              const requiredFeature = getRequiredFeatureForPath(pathname);
+
+              if (role === 'shop') {
+                const subscribeUrl = new URL('/shop/subscribe', request.url);
+                subscribeUrl.searchParams.set('reason', 'feature_locked');
+                if (requiredFeature) subscribeUrl.searchParams.set('feature', requiredFeature);
+                subscribeUrl.searchParams.set('redirect', pathname);
+                return NextResponse.redirect(subscribeUrl);
+              }
+
+              const home = ROLE_HOME[role] ?? '/auth/login';
+              const homeUrl = new URL(home, request.url);
+              homeUrl.searchParams.set('reason', 'feature_locked');
+              if (requiredFeature) homeUrl.searchParams.set('feature', requiredFeature);
+              return NextResponse.redirect(homeUrl);
+            }
+          }
+        } catch {
+          const subscribeUrl = new URL('/shop/subscribe', request.url);
+          subscribeUrl.searchParams.set('reason', 'subscription_check_failed');
+          return NextResponse.redirect(subscribeUrl);
+        }
+      }
+    }
+
+    return NextResponse.next();
+  }
 
   // Wrong role → bounce to their own dashboard (not to login)
   const home = ROLE_HOME[role] ?? '/auth/login';

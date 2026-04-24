@@ -23,8 +23,8 @@ const ghostBtn: React.CSSProperties = {
 };
 const glassCard: React.CSSProperties = {
   background: "rgba(8, 13, 26, 0.75)",
-  backdropFilter: "blur(22px) saturate(1.5)",
-  WebkitBackdropFilter: "blur(22px) saturate(1.5)",
+  backdropFilter: "blur(12px) saturate(1.25)",
+  WebkitBackdropFilter: "blur(12px) saturate(1.25)",
   border: "1px solid rgba(255,255,255,0.08)",
   borderRadius: 16,
   boxShadow: "0 8px 40px rgba(0,0,0,0.45)",
@@ -55,7 +55,7 @@ export default function Home() {
     <MarketingShell>
 
       {/* HERO */}
-      <section className="mx-auto flex min-h-[72vh] max-w-4xl flex-col items-center justify-center px-6 pb-16 pt-24 text-center">
+      <section className="mx-auto flex min-h-[72vh] max-w-4xl flex-col items-center justify-center px-6 pb-16 pt-24 text-center" style={{ width: '100%', maxWidth: 1024, marginLeft: 'auto', marginRight: 'auto' }}>
         <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.4em]" style={neonBadge}>
           <span className="h-2 w-2 animate-pulse rounded-full" style={{ background: "#e5332a" }} />
           Auto Repair Management Platform
@@ -88,7 +88,7 @@ export default function Home() {
       </section>
 
       {/* OPERATIONS */}
-      <section className="mx-auto grid max-w-6xl gap-12 px-6 pb-24 lg:grid-cols-2">
+      <section className="mx-auto grid max-w-6xl gap-12 px-6 pb-24 lg:grid-cols-2" style={{ width: '100%', maxWidth: 1152, marginLeft: 'auto', marginRight: 'auto' }}>
         <div className="flex flex-col justify-center lg:text-left text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Operations, synchronized</p>
           <h2 className="mt-4 text-3xl font-semibold text-white">Run every job like a mission.</h2>
@@ -124,7 +124,7 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section className="mx-auto max-w-6xl px-6 pb-24">
+      <section className="mx-auto max-w-6xl px-6 pb-24" style={{ width: '100%', maxWidth: 1152, marginLeft: 'auto', marginRight: 'auto' }}>
         <div className="flex flex-col items-center text-center gap-3">
           <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Features</p>
           <h2 className="text-3xl font-semibold text-white">Built for relentless teams.</h2>
@@ -141,8 +141,8 @@ export default function Home() {
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="rounded-2xl px-8 py-10" style={{ background: "rgba(8,13,26,0.75)", backdropFilter: "blur(22px) saturate(1.5)", WebkitBackdropFilter: "blur(22px) saturate(1.5)", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <section className="mx-auto max-w-6xl px-6 pb-24" style={{ width: '100%', maxWidth: 1152, marginLeft: 'auto', marginRight: 'auto' }}>
+        <div className="rounded-2xl px-8 py-10" style={{ background: "rgba(8,13,26,0.75)", backdropFilter: "blur(12px) saturate(1.25)", WebkitBackdropFilter: "blur(12px) saturate(1.25)", border: "1px solid rgba(255,255,255,0.08)" }}>
           <div className="grid gap-10 lg:grid-cols-3">
             {testimonials.map((t) => (
               <div key={t.name}>
@@ -155,8 +155,8 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="mx-auto max-w-6xl px-6 pb-28">
-        <div className="rounded-2xl px-10 py-12" style={{ background: "rgba(229,51,42,0.08)", border: "1px solid rgba(229,51,42,0.22)", backdropFilter: "blur(22px) saturate(1.5)", WebkitBackdropFilter: "blur(22px) saturate(1.5)" }}>
+      <section className="mx-auto max-w-6xl px-6 pb-28" style={{ width: '100%', maxWidth: 1152, marginLeft: 'auto', marginRight: 'auto' }}>
+        <div className="rounded-2xl px-10 py-12" style={{ background: "rgba(229,51,42,0.08)", border: "1px solid rgba(229,51,42,0.22)", backdropFilter: "blur(10px) saturate(1.2)", WebkitBackdropFilter: "blur(10px) saturate(1.2)" }}>
           <div className="flex flex-col items-center text-center gap-6">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Ready to launch</p>

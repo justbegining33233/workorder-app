@@ -91,11 +91,11 @@ export async function POST(request: NextRequest) {
       } else if (meta.shopId) {
         const s = await prisma.shop.findUnique({ where: { id: meta.shopId } });
         if (!s) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
-        payload = { id: s.id, username: s.username, role: 'shop' };
+        payload = { id: s.id, shopId: s.id, username: s.username, role: 'shop' };
       } else if (meta.techId) {
         const t = await prisma.tech.findUnique({ where: { id: meta.techId } });
         if (!t) return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
-        payload = { id: t.id, username: t.email, role: t.role };
+        payload = { id: t.id, shopId: t.shopId, username: t.email, role: t.role };
       }
     }
 

@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   async headers() {
+    const isProd = process.env.NODE_ENV === 'production';
+
     return [
       {
         source: '/(.*)',
@@ -44,13 +46,23 @@ const nextConfig: NextConfig = {
       {
         source: '/_next/static/(.*)',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          {
+            key: 'Cache-Control',
+            value: isProd
+              ? 'public, max-age=31536000, immutable'
+              : 'no-cache, no-store, must-revalidate',
+          },
         ],
       },
       {
         source: '/public/(.*)',
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=86400' },
+          {
+            key: 'Cache-Control',
+            value: isProd
+              ? 'public, max-age=86400'
+              : 'no-cache, no-store, must-revalidate',
+          },
         ],
       },
       // API versioning headers

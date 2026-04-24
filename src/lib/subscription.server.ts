@@ -1,6 +1,38 @@
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from './subscription';
 import { prisma } from './prisma';
 
+const ALLOWED_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing']);
+
+function isSubscriptionStatusAllowed(status: string | null | undefined): boolean {
+  if (!status) return false;
+  return ALLOWED_SUBSCRIPTION_STATUSES.has(status);
+}
+
+export async function getRawShopSubscription(shopId: string) {
+  return prisma.subscription.findUnique({ where: { shopId } });
+}
+
+export async function getShopSubscriptionGateStatus(shopId: string) {
+  const subscription = await getRawShopSubscription(shopId);
+
+  if (!subscription) {
+    return {
+      allowed: false,
+      reason: 'no_subscription',
+      status: null,
+      plan: null,
+    } as const;
+  }
+
+  const allowed = isSubscriptionStatusAllowed(subscription.status);
+  return {
+    allowed,
+    reason: allowed ? 'ok' : 'inactive_subscription',
+    status: subscription.status,
+    plan: subscription.plan,
+  } as const;
+}
+
 export async function getShopSubscription(shopId: string) {
   try {
     const subscription = await prisma.subscription.findUnique({ where: { shopId } });
@@ -57,8 +89,9 @@ export async function canAddUsers(shopId: string, currentUserCount: number): Pro
 }
 
 export async function isSubscriptionActive(shopId: string): Promise<boolean> {
-  const subscription = await getShopSubscription(shopId);
-  return subscription.status === 'active';
+  const subscription = await getRawShopSubscription(shopId);
+  if (!subscription) return false;
+  return isSubscriptionStatusAllowed(subscription.status);
 }
 
 export async function getUpgradeSuggestions(shopId: string) {

@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate access token
-    const accessToken = generateAccessToken({ id: shop.id, username: shop.username, role: 'shop' });
+    const accessToken = generateAccessToken({ id: shop.id, shopId: shop.id, username: shop.username, role: 'shop' });
 
     // Refresh token — httpOnly cookies for silent renewal
     const refreshRaw = generateRandomToken(48);

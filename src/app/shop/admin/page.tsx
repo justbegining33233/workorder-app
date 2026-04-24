@@ -8,6 +8,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import type { SubscriptionFeatures } from '@/lib/subscription';
 import OverviewTab from './tabs/OverviewTab';
 import SettingsTab from './tabs/SettingsTab';
 import PayrollTab from './tabs/PayrollTab';
@@ -32,6 +33,7 @@ export default function ShopAdminPage() {
   });
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'payroll' | 'team' | 'inventory'>('overview');
+  const [subscriptionFeatures, setSubscriptionFeatures] = useState<SubscriptionFeatures | null>(null);
   
   // Date range for payroll
   const [payrollStartDate, setPayrollStartDate] = useState('');
@@ -79,6 +81,9 @@ export default function ShopAdminPage() {
   const setTab = (tab: 'overview' | 'settings' | 'payroll' | 'team' | 'inventory') => {
     // Managers cannot access the settings tab (billing, Stripe, subscription)
     if (tab === 'settings' && user?.role === 'manager') return;
+    if (tab === 'payroll' && !subscriptionFeatures?.payroll) return;
+    if (tab === 'team' && !subscriptionFeatures?.multiRoleUsers) return;
+    if (tab === 'inventory' && !subscriptionFeatures?.inventory) return;
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', `#${tab}`);
@@ -90,6 +95,22 @@ export default function ShopAdminPage() {
     const syncTabFromHash = () => {
       const hash = (typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '') as typeof activeTab;
       if (hash && ['overview', 'settings', 'payroll', 'team', 'inventory'].includes(hash)) {
+        if (hash === 'settings' && user?.role === 'manager') {
+          setActiveTab('overview');
+          return;
+        }
+        if (hash === 'payroll' && !subscriptionFeatures?.payroll) {
+          setActiveTab('overview');
+          return;
+        }
+        if (hash === 'team' && !subscriptionFeatures?.multiRoleUsers) {
+          setActiveTab('overview');
+          return;
+        }
+        if (hash === 'inventory' && !subscriptionFeatures?.inventory) {
+          setActiveTab('overview');
+          return;
+        }
         setActiveTab(hash);
       }
     };
@@ -97,6 +118,28 @@ export default function ShopAdminPage() {
     syncTabFromHash();
     window.addEventListener('hashchange', syncTabFromHash);
     return () => window.removeEventListener('hashchange', syncTabFromHash);
+  }, [subscriptionFeatures, user?.role]);
+
+  useEffect(() => {
+    const fetchSubscriptionFeatures = async () => {
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const response = await fetch('/api/auth/subscription-gate', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          credentials: 'include',
+        });
+
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data?.features) {
+          setSubscriptionFeatures(data.features as SubscriptionFeatures);
+        }
+      } catch {
+        // Keep defaults when gate API is unavailable.
+      }
+    };
+
+    void fetchSubscriptionFeatures();
   }, []);
 
   useEffect(() => {
@@ -629,7 +672,7 @@ export default function ShopAdminPage() {
               />
             )}
 
-            {activeTab === 'payroll' && (
+            {activeTab === 'payroll' && subscriptionFeatures?.payroll && (
               <PayrollTab
                 payrollData={payrollData}
                 loading={loading}
@@ -644,11 +687,11 @@ export default function ShopAdminPage() {
               />
             )}
 
-            {activeTab === 'team' && (
+            {activeTab === 'team' && subscriptionFeatures?.multiRoleUsers && (
               <TeamTab teamData={teamData} />
             )}
 
-            {activeTab === 'inventory' && (
+            {activeTab === 'inventory' && subscriptionFeatures?.inventory && (
               <InventoryTab
                 showLowStockOnly={showLowStockOnly}
                 setShowLowStockOnly={setShowLowStockOnly}

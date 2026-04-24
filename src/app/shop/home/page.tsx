@@ -14,6 +14,8 @@ import ShopBaysCard from '@/components/ShopBaysCard';
 import MobileLayout from '@/components/MobileLayout';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { isPathAllowedForPlan } from '@/lib/subscription-access';
+import type { SubscriptionPlan } from '@/lib/subscription';
 
 interface Job {
   id: string;
@@ -74,6 +76,7 @@ export default function ShopHome() {
   const [pendingWorkOrders, setPendingWorkOrders] = useState<Job[]>([]);
   const [bays, setBays] = useState<Array<{ id: string; name: string; tech: string; jobs: Job[] }>>([]);
   const [_roadcallJobs, setRoadcallJobs] = useState<Job[]>([]);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
   const userId = (user as any)?.id ?? '';
   const shopId = (user as any)?.shopId ?? user?.id ?? '';
 
@@ -171,6 +174,26 @@ export default function ShopHome() {
 
     fetchDashboard();
   }, [user]);
+
+  useEffect(() => {
+    const fetchPlan = async () => {
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const response = await fetch('/api/auth/subscription-gate', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          credentials: 'include',
+        });
+
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data?.plan) setSubscriptionPlan(data.plan as SubscriptionPlan);
+      } catch {
+        // Keep existing quick actions if plan check fails.
+      }
+    };
+
+    void fetchPlan();
+  }, []);
   const quickActions: QuickAction[] = [
     { label: <><FaBox style={{marginRight:6}}/>Parts</>, href: '/shop/parts-labor', tint: 'rgba(59,130,246,0.18)', color: '#3b82f6', border: 'rgba(59,130,246,0.28)' },
     {
@@ -397,6 +420,7 @@ export default function ShopHome() {
         <div style={{display:'flex', flexWrap:'nowrap', gap:12, alignItems:'center', margin:'0 0 20px 0', overflowX:'auto', paddingBottom:4}}>
           <span style={{fontSize:13, color:'#9aa3b2', fontWeight:700}}>Quick Actions</span>
           {quickActions.map(action => {
+            if (subscriptionPlan && !isPathAllowedForPlan(action.href, subscriptionPlan)) return null;
             if (action.requiresAdmin && !user.isShopAdmin) return null;
             if (action.hideForAdmin && user.isShopAdmin) return null;
             if (action.requiresManagerOrAdmin && !(user.isShopAdmin || isManager)) return null;

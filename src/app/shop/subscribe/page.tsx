@@ -3,7 +3,6 @@ import { FaCheck } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 const PLANS = [
@@ -157,10 +156,10 @@ export default function ShopSubscribePage() {
             14-day free trial · Cancel anytime · No hidden fees
           </div>
           <button
-            onClick={() => router.push('/shop/home' as Route)}
+            onClick={() => router.push('/auth/login')}
             style={{ marginTop: 12, background: 'none', border: 'none', color: '#6b7280', fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}
           >
-            Skip for now (limited access)
+            Back to login
           </button>
         </div>
       </div>
