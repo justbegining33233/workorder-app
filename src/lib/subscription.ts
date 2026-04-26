@@ -61,7 +61,7 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Professional',
     price: 499.88,
     maxUsers: 15,
-    maxShops: 1,
+    maxShops: 3,
     features: {
       workOrders: true,
       timeTracking: true,
@@ -79,6 +79,7 @@ export const SUBSCRIPTION_PLANS = {
       budgetTracking: true,
       advancedReporting: true,
       realTimeDashboards: true,
+      multiShopManagement: true,
     }
   },
   business: {

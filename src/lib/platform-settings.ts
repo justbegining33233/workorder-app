@@ -24,7 +24,7 @@ const defaults: PlatformSettings = {
   enableCustomerPortal: true,
   enableEmailNotifications: true,
   enableSmsNotifications: false,
-  maxShopsPerPlan: { starter: 1, growth: 5, professional: 15, business: 40, enterprise: 999 },
+  maxShopsPerPlan: { starter: 1, growth: 1, professional: 3, business: 5, enterprise: 999 },
   serviceFee: 500,
   trialDays: 7,
   defaultSubscriptionPlan: 'starter',

@@ -59,7 +59,7 @@ export const STRIPE_PRODUCTS = {
     price: 499.88,
     interval: 'month' as const,
     maxUsers: 15,
-    maxShops: 1,
+    maxShops: 3,
   },
   business: {
     get productId() { return requireStripeId('STRIPE_BUSINESS_PRODUCT_ID', process.env.STRIPE_BUSINESS_PRODUCT_ID); },

@@ -31,6 +31,7 @@ interface SubscriptionData {
     role: string;
   }>;
   userCount: number;
+  shopCount: number;
 }
 
 interface UserData {
@@ -278,7 +279,7 @@ export default function AdminSubscriptionsPage() {
                       <div>
                         <div style={{ color: '#9aa3b2', fontSize: 12 }}>Shops</div>
                         <div style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>
-                          1 / {subscription.maxShops === -1 ? 'Unlimited' : subscription.maxShops}
+                          {subscription.shopCount} / {subscription.maxShops === -1 ? 'Unlimited' : subscription.maxShops}
                         </div>
                       </div>
                       <div>

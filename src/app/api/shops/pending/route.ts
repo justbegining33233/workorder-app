@@ -77,6 +77,52 @@ export async function POST(request: NextRequest) {
 
     const data = schema.parse(body);
 
+    const existingOwnerShops = await prisma.shop.findMany({
+      where: {
+        email: data.email,
+        status: { in: ['approved', 'pending'] },
+      },
+      include: {
+        subscription: {
+          select: {
+            status: true,
+            maxShops: true,
+            plan: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (existingOwnerShops.length > 0) {
+      const activeSubscriptions = existingOwnerShops
+        .map((s) => s.subscription)
+        .filter((s): s is NonNullable<typeof s> => Boolean(s && (s.status === 'active' || s.status === 'trialing')));
+
+      if (activeSubscriptions.length === 0) {
+        return NextResponse.json(
+          {
+            error: 'No active parent-owner subscription found for this email. Please reactivate your subscription before adding another shop.',
+            upgradeRequired: true,
+          },
+          { status: 403 }
+        );
+      }
+
+      const maxShopsAllowed = activeSubscriptions.reduce((max, s) => Math.max(max, s.maxShops), 1);
+      if (maxShopsAllowed !== -1 && existingOwnerShops.length >= maxShopsAllowed) {
+        return NextResponse.json(
+          {
+            error: `Shop limit reached. Your current parent-owner plan allows ${maxShopsAllowed} shop${maxShopsAllowed === 1 ? '' : 's'} total.`,
+            upgradeRequired: true,
+            maxShops: maxShopsAllowed,
+            currentShops: existingOwnerShops.length,
+          },
+          { status: 403 }
+        );
+      }
+    }
+
     // Hash password if provided
     let hashed = undefined;
     if (data.password) {

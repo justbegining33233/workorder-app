@@ -329,7 +329,7 @@ function ShopSettingsPageContent() {
       price: 499.88,
       maxUsers: 15,
       color: '#8B5CF6',
-      features: ['Up to 15 Users', '1 Shop', 'Full Features', 'Custom Reports', 'API Access', 'Phone Support']
+      features: ['Up to 15 Users', 'Up to 3 Shops', 'Full Features', 'Multi-Shop Management', 'Custom Reports', 'Phone Support']
     },
     business: {
       name: 'Business',

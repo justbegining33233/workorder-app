@@ -63,7 +63,15 @@ export async function GET(request: NextRequest) {
           }
         });
 
+        const ownerShopCount = await prisma.shop.count({
+          where: {
+            email: subscription.shop.email,
+            status: 'approved',
+          },
+        });
+
         const userCount = techs.length + 1; // +1 for the shop owner
+        const shopCount = ownerShopCount;
 
         // Calculate shop metrics
         const totalJobs = workOrders.length;
@@ -103,6 +111,7 @@ export async function GET(request: NextRequest) {
           ...subscription,
           techs,
           userCount,
+          shopCount,
           // Live metrics
           metrics: {
             totalJobs,
