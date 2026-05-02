@@ -3,27 +3,16 @@
 import Link from "next/link";
 import MarketingShell from "@/components/MarketingShell";
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from "@/lib/subscription";
-
-const planOrder: SubscriptionPlan[] = ["starter", "growth", "professional", "business", "enterprise"];
-
-const planDescriptions: Record<SubscriptionPlan, string> = {
-  starter: "Solo operators & very small shops",
-  growth: "Small shops with 2-5 technicians",
-  professional: "Established shops running payroll & inventory",
-  business: "High-volume shops & multi-location operators",
-  enterprise: "Franchises, fleets, and enterprise networks"
-};
+import {
+  PLAN_AUDIENCE,
+  PLAN_MARKETING_HIGHLIGHTS,
+  PLAN_ORDER,
+  PLAN_SUMMARY,
+  getPlanCapacityLine,
+} from "@/lib/subscription-copy";
 
 const planHighlights: Partial<Record<SubscriptionPlan, boolean>> = {
   professional: true
-};
-
-const planFeatureHighlights: Record<SubscriptionPlan, string[]> = {
-  starter: ["Work order management", "Time tracking", "Basic reporting", "Email notifications"],
-  growth: ["Multi-role users", "Photo capture", "Team messaging", "Real-time dashboards"],
-  professional: ["Inventory management", "Payroll automation", "Advanced reporting", "Budget tracking"],
-  business: ["Multi-shop management", "Revenue analytics", "Priority support", "Real-time dashboards"],
-  enterprise: ["Custom integrations", "SLA guarantees", "White label", "API access"]
 };
 
 const formatPrice = (plan: SubscriptionPlan) => {
@@ -37,12 +26,12 @@ export default function PricingPage() {
       <section className="mx-auto max-w-6xl px-6 pt-24 pb-16 text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Pricing</p>
         <h1 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">Plans that scale with every bay.</h1>
-        <p className="mt-5 text-lg text-slate-300">Start lean, then turn on the full command center as you grow.</p>
+        <p className="mt-5 text-lg text-slate-300">From solo operators to multi-shop groups, every tier maps to a real operating model instead of a stripped-down teaser.</p>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <div className="grid gap-6 lg:grid-cols-5">
-          {planOrder.map((planKey) => {
+          {PLAN_ORDER.map((planKey) => {
             const plan = SUBSCRIPTION_PLANS[planKey];
             const highlight = Boolean(planHighlights[planKey]);
 
@@ -58,9 +47,11 @@ export default function PricingPage() {
               )}
               <h2 className="mt-4 text-xl font-semibold text-white">{plan.name}</h2>
               <p className="mt-2 text-3xl font-semibold text-white">{formatPrice(planKey)}</p>
-              <p className="mt-2 text-sm text-slate-400">{planDescriptions[planKey]}</p>
+              <p className="mt-2 text-sm text-slate-300">{PLAN_AUDIENCE[planKey]}</p>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">{getPlanCapacityLine(planKey)}</p>
+              <p className="mt-3 text-sm text-slate-400">{PLAN_SUMMARY[planKey]}</p>
               <ul className="mt-6 space-y-3 text-sm text-slate-200">
-                {planFeatureHighlights[planKey].map((feature) => (
+                {PLAN_MARKETING_HIGHLIGHTS[planKey].map((feature) => (
                   <li key={feature} className="flex items-center gap-3">
                     <span className="h-2 w-2 rounded-full bg-cyan-400" />
                     {feature}

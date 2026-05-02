@@ -4,42 +4,26 @@ import { FaCheck } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';
+import {
+  PLAN_AUDIENCE,
+  PLAN_MARKETING_HIGHLIGHTS,
+  PLAN_ORDER,
+  getPlanCapacityLine,
+} from '@/lib/subscription-copy';
 
-const PLANS = [
-  {
-    key: 'starter',
-    name: 'Starter',
-    price: 99.88,
-    description: 'Perfect for small shops just getting started',
-    features: ['Up to 2 users', 'Work order management', 'Customer portal', 'Email notifications', '14-day free trial'],
-    color: '#3b82f6',
-    border: 'rgba(59,130,246,0.4)',
-  },
-  {
-    key: 'growth',
-    name: 'Growth',
-    price: 249.88,
-    description: 'For growing shops that need more capacity',
-    features: ['Up to 5 users', 'Everything in Starter', 'Recurring work orders', 'Inventory management', 'Reports & analytics', '14-day free trial'],
-    color: '#22c55e',
-    border: 'rgba(34,197,94,0.4)',
-    recommended: true,
-  },
-  {
-    key: 'professional',
-    name: 'Professional',
-    price: 499.88,
-    description: 'For established shops with full feature needs',
-    features: ['Up to 15 users', 'Everything in Growth', 'Advanced analytics', 'Priority support', 'Custom integrations', '14-day free trial'],
-    color: '#f59e0b',
-    border: 'rgba(245,158,11,0.4)',
-  },
-];
+const PLAN_COLORS: Record<SubscriptionPlan, string> = {
+  starter: '#3b82f6',
+  growth: '#22c55e',
+  professional: '#f59e0b',
+  business: '#ef4444',
+  enterprise: '#8b5cf6',
+};
 
 export default function ShopSubscribePage() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth(['shop']);
-  const [selectedPlan, setSelectedPlan] = useState('growth');
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>('professional');
   const [loading, setLoading] = useState(false);
   const [shopId, setShopId] = useState('');
   const [email, setEmail] = useState('');
@@ -90,21 +74,23 @@ export default function ShopSubscribePage() {
           <div style={{ fontSize: 13, color: '#6b7280', fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>Step 2 of 2</div>
           <h1 style={{ fontSize: 36, fontWeight: 800, color: '#f9fafb', marginBottom: 12 }}>Choose Your Plan</h1>
           <p style={{ fontSize: 16, color: '#9aa3b2', maxWidth: 480, margin: '0 auto' }}>
-            All plans include a 14-day free trial. No credit card charged until your trial ends.
+            Choose the operating model that matches your shop today. Checkout shows the exact trial terms before billing begins.
           </p>
         </div>
 
         {/* Plan Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 40 }}>
-          {PLANS.map((plan) => {
+          {PLAN_ORDER.map((planKey) => {
+            const plan = SUBSCRIPTION_PLANS[planKey];
+            const color = PLAN_COLORS[planKey];
             const isSelected = selectedPlan === plan.key;
             return (
               <div
-                key={plan.key}
-                onClick={() => setSelectedPlan(plan.key)}
+                key={planKey}
+                onClick={() => setSelectedPlan(planKey)}
                 style={{
-                  background: isSelected ? `rgba(${plan.key === 'starter' ? '59,130,246' : plan.key === 'growth' ? '34,197,94' : '245,158,11'},0.1)` : 'rgba(255,255,255,0.04)',
-                  border: `2px solid ${isSelected ? plan.color : 'rgba(255,255,255,0.08)'}`,
+                  background: isSelected ? `${color}1a` : 'rgba(255,255,255,0.04)',
+                  border: `2px solid ${isSelected ? color : 'rgba(255,255,255,0.08)'}`,
                   borderRadius: 16,
                   padding: 28,
                   cursor: 'pointer',
@@ -112,29 +98,30 @@ export default function ShopSubscribePage() {
                   position: 'relative',
                 }}
               >
-                {plan.recommended && (
+                {planKey === 'professional' && (
                   <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: '#22c55e', color: 'white', fontSize: 11, fontWeight: 700, padding: '4px 14px', borderRadius: 999, letterSpacing: 1 }}>
                     MOST POPULAR
                   </div>
                 )}
                 <div style={{ marginBottom: 20 }}>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#f9fafb', marginBottom: 6 }}>{plan.name}</div>
-                  <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 16 }}>{plan.description}</div>
+                  <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>{PLAN_AUDIENCE[planKey]}</div>
+                  <div style={{ fontSize: 12, color: '#cbd5e1', marginBottom: 16, fontWeight: 700, letterSpacing: 0.4 }}>{getPlanCapacityLine(planKey)}</div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                    <span style={{ fontSize: 36, fontWeight: 800, color: plan.color }}>${plan.price}</span>
+                    <span style={{ fontSize: 36, fontWeight: 800, color }}>{plan.price}</span>
                     <span style={{ fontSize: 14, color: '#6b7280' }}>/mo</span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {plan.features.map((f, i) => (
+                  {PLAN_MARKETING_HIGHLIGHTS[planKey].map((f, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#cbd5e1' }}>
-                      <span style={{ color: plan.color, fontWeight: 700, fontSize: 16 }}><FaCheck style={{marginRight:4}} /></span>
+                      <span style={{ color, fontWeight: 700, fontSize: 16 }}><FaCheck style={{marginRight:4}} /></span>
                       {f}
                     </div>
                   ))}
                 </div>
                 {isSelected && (
-                  <div style={{ marginTop: 20, background: plan.color, borderRadius: 8, padding: '8px 0', textAlign: 'center', fontSize: 13, fontWeight: 700, color: 'white' }}>
+                  <div style={{ marginTop: 20, background: color, borderRadius: 8, padding: '8px 0', textAlign: 'center', fontSize: 13, fontWeight: 700, color: 'white' }}>
                     Selected <FaCheck style={{marginRight:4}} />
                   </div>
                 )}
@@ -150,10 +137,10 @@ export default function ShopSubscribePage() {
             disabled={loading}
             style={{ padding: '16px 48px', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: 'white', border: 'none', borderRadius: 12, fontSize: 17, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, boxShadow: '0 4px 20px rgba(34,197,94,0.3)' }}
           >
-            {loading ? 'Redirecting to checkout...' : `Start Free Trial  -  ${PLANS.find(p => p.key === selectedPlan)?.name}`}
+            {loading ? 'Redirecting to checkout...' : `Continue with ${SUBSCRIPTION_PLANS[selectedPlan].name}`}
           </button>
           <div style={{ marginTop: 16, fontSize: 13, color: '#6b7280' }}>
-            14-day free trial · Cancel anytime · No hidden fees
+            Review pricing, trial terms, and billing details before you confirm checkout
           </div>
           <button
             onClick={() => router.push('/auth/login')}

@@ -88,7 +88,7 @@ export default function ThankYouPage() {
           </div>
         </div>
         <div className="sos-footer">
-          <span className="sos-tagline">Manage work orders, customers, teams and billing.</span>
+          <span className="sos-tagline">Run work orders, teams, customers, billing, and multi-shop operations from one platform.</span>
           <div className="accent-bar" style={{width:112, borderRadius:6}} />
         </div>
       </div>

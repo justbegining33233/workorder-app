@@ -16,6 +16,7 @@ import {
   TireServiceType,
 } from '../types/shop';
 import { SUBSCRIPTION_PLANS } from '../lib/subscription';
+import { PLAN_AUDIENCE, PLAN_SUMMARY, getPlanCapacityLine } from '../lib/subscription-copy';
 import '../styles/sos-theme.css';
 import { FaArrowLeft, FaArrowRight, FaSmile } from 'react-icons/fa';
 
@@ -748,7 +749,7 @@ export default function ShopRegistrationForm() {
             {step === 5 && (
               <div>
                 <div className="sos-title">Choose Your Plan</div>
-                <p className="sos-desc">Start with a 7-day free trial. No credit card required to begin.</p>
+                <p className="sos-desc">Pick the plan that fits your shop today. You can upgrade as your team, workflow, and shop count grow.</p>
 
                 <div style={{marginTop:24}}>
                   <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))', gap:16}}>
@@ -778,7 +779,15 @@ export default function ShopRegistrationForm() {
                         </div>
 
                         <div style={{fontSize:13, color:'#6b7280', marginBottom:12}}>
-                          Up to {plan.maxUsers} users - Up to {plan.maxShops} shop{plan.maxShops !== 1 ? 's' : ''}
+                          {getPlanCapacityLine(planKey as keyof typeof SUBSCRIPTION_PLANS)}
+                        </div>
+
+                        <div style={{fontSize:13, color:'#374151', marginBottom:8, fontWeight:600}}>
+                          {PLAN_AUDIENCE[planKey as keyof typeof SUBSCRIPTION_PLANS]}
+                        </div>
+
+                        <div style={{fontSize:12, color:'#6b7280', marginBottom:12}}>
+                          {PLAN_SUMMARY[planKey as keyof typeof SUBSCRIPTION_PLANS]}
                         </div>
 
                         <div style={{display:'flex', flexWrap:'wrap', gap:4}}>
@@ -816,8 +825,7 @@ export default function ShopRegistrationForm() {
                 <div style={{marginTop:16, padding:16, backgroundColor:'#f8fafc', borderRadius:8, border:'1px solid #e2e8f0'}}>
                   <div style={{fontSize:14, fontWeight:600, color:'#1e293b', marginBottom:8}}><FaSmile style={{marginRight:4}} /> Free 7-Day Trial</div>
                   <div style={{fontSize:13, color:'#64748b'}}>
-                    Your selected plan includes a 7-day free trial. You'll only be charged after the trial period ends.
-                    Cancel anytime during the trial with no charges.
+                    Registration starts with a 7-day trial so you can launch your shop, complete setup, and validate the workflow before billing begins.
                   </div>
                 </div>
               </div>

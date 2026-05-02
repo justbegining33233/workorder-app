@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { PLAN_MARKETING_HIGHLIGHTS, PLAN_ORDER, getPlanCapacityLine } from '@/lib/subscription-copy';
+import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';
 
 type CategoryId = 'diesel' | 'gas' | 'small-engine' | 'heavy-equipment' | 'resurfacing' | 'welding' | 'tire';
 
@@ -309,41 +311,41 @@ function ShopSettingsPageContent() {
     return !defaults.includes(service.serviceName);
   };
 
-  const PLAN_DETAILS: Record<string, { name: string; price: number; features: string[]; maxUsers: number; color: string }> = {
+  const PLAN_DETAILS: Record<SubscriptionPlan, { name: string; price: number; features: string[]; maxUsers: number; color: string }> = {
     starter: {
       name: 'Starter',
-      price: 99.88,
-      maxUsers: 1,
+      price: SUBSCRIPTION_PLANS.starter.price,
+      maxUsers: SUBSCRIPTION_PLANS.starter.maxUsers,
       color: '#6B7280',
-      features: ['1 User', '1 Shop', 'Basic Work Orders', 'Email Support']
+      features: [getPlanCapacityLine('starter'), ...PLAN_MARKETING_HIGHLIGHTS.starter.slice(1, 4)]
     },
     growth: {
       name: 'Growth',
-      price: 249.88,
-      maxUsers: 5,
+      price: SUBSCRIPTION_PLANS.growth.price,
+      maxUsers: SUBSCRIPTION_PLANS.growth.maxUsers,
       color: '#3B82F6',
-      features: ['Up to 5 Users', '1 Shop', 'Advanced Work Orders', 'Inventory Management', 'Priority Support']
+      features: [getPlanCapacityLine('growth'), ...PLAN_MARKETING_HIGHLIGHTS.growth.slice(1, 4)]
     },
     professional: {
       name: 'Professional',
-      price: 499.88,
-      maxUsers: 15,
+      price: SUBSCRIPTION_PLANS.professional.price,
+      maxUsers: SUBSCRIPTION_PLANS.professional.maxUsers,
       color: '#8B5CF6',
-      features: ['Up to 15 Users', 'Up to 3 Shops', 'Full Features', 'Multi-Shop Management', 'Custom Reports', 'Phone Support']
+      features: [getPlanCapacityLine('professional'), ...PLAN_MARKETING_HIGHLIGHTS.professional.slice(1, 4)]
     },
     business: {
       name: 'Business',
-      price: 749.88,
-      maxUsers: 40,
+      price: SUBSCRIPTION_PLANS.business.price,
+      maxUsers: SUBSCRIPTION_PLANS.business.maxUsers,
       color: '#F97316',
-      features: ['Up to 40 Users', 'Up to 5 Shops', 'Multi-Location', 'Advanced Analytics', 'Dedicated Support']
+      features: [getPlanCapacityLine('business'), ...PLAN_MARKETING_HIGHLIGHTS.business.slice(1, 4)]
     },
     enterprise: {
       name: 'Enterprise',
-      price: 999.88,
-      maxUsers: -1,
+      price: SUBSCRIPTION_PLANS.enterprise.price,
+      maxUsers: SUBSCRIPTION_PLANS.enterprise.maxUsers,
       color: '#EF4444',
-      features: ['Unlimited Users', 'Unlimited Shops', 'White Label Options', 'Custom Integrations', '24/7 Support', 'SLA']
+      features: [getPlanCapacityLine('enterprise'), ...PLAN_MARKETING_HIGHLIGHTS.enterprise.slice(1, 4)]
     }
   };
 
@@ -1566,7 +1568,7 @@ function ShopSettingsPageContent() {
                     <div style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:16}}>
                       <div style={{color:'#e5e7eb', fontWeight:600, marginBottom:4}}>When will I be charged?</div>
                       <div style={{color:'#9aa3b2', fontSize:13}}>
-                        You get a 14-day free trial. After that, you&apos;ll be charged monthly on the same day you started.
+                        Any trial or billing start date is shown during checkout and inside the billing portal before you confirm changes.
                       </div>
                     </div>
                     <div style={{background:'rgba(255,255,255,0.05)', borderRadius:8, padding:16}}>

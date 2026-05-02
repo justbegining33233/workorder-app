@@ -36,12 +36,12 @@ const neonBadge: React.CSSProperties = {
 };
 
 const features = [
-  { title: "Live dispatch",     detail: "Real-time routing with SLA alerts and location context." },
-  { title: "Approval flows",    detail: "Auto-send estimates with e-signature capture." },
-  { title: "Parts & inventory", detail: "Track parts usage, reorder points, and vendor SLAs." },
-  { title: "Technician pulse",  detail: "Know where every tech is and what they need next." },
-  { title: "Customer timeline", detail: "Share a branded status page for every job." },
-  { title: "Analytics board",   detail: "Measure cycle time, margin, and repeat work." },
+  { title: "Work order control", detail: "Create, dispatch, approve, and close jobs from one operating surface." },
+  { title: "Team workflow",      detail: "Run techs, managers, messaging, GPS, and time tracking without tool sprawl." },
+  { title: "Inventory & payroll", detail: "Track parts, labor, payroll, and budget data in the same workflow." },
+  { title: "Customer comms",     detail: "Send approvals, updates, and status visibility without the phone tag." },
+  { title: "Multi-shop ops",     detail: "Professional and above can coordinate multiple shops under one owner account." },
+  { title: "Analytics & growth", detail: "Measure margin, performance, SLA health, and shop-level trends." },
 ];
 
 const testimonials = [
@@ -67,7 +67,7 @@ export default function Home() {
           </span>.
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-slate-300">
-          Align operations, approvals, and customer updates with one cinematic workflow that feels fast, calm, and always connected.
+          FixTray brings together work orders, team workflow, customer communication, inventory, payroll, and multi-shop visibility in one connected platform.
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-4">
           <Link href="/auth/login" className="rounded-xl px-7 py-3 text-sm font-semibold transition hover:opacity-90" style={primaryBtn}>Start free</Link>
@@ -93,10 +93,10 @@ export default function Home() {
           <p className="text-sm font-semibold uppercase tracking-[0.3em]" style={{ color: "#94a3b8" }}>Operations, synchronized</p>
           <h2 className="mt-4 text-3xl font-semibold text-white">Run every job like a mission.</h2>
           <p className="mt-4 text-base leading-relaxed" style={{ color: "#cbd5e1" }}>
-            FixTray stitches together your intake, dispatch, approvals, and completions with a live status ribbon that keeps every role in sync.
+            From intake to completion, FixTray keeps owners, managers, techs, and customers on the same operational timeline.
           </p>
           <ul className="mt-6 space-y-4">
-            {["Auto-route work orders to the right tech", "Instant approvals from any device", "Customer-ready updates without the call volume"].map((item) => (
+            {["Dispatch and route work orders from one place", "Capture approvals, photos, messages, and technician updates live", "Scale from one shop to multi-shop operations without changing systems"].map((item) => (
               <li key={item} className="flex items-center gap-3 text-sm" style={{ color: "#e2e8f0" }}>
                 <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: "#e5332a" }} />{item}
               </li>
@@ -164,7 +164,7 @@ export default function Home() {
               <p className="mt-2 text-sm" style={{ color: "#cbd5e1" }}>Start in minutes or book a custom onboarding session.</p>
             </div>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/auth/login" className="rounded-xl px-7 py-3 text-sm font-semibold transition hover:opacity-90" style={primaryBtn}>Start free</Link>
+              <Link href="/auth/login" className="rounded-xl px-7 py-3 text-sm font-semibold transition hover:opacity-90" style={primaryBtn}>Start your trial</Link>
               <Link href="/contact" className="rounded-xl px-7 py-3 text-sm font-semibold transition" style={ghostBtn}>Contact sales</Link>
             </div>
           </div>

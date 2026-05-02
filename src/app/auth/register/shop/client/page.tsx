@@ -11,7 +11,7 @@ export default function ShopRegistrationClientPage() {
         </Link>
         <div style={{ justifyContent: 'center' }}>
           <span style={{fontWeight:700, fontSize:18}}>FixTray</span>
-          <span style={{marginLeft:8, color:'#9aa3b2'}}>Shop Registration (Client)</span>
+          <span style={{marginLeft:8, color:'#9aa3b2'}}>Shop setup, plan selection, and onboarding</span>
         </div>
       </header>
 

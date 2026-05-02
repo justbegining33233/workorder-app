@@ -1,0 +1,5321 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 3572
+>>
+stream
+0.200025 w
+0 G
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -842. re
+f
+1. g
+BT
+/F2 34 Tf
+39.0999999999999943 TL
+1. g
+236.8199999999999932 621.8899999999999864 Td
+(FixTray) Tj
+ET
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+1. g
+165.9900000000000091 581.8899999999999864 Td
+(Full System Audit Report) Tj
+ET
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0.706 0.784 0.902 rg
+142.5600000000000023 546.8899999999999864 Td
+(Problem · Why It's Wrong · How to Fix · What It Affects) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0.549 0.627 0.784 rg
+218.2999999999999545 511.8899999999999864 Td
+(Generated: 4/25/2026, 1:21:34 AM) Tj
+ET
+255. 255. 255. 0.08 k
+0.12 0.22 0.39 rg
+86. 461.8899999999999864 m
+509. 461.8899999999999864 l
+512.3137084989847381 461.8899999999999864 515. 459.2037084989847244 515. 455.8899999999999864 c
+515. 307.8899999999999864 l
+515. 304.5762915010152483 511.6862915010152619 301.8899999999999864 509. 301.8899999999999864 c
+86. 301.8899999999999864 l
+82.6862915010152335 301.8899999999999864 80. 305.2037084989847244 80. 307.8899999999999864 c
+80. 455.8899999999999864 l
+80. 459.2037084989847244 83.3137084989847665 461.8899999999999864 86. 461.8899999999999864 c
+h
+f
+0.71 0.12 0.12 rg
+103. 433.8899999999999864 m
+157. 433.8899999999999864 l
+158.656854249492369 433.8899999999999864 160. 432.5468542494923554 160. 430.8899999999999864 c
+160. 418.8899999999999864 l
+160. 417.2331457505076173 158.343145750507631 415.8899999999999864 157. 415.8899999999999864 c
+103. 415.8899999999999864 l
+101.3431457505076168 415.8899999999999864 100. 417.5468542494923554 100. 418.8899999999999864 c
+100. 430.8899999999999864 l
+100. 432.5468542494923554 101.6568542494923832 433.8899999999999864 103. 433.8899999999999864 c
+h
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+109.0300000000000011 421.8899999999999864 Td
+(CRITICAL) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.863 0.902 0.98 rg
+220. 421.8899999999999864 Td
+(5 issues) Tj
+ET
+0.71 0.35 0. rg
+103. 397.8899999999999864 m
+157. 397.8899999999999864 l
+158.656854249492369 397.8899999999999864 160. 396.5468542494923554 160. 394.8899999999999864 c
+160. 382.8899999999999864 l
+160. 381.2331457505076173 158.343145750507631 379.8899999999999864 157. 379.8899999999999864 c
+103. 379.8899999999999864 l
+101.3431457505076168 379.8899999999999864 100. 381.5468542494923554 100. 382.8899999999999864 c
+100. 394.8899999999999864 l
+100. 396.5468542494923554 101.6568542494923832 397.8899999999999864 103. 397.8899999999999864 c
+h
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+118.75 385.8899999999999864 Td
+(HIGH) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.863 0.902 0.98 rg
+220. 385.8899999999999864 Td
+(29 issues) Tj
+ET
+0.63 0.51 0. rg
+103. 361.8899999999999864 m
+157. 361.8899999999999864 l
+158.656854249492369 361.8899999999999864 160. 360.5468542494923554 160. 358.8899999999999864 c
+160. 346.8899999999999864 l
+160. 345.2331457505076173 158.343145750507631 343.8899999999999864 157. 343.8899999999999864 c
+103. 343.8899999999999864 l
+101.3431457505076168 343.8899999999999864 100. 345.5468542494923554 100. 346.8899999999999864 c
+100. 358.8899999999999864 l
+100. 360.5468542494923554 101.6568542494923832 361.8899999999999864 103. 361.8899999999999864 c
+h
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+111.8199999999999932 349.8899999999999864 Td
+(MEDIUM) Tj
+ET
+BT
+/F2 11 Tf
+12.6499999999999986 TL
+0.863 0.902 0.98 rg
+220. 349.8899999999999864 Td
+(6 issues) Tj
+ET
+BT
+/F1 9 Tf
+10.3499999999999996 TL
+0.549 0.627 0.784 rg
+120.5550000000000637 281.8899999999999864 Td
+(Areas covered: API routes · Auth · Env vars · Subscriptions · Missing endpoints · Security) Tj
+ET
+endstream
+endobj
+5 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 6 0 R
+>>
+endobj
+6 0 obj
+<<
+/Length 7946
+>>
+stream
+0.200025 w
+0 G
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 2) Tj
+ET
+0.07 0.16 0.28 rg
+14. 791.8899999999999864 567. -26. re
+f
+BT
+/F2 13 Tf
+14.9499999999999993 TL
+1. g
+242.335000000000008 774.8899999999999864 Td
+(Table of Contents) Tj
+ET
+0.71 0.12 0.12 rg
+17. 763.8899999999999864 m
+66. 763.8899999999999864 l
+67.6568542494923832 763.8899999999999864 69. 762.5468542494924122 69. 760.8899999999999864 c
+69. 752.8899999999999864 l
+69. 751.2331457505075605 67.3431457505076168 749.8899999999999864 66. 749.8899999999999864 c
+17. 749.8899999999999864 l
+15.3431457505076203 749.8899999999999864 14. 751.5468542494924122 14. 752.8899999999999864 c
+14. 760.8899999999999864 l
+14. 762.5468542494924122 15.6568542494923797 763.8899999999999864 17. 763.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+24.6899999999999977 753.8899999999999864 Td
+(CRITICAL) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 753.8899999999999864 Td
+(1.  CRITICAL — Stripe Payment Configuration Broken) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 748.8899999999999864 m
+581. 748.8899999999999864 l
+S
+0.71 0.12 0.12 rg
+17. 741.8899999999999864 m
+66. 741.8899999999999864 l
+67.6568542494923832 741.8899999999999864 69. 740.5468542494924122 69. 738.8899999999999864 c
+69. 730.8899999999999864 l
+69. 729.2331457505075605 67.3431457505076168 727.8899999999999864 66. 727.8899999999999864 c
+17. 727.8899999999999864 l
+15.3431457505076203 727.8899999999999864 14. 729.5468542494924122 14. 730.8899999999999864 c
+14. 738.8899999999999864 l
+14. 740.5468542494924122 15.6568542494923797 741.8899999999999864 17. 741.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+24.6899999999999977 731.8899999999999864 Td
+(CRITICAL) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 731.8899999999999864 Td
+(2.  CRITICAL — Email Sending Completely Broken) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 726.8899999999999864 m
+581. 726.8899999999999864 l
+S
+0.71 0.12 0.12 rg
+17. 719.8899999999999864 m
+66. 719.8899999999999864 l
+67.6568542494923832 719.8899999999999864 69. 718.5468542494924122 69. 716.8899999999999864 c
+69. 708.8899999999999864 l
+69. 707.2331457505076742 67.3431457505076168 705.8899999999999864 66. 705.8899999999999864 c
+17. 705.8899999999999864 l
+15.3431457505076203 705.8899999999999864 14. 707.5468542494922985 14. 708.8899999999999864 c
+14. 716.8899999999999864 l
+14. 718.5468542494924122 15.6568542494923797 719.8899999999999864 17. 719.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+24.6899999999999977 709.8899999999999864 Td
+(CRITICAL) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 709.8899999999999864 Td
+(3.  CRITICAL — Superadmin Pages Have Zero Server-Side Protection) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 704.8899999999999864 m
+581. 704.8899999999999864 l
+S
+0.71 0.35 0. rg
+17. 697.8899999999999864 m
+66. 697.8899999999999864 l
+67.6568542494923832 697.8899999999999864 69. 696.5468542494922985 69. 694.8899999999999864 c
+69. 686.8899999999999864 l
+69. 685.2331457505076742 67.3431457505076168 683.8899999999999864 66. 683.8899999999999864 c
+17. 683.8899999999999864 l
+15.3431457505076203 683.8899999999999864 14. 685.5468542494922985 14. 686.8899999999999864 c
+14. 694.8899999999999864 l
+14. 696.5468542494922985 15.6568542494923797 697.8899999999999864 17. 697.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+32.25 687.8899999999999864 Td
+(HIGH) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 687.8899999999999864 Td
+(4.  HIGH — 17 Frontend API Calls Have No Backend Route) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 682.8899999999999864 m
+581. 682.8899999999999864 l
+S
+0.71 0.35 0. rg
+17. 675.8899999999999864 m
+66. 675.8899999999999864 l
+67.6568542494923832 675.8899999999999864 69. 674.5468542494922985 69. 672.8899999999999864 c
+69. 664.8899999999999864 l
+69. 663.2331457505076742 67.3431457505076168 661.8899999999999864 66. 661.8899999999999864 c
+17. 661.8899999999999864 l
+15.3431457505076203 661.8899999999999864 14. 663.5468542494922985 14. 664.8899999999999864 c
+14. 672.8899999999999864 l
+14. 674.5468542494922985 15.6568542494923797 675.8899999999999864 17. 675.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+32.25 665.8899999999999864 Td
+(HIGH) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 665.8899999999999864 Td
+(5.  HIGH — Subscription Enforcement Gaps) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 660.8899999999999864 m
+581. 660.8899999999999864 l
+S
+0.71 0.35 0. rg
+17. 653.8899999999999864 m
+66. 653.8899999999999864 l
+67.6568542494923832 653.8899999999999864 69. 652.5468542494922985 69. 650.8899999999999864 c
+69. 642.8899999999999864 l
+69. 641.2331457505076742 67.3431457505076168 639.8899999999999864 66. 639.8899999999999864 c
+17. 639.8899999999999864 l
+15.3431457505076203 639.8899999999999864 14. 641.5468542494922985 14. 642.8899999999999864 c
+14. 650.8899999999999864 l
+14. 652.5468542494922985 15.6568542494923797 653.8899999999999864 17. 653.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+32.25 643.8899999999999864 Td
+(HIGH) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 643.8899999999999864 Td
+(6.  HIGH — Environment Variable Mismatches) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 638.8899999999999864 m
+581. 638.8899999999999864 l
+S
+0.63 0.51 0. rg
+17. 631.8899999999999864 m
+66. 631.8899999999999864 l
+67.6568542494923832 631.8899999999999864 69. 630.5468542494922985 69. 628.8899999999999864 c
+69. 620.8899999999999864 l
+69. 619.2331457505076742 67.3431457505076168 617.8899999999999864 66. 617.8899999999999864 c
+17. 617.8899999999999864 l
+15.3431457505076203 617.8899999999999864 14. 619.5468542494922985 14. 620.8899999999999864 c
+14. 628.8899999999999864 l
+14. 630.5468542494922985 15.6568542494923797 631.8899999999999864 17. 631.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+26.8599999999999994 621.8899999999999864 Td
+(MEDIUM) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 621.8899999999999864 Td
+(7.  MEDIUM — Auth & Token Inconsistencies) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 616.8899999999999864 m
+581. 616.8899999999999864 l
+S
+0.63 0.51 0. rg
+17. 609.8899999999999864 m
+66. 609.8899999999999864 l
+67.6568542494923832 609.8899999999999864 69. 608.5468542494922985 69. 606.8899999999999864 c
+69. 598.8899999999999864 l
+69. 597.2331457505076742 67.3431457505076168 595.8899999999999864 66. 595.8899999999999864 c
+17. 595.8899999999999864 l
+15.3431457505076203 595.8899999999999864 14. 597.5468542494922985 14. 598.8899999999999864 c
+14. 606.8899999999999864 l
+14. 608.5468542494922985 15.6568542494923797 609.8899999999999864 17. 609.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+26.8599999999999994 599.8899999999999864 Td
+(MEDIUM) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 599.8899999999999864 Td
+(8.  MEDIUM — Pages Without API Backing \(Placeholder / Stub Pages\)) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 594.8899999999999864 m
+581. 594.8899999999999864 l
+S
+0.71 0.35 0. rg
+17. 587.8899999999999864 m
+66. 587.8899999999999864 l
+67.6568542494923832 587.8899999999999864 69. 586.5468542494922985 69. 584.8899999999999864 c
+69. 576.8899999999999864 l
+69. 575.2331457505076742 67.3431457505076168 573.8899999999999864 66. 573.8899999999999864 c
+17. 573.8899999999999864 l
+15.3431457505076203 573.8899999999999864 14. 575.5468542494922985 14. 576.8899999999999864 c
+14. 584.8899999999999864 l
+14. 586.5468542494922985 15.6568542494923797 587.8899999999999864 17. 587.8899999999999864 c
+h
+f
+BT
+/F2 7 Tf
+8.0499999999999989 TL
+1. g
+32.25 577.8899999999999864 Td
+(HIGH) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.118 0.118 0.157 rg
+78. 577.8899999999999864 Td
+(9.  HIGH — LAUNCH READINESS \(What Still Must Be Done For 100% Client Go-Live\)) Tj
+ET
+0.78 0.78 0.82 RG
+0.3 w
+14. 572.8899999999999864 m
+581. 572.8899999999999864 l
+S
+endstream
+endobj
+7 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 8 0 R
+>>
+endobj
+8 0 obj
+<<
+/Length 5704
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 3) Tj
+ET
+0.71 0.12 0.12 rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(1.  CRITICAL — Stripe Payment Configuration Broken) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(All Stripe keys are placeholders — payments cannot be processed) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(.env contains "sk_test_your_stripe_secret_key_here" and "pk_test_your_stripe_publishable_key_here" as values. These are dummy strings. When) Tj
+T* (any subscription checkout is triggered, the Stripe SDK will reject the key immediately and throw a runtime error.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 637.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 626.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 619.8899999999999864 567. -61. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 610.8899999999999864 Td
+(1. Create a Stripe account at stripe.com if not done yet.) Tj
+T* (2. Copy your real test keys from Stripe Dashboard > Developers > API Keys.) Tj
+T* (3. In .env set: STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET.) Tj
+T* (4. Run: node scripts/setup-stripe.js to auto-create all 5 plan products and prices.) Tj
+T* (5. The script will print the 10 IDs — paste them into .env.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 552.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 541.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 534.8899999999999864 567. -72. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 525.8899999999999864 Td
+(The Stripe checkout route \(src/app/api/stripe/checkout/route.ts\) reads STRIPE_SECRET_KEY to initialize the SDK and then reads per-plan price IDs) Tj
+T* (from STRIPE_STARTER_PRICE_ID, STRIPE_GROWTH_PRICE_ID, STRIPE_PROFESSIONAL_PRICE_ID, STRIPE_BUSINESS_PRICE_ID,) Tj
+T* (STRIPE_ENTERPRISE_PRICE_ID. The subscribe page \(/shop/subscribe\) calls POST /api/stripe/checkout which creates a Stripe Checkout Session) Tj
+T* (and redirects the user to hosted Stripe payment page. After payment Stripe calls POST /api/stripe/webhook which flips the shop's Subscription) Tj
+T* (record in the database to status=active and sets the plan. Without these keys: clicking "Subscribe" throws a 500, no subscription record is ever) Tj
+T* (created, and the shop is permanently locked at the subscription gate.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 448.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 436.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 424.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 413.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 406.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 397.8899999999999864 Td
+(All 10 Stripe plan price/product IDs are missing from .env entirely) Tj
+ET
+0.78 0.39 0. rg
+14. 383.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 372.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 365.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 356.8899999999999864 Td
+(src/lib/stripe.ts exports STRIPE_PRODUCTS with a requireStripeId\(\) guard that throws a hard JavaScript Error if any of the 10 env vars is undefined.) Tj
+T* (This means the moment any code imports STRIPE_PRODUCTS and accesses a plan \(e.g. stripe checkout, subscription suggestions\), it throws:) Tj
+T* ("Missing Stripe env var: STRIPE_STARTER_PRICE_ID".) Tj
+ET
+0.08 0.39 0.24 rg
+14. 320.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 309.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 302.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 293.8899999999999864 Td
+(After running setup-stripe.js \(above\), add these to .env:) Tj
+T* (STRIPE_STARTER_PRODUCT_ID=prod_xxx) Tj
+T* (STRIPE_STARTER_PRICE_ID=price_xxx) Tj
+T* (\(repeat for: GROWTH, PROFESSIONAL, BUSINESS, ENTERPRISE\)) Tj
+ET
+0.24 0.24 0.27 rg
+14. 246.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 235.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 228.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 219.8899999999999864 Td
+(STRIPE_PRODUCTS is used by: /api/stripe/checkout \(creates session\), /api/subscriptions/[shopId]/update-plan \(upgrades/downgrades\),) Tj
+T* (/api/subscriptions/[shopId]/suggestions \(shows upgrade nudges on subscribe page\). Without IDs all three routes throw and the subscribe page) Tj
+T* (cannot render plan cards with real pricing.) Tj
+ET
+endstream
+endobj
+9 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 10 0 R
+>>
+endobj
+10 0 obj
+<<
+/Length 5523
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 4) Tj
+ET
+0.71 0.12 0.12 rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(2.  CRITICAL — Email Sending Completely Broken) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(RESEND_API_KEY is missing from .env — all emails silently fail) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(src/lib/emailService.ts checks for RESEND_API_KEY before calling the Resend API. When the key is absent it logs a warning and returns without) Tj
+T* (sending. The .env file has Gmail SMTP variables \(EMAIL_HOST, EMAIL_USER, EMAIL_PASS\) but the codebase was migrated to Resend and no) Tj
+T* (longer uses those SMTP vars. The SMTP config is dead code.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 626.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 615.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 608.8899999999999864 567. -72. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 599.8899999999999864 Td
+(1. Sign up at resend.com \(free tier sends 3,000 emails/month\).) Tj
+T* (2. Create an API key in the Resend dashboard.) Tj
+T* (3. Add to .env:) Tj
+T* (   RESEND_API_KEY=re_xxxxxxxxxxxx) Tj
+T* (   RESEND_FROM_EMAIL=noreply@yourdomain.com) Tj
+T* (4. Optionally remove the unused EMAIL_HOST/EMAIL_USER/EMAIL_PASS/EMAIL_SECURE vars to avoid confusion.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 530.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 519.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 512.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 503.8899999999999864 Td
+(Emails affected by this outage: password reset emails \(/api/auth/reset/request\), estimate-ready customer notifications \(/api/workorders/[id]\), work) Tj
+T* (order status update emails, customer invitation emails, recurring work order reminders \(/api/cron/recurring-reminders\), appointment reminders) Tj
+T* (\(/api/cron/appointment-reminders\), team invitation emails, review request emails. The from address defaults to "onboarding@resend.dev" which is) Tj
+T* (the Resend test sender — only works while API key is configured.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 448.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 436.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 424.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 413.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 406.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 397.8899999999999864 Td
+(Twilio env var name mismatch — SMS sending broken) Tj
+ET
+0.78 0.39 0. rg
+14. 383.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 372.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 365.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 356.8899999999999864 Td
+(.env defines TWILIO_PHONE_NUMBER but code references process.env.TWILIO_FROM and process.env.TWILIO_FROM_NUMBER in two) Tj
+T* (different places. Neither name matches what is in .env so both will be undefined at runtime and Twilio will throw "from" parameter missing.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 331.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 320.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 313.8899999999999864 567. -72. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 304.8899999999999864 Td
+(In .env rename TWILIO_PHONE_NUMBER to TWILIO_FROM:) Tj
+T* (  TWILIO_FROM="+15551234567") Tj
+T* (Also add:) Tj
+T* (  TWILIO_FROM_NUMBER="+15551234567") Tj
+T* (  TWILIO_MESSAGING_SERVICE_SID=MGxxxxxxx \(if using messaging service\)) Tj
+T* (Both vars point to the same phone number — the code uses whichever it finds first.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 235.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 224.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 217.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 208.8899999999999864 Td
+(SMS is used for: 2FA verification codes to technician phones, automated marketing campaign SMS blasts \(/api/shop/campaigns\), appointment) Tj
+T* (reminder texts. The Twilio client is initialized in src/lib/twilio.ts using TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN \(both present\) but the) Tj
+T* ("from" field in every sendSms call reads from TWILIO_FROM which is undefined.) Tj
+ET
+endstream
+endobj
+11 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 12 0 R
+>>
+endobj
+12 0 obj
+<<
+/Length 3385
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 5) Tj
+ET
+0.71 0.12 0.12 rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(3.  CRITICAL — Superadmin Pages Have Zero Server-Side Protection) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(/superadmin/* pages are NOT in the middleware matcher) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(src/middleware.ts config.matcher lists: /admin/:path*, /shop/:path*, /tech/:path*, /customer/:path*, /manager/:path*, /workorders/:path*,) Tj
+T* (/reports/:path*. /superadmin is completely absent. This means Next.js never runs the auth middleware for any superadmin page. The only protection) Tj
+T* (is a client-side useRequireAuth\(['superadmin']\) hook which runs AFTER the page JavaScript loads — meaning the page HTML and data fetches) Tj
+T* (have already started.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 615.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 604.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 597.8899999999999864 567. -138. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 588.8899999999999864 Td
+(In src/middleware.ts add '/superadmin/:path*' to the matcher array:) Tj
+T* () Tj
+T* (export const config = {) Tj
+T* (  matcher: [) Tj
+T* (    '/admin/:path*',) Tj
+T* (    '/superadmin/:path*',   // ADD THIS LINE) Tj
+T* (    '/shop/:path*',) Tj
+T* (    ...) Tj
+T* (  ],) Tj
+T* (};) Tj
+T* () Tj
+T* (Also add ROLE_ROLES entry: '/superadmin': ['superadmin']) Tj
+ET
+0.24 0.24 0.27 rg
+14. 453.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 442.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 435.8899999999999864 567. -61. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 426.8899999999999864 Td
+(Superadmin pages include: /superadmin/dashboard \(all shops, all users counts\), /superadmin/tenants \(full tenant list with management actions\),) Tj
+T* (/superadmin/users \(every user on the platform\), /superadmin/security \(security audit log\), /superadmin/infrastructure \(system health\),) Tj
+T* (/superadmin/analytics \(platform-wide analytics\). These pages call /api/admin/* routes which DO check auth — but without middleware, a) Tj
+T* (non-logged-in user sees the page shell and loading states instead of a redirect to login. A logged-in shop owner hitting /superadmin/dashboard would) Tj
+T* (see an empty page rather than an error.) Tj
+ET
+endstream
+endobj
+13 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 14 0 R
+>>
+endobj
+14 0 obj
+<<
+/Length 6687
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 6) Tj
+ET
+0.78 0.39 0. rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(4.  HIGH — 17 Frontend API Calls Have No Backend Route) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(/api/admin/email-templates — no route.ts file) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(The admin email templates page \(/admin/email-templates\) fetches this endpoint to load and save email templates. No route.ts exists under) Tj
+T* (src/app/api/admin/email-templates. Every request returns a Next.js 404.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 637.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 626.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 619.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 610.8899999999999864 Td
+(Create src/app/api/admin/email-templates/route.ts.) Tj
+T* (GET: return list of email templates from DB \(or a JSON config file\).) Tj
+T* (POST/PUT: save customized template content to DB.) Tj
+T* (Schema: add EmailTemplate model to prisma/schema.prisma with fields: id, name, subject, htmlBody, updatedAt, shopId \(null = global default\).) Tj
+ET
+0.24 0.24 0.27 rg
+14. 563.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 552.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 545.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 536.8899999999999864 Td
+(Page: /admin/email-templates — allows platform admins to customize the HTML/text of system emails \(password reset, work order notification,) Tj
+T* (estimate ready\). Without this route the page shows an empty list and saving does nothing. All emails continue using hardcoded templates in) Tj
+T* (emailService.ts.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 492.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 480.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 468.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 457.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 450.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 441.8899999999999864 Td
+(/api/admin/security — no route.ts \(real path is /api/security/events\)) Tj
+ET
+0.78 0.39 0. rg
+14. 427.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 416.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 409.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 400.8899999999999864 Td
+(The admin security settings page calls /api/admin/security but the actual route file is at src/app/api/security/events/route.ts. The paths do not match) Tj
+T* (so the admin page gets a 404.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 375.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 364.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 357.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 348.8899999999999864 Td
+(Two options:) Tj
+T* (  A\) Rename the existing route to match: move src/app/api/security/events/route.ts to src/app/api/admin/security/route.ts) Tj
+T* (  B\) Add a redirect/proxy: in the admin security page change the fetch URL from /api/admin/security to /api/security/events) Tj
+ET
+0.24 0.24 0.27 rg
+14. 312.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 301.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 294.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 285.8899999999999864 Td
+(The security events route returns platform-wide security audit entries: login attempts, failed authentications, role changes, suspicious activity flags.) Tj
+T* (The admin security page \(/admin/security-settings\) displays these as a log table with filter by event type and date range.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 252.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 240.8899999999999864 Td
+(Issue 3) Tj
+ET
+0.71 0.12 0.12 rg
+14. 228.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 217.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 210.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 201.8899999999999864 Td
+(/api/admin/sessions — no route.ts \(real path is /api/auth/sessions\)) Tj
+ET
+0.78 0.39 0. rg
+14. 187.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 176.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 169.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 160.8899999999999864 Td
+(The admin sessions page and the admin dashboard both call /api/admin/sessions but the route is at /api/auth/sessions. Path mismatch causes 404.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 146.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 135.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 128.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 119.8899999999999864 Td
+(In the admin sessions page change fetch URL from /api/admin/sessions to /api/auth/sessions.) Tj
+T* (Alternatively create a thin wrapper at /api/admin/sessions that proxies to /api/auth/sessions with admin-level permissions \(letting admin see all) Tj
+T* (sessions, not just their own\).) Tj
+ET
+0.24 0.24 0.27 rg
+14. 83.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 72.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+endstream
+endobj
+15 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 16 0 R
+>>
+endobj
+16 0 obj
+<<
+/Length 6765
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -39. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(The sessions route returns active login tokens. The admin view should show all active sessions across all users for security monitoring. The current) Tj
+T* (/api/auth/sessions route only returns sessions for the authenticated user — an admin wrapper route would need to query all refreshToken records) Tj
+T* (with pagination.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 743.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 731.8899999999999864 Td
+(Issue 4) Tj
+ET
+0.71 0.12 0.12 rg
+14. 719.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 708.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 701.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 692.8899999999999864 Td
+(/api/admin/tools — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 678.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 667.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 660.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 651.8899999999999864 Td
+(The /admin/admin-tools page fetches /api/admin/tools for a list of runnable admin utilities. No route file exists.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 637.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 626.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 619.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 610.8899999999999864 Td
+(Create src/app/api/admin/tools/route.ts.) Tj
+T* (GET: return list of available admin tools \(db cleanup, cache flush, re-index, etc.\).) Tj
+T* (POST: accept { tool: string, params: object } to execute a specific tool.) Tj
+T* (Protect with admin role check.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 563.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 552.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 545.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 536.8899999999999864 Td
+(Page: /admin/admin-tools — intended to give platform admins a UI to run maintenance tasks without SSH access: clear Redis cache, trigger manual) Tj
+T* (cron jobs, re-run database migrations, flush rate limit counters. Without the route the page shows empty and buttons do nothing.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 503.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 491.8899999999999864 Td
+(Issue 5) Tj
+ET
+0.71 0.12 0.12 rg
+14. 479.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 468.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 461.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 452.8899999999999864 Td
+(/api/appointments/recurring — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 438.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 427.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 420.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 411.8899999999999864 Td
+(The appointments page calls /api/appointments/recurring to load recurring appointment templates. Only /api/appointments and /api/appointments/[id]) Tj
+T* (exist. There is no recurring sub-route.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 386.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 375.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 368.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 359.8899999999999864 Td
+(Create src/app/api/appointments/recurring/route.ts.) Tj
+T* (GET: return appointments where recurrence !== null or a RecurringAppointment model.) Tj
+T* (POST: create a new recurring appointment template.) Tj
+T* (DELETE: remove recurring template and optionally all future instances.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 312.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 301.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 294.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 285.8899999999999864 Td
+(Recurring appointments allow customers to book repeating service slots \(e.g. monthly oil changes\). The page /customer/appointments would show a) Tj
+T* ("Recurring" tab listing these. The recurring appointment model would need: customerId, shopId, serviceType, frequency \(weekly/monthly\),) Tj
+T* (dayOfWeek/dayOfMonth, nextOccurrence, status.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 241.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 229.8899999999999864 Td
+(Issue 6) Tj
+ET
+0.71 0.12 0.12 rg
+14. 217.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 206.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 199.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 190.8899999999999864 Td
+(/api/auth/forgot-password — no route.ts \(real path is /api/auth/reset/request\)) Tj
+ET
+0.78 0.39 0. rg
+14. 176.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 165.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 158.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 149.8899999999999864 Td
+(Some pages link to or fetch /api/auth/forgot-password but the password reset route is at /api/auth/reset/request. A 404 is returned.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 135.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 124.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 117.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 108.8899999999999864 Td
+(Two options:) Tj
+T* (  A\) Create src/app/api/auth/forgot-password/route.ts that imports and re-exports the handler from reset/request) Tj
+T* (  B\) Find every reference to /api/auth/forgot-password in the codebase and change them to /api/auth/reset/request) Tj
+T* (Option B is cleaner.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 61.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 50.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+endstream
+endobj
+17 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 18 0 R
+>>
+endobj
+18 0 obj
+<<
+/Length 6694
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -39. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(The password reset flow: user enters email on /auth/reset page -> POST /api/auth/reset/request sends a reset code via Resend -> user receives) Tj
+T* (email with token -> user submits token and new password to POST /api/auth/reset/confirm. The "forgot-password" name is a legacy leftover from an) Tj
+T* (earlier version.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 743.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 731.8899999999999864 Td
+(Issue 7) Tj
+ET
+0.71 0.12 0.12 rg
+14. 719.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 708.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 701.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 692.8899999999999864 Td
+(/api/manager/estimates — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 678.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 667.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 660.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 651.8899999999999864 Td
+(The manager estimates page \(/manager/estimates\) fetches this endpoint to load pending customer estimates that need manager review. No route) Tj
+T* (file exists under src/app/api/manager.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 626.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 615.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 608.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 599.8899999999999864 Td
+(Create src/app/api/manager/estimates/route.ts.) Tj
+T* (GET: query WorkOrder/Estimate records where shopId = token.shopId and status = 'estimate_pending') Tj
+T* (POST: approve or reject an estimate with notes) Tj
+T* (Filter by the managersShopId from the JWT token.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 552.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 541.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 534.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 525.8899999999999864 Td
+(Page: /manager/estimates — shows the manager a list of estimates waiting for approval before being sent to the customer. Columns: customer) Tj
+T* (name, vehicle, line items, total, submitted by \(tech\), date. Manager can approve \(triggers customer email\), request changes \(sends note back to) Tj
+T* (tech\), or reject. Without this route the page shows nothing.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 481.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 469.8899999999999864 Td
+(Issue 8) Tj
+ET
+0.71 0.12 0.12 rg
+14. 457.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 446.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 439.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 430.8899999999999864 Td
+(/api/manager/performance — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 416.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 405.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 398.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 389.8899999999999864 Td
+(Manager reports page calls /api/manager/performance which does not exist. The shop-owner equivalent is /api/analytics/employee-performance.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 375.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 364.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 357.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 348.8899999999999864 Td
+(Create src/app/api/manager/performance/route.ts that queries tech performance metrics scoped to the manager's shopId from JWT.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 334.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 323.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 316.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 307.8899999999999864 Td
+(Page: /manager/reports — performance metrics for the manager's shop: completed jobs per tech, average job duration, comeback rate, parts) Tj
+T* (markup, customer satisfaction scores. All data already exists in the database via WorkOrder, TimeTracking, and Review tables — the route just) Tj
+T* (needs to aggregate it.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 263.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 251.8899999999999864 Td
+(Issue 9) Tj
+ET
+0.71 0.12 0.12 rg
+14. 239.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 228.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 221.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 212.8899999999999864 Td
+(/api/manager/schedule — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 198.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 187.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 180.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 171.8899999999999864 Td
+(Manager schedule page calls this endpoint. The shop-equivalent schedule routes exist at /api/shop/schedule and /api/shop/team-schedule but there) Tj
+T* (is no manager-scoped version.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 146.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 135.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 128.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 119.8899999999999864 Td
+(Create src/app/api/manager/schedule/route.ts.) Tj
+T* (GET: return schedule entries for the manager's shop \(scoped by shopId from JWT\).) Tj
+T* (POST: create/update schedule blocks.) Tj
+T* (This is effectively a proxy to the existing shop/schedule logic with a role check for manager.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 72.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 61.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+endstream
+endobj
+19 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 20 0 R
+>>
+endobj
+20 0 obj
+<<
+/Length 6669
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -39. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(Page: /manager/schedule — the manager's view of the shop schedule: who is working which shifts, bay assignments, appointments blocked on the) Tj
+T* (calendar. Data comes from the ShopSchedule and Appointment models. The manager needs the same data as the shop owner but the JWT role is) Tj
+T* ('manager' not 'shop' so the /api/shop/schedule route may reject the token.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 743.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 731.8899999999999864 Td
+(Issue 10) Tj
+ET
+0.71 0.12 0.12 rg
+14. 719.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 708.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 701.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 692.8899999999999864 Td
+(/api/user/permissions — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 678.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 667.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 660.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 651.8899999999999864 Td
+(Some settings pages call /api/user/permissions to load the current user's permission set. The real permissions route is /api/permissions which) Tj
+T* (handles shop-level permission templates — not individual user permissions.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 626.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 615.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 608.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 599.8899999999999864 Td
+(Create src/app/api/user/permissions/route.ts.) Tj
+T* (GET: return the permission flags for the authenticated user \(from Tech.permissions or a PermissionSet record\).) Tj
+T* (This should be scoped to the token's id and role.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 563.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 552.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 545.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 536.8899999999999864 Td
+(This is used in permission-checking logic on settings pages where the UI conditionally shows/hides actions based on what the logged-in user is) Tj
+T* (allowed to do \(e.g. can_void_invoices, can_edit_customer, can_manage_inventory\). Without this route permission checks default to showing) Tj
+T* (everything or nothing depending on the fallback logic.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 492.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 480.8899999999999864 Td
+(Issue 11) Tj
+ET
+0.71 0.12 0.12 rg
+14. 468.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 457.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 450.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 441.8899999999999864 Td
+(/api/mdm/unenroll — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 427.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 416.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 409.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 400.8899999999999864 Td
+(The MDM mobile device management page has an unenroll button that calls DELETE /api/mdm/unenroll. Only /api/mdm/enroll and) Tj
+T* (/api/mdm/commands exist.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 375.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 364.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 357.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 348.8899999999999864 Td
+(Create src/app/api/mdm/unenroll/route.ts.) Tj
+T* (DELETE: remove the device record for the given deviceId from the MDM enrollment table, revoke push notification token, clear geolocation tracking) Tj
+T* (for that device.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 312.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 301.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 294.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 285.8899999999999864 Td
+(MDM \(Mobile Device Management\) is used to manage tech phones: push silent commands, get GPS location, wipe app data on termination. The) Tj
+T* (unenroll endpoint is called when a technician leaves the company or a device is replaced. Without it enrolled devices cannot be removed from the) Tj
+T* (system.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 241.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 229.8899999999999864 Td
+(Issue 12) Tj
+ET
+0.71 0.12 0.12 rg
+14. 217.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 206.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 199.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 190.8899999999999864 Td
+(/api/tech/complete — no route.ts) Tj
+ET
+0.78 0.39 0. rg
+14. 176.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 165.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 158.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 149.8899999999999864 Td
+(The tech home page has a "Mark Complete" button that calls PATCH /api/tech/complete. No such route exists.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 135.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 124.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 117.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 108.8899999999999864 Td
+(Create src/app/api/tech/complete/route.ts.) Tj
+T* (PATCH: accept { workOrderId } in body. Update WorkOrder status to 'completed', set completedAt, set assignedTechId, trigger customer notification) Tj
+T* (email.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 72.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 61.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+endstream
+endobj
+21 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 22 0 R
+>>
+endobj
+22 0 obj
+<<
+/Length 743
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -28. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(This is the technician's quick-complete action from their home dashboard job card. It differs from the full edit flow \(/api/workorders/[id]\) because it is a) Tj
+T* (one-tap action with no form — just marks the job done and notifies the customer. Without this route the button fails silently and jobs stay in-progress.) Tj
+ET
+endstream
+endobj
+23 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 24 0 R
+>>
+endobj
+24 0 obj
+<<
+/Length 6556
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 7) Tj
+ET
+0.78 0.39 0. rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(5.  HIGH — Subscription Enforcement Gaps) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(Manager and tech page routes are NOT middleware-gated by subscription) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(The middleware only runs the subscription gate check when role === 'shop'. Manager and tech tokens carry a shopId so they can be gated too —) Tj
+T* (but they are not. A manager on a Starter-plan shop can navigate directly to /manager/payroll in the browser and nothing stops them at the server) Tj
+T* (level. Only the Sidebar UI hides the link.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 626.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 615.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 608.8899999999999864 567. -105. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 599.8899999999999864 Td
+(In src/middleware.ts extend the subscription check to also cover role === 'manager' and role === 'tech':) Tj
+T* () Tj
+T* (if \(['shop', 'manager', 'tech'].includes\(role\)\) {) Tj
+T* (  // run subscription gate check) Tj
+T* (  // if feature locked: redirect manager to /manager/home?reason=feature_locked) Tj
+T* (  //                    redirect tech to /tech/home?reason=feature_locked) Tj
+T* (}) Tj
+T* () Tj
+T* (The gate API already handles manager/tech tokens correctly \(returns the shop's plan\).) Tj
+ET
+0.24 0.24 0.27 rg
+14. 497.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 486.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 479.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 470.8899999999999864 Td
+(A shop owner on Starter plan who creates a manager account — that manager can bypass the UI restrictions by typing /manager/payroll directly in) Tj
+T* (the address bar. The middleware check ensures a server-side redirect happens before any page data loads, regardless of what the Sidebar shows.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 437.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 425.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 413.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 402.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 395.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 386.8899999999999864 Td
+(breakTracking \(GPS/time break features\) not gated — Starter users can access it) Tj
+ET
+0.78 0.39 0. rg
+14. 372.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 361.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 354.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 345.8899999999999864 Td
+(subscription.ts sets breakTracking: false for Starter plan. But no route in subscription-access.ts maps to the breakTracking feature. The timeclock) Tj
+T* (pages \(/shop/timeclock, /tech/timeclock, /manager/timeclock\) are freely accessible on all plans.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 320.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 309.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 302.8899999999999864 567. -83. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 293.8899999999999864 Td
+(In src/lib/subscription-access.ts add to ROUTE_FEATURE_RULES:) Tj
+T* (  { prefix: '/shop/timeclock', feature: 'breakTracking' },) Tj
+T* (  { prefix: '/tech/timeclock', feature: 'breakTracking' },) Tj
+T* (  { prefix: '/manager/timeclock', feature: 'breakTracking' },) Tj
+T* () Tj
+T* (Note: basic clock-in/out is a core feature — consider using timeTracking as the gate key \(which is true on all plans\) and only gating the break-specific) Tj
+T* (sub-routes under breakTracking.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 213.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 202.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 195.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 186.8899999999999864 Td
+(The timeclock system tracks punch-in, punch-out, and break periods for payroll. The breakTracking feature flag specifically controls whether) Tj
+T* (technicians can log paid/unpaid breaks. On Starter \(1 user\) this is less critical, but on Growth it becomes part of payroll compliance. Currently a) Tj
+T* (Starter user sees the full break UI.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 142.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 130.8899999999999864 Td
+(Issue 3) Tj
+ET
+0.71 0.12 0.12 rg
+14. 118.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 107.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 100.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 91.8899999999999864 Td
+(gpsVerification not gated — Starter users can use tech share-location) Tj
+ET
+0.78 0.39 0. rg
+14. 77.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 66.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 59.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 50.8899999999999864 Td
+(subscription.ts sets gpsVerification: false for Starter. No rule in subscription-access.ts covers /tech/share-location so it is openly accessible.) Tj
+ET
+endstream
+endobj
+25 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 26 0 R
+>>
+endobj
+26 0 obj
+<<
+/Length 3852
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.08 0.39 0.24 rg
+14. 796.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 785.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 778.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 769.8899999999999864 Td
+(In src/lib/subscription-access.ts add:) Tj
+T* (  { prefix: '/tech/share-location', feature: 'gpsVerification' },) Tj
+T* (  { prefix: '/api/tech/tracking', feature: 'gpsVerification' },) Tj
+ET
+0.24 0.24 0.27 rg
+14. 733.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 722.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 715.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 706.8899999999999864 Td
+(GPS verification lets the shop owner see live technician locations on a map and verify that field techs are at job sites. The tech share-location page) Tj
+T* (\(/tech/share-location\) posts GPS coordinates to /api/tech/tracking. On Starter \(single user, single shop\) this feature is disabled — it is part of the) Tj
+T* (Growth multi-tech management suite.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 662.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 650.8899999999999864 Td
+(Issue 4) Tj
+ET
+0.71 0.12 0.12 rg
+14. 638.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 627.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 620.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 611.8899999999999864 Td
+(realTimeDashboards not gated — live dashboard accessible on Starter) Tj
+ET
+0.78 0.39 0. rg
+14. 597.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 586.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 579.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 570.8899999999999864 Td
+(subscription.ts sets realTimeDashboards: false for Starter. The real-time shop home dashboard \(/shop/home\) and socket-based updates are) Tj
+T* (available to all plans with no check.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 545.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 534.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 527.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 518.8899999999999864 Td
+(Consider whether /shop/home should be fully blocked on Starter or just the real-time socket features. Recommended approach:) Tj
+T* (  - Gate /shop/admin/health \(already done via advancedReporting\)) Tj
+T* (  - Add a socket connection guard in the home page: only initiate socket.io connection if subscriptionFeatures.realTimeDashboards === true) Tj
+T* (  - Show a static dashboard for Starter — same data but polled every 60s instead of live) Tj
+ET
+0.24 0.24 0.27 rg
+14. 471.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 460.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 453.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 444.8899999999999864 Td
+(Real-time dashboards use socket.io \(socket-server.js\) to push live work order status changes, tech location pings, and urgent alerts to the shop) Tj
+T* (home screen. On Starter this creates unnecessary server load for single-user shops. The data is the same — only the delivery mechanism \(live vs.) Tj
+T* (polled\) should differ by plan.) Tj
+ET
+endstream
+endobj
+27 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 28 0 R
+>>
+endobj
+28 0 obj
+<<
+/Length 6499
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 8) Tj
+ET
+0.78 0.39 0. rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(6.  HIGH — Environment Variable Mismatches) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(DATABASE_URL and DATABASE_URL_UNPOOLED are identical) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(Neon PostgreSQL provides two connection strings: a pooled URL \(for app runtime — uses PgBouncer\) and an unpooled URL \(for migrations —) Tj
+T* (direct connection required\). Both are set to the same pooled URL. Running migrations through a pooler can cause "prepared statements" errors and) Tj
+T* (connection limit issues.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 626.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 615.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 608.8899999999999864 567. -94. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 599.8899999999999864 Td
+(In the Neon dashboard go to your project > Connection Details.) Tj
+T* (Copy the "Direct connection" URL \(contains no "-pooler" in the hostname\).) Tj
+T* (Set DATABASE_URL_UNPOOLED to that direct URL.) Tj
+T* (DATABASE_URL should keep the pooled URL.) Tj
+T* () Tj
+T* (Example:) Tj
+T* (DATABASE_URL="...pooler.neon.tech/neondb?pgbouncer=true") Tj
+T* (DATABASE_URL_UNPOOLED="...neon.tech/neondb" \(no pooler\)) Tj
+ET
+0.24 0.24 0.27 rg
+14. 508.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 497.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 490.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 481.8899999999999864 Td
+(The Prisma schema.prisma has directUrl = env\("DATABASE_URL_UNPOOLED"\) which Prisma uses for schema migrations and introspection.) Tj
+T* (During npm run db:migrate Prisma will use the direct URL to run DDL statements. PgBouncer does not support session-mode statements required) Tj
+T* (by Prisma migrations — using the pooler for migrations causes intermittent failures especially under load.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 437.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 425.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 413.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 402.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 395.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 386.8899999999999864 Td
+(NEXT_PUBLIC_APP_URL = http://localhost:3000 but dev server runs on port 3001) Tj
+ET
+0.78 0.39 0. rg
+14. 372.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 361.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 354.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 345.8899999999999864 Td
+(The dev server is configured \(SOCKET_PORT=3001 and next dev starts on 3001\) but the public URL env var still points to port 3000. Any code that) Tj
+T* (constructs absolute URLs using NEXT_PUBLIC_APP_URL \(payment callbacks, email links, webhook URLs\) will generate links to the wrong port.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 320.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 309.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 302.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 293.8899999999999864 Td
+(In .env change:) Tj
+T* (  NEXT_PUBLIC_APP_URL="http://localhost:3001") Tj
+T* (Also update NEXT_PUBLIC_APP_URL_PRODUCTION to your real domain before deploying.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 257.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 246.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 239.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 230.8899999999999864 Td
+(Affected places: Stripe success/cancel redirect URLs in /api/stripe/checkout \(currently builds http://localhost:3000/shop/settings which doesn't load) Tj
+T* (on dev\), password reset links in emails \(broken localhost link in dev\), DVI inspection approval links, work authorization token links. In production this) Tj
+T* (should be set to https://yourdomain.com.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 186.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 174.8899999999999864 Td
+(Issue 3) Tj
+ET
+0.71 0.12 0.12 rg
+14. 162.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 151.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 144.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 135.8899999999999864 Td
+(Push notifications will not work — 3 VAPID keys missing from .env) Tj
+ET
+0.78 0.39 0. rg
+14. 121.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 110.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 103.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 94.8899999999999864 Td
+(Web Push requires a VAPID key pair \(public + private\) plus a contact email. The code references process.env.VAPID_PUBLIC_KEY,) Tj
+T* (VAPID_PRIVATE_KEY, VAPID_EMAIL, and NEXT_PUBLIC_VAPID_PUBLIC_KEY. None of these are in .env.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 69.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 58.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+endstream
+endobj
+29 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 30 0 R
+>>
+endobj
+30 0 obj
+<<
+/Length 6243
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -94. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(Generate VAPID keys once:) Tj
+T* (  npx web-push generate-vapid-keys) Tj
+T* (Add to .env:) Tj
+T* (  VAPID_PUBLIC_KEY=BAxxx...) Tj
+T* (  VAPID_PRIVATE_KEY=xxx...) Tj
+T* (  VAPID_EMAIL=mailto:admin@yourdomain.com) Tj
+T* (  NEXT_PUBLIC_VAPID_PUBLIC_KEY=BAxxx... \(same as VAPID_PUBLIC_KEY\)) Tj
+T* (Also update public/manifest.json if it references the VAPID key.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 696.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 685.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 678.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 669.8899999999999864 Td
+(Push notifications are used across the app: new work order assigned \(tech\), customer message received \(shop\), appointment reminder \(customer\),) Tj
+T* (urgent alert \(shop home\). The service worker \(public/sw.js\) subscribes using NEXT_PUBLIC_VAPID_PUBLIC_KEY. /api/push/subscribe stores the) Tj
+T* (subscription endpoint in the database. /api/push/send sends the notification. Without VAPID keys the subscription call fails and no notifications are) Tj
+T* (ever delivered.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 614.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 602.8899999999999864 Td
+(Issue 4) Tj
+ET
+0.71 0.12 0.12 rg
+14. 590.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 579.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 572.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 563.8899999999999864 Td
+(NEXT_PUBLIC_SOCKET_URL missing — socket.io client cannot connect) Tj
+ET
+0.78 0.39 0. rg
+14. 549.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 538.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 531.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 522.8899999999999864 Td
+(The client-side socket.io initialization reads process.env.NEXT_PUBLIC_SOCKET_URL to know what server to connect to. This env var is not in) Tj
+T* (.env. Without it the socket client likely falls back to window.location.origin \(same-origin\) which works in development but fails in production where the) Tj
+T* (socket server runs on a different port or service.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 486.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 475.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 468.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 459.8899999999999864 Td
+(Add to .env:) Tj
+T* (  NEXT_PUBLIC_SOCKET_URL=http://localhost:3001) Tj
+T* (In production this should be your socket server URL \(same domain or separate subdomain\).) Tj
+ET
+0.24 0.24 0.27 rg
+14. 423.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 412.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 405.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 396.8899999999999864 Td
+(The socket server \(socket-server.js\) runs separately from Next.js. Real-time features depend on the client connecting to it: live work order status) Tj
+T* (updates on shop home, tech GPS pings, urgent alerts, waiting room screen, live chat. When NEXT_PUBLIC_SOCKET_URL is undefined in) Tj
+T* (production the client tries the Next.js server port which has no socket.io handler and silently fails.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 352.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 340.8899999999999864 Td
+(Issue 5) Tj
+ET
+0.71 0.12 0.12 rg
+14. 328.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 317.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 310.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 301.8899999999999864 Td
+(Cloudinary client-side upload vars missing) Tj
+ET
+0.78 0.39 0. rg
+14. 287.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 276.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 269.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 260.8899999999999864 Td
+(.env has server-side CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET but the browser-side upload widget) Tj
+T* (needs NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET. These are absent.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 235.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 224.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 217.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 208.8899999999999864 Td
+(In .env add:) Tj
+T* (  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name \(same value as CLOUDINARY_CLOUD_NAME\)) Tj
+T* (  NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset) Tj
+T* (Create an unsigned upload preset in Cloudinary Dashboard > Settings > Upload Presets.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 161.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 150.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 143.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 134.8899999999999864 Td
+(Client-side Cloudinary uploads \(photos from the DVI page, condition reports, work order attachments\) use the Cloudinary Upload Widget or direct) Tj
+T* (fetch to the Cloudinary API. These require the cloud name and an unsigned preset — not the API secret \(which must never be in client code\).) Tj
+T* (Without these vars photo uploads from the browser show an error or are silently dropped.) Tj
+ET
+endstream
+endobj
+31 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 32 0 R
+>>
+endobj
+32 0 obj
+<<
+/Length 6847
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page 9) Tj
+ET
+0.63 0.51 0. rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(7.  MEDIUM — Auth & Token Inconsistencies) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(Double admin login attempt on every single login — performance issue and confusing logs) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(LoginClient.tsx tries /api/auth/admin first. If it returns 404, it immediately retries with /api/admin/login. This means every non-admin login attempt) Tj
+T* (\(shops, techs, customers\) makes TWO requests to admin endpoints before moving on. The logs show spurious 404 errors for every login.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 637.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 626.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 619.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 610.8899999999999864 Td
+(Remove the fallback. Decide on one admin login endpoint and use only that.) Tj
+T* (Recommended: keep /api/auth/admin \(consistent with other auth routes\) and delete /api/admin/login or have it redirect to /api/auth/admin.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 585.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 574.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 567.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 558.8899999999999864 Td
+(The double-attempt pattern was added when the admin login route was moved, as a backwards-compatibility shim. Since both routes now exist it) Tj
+T* (creates unnecessary network traffic. For a shop with 20 techs logging in throughout the day that is 40 extra requests per day just for the login) Tj
+T* (fallback.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 514.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 502.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 490.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 479.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 472.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 463.8899999999999864 Td
+(Manager login goes through /api/auth/tech — undocumented and fragile) Tj
+ET
+0.78 0.39 0. rg
+14. 449.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 438.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 431.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 422.8899999999999864 Td
+(Managers are stored in the Tech table with role='manager'. The /api/auth/tech route returns whatever role is in the Tech record. This works but is) Tj
+T* (conceptually confusing: manager auth flows through a "tech" endpoint, and if the Tech table is ever split into Manager and Tech tables the login will) Tj
+T* (silently break.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 386.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 375.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 368.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 359.8899999999999864 Td
+(No immediate code change needed — document this clearly. Long term: create /api/auth/manager that queries the same Tech table but filters for role) Tj
+T* (IN ['manager']:) Tj
+ET
+0.24 0.24 0.27 rg
+14. 334.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 323.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 316.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 307.8899999999999864 Td
+(The JWT returned from /api/auth/tech includes role: techData.role which will be 'manager' or 'tech' based on the DB record. LoginClient.tsx checks) Tj
+T* (techData.role after a successful response to decide which home page to route to. This works correctly today but the coupling to the tech endpoint is) Tj
+T* (a maintenance risk.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 263.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 251.8899999999999864 Td
+(Issue 3) Tj
+ET
+0.71 0.12 0.12 rg
+14. 239.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 228.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 221.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 212.8899999999999864 Td
+(Customer login token field inconsistency — dead code fallback) Tj
+ET
+0.78 0.39 0. rg
+14. 198.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 187.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 180.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 171.8899999999999864 Td
+(The customer login route \(/api/auth/customer\) returns { accessToken: "..." }. LoginClient.tsx reads it as: customerData.token ||) Tj
+T* (customerData.accessToken || customerData.access_token. The primary check is customerData.token which is never set — the real field is) Tj
+T* (accessToken. The fallbacks are dead code from previous API versions.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 135.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 124.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 117.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 108.8899999999999864 Td
+(In LoginClient.tsx change customer token extraction to:) Tj
+T* (  const token = customerData.accessToken;) Tj
+T* (Remove the || customerData.token || customerData.access_token fallbacks.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 72.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 61.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+endstream
+endobj
+33 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 34 0 R
+>>
+endobj
+34 0 obj
+<<
+/Length 605
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -28. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(This is a latent bug: if anyone ever adds a token field to the customer login response with a different value, the wrong token will be used. Clean code) Tj
+T* (eliminates ambiguity.) Tj
+ET
+endstream
+endobj
+35 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 36 0 R
+>>
+endobj
+36 0 obj
+<<
+/Length 6609
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+530.4800000000000182 823.8899999999999864 Td
+(Page 10) Tj
+ET
+0.63 0.51 0. rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(8.  MEDIUM — Pages Without API Backing \(Placeholder / Stub Pages\)) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(/superadmin/deployments — no API, shows static/mock content) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(The deployments page renders hardcoded deployment cards with no real data. There is no /api/superadmin/deployments route.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 648.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 637.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 630.8899999999999864 567. -50. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 621.8899999999999864 Td
+(Either:) Tj
+T* (  A\) Build a real deployment tracking API that reads from a deployment log table) Tj
+T* (  B\) Mark the page as "Coming Soon" with a placeholder UI to avoid user confusion) Tj
+T* (  C\) Link to an external deployment dashboard \(Vercel, Railway\)) Tj
+ET
+0.24 0.24 0.27 rg
+14. 574.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 563.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 556.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 547.8899999999999864 Td
+(This page would show: recent deploys \(commit hash, branch, timestamp, status\), rollback controls, environment health. Without a real API this page) Tj
+T* (is misleading — it shows fake data that looks real.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 514.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 502.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 490.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 479.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 472.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 463.8899999999999864 Td
+(/superadmin/infrastructure — hardcoded mock system health data) Tj
+ET
+0.78 0.39 0. rg
+14. 449.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 438.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 431.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 422.8899999999999864 Td
+(The infrastructure monitoring page fetches no real data. CPU, memory, and uptime values are hardcoded.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 408.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 397.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 390.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 381.8899999999999864 Td
+(Connect to the existing /api/admin/health endpoint which already checks: database connectivity, Resend config, Stripe config, Redis config. Extend it) Tj
+T* (with real system metrics or integrate a monitoring tool \(Datadog, Better Uptime\).) Tj
+ET
+0.24 0.24 0.27 rg
+14. 356.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 345.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 338.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 329.8899999999999864 Td
+(Page: /superadmin/infrastructure — meant to show server health: database connection status, cache hit rate, active socket connections, memory) Tj
+T* (usage, job queue depth. The /api/admin/health route already has a partial implementation.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 296.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 284.8899999999999864 Td
+(Issue 3) Tj
+ET
+0.71 0.12 0.12 rg
+14. 272.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 261.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 254.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 245.8899999999999864 Td
+(/tech/diagnostics and /tech/manuals — no API, static pages) Tj
+ET
+0.78 0.39 0. rg
+14. 231.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 220.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 213.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 204.8899999999999864 Td
+(These tech tool pages have no backend data source.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 190.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 179.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 172.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 163.8899999999999864 Td
+(/tech/diagnostics: connect to /api/dtc-lookup which already exists for DTC code lookup.) Tj
+T* (/tech/manuals: either connect to a vehicle database API \(AllData, Mitchell1\) via an integration, or allow shops to upload PDFs via Cloudinary and) Tj
+T* (display them here.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 127.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 116.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 109.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 100.8899999999999864 Td
+(Tech diagnostics \(/tech/diagnostics\) is meant to give techs real-time vehicle diagnostic data. Manuals \(/tech/manuals\) gives access to repair) Tj
+T* (procedures. These are Growth+ features \(tied to photoCapture and advancedReporting flags\). Currently both pages render empty or with) Tj
+T* (placeholder text.) Tj
+ET
+endstream
+endobj
+37 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 38 0 R
+>>
+endobj
+38 0 obj
+<<
+/Length 6450
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+530.4800000000000182 823.8899999999999864 Td
+(Page 11) Tj
+ET
+0.78 0.39 0. rg
+0. 796.8899999999999864 595. -32. re
+f
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+1. g
+14. 775.8899999999999864 Td
+(9.  HIGH — LAUNCH READINESS \(What Still Must Be Done For 100% Client Go-Live\)) Tj
+ET
+0.94 0.94 0.97 rg
+14. 754.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 742.8899999999999864 Td
+(Issue 1) Tj
+ET
+0.71 0.12 0.12 rg
+14. 730.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 719.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 712.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 703.8899999999999864 Td
+(No formal Go/No-Go launch gate exists yet) Tj
+ET
+0.78 0.39 0. rg
+14. 689.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 678.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 671.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 662.8899999999999864 Td
+(Even if code issues are fixed, launch quality still fails when there is no final pass/fail gate. Teams end up launching with unknown regressions) Tj
+T* (because there is no owner-approved checklist that proves core journeys work in production-like conditions.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 637.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 626.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 619.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 610.8899999999999864 Td
+(Create a release gate document with 4 states per check: Not Started, In Progress, Passed, Failed. Require all checks to be Passed before launch.) Tj
+T* (Block launch if any CRITICAL/HIGH issue is Failed. Assign one owner per section \(Product, Engineering, QA, Operations\).) Tj
+ET
+0.24 0.24 0.27 rg
+14. 585.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 574.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 567.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 558.8899999999999864 Td
+(This should be a single source of truth for launch readiness. Suggested sections: Core User Journeys, Payments & Billing, Auth & Access,) Tj
+T* (Notifications, Data & Recovery, Security, Monitoring, Legal/Compliance, Support Readiness. Each section must have evidence links \(test run) Tj
+T* (screenshots, logs, Stripe test transaction IDs, webhook event IDs\).) Tj
+ET
+0.94 0.94 0.97 rg
+14. 514.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 502.8899999999999864 Td
+(Issue 2) Tj
+ET
+0.71 0.12 0.12 rg
+14. 490.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 479.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 472.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 463.8899999999999864 Td
+(Core end-to-end user journeys are not fully validated in one production-like run) Tj
+ET
+0.78 0.39 0. rg
+14. 449.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 438.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 431.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 422.8899999999999864 Td
+(Feature-level testing is not enough. Real users fail when multiple services interact \(auth + payments + email + DB + webhooks\). Without an) Tj
+T* (end-to-end pass, hidden integration bugs ship to customers.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 397.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 386.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 379.8899999999999864 567. -83. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 370.8899999999999864 Td
+(Run one full "golden path" test in staging and record results for each role:) Tj
+T* (1\) Shop signup -> approval -> subscription checkout) Tj
+T* (2\) Shop login -> create work order -> assign tech) Tj
+T* (3\) Tech login -> update job -> mark complete) Tj
+T* (4\) Customer receives notification -> approves work -> pays invoice) Tj
+T* (5\) Manager flow \(if enabled\) -> reports/schedule actions) Tj
+T* (Capture screenshots and IDs for every step.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 290.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 279.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 272.8899999999999864 567. -39. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 263.8899999999999864 Td
+(Pages and endpoints touched in this flow include: /auth/login, /shop/subscribe, /shop/admin, /workorders/new, /tech/home, /customer/workorders/[id],) Tj
+T* (/payment/success plus APIs such as /api/auth/shop, /api/stripe/checkout, /api/workorders, /api/workorders/[id], /api/workorders/payment,) Tj
+T* (/api/stripe/webhook. This proves the full business lifecycle works for paying customers.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 219.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 207.8899999999999864 Td
+(Issue 3) Tj
+ET
+0.71 0.12 0.12 rg
+14. 195.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 184.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 177.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 168.8899999999999864 Td
+(Production environment is not fully configured and verified) Tj
+ET
+0.78 0.39 0. rg
+14. 154.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 143.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 136.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 127.8899999999999864 Td
+(Missing or placeholder env vars cause silent partial outages \(emails off, Stripe off, sockets off\) that are often discovered only by live customers.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 113.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 102.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+endstream
+endobj
+39 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 40 0 R
+>>
+endobj
+40 0 obj
+<<
+/Length 6227
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -94. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(Build a deployment-time environment validation step:) Tj
+T* (1\) Add startup checks that fail hard for required vars in production) Tj
+T* (2\) Verify Stripe keys and plan IDs) Tj
+T* (3\) Verify RESEND_API_KEY/RESEND_FROM_EMAIL) Tj
+T* (4\) Verify VAPID keys) Tj
+T* (5\) Verify NEXT_PUBLIC_SOCKET_URL) Tj
+T* (6\) Verify DATABASE_URL vs DATABASE_URL_UNPOOLED) Tj
+T* (7\) Verify webhook secrets and callback URLs) Tj
+ET
+0.24 0.24 0.27 rg
+14. 696.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 685.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 678.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 669.8899999999999864 Td
+(Use /api/admin/health as a base and expand it into a launch blocker endpoint: if any required integration is missing, return status=failed with explicit) Tj
+T* (missing keys. Expose this on /admin/system-settings so you can confirm readiness before opening access to customers.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 636.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 624.8899999999999864 Td
+(Issue 4) Tj
+ET
+0.71 0.12 0.12 rg
+14. 612.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 601.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 594.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 585.8899999999999864 Td
+(Security readiness is incomplete for production customer traffic) Tj
+ET
+0.78 0.39 0. rg
+14. 571.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 560.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 553.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 544.8899999999999864 Td
+(Customer launch increases attack surface immediately. Missing middleware coverage, weak secret handling, or incomplete authorization checks can) Tj
+T* (expose sensitive data and cause account compromise.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 519.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 508.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 501.8899999999999864 567. -94. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 492.8899999999999864 Td
+(Before launch complete this security minimum:) Tj
+T* (1\) Add /superadmin/:path* to middleware matcher) Tj
+T* (2\) Enforce server-side role checks on all admin/superadmin routes) Tj
+T* (3\) Enforce subscription checks for manager/tech where required) Tj
+T* (4\) Confirm CSRF token validation on state-changing endpoints) Tj
+T* (5\) Rotate leaked/test secrets and generate fresh production secrets) Tj
+T* (6\) Verify rate limits on login/reset/payment endpoints) Tj
+T* (7\) Confirm no sensitive data is logged \(tokens, passwords, card data\)) Tj
+ET
+0.24 0.24 0.27 rg
+14. 401.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 390.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 383.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 374.8899999999999864 Td
+(Key endpoints to retest with unauthorized tokens: /api/admin/*, /api/superadmin/* \(if added\), /api/shop/*, /api/workorders/*, /api/payment/*,) Tj
+T* (/api/stripe/webhook. Expected behavior: 401/403 for unauthorized requests and no leakage in response payloads.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 341.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 329.8899999999999864 Td
+(Issue 5) Tj
+ET
+0.71 0.12 0.12 rg
+14. 317.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 306.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 299.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 290.8899999999999864 Td
+(Monitoring, alerting, and incident response are not fully operationalized) Tj
+ET
+0.78 0.39 0. rg
+14. 276.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 265.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 258.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 249.8899999999999864 Td
+(Without active monitoring, failures can run for hours before anyone notices. Early customers experience outages first and lose trust quickly.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 235.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 224.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 217.8899999999999864 567. -72. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 208.8899999999999864 Td
+(Set up launch-day monitoring baseline:) Tj
+T* (1\) Enable Sentry with real DSN and release tags) Tj
+T* (2\) Add uptime checks for app + API + socket server) Tj
+T* (3\) Add alerts for payment webhook failures, email failures, 5xx spikes) Tj
+T* (4\) Log correlation IDs for request tracing) Tj
+T* (5\) Create an incident runbook with owner contacts and rollback steps) Tj
+ET
+0.24 0.24 0.27 rg
+14. 139.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 128.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 121.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 112.8899999999999864 Td
+(Minimum pages/endpoints to monitor: landing and login pages, /shop/admin, /api/health, /api/admin/health, /api/stripe/webhook, /api/auth/* login) Tj
+T* (routes, and socket connection success rate. This gives immediate visibility into customer-facing failures.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 79.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 67.8899999999999864 Td
+(Issue 6) Tj
+ET
+endstream
+endobj
+41 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 42 0 R
+>>
+endobj
+42 0 obj
+<<
+/Length 6379
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.71 0.12 0.12 rg
+14. 796.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 785.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 778.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 769.8899999999999864 Td
+(Data integrity, backup, and recovery are not proven end-to-end) Tj
+ET
+0.78 0.39 0. rg
+14. 755.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 744.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 737.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 728.8899999999999864 Td
+(A product is not customer-ready unless you can recover from mistakes and outages. Backup jobs that were never restore-tested are effectively) Tj
+T* (untrusted.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 703.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 692.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 685.8899999999999864 567. -83. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 676.8899999999999864 Td
+(Run a backup/restore drill before launch:) Tj
+T* (1\) Create a backup snapshot) Tj
+T* (2\) Restore to a staging database) Tj
+T* (3\) Validate key tables: Shop, Subscription, WorkOrder, Customer, RefreshToken) Tj
+T* (4\) Confirm migrated schema version matches production) Tj
+T* (5\) Document RPO/RTO and communicate internally) Tj
+T* (Also verify webhook idempotency for Stripe events to prevent duplicate billing state changes.) Tj
+ET
+0.24 0.24 0.27 rg
+14. 596.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 585.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 578.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 569.8899999999999864 Td
+(The admin backup area and APIs \(e.g., /api/admin/backup where implemented\) should support operational recovery. In customer terms: this ensures) Tj
+T* (their work orders, invoices, and subscriptions are not lost after an incident.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 536.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 524.8899999999999864 Td
+(Issue 7) Tj
+ET
+0.71 0.12 0.12 rg
+14. 512.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 501.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 494.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 485.8899999999999864 Td
+(Customer trust/compliance artifacts are incomplete or not enforced in UX) Tj
+ET
+0.78 0.39 0. rg
+14. 471.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 460.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 453.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 444.8899999999999864 Td
+(Launching without visible policies and consent checkpoints increases legal and reputational risk, especially when handling customer PII and payment) Tj
+T* (data.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 419.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 408.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 401.8899999999999864 567. -72. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 392.8899999999999864 Td
+(Before launch verify:) Tj
+T* (1\) Privacy policy and Terms are current and linked in auth/signup flows) Tj
+T* (2\) Data retention and deletion process is documented) Tj
+T* (3\) Consent text exists for marketing notifications) Tj
+T* (4\) Billing/refund policy is visible on subscription pages) Tj
+T* (5\) Contact/support channels are visible in-app) Tj
+ET
+0.24 0.24 0.27 rg
+14. 323.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 312.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+0.96 0.96 0.97 rg
+14. 305.8899999999999864 567. -28. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 296.8899999999999864 Td
+(Relevant pages to verify: /pricing, /auth/register/*, /contact, customer signup/payment flows, and footer links in public-facing pages. These elements) Tj
+T* (reduce disputes and support burden after launch.) Tj
+ET
+0.94 0.94 0.97 rg
+14. 263.8899999999999864 567. -18. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+0.235 0.235 0.314 rg
+18. 251.8899999999999864 Td
+(Issue 8) Tj
+ET
+0.71 0.12 0.12 rg
+14. 239.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 228.8899999999999864 Td
+(&‘     P R O B L E M) Tj
+ET
+0.96 0.96 0.97 rg
+14. 221.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 212.8899999999999864 Td
+(Support and operations readiness for first customers is not finalized) Tj
+ET
+0.78 0.39 0. rg
+14. 198.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 187.8899999999999864 Td
+(?  WHY IT'S WRONG) Tj
+ET
+0.96 0.96 0.97 rg
+14. 180.8899999999999864 567. -17. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 171.8899999999999864 Td
+(Even if the app works, the first real users will need help. Without support workflows, issues stay unresolved and churn increases immediately.) Tj
+ET
+0.08 0.39 0.24 rg
+14. 157.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 146.8899999999999864 Td
+('     H O W   T O   F I X) Tj
+ET
+0.96 0.96 0.97 rg
+14. 139.8899999999999864 567. -72. re
+f
+BT
+/F1 8.5 Tf
+9.7749999999999986 TL
+0.118 0.118 0.157 rg
+19. 130.8899999999999864 Td
+(Create first-30-days support operations:) Tj
+T* (1\) Define support SLA targets \(response and resolution\)) Tj
+T* (2\) Create triage labels \(billing, auth, work order, mobile, integration\)) Tj
+T* (3\) Prepare canned responses and troubleshooting steps) Tj
+T* (4\) Ensure admin tools needed for support are functional) Tj
+T* (5\) Add account recovery and password-reset fallback procedures) Tj
+ET
+0.24 0.24 0.27 rg
+14. 61.8899999999999864 567. -16. re
+f
+BT
+/F2 8 Tf
+9.1999999999999993 TL
+1. g
+19. 50.8899999999999864 Td
+(?  EXPLANATION) Tj
+ET
+endstream
+endobj
+43 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 44 0 R
+>>
+endobj
+44 0 obj
+<<
+/Length 644
+>>
+stream
+0.3 w
+0.78 0.78 0.82 RG
+0.07 0.16 0.28 rg
+0. 841.8899999999999864 595. -28. re
+f
+BT
+/F2 9 Tf
+10.3499999999999996 TL
+1. g
+14. 823.8899999999999864 Td
+(FixTray — Full System Audit Report) Tj
+ET
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+534.8799999999999955 823.8899999999999864 Td
+(Page ?) Tj
+ET
+0.96 0.96 0.97 rg
+14. 796.8899999999999864 567. -28. re
+f
+BT
+/F1 8 Tf
+9.1999999999999993 TL
+1. g
+19. 787.8899999999999864 Td
+(At minimum, support staff should be able to verify account status, subscription state, payment events, and login/session issues quickly using admin) Tj
+T* (pages and logs. This is essential for retaining early customers.) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R 5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R 29 0 R 31 0 R 33 0 R 35 0 R 37 0 R 39 0 R 41 0 R 43 0 R ]
+/Count 21
+>>
+endobj
+45 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+46 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+47 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+48 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+49 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+50 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+51 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+52 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+53 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+54 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+55 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+56 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+57 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+58 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 45 0 R
+/F2 46 0 R
+/F3 47 0 R
+/F4 48 0 R
+/F5 49 0 R
+/F6 50 0 R
+/F7 51 0 R
+/F8 52 0 R
+/F9 53 0 R
+/F10 54 0 R
+/F11 55 0 R
+/F12 56 0 R
+/F13 57 0 R
+/F14 58 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+59 0 obj
+<<
+/Producer (jsPDF 4.2.1)
+/CreationDate (D:20260425012134-04'00')
+>>
+endobj
+60 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 61
+0000000000 65535 f 
+0000114633 00000 n 
+0000116593 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000003776 00000 n 
+0000003913 00000 n 
+0000011911 00000 n 
+0000012048 00000 n 
+0000017804 00000 n 
+0000017942 00000 n 
+0000023518 00000 n 
+0000023657 00000 n 
+0000027095 00000 n 
+0000027234 00000 n 
+0000033974 00000 n 
+0000034113 00000 n 
+0000040931 00000 n 
+0000041070 00000 n 
+0000047817 00000 n 
+0000047956 00000 n 
+0000054678 00000 n 
+0000054817 00000 n 
+0000055612 00000 n 
+0000055751 00000 n 
+0000062360 00000 n 
+0000062499 00000 n 
+0000066404 00000 n 
+0000066543 00000 n 
+0000073095 00000 n 
+0000073234 00000 n 
+0000079530 00000 n 
+0000079669 00000 n 
+0000086569 00000 n 
+0000086708 00000 n 
+0000087365 00000 n 
+0000087504 00000 n 
+0000094166 00000 n 
+0000094305 00000 n 
+0000100808 00000 n 
+0000100947 00000 n 
+0000107227 00000 n 
+0000107366 00000 n 
+0000113798 00000 n 
+0000113937 00000 n 
+0000114828 00000 n 
+0000114954 00000 n 
+0000115085 00000 n 
+0000115219 00000 n 
+0000115357 00000 n 
+0000115481 00000 n 
+0000115610 00000 n 
+0000115742 00000 n 
+0000115878 00000 n 
+0000116006 00000 n 
+0000116133 00000 n 
+0000116262 00000 n 
+0000116395 00000 n 
+0000116497 00000 n 
+0000116846 00000 n 
+0000116932 00000 n 
+trailer
+<<
+/Size 61
+/Root 60 0 R
+/Info 59 0 R
+/ID [ <AF8D6CA5CA74F2F98F1653267FF88645> <AF8D6CA5CA74F2F98F1653267FF88645> ]
+>>
+startxref
+117036
+%%EOF

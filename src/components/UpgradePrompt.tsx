@@ -3,6 +3,7 @@ import { FaCheck } from 'react-icons/fa';
 
 import { useState, useEffect } from 'react';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';
+import { PLAN_AUDIENCE, PLAN_MARKETING_HIGHLIGHTS, getPlanCapacityLine } from '@/lib/subscription-copy';
 
 interface UpgradePromptProps {
   shopId: string;
@@ -134,12 +135,12 @@ export default function UpgradePrompt({
                         <p className="text-2xl font-bold text-blue-600 mt-1">
                           ${planDetails.price}/mo
                         </p>
+                        <p className="mt-2 text-xs text-gray-500">{PLAN_AUDIENCE[plan]}</p>
                         <ul className="text-sm text-gray-600 mt-3 space-y-1">
-                          <li>Up to {planDetails.maxUsers === -1 ? 'unlimited' : planDetails.maxUsers} users</li>
-                          <li>Up to {planDetails.maxShops === -1 ? 'unlimited' : planDetails.maxShops} shops</li>
-                          {planDetails.features.inventory && <li><FaCheck style={{marginRight:4}} /> Inventory Management</li>}
-                          {planDetails.features.payroll && <li><FaCheck style={{marginRight:4}} /> Payroll Automation</li>}
-                          {planDetails.features.advancedReporting && <li><FaCheck style={{marginRight:4}} /> Advanced Reporting</li>}
+                          <li>{getPlanCapacityLine(plan)}</li>
+                          {PLAN_MARKETING_HIGHLIGHTS[plan].slice(1, 4).map((item) => (
+                            <li key={item}><FaCheck style={{marginRight:4}} /> {item}</li>
+                          ))}
                         </ul>
                       </div>
                     </div>

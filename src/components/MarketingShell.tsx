@@ -140,7 +140,7 @@ export default function MarketingShell({ children }: MarketingShellProps) {
           }}
         >
           <span>© 2026 FixTray. All rights reserved.</span>
-          <span>Built for multi-shop operations and modern service teams.</span>
+          <span>Built for owner-operators, growing shop teams, and multi-shop service groups.</span>
         </div>
       </footer>
     </div>
