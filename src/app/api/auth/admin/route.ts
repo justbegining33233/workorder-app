@@ -12,6 +12,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Username and password are required' }, { status: 400 });
     }
 
+    const normalizedUsername = String(username).trim();
+
     // Lazy-load runtime-sensitive modules
     const prisma = (await import('@/lib/prisma')).default;
     const bcryptMod = await import('bcrypt');
@@ -19,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     // Rate limiting - prevent brute force attacks
     const clientIP = getClientIP(request);
-    const rateLimitKey = `admin_login:${clientIP}:${username}`;
+    const rateLimitKey = `admin_login:${clientIP}:${normalizedUsername.toLowerCase()}`;
     const rateLimit = await checkRateLimit(rateLimitKey);
     
     if (!rateLimit.success) {
@@ -29,8 +31,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find admin by username
-    const admin = await prisma.admin.findUnique({ where: { username } });
+    // Find admin by username (trimmed), with a case-insensitive fallback
+    let admin = await prisma.admin.findUnique({ where: { username: normalizedUsername } });
+    if (!admin) {
+      const admins = await prisma.admin.findMany({
+        select: { id: true, username: true, password: true, email: true, isSuperAdmin: true },
+      });
+      admin = admins.find((a) => a.username.toLowerCase() === normalizedUsername.toLowerCase()) || null;
+    }
 
     if (!admin) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
