@@ -349,6 +349,10 @@ function ShopSettingsPageContent() {
     }
   };
 
+  const currentPlan: SubscriptionPlan = subscription?.plan && subscription.plan in PLAN_DETAILS
+    ? (subscription.plan as SubscriptionPlan)
+    : 'starter';
+
   useEffect(() => {
     if (!user?.shopId || settingsLoaded) return;
     setShopId(user.shopId);
@@ -1290,8 +1294,8 @@ function ShopSettingsPageContent() {
 
                 {/* Current Plan Card */}
                 <div style={{
-                  background: `linear-gradient(135deg, ${PLAN_DETAILS[subscription?.plan || 'starter']?.color}20 0%, rgba(0,0,0,0.3) 100%)`,
-                  border: `1px solid ${PLAN_DETAILS[subscription?.plan || 'starter']?.color}40`,
+                  background: `linear-gradient(135deg, ${PLAN_DETAILS[currentPlan].color}20 0%, rgba(0,0,0,0.3) 100%)`,
+                  border: `1px solid ${PLAN_DETAILS[currentPlan].color}40`,
                   borderRadius: 16,
                   padding: 24,
                   marginBottom: 32
@@ -1302,9 +1306,9 @@ function ShopSettingsPageContent() {
                         <span style={{
                           fontSize:24,
                           fontWeight:700,
-                          color: PLAN_DETAILS[subscription?.plan || 'starter']?.color
+                          color: PLAN_DETAILS[currentPlan].color
                         }}>
-                          {PLAN_DETAILS[subscription?.plan || 'starter']?.name} Plan
+                          {PLAN_DETAILS[currentPlan].name} Plan
                         </span>
                         <span style={{
                           padding:'4px 12px',
@@ -1323,7 +1327,7 @@ function ShopSettingsPageContent() {
                         </span>
                       </div>
                       <div style={{color:'#e5e7eb', fontSize:32, fontWeight:700, marginBottom:4}}>
-                        ${PLAN_DETAILS[subscription?.plan || 'starter']?.price}
+                        ${PLAN_DETAILS[currentPlan].price}
                         <span style={{fontSize:16, fontWeight:400, color:'#9aa3b2'}}>/month</span>
                       </div>
                       <div style={{color:'#9aa3b2', fontSize:14}}>
@@ -1390,7 +1394,7 @@ function ShopSettingsPageContent() {
                   <div style={{marginTop:24, paddingTop:24, borderTop:'1px solid rgba(255,255,255,0.1)'}}>
                     <div style={{color:'#9aa3b2', fontSize:13, marginBottom:12}}>Your plan includes:</div>
                     <div style={{display:'flex', flexWrap:'wrap', gap:12}}>
-                      {PLAN_DETAILS[subscription?.plan || 'starter']?.features.map((feature, i) => (
+                      {PLAN_DETAILS[currentPlan].features.map((feature, i) => (
                         <span key={i} style={{
                           padding:'6px 12px',
                           background:'rgba(255,255,255,0.05)',

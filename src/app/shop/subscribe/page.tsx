@@ -83,7 +83,7 @@ export default function ShopSubscribePage() {
           {PLAN_ORDER.map((planKey) => {
             const plan = SUBSCRIPTION_PLANS[planKey];
             const color = PLAN_COLORS[planKey];
-            const isSelected = selectedPlan === plan.key;
+            const isSelected = selectedPlan === planKey;
             return (
               <div
                 key={planKey}
