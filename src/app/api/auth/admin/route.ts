@@ -34,9 +34,7 @@ export async function POST(request: NextRequest) {
     // Find admin by username (trimmed), with a case-insensitive fallback
     let admin = await prisma.admin.findUnique({ where: { username: normalizedUsername } });
     if (!admin) {
-      const admins = await prisma.admin.findMany({
-        select: { id: true, username: true, password: true, email: true, isSuperAdmin: true },
-      });
+      const admins = await prisma.admin.findMany();
       admin = admins.find((a) => a.username.toLowerCase() === normalizedUsername.toLowerCase()) || null;
     }
 
