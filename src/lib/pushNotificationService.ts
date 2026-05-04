@@ -155,7 +155,7 @@ class PushNotificationService {
         if (data.workOrderId) {
           // Navigate to work order
           setTimeout(() => {
-            window.location.href = `/workorders/${data.workOrderId}`;
+            window.location.href = `/customer/workorders/${data.workOrderId}`;
           }, 1000);
         }
         break;
@@ -258,7 +258,7 @@ class PushNotificationService {
       data: {
         workOrderId,
         type: 'workorder',
-        actionUrl: `/workorders/${workOrderId}`,
+        actionUrl: `/tech/home`,
       },
       priority: 'high',
     });
@@ -271,7 +271,7 @@ class PushNotificationService {
       data: {
         workOrderId,
         type: 'workorder',
-        actionUrl: `/workorders/${workOrderId}`,
+        actionUrl: `/customer/workorders/${workOrderId}`,
       },
     });
   }
@@ -283,7 +283,7 @@ class PushNotificationService {
       data: {
         workOrderId,
         type: 'workorder',
-        actionUrl: `/workorders/${workOrderId}`,
+        actionUrl: `/customer/workorders/${workOrderId}`,
       },
       priority: 'high',
     });

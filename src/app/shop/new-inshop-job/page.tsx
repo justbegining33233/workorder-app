@@ -10,7 +10,7 @@ import { FaArrowLeft, FaBuilding } from 'react-icons/fa';
 
 export default function ShopNewInShopJob() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth(['shop']);
+  const { user, isLoading } = useRequireAuth(['shop', 'tech']);
   const [userName, setUserName] = useState('');
   const [formData, setFormData] = useState({
     customerName: '',

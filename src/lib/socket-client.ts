@@ -12,11 +12,10 @@ class SocketClient {
 
   private resolveSocketUrl(): string | null {
     if (!this.isRealtimeEnabled()) return null;
-    if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
-      return window.location.origin;
-    }
-    return null;
+    // Require an explicit socket server URL — never fall back to window.location.origin.
+    // The standalone socket-server.js must be deployed separately (Railway/Render/Fly.io)
+    // and its URL set as NEXT_PUBLIC_SOCKET_URL.
+    return process.env.NEXT_PUBLIC_SOCKET_URL || null;
   }
 
   connect(token: string) {
@@ -31,11 +30,10 @@ class SocketClient {
     }
 
     this.socket = io(socketUrl, {
-      path: '/api/socket',
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 1,
-      timeout: 10000, // Increased from 5000 to 10000ms
+      timeout: 10000,
     });
 
     this.setupEventHandlers();

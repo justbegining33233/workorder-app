@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { requireAuth } from '@/lib/middleware';
 import { validateCsrf } from '@/lib/csrf';
 import { sendWorkOrderCreatedEmail } from '@/lib/emailService';
-import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
+import { rateLimit, rateLimitConfigs } from '@/lib/rateLimit';
 import { sanitizeObject } from '@/lib/sanitize';
 // Enterprise features
 import { apiVersioning } from '@/lib/apiVersioning';
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Fields (repairs, maintenance, partsMaterials, pictures, location, estimate,
-    // techLabor, partsUsed, workPhotos, completion) are now Prisma Json? — returned
+    // techLabor, partsUsed, workPhotos, completion) are now Prisma Json? â€” returned
     // as native JS objects/arrays, no JSON.parse needed.
     const workOrders = rawWorkOrders.map(wo => ({
       ...wo,
@@ -211,29 +211,75 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const auth = requireAuth(request);
   if (auth instanceof NextResponse) return auth;
-  
-  if (auth.role !== 'customer') {
-    return NextResponse.json({ error: 'Only customers can create work orders' }, { status: 403 });
+
+  const ALLOWED_CREATOR_ROLES = ['customer', 'shop', 'tech', 'manager', 'admin'];
+  if (!ALLOWED_CREATOR_ROLES.includes(auth.role)) {
+    return NextResponse.json({ error: 'Unauthorized to create work orders' }, { status: 403 });
   }
   // If request uses cookie-based auth (no Authorization header), require CSRF
   if (!request.headers.get('authorization')) {
     const ok = await validateCsrf(request);
     if (!ok) return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
   }
-  
+
   const rateLimitResult = await rateLimit(rateLimitConfigs.api)(request);
   if (rateLimitResult) return rateLimitResult;
-  
+
   try {
     const data = await request.json();
     const sanitizedData = sanitizeObject(data);
-    
+
+    let customerId: string;
+    let shopId: string;
+
+    if (auth.role === 'customer') {
+      // Customer creating their own work order
+      customerId = auth.id;
+      shopId = sanitizedData.shopId;
+    } else {
+      // Shop / tech / manager / admin creating on behalf of a customer
+      shopId = auth.role === 'shop' ? auth.id : (sanitizedData.shopId || auth.shopId);
+      if (!shopId) {
+        return NextResponse.json({ error: 'shopId is required' }, { status: 400 });
+      }
+
+      if (sanitizedData.customerId) {
+        customerId = sanitizedData.customerId;
+      } else if (sanitizedData.customerEmail) {
+        const nameParts = (sanitizedData.customerName || 'Walk-in Customer').split(' ');
+        const firstName = nameParts[0] || 'Walk-in';
+        const lastName = nameParts.slice(1).join(' ') || 'Customer';
+        const bcrypt = await import('bcrypt');
+        const tempPassword = await bcrypt.hash(crypto.randomUUID(), 10);
+
+        const customer = await prisma.customer.upsert({
+          where: { email: sanitizedData.customerEmail },
+          create: {
+            email: sanitizedData.customerEmail,
+            firstName,
+            lastName,
+            phone: sanitizedData.customerPhone || null,
+            password: tempPassword,
+          },
+          update: {
+            ...(sanitizedData.customerPhone ? { phone: sanitizedData.customerPhone } : {}),
+          },
+        });
+        customerId = customer.id;
+      } else {
+        return NextResponse.json(
+          { error: 'customerEmail is required when creating a work order on behalf of a customer' },
+          { status: 400 }
+        );
+      }
+    }
+
     const workOrder = await prisma.workOrder.create({
       data: {
-        customerId: auth.id,
-        shopId: sanitizedData.shopId,
-        vehicleType: sanitizedData.vehicleType,
-        serviceLocation: sanitizedData.serviceLocationType || 'in-shop',
+        customerId,
+        shopId,
+        vehicleType: sanitizedData.vehicleType || 'personal-vehicle',
+        serviceLocation: sanitizedData.serviceLocationType || sanitizedData.serviceLocation || 'in-shop',
         repairs: sanitizedData.services?.repairs || [],
         maintenance: sanitizedData.services?.maintenance || [],
         partsMaterials: sanitizedData.partsMaterials,
@@ -248,14 +294,14 @@ export async function POST(request: NextRequest) {
         shop: true,
       },
     });
-    
+
     // Send email notification
     sendWorkOrderCreatedEmail(workOrder.customer.email, workOrder.id).catch(console.error);
-    
+
     // Create notification
     await prisma.notification.create({
       data: {
-        customerId: auth.id,
+        customerId,
         type: 'workorder',
         title: 'Work Order Created',
         message: `Your work order ${workOrder.id} has been created successfully`,
@@ -263,10 +309,12 @@ export async function POST(request: NextRequest) {
         deliveryMethod: 'in-app',
       },
     });
-    
+
     return NextResponse.json(workOrder, { status: 201 });
   } catch (error) {
     console.error('Error creating work order:', error);
     return NextResponse.json({ error: 'Failed to create work order' }, { status: 500 });
   }
 }
+
+

@@ -54,7 +54,7 @@ export default function TechnicianNavigation({
     },
     {
       name: 'My Jobs',
-      href: '/workorders/list',
+      href: '/tech/home',
       icon: FaClipboardList,
       badge: activeJobs > 0 ? activeJobs : undefined,
       description: 'Active service calls'
@@ -151,7 +151,7 @@ export default function TechnicianNavigation({
 
               {/* Quick Actions */}
               <Link
-                href={"/workorders/list" as Route}
+                  href={"/tech/home" as Route}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 View Jobs

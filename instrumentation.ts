@@ -1,12 +1,19 @@
 import * as Sentry from "@sentry/nextjs";
+import { registerOTel } from "@vercel/otel";
 
-export async function register() {
+export function register() {
+  // OpenTelemetry — initialise first so spans are available before Sentry loads
+  registerOTel({
+    serviceName: process.env.OTEL_SERVICE_NAME || 'fixtray-app',
+  });
+
+  // Sentry — error tracking + performance monitoring (wraps OTel traces)
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('./sentry.server.config');
+    import('./sentry.server.config');
   }
 
   if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('./sentry.edge.config');
+    import('./sentry.edge.config');
   }
 }
 

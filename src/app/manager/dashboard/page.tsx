@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -135,7 +135,7 @@ export default function ManagerDashboard() {
               icon={<FaPlus />}
               title="New Work Order"
               description="Create a new work order for a customer"
-              href="/workorders/new"
+              href="/shop/new-inshop-job"
               color="#22c55e"
             />
             <QuickActionCard
@@ -261,3 +261,4 @@ export default function ManagerDashboard() {
     </div>
   );
 }
+

@@ -1,287 +1,212 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { query } from '@/lib/db';
+﻿import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
-interface SecurityEvent {
-  id?: string;
-  userId?: string;
-  eventType: string;
-  details: any;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  ipAddress?: string;
-  userAgent?: string;
-  createdAt?: Date;
+const VALID_SEVERITIES = ['low', 'medium', 'high', 'critical'] as const;
+type Severity = typeof VALID_SEVERITIES[number];
+
+// Security events are stored as AuditLog rows with:
+//   action     = "security:<eventType>"
+//   targetType = severity level  (repurposed for filtering)
+//   adminId    = userId (or "system" for anonymous events)
+//   details    = JSON string of the caller-supplied details object
+
+function securityAction(eventType: string) {
+  return `security:${eventType}`;
 }
 
-function isMissingSecurityEventsTable(error: unknown): boolean {
-  const message = String((error as { message?: string })?.message || error || '').toLowerCase();
-  return message.includes('security_events') && (
-    message.includes('does not exist') ||
-    message.includes('undefined table') ||
-    message.includes('no such table')
-  );
-}
-
-// POST /api/security/events - Log security event
+// POST /api/security/events â€” Log a security event
 export async function POST(request: NextRequest) {
   try {
-    const body: SecurityEvent = await request.json();
-    const { userId, eventType, details, severity } = body;
+    const body = await request.json();
+    const { userId, eventType, details, severity, shopId } = body;
 
     if (!eventType || !severity) {
-      return NextResponse.json(
-        { error: 'Event type and severity are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Event type and severity are required' }, { status: 400 });
+    }
+    if (!VALID_SEVERITIES.includes(severity as Severity)) {
+      return NextResponse.json({ error: 'Invalid severity level' }, { status: 400 });
     }
 
-    // Validate severity level
-    const validSeverities = ['low', 'medium', 'high', 'critical'];
-    if (!validSeverities.includes(severity)) {
-      return NextResponse.json(
-        { error: 'Invalid severity level' },
-        { status: 400 }
-      );
-    }
-
-    // Get client information
-    const ipAddress = request.headers.get('x-forwarded-for') ||
-                     request.headers.get('x-real-ip') ||
-                     'unknown';
-
+    const ipAddress =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
-    // Insert security event
-    const eventResult = await query(
-      `INSERT INTO security_events (
-        user_id, event_type, details, severity, ip_address, user_agent, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, NOW())
-      RETURNING id, created_at`,
-      [
-        userId || null,
-        eventType,
-        details ? JSON.stringify(details) : null,
-        severity,
+    const log = await prisma.auditLog.create({
+      data: {
+        adminId:    userId || 'system',
+        action:     securityAction(eventType),
+        targetType: severity,           // severity stored here for fast filtering
+        details:    details ? JSON.stringify(details) : null,
         ipAddress,
         userAgent,
-      ]
-    );
+        shopId:     shopId || null,
+      },
+    });
 
-    const eventId = eventResult.rows[0].id;
-    const createdAt = eventResult.rows[0].created_at;
-
-    // Check for suspicious activity patterns
+    // Detect suspicious patterns for high/critical events (fire-and-forget)
     if (severity === 'high' || severity === 'critical') {
-      await checkForSecurityThreats(userId, eventType, details);
+      checkForSecurityThreats(userId, eventType, details, ipAddress).catch(() => {});
     }
 
     return NextResponse.json({
-      success: true,
-      eventId,
-      createdAt,
-      message: 'Security event logged successfully',
+      success:   true,
+      eventId:   log.id,
+      createdAt: log.createdAt,
+      message:   'Security event logged successfully',
     });
-
   } catch (error) {
     console.error('Security event logging error:', error);
-    if (isMissingSecurityEventsTable(error)) {
-      return NextResponse.json({
-        success: true,
-        skipped: true,
-        message: 'Security events table is not available in this environment',
-      });
-    }
-    return NextResponse.json(
-      { error: 'Failed to log security event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to log security event' }, { status: 500 });
   }
 }
 
-// GET /api/security/events - Get security events
+// GET /api/security/events â€” Query security events
+// Query params: userId, eventType, severity, shopId, limit, offset
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const eventType = searchParams.get('eventType');
-    const severity = searchParams.get('severity');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const userId    = searchParams.get('userId')    || undefined;
+    const eventType = searchParams.get('eventType') || undefined;
+    const severity  = searchParams.get('severity')  || undefined;
+    const shopId    = searchParams.get('shopId')    || undefined;
+    const limit     = Math.min(parseInt(searchParams.get('limit')  || '50'),  200);
+    const offset    = Math.max(parseInt(searchParams.get('offset') || '0'), 0);
 
-    // Build query conditions
-    const whereConditions = [];
-    const queryParams = [];
-    let paramIndex = 1;
+    const where = {
+      action:     eventType ? securityAction(eventType) : { startsWith: 'security:' },
+      ...(userId    && { adminId:    userId }),
+      ...(severity  && { targetType: severity }),
+      ...(shopId    && { shopId }),
+    };
 
-    if (userId) {
-      whereConditions.push(`user_id = $${paramIndex}`);
-      queryParams.push(userId);
-      paramIndex++;
-    }
+    const [logs, total] = await Promise.all([
+      prisma.auditLog.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take:    limit,
+        skip:    offset,
+      }),
+      prisma.auditLog.count({ where }),
+    ]);
 
-    if (eventType) {
-      whereConditions.push(`event_type = $${paramIndex}`);
-      queryParams.push(eventType);
-      paramIndex++;
-    }
-
-    if (severity) {
-      whereConditions.push(`severity = $${paramIndex}`);
-      queryParams.push(severity);
-      paramIndex++;
-    }
-
-    const whereClause = whereConditions.length > 0
-      ? `WHERE ${whereConditions.join(' AND ')}`
-      : '';
-
-    // Get events
-    const eventsResult = await query(
-      `SELECT id, user_id, event_type, details, severity, ip_address, user_agent, created_at
-       FROM security_events
-       ${whereClause}
-       ORDER BY created_at DESC
-       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
-      [...queryParams, limit, offset]
-    );
-
-    // Get total count
-    const countResult = await query(
-      `SELECT COUNT(*) as total FROM security_events ${whereClause}`,
-      queryParams
-    );
-
-    const events = eventsResult.rows.map((event: Record<string, unknown>) => ({
-      id: event.id,
-      userId: event.user_id,
-      eventType: event.event_type,
-      details: event.details ? JSON.parse(event.details as string) : null,
-      severity: event.severity,
-      ipAddress: event.ip_address,
-      userAgent: event.user_agent,
-      createdAt: event.created_at,
+    const events = logs.map(log => ({
+      id:        log.id,
+      userId:    log.adminId === 'system' ? null : log.adminId,
+      eventType: log.action.replace(/^security:/, ''),
+      severity:  log.targetType,
+      details:   log.details ? JSON.parse(log.details) : null,
+      ipAddress: log.ipAddress,
+      userAgent: log.userAgent,
+      shopId:    log.shopId,
+      createdAt: log.createdAt,
     }));
 
-    return NextResponse.json({
-      events,
-      total: parseInt(countResult.rows[0].total),
-      limit,
-      offset,
-    });
-
+    return NextResponse.json({ events, total, limit, offset });
   } catch (error) {
     console.error('Security events fetch error:', error);
-    if (isMissingSecurityEventsTable(error)) {
-      return NextResponse.json({ events: [], total: 0, limit: 50, offset: 0, skipped: true });
-    }
-    return NextResponse.json(
-      { error: 'Failed to fetch security events' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch security events' }, { status: 500 });
   }
 }
 
-// Check for security threats and patterns
-async function checkForSecurityThreats(userId: string | undefined, eventType: string, details: any) {
-  try {
-    // Check for multiple failed login attempts
-    if (eventType === 'login_failed' && userId) {
-      const recentFailures = await query(
-        `SELECT COUNT(*) as count FROM security_events
-         WHERE user_id = $1 AND event_type = 'login_failed'
-         AND created_at > NOW() - INTERVAL '15 minutes'`,
-        [userId]
-      );
-
-      if (recentFailures.rows[0].count >= 5) {
-        // Log potential brute force attack
-        await query(
-          'INSERT INTO security_events (user_id, event_type, details, severity, created_at) VALUES ($1, $2, $3, $4, NOW())',
-          [userId, 'potential_brute_force', { failureCount: recentFailures.rows[0].count }, 'critical']
-        );
-
-        // Could trigger additional security measures like account lockout
-      }
-    }
-
-    // Check for suspicious login locations
-    if (eventType === 'login_success' && userId && details?.ipAddress) {
-      // Get recent login locations
-      const recentLogins = await query(
-        `SELECT DISTINCT ip_address FROM security_events
-         WHERE user_id = $1 AND event_type = 'login_success'
-         AND created_at > NOW() - INTERVAL '30 days'
-         ORDER BY created_at DESC LIMIT 10`,
-        [userId]
-      );
-
-      const knownIPs = recentLogins.rows.map((row: Record<string, unknown>) => row.ip_address);
-      if (!knownIPs.includes(details.ipAddress)) {
-        // Log suspicious login location
-        await query(
-          'INSERT INTO security_events (user_id, event_type, details, severity, created_at) VALUES ($1, $2, $3, $4, NOW())',
-          [userId, 'suspicious_login_location', { newIP: details.ipAddress, knownIPs }, 'high']
-        );
-      }
-    }
-
-    // Check for rapid password changes
-    if (eventType === 'password_changed' && userId) {
-      const recentChanges = await query(
-        `SELECT COUNT(*) as count FROM security_events
-         WHERE user_id = $1 AND event_type = 'password_changed'
-         AND created_at > NOW() - INTERVAL '1 hour'`,
-        [userId]
-      );
-
-      if (recentChanges.rows[0].count >= 3) {
-        await query(
-          'INSERT INTO security_events (user_id, event_type, details, severity, created_at) VALUES ($1, $2, $3, $4, NOW())',
-          [userId, 'rapid_password_changes', { changeCount: recentChanges.rows[0].count }, 'high']
-        );
-      }
-    }
-
-  } catch (error) {
-    console.error('Security threat check failed:', error);
-  }
-}
-
-// DELETE /api/security/events - Delete old security events (cleanup)
+// DELETE /api/security/events?daysOld=90 â€” Prune old low/medium events
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const daysOld = parseInt(searchParams.get('daysOld') || '90');
 
     if (daysOld < 30) {
-      return NextResponse.json(
-        { error: 'Cannot delete events less than 30 days old' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Cannot delete events less than 30 days old' }, { status: 400 });
     }
 
-    // Delete old events (keep critical events longer)
-    const deleteResult = await query(
-      `DELETE FROM security_events
-       WHERE created_at < NOW() - INTERVAL '${daysOld} days'
-       AND severity IN ('low', 'medium')
-       AND event_type NOT IN ('device_wiped', 'account_locked', 'admin_action')`,
-      []
-    );
-
-    return NextResponse.json({
-      success: true,
-      deletedCount: deleteResult.rowCount,
-      message: `Deleted ${deleteResult.rowCount} old security events`,
+    const cutoff = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000);
+    const { count } = await prisma.auditLog.deleteMany({
+      where: {
+        action:     { startsWith: 'security:' },
+        NOT: { action: { in: ['security:device_wiped', 'security:account_locked', 'security:admin_action'] } },
+        targetType: { in: ['low', 'medium'] },
+        createdAt:  { lt: cutoff },
+      },
     });
 
+    return NextResponse.json({
+      success:      true,
+      deletedCount: count,
+      message:      `Deleted ${count} old security events`,
+    });
   } catch (error) {
     console.error('Security events cleanup error:', error);
-    if (isMissingSecurityEventsTable(error)) {
-      return NextResponse.json({ success: true, deletedCount: 0, skipped: true });
+    return NextResponse.json({ error: 'Failed to cleanup security events' }, { status: 500 });
+  }
+}
+
+// â”€â”€â”€ Internal threat-detection helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+async function checkForSecurityThreats(
+  userId: string | undefined,
+  eventType: string,
+  details: unknown,
+  ipAddress: string,
+) {
+  const since15m = new Date(Date.now() - 15 * 60 * 1000);
+  const since1h  = new Date(Date.now() - 60 * 60 * 1000);
+  const since30d = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+  // Brute-force detection: â‰¥5 failed logins in 15 minutes
+  if (eventType === 'login_failed' && userId) {
+    const failures = await prisma.auditLog.count({
+      where: { adminId: userId, action: securityAction('login_failed'), createdAt: { gt: since15m } },
+    });
+    if (failures >= 5) {
+      await prisma.auditLog.create({
+        data: {
+          adminId:    userId,
+          action:     securityAction('potential_brute_force'),
+          targetType: 'critical',
+          details:    JSON.stringify({ failureCount: failures }),
+          ipAddress,
+        },
+      });
     }
-    return NextResponse.json(
-      { error: 'Failed to cleanup security events' },
-      { status: 500 }
-    );
+  }
+
+  // New-location detection: login from an IP not seen in the last 30 days
+  if (eventType === 'login_success' && userId) {
+    const recentLogs = await prisma.auditLog.findMany({
+      where: { adminId: userId, action: securityAction('login_success'), createdAt: { gt: since30d } },
+      select: { ipAddress: true },
+      distinct: ['ipAddress'],
+    });
+    const knownIPs = recentLogs.map(l => l.ipAddress).filter(Boolean);
+    if (knownIPs.length > 0 && !knownIPs.includes(ipAddress)) {
+      await prisma.auditLog.create({
+        data: {
+          adminId:    userId,
+          action:     securityAction('suspicious_login_location'),
+          targetType: 'high',
+          details:    JSON.stringify({ newIP: ipAddress, knownIPs }),
+          ipAddress,
+        },
+      });
+    }
+  }
+
+  // Rapid password changes: â‰¥3 in 1 hour
+  if (eventType === 'password_changed' && userId) {
+    const changes = await prisma.auditLog.count({
+      where: { adminId: userId, action: securityAction('password_changed'), createdAt: { gt: since1h } },
+    });
+    if (changes >= 3) {
+      await prisma.auditLog.create({
+        data: {
+          adminId:    userId,
+          action:     securityAction('rapid_password_changes'),
+          targetType: 'high',
+          details:    JSON.stringify({ changeCount: changes }),
+          ipAddress,
+        },
+      });
+    }
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { BiometricAuth } from '@capacitor/biometric-auth';
+import { BiometricAuth, BiometryType, BiometryErrorType } from '@aparajita/capacitor-biometric-auth';
 import { FaFingerprint, FaLock, FaCheckCircle, FaTimesCircle, FaShieldAlt } from 'react-icons/fa';
 
 interface BiometricLoginProps {
@@ -13,12 +13,6 @@ interface BiometricLoginProps {
   requireBiometric?: boolean;
 }
 
-interface BiometricResult {
-  isAvailable: boolean;
-  biometryType: 'none' | 'touchId' | 'faceId' | 'fingerprint' | 'faceAuthentication' | 'irisAuthentication';
-  reason?: string;
-}
-
 export default function BiometricLogin({
   onSuccess,
   onError,
@@ -27,7 +21,7 @@ export default function BiometricLogin({
   requireBiometric = false,
 }: BiometricLoginProps) {
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
-  const [biometryType, setBiometryType] = useState<string>('none');
+  const [biometryType, setBiometryType] = useState<BiometryType>(BiometryType.none);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [lastAuthTime, setLastAuthTime] = useState<number | null>(null);
   const [authAttempts, setAuthAttempts] = useState(0);
@@ -44,18 +38,15 @@ export default function BiometricLogin({
 
   const checkBiometricAvailability = async () => {
     try {
-      const result: BiometricResult = await BiometricAuth.checkBiometry();
-
+      const result = await BiometricAuth.checkBiometry();
       setIsAvailable(result.isAvailable);
       setBiometryType(result.biometryType);
-
       if (!result.isAvailable && requireBiometric) {
         onError('Biometric authentication is required but not available on this device');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Biometric check failed:', error);
       setIsAvailable(false);
-
       if (requireBiometric) {
         onError('Biometric authentication is required but not supported');
       }
@@ -69,37 +60,27 @@ export default function BiometricLogin({
     setAuthAttempts(prev => prev + 1);
 
     try {
-      const authResult = await BiometricAuth.authenticate({
+      // authenticate() resolves on success, throws BiometryError on failure
+      await BiometricAuth.authenticate({
         reason: 'Please authenticate to access FixTray',
-        title: 'FixTray Authentication',
-        subtitle: 'Use your biometric credential',
-        description: 'Place your finger on the sensor or look at the camera',
-        negativeButtonText: 'Use Password',
         cancelTitle: 'Cancel',
-        maxAttempts: 3,
+        allowDeviceCredential: false,
       });
 
-      if (authResult.isAuthenticated) {
-        setLastAuthTime(Date.now());
-        setAuthAttempts(0);
-        setIsLocked(false);
-
-        // Get stored credentials or trigger login
-        await performBiometricLogin();
-      } else {
-        throw new Error('Authentication failed');
-      }
-    } catch (error: any) {
+      setLastAuthTime(Date.now());
+      setAuthAttempts(0);
+      setIsLocked(false);
+      await performBiometricLogin();
+    } catch (error: unknown) {
       console.error('Biometric authentication failed:', error);
+      const code = (error as { code?: string })?.code;
 
-      // Handle different error types
-      if (error.code === 'BIOMETRIC_LOCKED_OUT') {
+      if (code === BiometryErrorType.biometryLockout) {
         setIsLocked(true);
         onError('Biometric authentication is locked. Please use password login.');
-      } else if (error.code === 'BIOMETRIC_NOT_ENROLLED') {
+      } else if (code === BiometryErrorType.biometryNotEnrolled) {
         onError('No biometric credentials enrolled. Please set up biometrics in your device settings.');
-      } else if (error.code === 'BIOMETRIC_DISMISSED') {
-        // User cancelled, show fallback option
+      } else if (code === BiometryErrorType.userCancel || code === BiometryErrorType.appCancel) {
         onFallback();
       } else {
         onError('Authentication failed. Please try again or use password login.');
@@ -154,13 +135,12 @@ export default function BiometricLogin({
 
   const getBiometryIcon = () => {
     switch (biometryType) {
-      case 'touchId':
-      case 'fingerprint':
+      case BiometryType.touchId:
+      case BiometryType.fingerprintAuthentication:
         return <FaFingerprint size={48} />;
-      case 'faceId':
-      case 'faceAuthentication':
-        return <FaShieldAlt size={48} />;
-      case 'irisAuthentication':
+      case BiometryType.faceId:
+      case BiometryType.faceAuthentication:
+      case BiometryType.irisAuthentication:
         return <FaShieldAlt size={48} />;
       default:
         return <FaLock size={48} />;
@@ -169,18 +149,12 @@ export default function BiometricLogin({
 
   const getBiometryLabel = () => {
     switch (biometryType) {
-      case 'touchId':
-        return 'Touch ID';
-      case 'faceId':
-        return 'Face ID';
-      case 'fingerprint':
-        return 'Fingerprint';
-      case 'faceAuthentication':
-        return 'Face Authentication';
-      case 'irisAuthentication':
-        return 'Iris Authentication';
-      default:
-        return 'Biometric Authentication';
+      case BiometryType.touchId:               return 'Touch ID';
+      case BiometryType.faceId:                return 'Face ID';
+      case BiometryType.fingerprintAuthentication: return 'Fingerprint';
+      case BiometryType.faceAuthentication:    return 'Face Authentication';
+      case BiometryType.irisAuthentication:    return 'Iris Authentication';
+      default:                                 return 'Biometric Authentication';
     }
   };
 

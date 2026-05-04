@@ -49,3 +49,7 @@ tmp/
 .env*.local
 /logs/*.log
 /lint-output.txt
+
+# SQLite dev database (never commit)
+prisma/*.db
+prisma/*.db-journal

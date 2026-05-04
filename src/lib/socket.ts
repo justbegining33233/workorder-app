@@ -55,6 +55,12 @@ let socketConnected = false;
 
 function shouldUseSocketInCurrentEnv(): boolean {
   if (process.env.NEXT_PUBLIC_ENABLE_REALTIME !== 'true') return false;
+  // Require an explicit socket server URL.
+  // Vercel serverless functions cannot host a persistent Socket.IO connection,
+  // so we must never fall back to the app's own origin.
+  // If no URL is configured, getSocket() returns null and the polling fallback
+  // in useSocket() takes over automatically.
+  if (!process.env.NEXT_PUBLIC_SOCKET_URL) return false;
   if (process.env.NODE_ENV === 'production') return true;
   return process.env.NEXT_PUBLIC_ENABLE_SOCKET_IN_DEV === 'true';
 }
@@ -64,8 +70,8 @@ function getSocket(): Socket | null {
   if (socketInstance) return socketInstance;
   if (!shouldUseSocketInCurrentEnv()) return null;
 
-  const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || `${window.location.origin}`;
-  if (!socketUrl) return null;
+  const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL!;
+  if (!socketUrl) return null; // guarded above, but keep as safety net
 
   const token = localStorage.getItem('token');
   if (!token) return null;

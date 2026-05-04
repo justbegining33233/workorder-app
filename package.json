@@ -1,5 +1,5 @@
 {
-  "name": "workorder-app",
+  "name": "fixtray",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -31,6 +31,7 @@
     "db:studio": "npx prisma studio"
   },
   "dependencies": {
+    "@aparajita/capacitor-biometric-auth": "^10.0.0",
     "@capacitor/android": "^8.1.0",
     "@capacitor/barcode-scanner": "^3.0.2",
     "@capacitor/camera": "^8.0.2",
@@ -46,15 +47,19 @@
     "@capacitor/network": "^8.0.1",
     "@capacitor/push-notifications": "^8.0.3",
     "@capacitor/status-bar": "^8.0.1",
+    "@opentelemetry/api": "^1.9.1",
     "@prisma/client": "^5.22.0",
     "@sentry/nextjs": "^10.42.0",
     "@upstash/redis": "^1.36.3",
+    "@vercel/otel": "^2.1.2",
     "bcrypt": "^6.0.0",
+    "capacitor-secure-storage-plugin": "^0.13.0",
     "cloudinary": "^2.8.0",
     "critters": "^0.0.23",
     "dotenv": "^16.6.1",
     "express-rate-limit": "^8.2.1",
     "isomorphic-dompurify": "^3.5.1",
+    "jose": "^6.2.3",
     "jsonwebtoken": "^9.0.3",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.2",
@@ -98,6 +103,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.1.6",
     "husky": "^8.0.0",
+    "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "prisma": "^5.22.0",
     "tailwindcss": "^4",

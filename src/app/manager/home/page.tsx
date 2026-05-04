@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { FaBox, FaCalendarAlt, FaChartBar, FaClipboardList, FaDollarSign, FaExclamationCircle, FaUsers } from 'react-icons/fa';
 
 import { useEffect, useState } from 'react';
@@ -314,7 +314,7 @@ export default function ManagerHome() {
                       </div>
                     </div>
                     <div style={{display:'flex', gap:12, marginTop:20}}>
-                      <Link href="/workorders/list" style={{flex:1, padding:12, background:'#3b82f6', color:'white', borderRadius:8, textDecoration:'none', textAlign:'center', fontWeight:600}}>
+                      <Link href="/manager/home" style={{flex:1, padding:12, background:'#3b82f6', color:'white', borderRadius:8, textDecoration:'none', textAlign:'center', fontWeight:600}}>
                         View All Jobs
                       </Link>
                       <Link href="/manager/assignments" style={{flex:1, padding:12, background:'#6b7280', color:'white', borderRadius:8, textDecoration:'none', textAlign:'center', fontWeight:600}}>
@@ -512,7 +512,7 @@ export default function ManagerHome() {
                         ))
                       )}
                     </div>
-                    <Link href="/workorders/list" style={{display:'block', marginTop:12, padding:8, background:'#6b7280', color:'white', borderRadius:6, textDecoration:'none', textAlign:'center', fontSize:12, fontWeight:600}}>
+                    <Link href="/manager/home" style={{display:'block', marginTop:12, padding:8, background:'#6b7280', color:'white', borderRadius:6, textDecoration:'none', textAlign:'center', fontSize:12, fontWeight:600}}>
                       View Schedule
                     </Link>
                   </div>
@@ -573,9 +573,10 @@ export default function ManagerHome() {
       {managerMsg && (
         <div style={{position:'fixed',bottom:24,right:24,background:managerMsg.type==='success'?'#dcfce7':'#fde8e8',color:managerMsg.type==='success'?'#166534':'#991b1b',borderRadius:10,padding:'12px 20px',zIndex:9999,fontSize:14,fontWeight:600,boxShadow:'0 4px 12px rgba(0,0,0,0.3)'}}>
           {managerMsg.text}
-          <button onClick={()=>setManagerMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>×</button>
+          <button onClick={()=>setManagerMsg(null)} style={{marginLeft:12,background:'none',border:'none',cursor:'pointer',fontSize:16,color:'inherit'}}>Ã—</button>
         </div>
       )}
     </div>
   );
 }
+

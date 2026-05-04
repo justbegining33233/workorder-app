@@ -1,16 +1,17 @@
 'use client';
 
 import { Capacitor } from '@capacitor/core';
-import { BiometricAuth } from '@capacitor/biometric-auth';
+import { BiometricAuth, BiometryType, BiometryErrorType } from '@aparajita/capacitor-biometric-auth';
 import { Device } from '@capacitor/device';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 interface BiometricCredentials {
   userId: string;
+  userType: 'shop' | 'tech' | 'customer';
   deviceToken: string;
   timestamp: Date;
   deviceId: string;
-  biometryType: string;
+  biometryType: BiometryType;
 }
 
 interface AuthResult {
@@ -87,7 +88,7 @@ export class BiometricAuthenticationService {
   // Check if biometric authentication is available
   async isAvailable(): Promise<{
     available: boolean;
-    type: string;
+    type: BiometryType;
     enrolled: boolean;
   }> {
     try {
@@ -95,13 +96,13 @@ export class BiometricAuthenticationService {
       return {
         available: result.isAvailable,
         type: result.biometryType,
-        enrolled: result.biometryType !== 'none',
+        enrolled: result.biometryType !== BiometryType.none,
       };
     } catch (error) {
       console.error('Biometric availability check failed:', error);
       return {
         available: false,
-        type: 'none',
+        type: BiometryType.none,
         enrolled: false,
       };
     }
@@ -142,96 +143,75 @@ export class BiometricAuthenticationService {
     }
 
     try {
-      const authResult = await BiometricAuth.authenticate({
+      // authenticate() resolves on success, throws BiometryError on failure
+      await BiometricAuth.authenticate({
         reason: reason || 'Please authenticate to access FixTray',
-        title: 'FixTray Secure Access',
-        subtitle: 'Biometric Authentication',
-        description: 'Use your biometric credential to securely access your account',
-        negativeButtonText: this.config.allowFallback ? 'Use Password' : undefined,
-        cancelTitle: 'Cancel',
-        maxAttempts: this.config.maxAttempts,
+        cancelTitle: this.config.allowFallback ? 'Use Password' : 'Cancel',
+        allowDeviceCredential: false,
       });
 
-      if (authResult.isAuthenticated) {
-        // Reset attempts on success
-        this.authAttempts.delete(deviceId);
-
-        // Get stored credentials and perform login
-        const credentials = await this.getStoredCredentials();
-        if (credentials) {
-          return await this.performBiometricLogin(credentials);
-        } else {
-          return {
-            success: false,
-            error: 'No stored credentials found',
-            requiresFallback: true,
-          };
-        }
-      } else {
-        // Handle failed authentication
-        this.recordFailedAttempt(deviceId);
-        return {
-          success: false,
-          error: 'Authentication failed',
-          requiresFallback: this.config.allowFallback,
-        };
+      // Success — reset attempts and perform login
+      this.authAttempts.delete(deviceId);
+      const credentials = await this.getStoredCredentials();
+      if (credentials) {
+        return await this.performBiometricLogin(credentials);
       }
-    } catch (error: any) {
+      return { success: false, error: 'No stored credentials found', requiresFallback: true };
+    } catch (error: unknown) {
       console.error('Biometric authentication error:', error);
-
       this.recordFailedAttempt(deviceId);
 
-      // Handle specific error codes
-      switch (error.code) {
-        case 'BIOMETRIC_LOCKED_OUT':
+      const code = (error as { code?: string })?.code;
+      switch (code) {
+        case BiometryErrorType.biometryLockout:
           this.setLockout(deviceId);
-          return {
-            success: false,
-            error: 'Biometric authentication is locked out. Please use password login.',
-            requiresFallback: this.config.allowFallback,
-          };
-
-        case 'BIOMETRIC_NOT_ENROLLED':
-          return {
-            success: false,
-            error: 'No biometric credentials enrolled. Please set up biometrics in device settings.',
-            requiresFallback: this.config.allowFallback,
-          };
-
-        case 'BIOMETRIC_DISMISSED':
-          return {
-            success: false,
-            error: 'Authentication cancelled by user',
-            requiresFallback: this.config.allowFallback,
-          };
-
-        case 'BIOMETRIC_PIN_OR_PATTERN_DISMISSED':
-          return {
-            success: false,
-            error: 'PIN/Pattern authentication cancelled',
-            requiresFallback: this.config.allowFallback,
-          };
-
+          return { success: false, error: 'Biometric authentication is locked out. Please use password login.', requiresFallback: this.config.allowFallback };
+        case BiometryErrorType.biometryNotEnrolled:
+          return { success: false, error: 'No biometric credentials enrolled. Please set up biometrics in device settings.', requiresFallback: this.config.allowFallback };
+        case BiometryErrorType.userCancel:
+        case BiometryErrorType.appCancel:
+          return { success: false, error: 'Authentication cancelled by user', requiresFallback: this.config.allowFallback };
         default:
-          return {
-            success: false,
-            error: 'Authentication failed. Please try again.',
-            requiresFallback: this.config.allowFallback,
-          };
+          return { success: false, error: 'Authentication failed. Please try again.', requiresFallback: this.config.allowFallback };
       }
     }
   }
 
-  // Store credentials securely for biometric login
-  async storeCredentials(userId: string, deviceToken: string): Promise<boolean> {
+  /**
+   * Register this device for biometric login.
+   * Calls PUT /api/auth/biometric-login to obtain a server-issued device token,
+   * then stores it securely on the device.
+   */
+  async storeCredentials(userId: string, userType: 'shop' | 'tech' | 'customer'): Promise<boolean> {
     try {
       const deviceId = await this.getDeviceId();
       const biometryInfo = await this.isAvailable();
 
+      // Register with the server and receive a server-issued device token
+      const response = await fetch('/api/auth/biometric-login', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          userType,
+          deviceId,
+          deviceName: 'Mobile Device',
+          biometryType: biometryInfo.type,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Biometric registration failed:', await response.text());
+        return false;
+      }
+
+      const { deviceToken, expiresAt } = await response.json();
+
       const credentials: BiometricCredentials = {
         userId,
+        userType,
         deviceToken,
-        timestamp: new Date(),
+        timestamp: new Date(expiresAt),
         deviceId,
         biometryType: biometryInfo.type,
       };
@@ -243,7 +223,6 @@ export class BiometricAuthenticationService {
           value: JSON.stringify(credentials),
         });
       } else {
-        // Encrypt and store in localStorage
         const encrypted = await this.encryptData(JSON.stringify(credentials));
         localStorage.setItem('biometric_credentials_encrypted', encrypted);
       }
@@ -275,9 +254,8 @@ export class BiometricAuthenticationService {
 
       const credentials: BiometricCredentials = JSON.parse(storedData);
 
-      // Validate credentials haven't expired (30 days)
-      const daysSinceCreation = (Date.now() - new Date(credentials.timestamp).getTime()) / (1000 * 60 * 60 * 24);
-      if (daysSinceCreation > 30) {
+      // Validate credentials haven't expired (timestamp stores server-issued expiresAt)
+      if (new Date(credentials.timestamp).getTime() < Date.now()) {
         await this.clearCredentials();
         return null;
       }

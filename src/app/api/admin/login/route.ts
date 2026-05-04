@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
+import { rateLimit, rateLimitConfigs } from '@/lib/rateLimit';
 import { validateRequest } from '@/lib/validation';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
@@ -96,3 +96,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+

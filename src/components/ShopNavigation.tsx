@@ -69,7 +69,7 @@ export default function ShopNavigation({
     },
     {
       name: 'Jobs',
-      href: '/workorders/list',
+      href: '/shop/home',
       icon: FaClipboardList,
       badge: pendingJobs > 0 ? pendingJobs : undefined,
       description: 'Service requests'
@@ -182,7 +182,7 @@ export default function ShopNavigation({
 
               {/* Quick Actions */}
               <Link
-                href={"/workorders/list" as Route}
+                  href={"/shop/home" as Route}
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 View Jobs

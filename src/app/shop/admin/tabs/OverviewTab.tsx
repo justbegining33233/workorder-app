@@ -40,7 +40,7 @@ export default function OverviewTab({
     <div>
       {/* Key Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
-        <Link href="/workorders/list?from=admin" style={{ textDecoration: 'none' }}>
+        <Link href="/shop/home" style={{ textDecoration: 'none' }}>
           <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 12, padding: 20, cursor: 'pointer' }}>
             <div style={{ fontSize: 13, color: '#9aa3b2', marginBottom: 8 }}>Open Work Orders</div>
             <div style={{ fontSize: 32, fontWeight: 700, color: '#3b82f6' }}>{shopStats.workOrders.open}</div>

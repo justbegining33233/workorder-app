@@ -209,13 +209,13 @@ export default function TechHome() {
   };
 
   const jobCreationTools = [
-    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: <FaCar style={{marginRight:4}} />, link: '/workorders/new' },
-    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: <FaWrench style={{marginRight:4}} />, link: '/workorders/inshop' },
+    { title: 'New Roadside Job', description: 'Create emergency roadside assistance work orders', icon: <FaCar style={{marginRight:4}} />, link: '/tech/new-roadside-job' },
+    { title: 'New In-Shop Job', description: 'Schedule in-shop service appointments', icon: <FaWrench style={{marginRight:4}} />, link: '/tech/new-inshop-job' },
   ];
 
   const jobManagementTools = [
-    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: <FaClipboardList style={{marginRight:4}} />, link: '/workorders/list?status=in-progress' },
-    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: <FaChartBar style={{marginRight:4}} />, link: '/workorders/list?status=closed' },
+    { title: 'Active Jobs', description: 'View all your currently assigned work orders', icon: <FaClipboardList style={{marginRight:4}} />, link: '/tech/home' },
+    { title: 'Job History', description: 'Browse completed work orders and feedback', icon: <FaChartBar style={{marginRight:4}} />, link: '/tech/home' },
   ];
 
   const fieldTools = [
@@ -273,7 +273,7 @@ export default function TechHome() {
             <div style={{background:'rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24}}>
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20}}>
                 <h2 style={{fontSize:20, fontWeight:700, color:'#e5e7eb'}}><FaWrench style={{marginRight:4}} /> My Tasks Today</h2>
-                <Link href="/workorders/list" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All <FaArrowRight style={{marginRight:4}} /></Link>
+                <Link href="/tech/home" style={{fontSize:13, color:'#3b82f6', textDecoration:'none'}}>View All <FaArrowRight style={{marginRight:4}} /></Link>
               </div>
               
               {todayJobs.length === 0 ? (
@@ -391,7 +391,7 @@ export default function TechHome() {
                             } catch (err) { console.error(err); setHomeMsg({type:'error',text:'Error loading road calls'}); }
                           }} style={{padding:8, borderRadius:8, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', color:'#e5e7eb', cursor:'pointer'}}>Show</button>
 
-                          <Link href="/workorders/new?serviceLocation=roadside" style={{display:'inline-block', padding:'8px 10px', background:'#e5332a', color:'white', borderRadius:6, textDecoration:'none', fontWeight:700, fontSize:13}}>Create Road Call</Link>
+                          <Link href="/tech/new-roadside-job" style={{display:'inline-block', padding:'8px 10px', background:'#e5332a', color:'white', borderRadius:6, textDecoration:'none', fontWeight:700, fontSize:13}}>Create Road Call</Link>
                         </div>
                       </div>
 

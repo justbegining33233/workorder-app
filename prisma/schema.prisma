@@ -2023,3 +2023,71 @@ model Campaign {
   @@index([shopId])
   @@map("campaigns")
 }
+
+// ─── MDM (Mobile Device Management) ──────────────────────────────────────────
+
+model MdmDevice {
+  id              String    @id @default(cuid())
+  deviceId        String    @unique
+  platform        String
+  model           String
+  operatingSystem String
+  osVersion       String
+  manufacturer    String
+  isVirtual       Boolean   @default(false)
+  status          String    @default("active")
+  userId          String?
+  enrolledAt      DateTime  @default(now())
+  unenrolledAt    DateTime?
+
+  policies MdmDevicePolicy[]
+  commands MdmCommand[]
+
+  @@index([deviceId])
+  @@index([userId])
+  @@index([status])
+  @@map("mdm_devices")
+}
+
+model MdmPolicy {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  config      Json     @default("{}")
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  devicePolicies MdmDevicePolicy[]
+
+  @@map("mdm_policies")
+}
+
+model MdmDevicePolicy {
+  id        String   @id @default(cuid())
+  deviceId  String
+  policyId  String
+  appliedAt DateTime @default(now())
+
+  device MdmDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  policy MdmPolicy @relation(fields: [policyId], references: [id])
+
+  @@unique([deviceId, policyId])
+  @@map("mdm_device_policies")
+}
+
+model MdmCommand {
+  id         String    @id @default(cuid())
+  deviceId   String
+  command    String
+  parameters Json?
+  status     String    @default("pending")
+  createdBy  String?
+  createdAt  DateTime  @default(now())
+  executedAt DateTime?
+
+  device MdmDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId, status])
+  @@map("mdm_commands")
+}
