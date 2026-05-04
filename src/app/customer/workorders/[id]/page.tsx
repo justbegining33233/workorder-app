@@ -56,7 +56,7 @@ export default function WorkOrderDetailsPage() {
   const [error, setError] = useState('');
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState('');
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages] = useState<any[]>([]);
 
   const workOrderId = params?.id as string;
 

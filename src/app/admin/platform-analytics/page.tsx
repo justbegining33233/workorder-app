@@ -19,7 +19,7 @@ const DynamicStatusDistributionChart = dynamic(() => import('@/components/Analyt
 const DynamicMonthlyTrendsChart = dynamic(() => import('@/components/AnalyticsCharts').then(mod => ({ default: mod.MonthlyTrendsChart })), {
   loading: () => <div className="h-64 flex items-center justify-center text-gray-400">Loading chart...</div>
 });
-import { FaArrowDown, FaArrowLeft, FaArrowUp, FaChartBar, FaChartLine } from 'react-icons/fa';
+import { FaArrowDown, FaArrowLeft, FaArrowUp, FaChartBar } from 'react-icons/fa';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function PlatformAnalytics() {

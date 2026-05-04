@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Route } from 'next';
-import { FaBolt, FaBox, FaBoxes, FaBuilding, FaBullhorn, FaCalendarAlt, FaChartBar, FaCircle, FaClipboardList, FaCodeBranch, FaCog, FaComments, FaCreditCard, FaDesktop, FaEdit, FaGift, FaHeartbeat, FaIndustry, FaListAlt, FaLock, FaMapMarkerAlt, FaPaintBrush, FaPlug, FaReceipt, FaRoad, FaScroll, FaShoppingCart, FaStar, FaStore, FaSyncAlt, FaTools, FaTruck, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
+import { FaBox, FaChartBar, FaCircle, FaClipboardList, FaCog, FaIndustry, FaLock, FaMapMarkerAlt, FaStore, FaSyncAlt, FaTools, FaTruck, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -279,16 +279,18 @@ export default function ShopHome() {
     setAddMemberSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const r = await fetch('/api/auth/register', {
+      const [firstName, ...rest] = newMember.name.trim().split(/\s+/);
+      const lastName = rest.join(' ') || '-';
+      const r = await fetch('/api/techs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          name: newMember.name,
+          firstName: firstName || newMember.name,
+          lastName,
           email: newMember.email,
           phone: newMember.phone,
           password: newMember.password,
           role: newMember.role,
-          shopId: (user as any)?.shopId ?? user?.id,
         }),
       });
       if (r.ok) {

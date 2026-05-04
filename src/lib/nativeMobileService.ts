@@ -2,10 +2,10 @@
 
 import { Capacitor, PluginListenerHandle } from '@capacitor/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Geolocation, Position, PositionOptions } from '@capacitor/geolocation';
+import { Geolocation, PositionOptions } from '@capacitor/geolocation';
 import { PushNotifications, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Network } from '@capacitor/network';
 import { Device, DeviceInfo } from '@capacitor/device';
 import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHintALLOption, type CapacitorBarcodeScannerScanResult } from '@capacitor/barcode-scanner';

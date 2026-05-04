@@ -63,7 +63,7 @@ export default function BreadcrumbNavigation({
     return breadcrumbs;
   };
 
-  const formatSegmentLabel = (segment: string, previousSegment?: string): string => {
+  const formatSegmentLabel = (segment: string, _previousSegment?: string): string => {
     // Handle common route patterns
     const labelMap: Record<string, string> = {
       // User roles

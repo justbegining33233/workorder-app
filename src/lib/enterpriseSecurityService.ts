@@ -34,12 +34,14 @@ interface DeviceSecurityStatus {
   recommendations: string[];
 }
 
+type SecurityEventListener = (event: SecurityEvent) => void;
+
 export class EnterpriseSecurityService {
   private static instance: EnterpriseSecurityService;
   private securityEvents: SecurityEvent[] = [];
   private securityPolicies: SecurityPolicy[] = [];
   private deviceStatus: DeviceSecurityStatus | null = null;
-  private eventListeners: Map<string, Function[]> = new Map();
+  private eventListeners: Map<string, SecurityEventListener[]> = new Map();
 
   private constructor() {
     this.initializeDefaultPolicies();
@@ -320,7 +322,7 @@ export class EnterpriseSecurityService {
   }
 
   // File existence check (simplified)
-  private async fileExists(path: string): Promise<boolean> {
+  private async fileExists(_path: string): Promise<boolean> {
     // This would require native plugin implementation
     // For now, return false
     return false;
@@ -369,14 +371,14 @@ export class EnterpriseSecurityService {
   }
 
   // Add event listener
-  addEventListener(eventType: SecurityEvent['type'], listener: Function): void {
+  addEventListener(eventType: SecurityEvent['type'], listener: SecurityEventListener): void {
     const listeners = this.eventListeners.get(eventType) || [];
     listeners.push(listener);
     this.eventListeners.set(eventType, listeners);
   }
 
   // Remove event listener
-  removeEventListener(eventType: SecurityEvent['type'], listener: Function): void {
+  removeEventListener(eventType: SecurityEvent['type'], listener: SecurityEventListener): void {
     const listeners = this.eventListeners.get(eventType) || [];
     const index = listeners.indexOf(listener);
     if (index > -1) {

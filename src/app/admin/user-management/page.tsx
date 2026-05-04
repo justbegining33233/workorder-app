@@ -8,13 +8,22 @@ import { FaArrowLeft, FaBuilding, FaEnvelope, FaHourglassHalf, FaUsers } from 'r
 
 type User = {
   id: string;
+  userType: 'admin' | 'shop' | 'customer' | 'tech' | 'manager';
+  username?: string;
+  firstName?: string;
+  lastName?: string;
   name: string;
   email: string;
-  role: 'admin' | 'shop' | 'customer' | 'technician' | 'manager';
-  status: 'active' | 'suspended' | 'pending';
+  role: 'admin' | 'shop' | 'customer' | 'tech' | 'manager';
+  status: 'active' | 'inactive' | 'suspended' | 'pending';
   joinedDate: Date;
   lastLogin: Date;
   organization?: string;
+  capabilities: {
+    canEditRole: boolean;
+    canEditStatus: boolean;
+    canEditUsername: boolean;
+  };
 };
 
 export default function UserManagement() {
@@ -23,6 +32,11 @@ export default function UserManagement() {
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', email: '', role: 'customer', status: 'active' });
+  const [modalMode, setModalMode] = useState<'edit' | 'reset' | null>(null);
+  const [savingAction, setSavingAction] = useState(false);
 
   useEffect(() => {
     if (!user || isLoading) return;
@@ -31,14 +45,23 @@ export default function UserManagement() {
     fetch('/api/admin/users')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) {
-          const formattedUsers = data.map(u => ({
-            ...u,
-            joinedDate: new Date(u.joinedDate || u.createdAt || Date.now()),
-            lastLogin: new Date(u.lastLogin || Date.now())
-          }));
-          setUsers(formattedUsers);
-        }
+        const list = Array.isArray(data) ? data : data?.users || [];
+        const formattedUsers = list.map((u: any) => ({
+          id: u.id,
+          userType: u.userType || (u.role === 'technician' ? 'tech' : u.role) || 'customer',
+          username: u.username,
+          firstName: u.firstName || '',
+          lastName: u.lastName || '',
+          name: [u.firstName, u.lastName].filter(Boolean).join(' ').trim() || u.username || u.email || 'Unknown User',
+          email: u.email || '',
+          role: (u.role === 'technician' ? 'tech' : u.role) || 'customer',
+          status: u.status || 'active',
+          joinedDate: new Date(u.joinedDate || u.createdAt || Date.now()),
+          lastLogin: new Date(u.lastLogin || u.createdAt || Date.now()),
+          organization: u.shopName || '',
+          capabilities: u.capabilities || { canEditRole: false, canEditStatus: false, canEditUsername: false },
+        }));
+        setUsers(formattedUsers);
         setLoading(false);
       })
       .catch(err => {
@@ -52,15 +75,138 @@ export default function UserManagement() {
       case 'admin': return '#e5332a';
       case 'shop': return '#22c55e';
       case 'manager': return '#3b82f6';
-      case 'technician': return '#8b5cf6';
+      case 'tech': return '#8b5cf6';
       case 'customer': return '#f59e0b';
       default: return '#9aa3b2';
+    }
+  };
+
+  const openEditModal = (u: User) => {
+    setSelectedUser(u);
+    setEditForm({
+      firstName: u.firstName || '',
+      lastName: u.lastName || '',
+      email: u.email || '',
+      role: u.role,
+      status: u.status,
+    });
+    setModalMode('edit');
+  };
+
+  const openResetModal = (u: User) => {
+    setSelectedUser(u);
+    setNewPassword('');
+    setModalMode('reset');
+  };
+
+  const closeModal = () => {
+    setModalMode(null);
+    setSelectedUser(null);
+    setNewPassword('');
+  };
+
+  const updateUserStatus = async (targetUser: User, nextStatus: User['status']) => {
+    if (!targetUser.capabilities.canEditStatus) return;
+
+    setSavingAction(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          id: targetUser.id,
+          userType: targetUser.userType,
+          status: nextStatus,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data?.error || 'Failed to update status');
+        return;
+      }
+
+      setUsers((prev) => prev.map((item) => item.id === targetUser.id ? { ...item, status: nextStatus } : item));
+    } finally {
+      setSavingAction(false);
+    }
+  };
+
+  const handleSaveUserEdit = async () => {
+    if (!selectedUser) return;
+    setSavingAction(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          id: selectedUser.id,
+          userType: selectedUser.userType,
+          firstName: editForm.firstName,
+          lastName: editForm.lastName,
+          email: editForm.email,
+          ...(selectedUser.capabilities.canEditRole ? { role: editForm.role } : {}),
+          ...(selectedUser.capabilities.canEditStatus ? { status: editForm.status } : {}),
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data?.error || 'Failed to update user');
+        return;
+      }
+
+      setUsers((prev) => prev.map((u) => u.id === selectedUser.id ? {
+        ...u,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        name: `${editForm.firstName} ${editForm.lastName}`.trim() || u.name,
+        email: editForm.email,
+        role: selectedUser.capabilities.canEditRole ? editForm.role as User['role'] : u.role,
+        status: selectedUser.capabilities.canEditStatus ? editForm.status as User['status'] : u.status,
+      } : u));
+      closeModal();
+    } finally {
+      setSavingAction(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!selectedUser) return;
+    if (newPassword.length < 8) {
+      alert('Password must be at least 8 characters.');
+      return;
+    }
+    setSavingAction(true);
+    try {
+      const res = await fetch('/api/admin/users/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          userId: selectedUser.id,
+          userType: selectedUser.userType,
+          newPassword,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data?.error || 'Failed to reset password');
+        return;
+      }
+      alert('Password reset successfully.');
+      closeModal();
+    } finally {
+      setSavingAction(false);
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return '#22c55e';
+      case 'inactive': return '#64748b';
       case 'pending': return '#f59e0b';
       case 'suspended': return '#e5332a';
       default: return '#9aa3b2';
@@ -109,7 +255,7 @@ export default function UserManagement() {
     admin: users.filter(u => u.role === 'admin').length,
     shop: users.filter(u => u.role === 'shop').length,
     manager: users.filter(u => u.role === 'manager').length,
-    technician: users.filter(u => u.role === 'technician').length,
+    technician: users.filter(u => u.role === 'tech').length,
     customer: users.filter(u => u.role === 'customer').length,
     active: users.filter(u => u.status === 'active').length,
   };
@@ -164,7 +310,7 @@ export default function UserManagement() {
               <option value="admin">Admin</option>
               <option value="shop">Shop</option>
               <option value="manager">Manager</option>
-              <option value="technician">Technician</option>
+              <option value="tech">Technician</option>
               <option value="customer">Customer</option>
             </select>
           </div>
@@ -177,6 +323,7 @@ export default function UserManagement() {
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
               <option value="pending">Pending</option>
               <option value="suspended">Suspended</option>
             </select>
@@ -218,17 +365,40 @@ export default function UserManagement() {
                   </div>
                 </div>
                 <div style={{display:'flex', gap:8}}>
-                  <button style={{padding:'10px 16px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}>
+                  <button
+                    onClick={() => openEditModal(user)}
+                    style={{padding:'10px 16px', background:'rgba(59,130,246,0.2)', color:'#3b82f6', border:'1px solid rgba(59,130,246,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}
+                  >
                     Edit
                   </button>
-                  {user.status === 'active' ? (
-                    <button style={{padding:'10px 16px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}>
-                      Suspend
-                    </button>
+                  <button
+                    onClick={() => openResetModal(user)}
+                    style={{padding:'10px 16px', background:'rgba(139,92,246,0.2)', color:'#a78bfa', border:'1px solid rgba(139,92,246,0.35)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}
+                  >
+                    Reset Password
+                  </button>
+                  {user.capabilities.canEditStatus ? (
+                    user.status === 'active' ? (
+                      <button
+                        onClick={() => updateUserStatus(user, 'suspended')}
+                        disabled={savingAction}
+                        style={{padding:'10px 16px', background:'rgba(229,51,42,0.2)', color:'#e5332a', border:'1px solid rgba(229,51,42,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', opacity: savingAction ? 0.7 : 1}}
+                      >
+                        Suspend
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => updateUserStatus(user, 'active')}
+                        disabled={savingAction}
+                        style={{padding:'10px 16px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer', opacity: savingAction ? 0.7 : 1}}
+                      >
+                        Activate
+                      </button>
+                    )
                   ) : (
-                    <button style={{padding:'10px 16px', background:'rgba(34,197,94,0.2)', color:'#22c55e', border:'1px solid rgba(34,197,94,0.3)', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer'}}>
-                      Activate
-                    </button>
+                    <div style={{padding:'10px 16px', background:'rgba(100,116,139,0.15)', color:'#94a3b8', border:'1px solid rgba(100,116,139,0.3)', borderRadius:8, fontSize:12, fontWeight:600}}>
+                      Status read-only
+                    </div>
                   )}
                 </div>
               </div>
@@ -237,6 +407,63 @@ export default function UserManagement() {
           </div>
         )}
       </div>
+
+      {modalMode && selectedUser && (
+        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000}}>
+          <div style={{width:'100%', maxWidth:540, background:'#0b1220', border:'1px solid rgba(255,255,255,0.12)', borderRadius:12, padding:20}}>
+            <h3 style={{fontSize:18, fontWeight:700, color:'#e5e7eb', marginBottom:12}}>
+              {modalMode === 'edit' ? 'Quick Edit User' : 'Reset User Password'}
+            </h3>
+            {modalMode === 'edit' ? (
+              <div style={{display:'grid', gap:12}}>
+                <input value={editForm.firstName} onChange={(e) => setEditForm((p) => ({...p, firstName: e.target.value}))} placeholder="First name" style={{padding:'10px 12px', borderRadius:8, border:'1px solid rgba(255,255,255,0.18)', background:'rgba(255,255,255,0.04)', color:'#e5e7eb'}} />
+                <input value={editForm.lastName} onChange={(e) => setEditForm((p) => ({...p, lastName: e.target.value}))} placeholder="Last name" style={{padding:'10px 12px', borderRadius:8, border:'1px solid rgba(255,255,255,0.18)', background:'rgba(255,255,255,0.04)', color:'#e5e7eb'}} />
+                <input value={editForm.email} onChange={(e) => setEditForm((p) => ({...p, email: e.target.value}))} placeholder="Email" style={{padding:'10px 12px', borderRadius:8, border:'1px solid rgba(255,255,255,0.18)', background:'rgba(255,255,255,0.04)', color:'#e5e7eb'}} />
+                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                  <select value={editForm.role} onChange={(e) => setEditForm((p) => ({...p, role: e.target.value}))} disabled={!selectedUser.capabilities.canEditRole} style={{padding:'10px 12px', borderRadius:8, border:'1px solid rgba(255,255,255,0.18)', background:selectedUser.capabilities.canEditRole ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.8)', color:'#e5e7eb', opacity: selectedUser.capabilities.canEditRole ? 1 : 0.7}}>
+                    <option value="admin">Admin</option>
+                    <option value="shop">Shop</option>
+                    <option value="manager">Manager</option>
+                    <option value="tech">Tech</option>
+                    <option value="customer">Customer</option>
+                  </select>
+                  <select value={editForm.status} onChange={(e) => setEditForm((p) => ({...p, status: e.target.value}))} disabled={!selectedUser.capabilities.canEditStatus} style={{padding:'10px 12px', borderRadius:8, border:'1px solid rgba(255,255,255,0.18)', background:selectedUser.capabilities.canEditStatus ? 'rgba(255,255,255,0.04)' : 'rgba(15,23,42,0.8)', color:'#e5e7eb', opacity: selectedUser.capabilities.canEditStatus ? 1 : 0.7}}>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="pending">Pending</option>
+                    <option value="suspended">Suspended</option>
+                  </select>
+                </div>
+                <p style={{fontSize:12, color:'#94a3b8', margin:0}}>
+                  Only fields backed by the selected user type are editable. Shop accounts support persisted status changes.
+                </p>
+              </div>
+            ) : (
+              <div style={{display:'grid', gap:12}}>
+                <p style={{fontSize:13, color:'#9aa3b2'}}>Reset password for <strong style={{color:'#e5e7eb'}}>{selectedUser.name}</strong> ({selectedUser.email})</p>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="New password (min 8 chars)"
+                  style={{padding:'10px 12px', borderRadius:8, border:'1px solid rgba(255,255,255,0.18)', background:'rgba(255,255,255,0.04)', color:'#e5e7eb'}}
+                />
+              </div>
+            )}
+
+            <div style={{display:'flex', justifyContent:'flex-end', gap:8, marginTop:16}}>
+              <button onClick={closeModal} style={{padding:'10px 14px', borderRadius:8, border:'1px solid rgba(255,255,255,0.18)', background:'transparent', color:'#9aa3b2', cursor:'pointer'}}>Cancel</button>
+              <button
+                onClick={modalMode === 'edit' ? handleSaveUserEdit : handleResetPassword}
+                disabled={savingAction}
+                style={{padding:'10px 14px', borderRadius:8, border:'none', background:'#3b82f6', color:'white', cursor:'pointer', opacity: savingAction ? 0.7 : 1}}
+              >
+                {savingAction ? 'Saving...' : modalMode === 'edit' ? 'Save User' : 'Reset Password'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

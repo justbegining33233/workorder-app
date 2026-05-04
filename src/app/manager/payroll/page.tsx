@@ -5,7 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaDollarSign, FaUsers, FaClock, FaCheckCircle } from 'react-icons/fa';
+import { FaUsers, FaDollarSign } from 'react-icons/fa';
 
 interface Employee {
   id: string;

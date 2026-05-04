@@ -152,22 +152,6 @@ export default function BiometricLogin({
     }
   };
 
-  const storeCredentials = async (userId: string, deviceToken: string) => {
-    try {
-      localStorage.setItem('biometric_credentials', JSON.stringify({
-        userId,
-        deviceToken,
-        timestamp: Date.now(),
-      }));
-    } catch (error) {
-      console.error('Failed to store biometric credentials:', error);
-    }
-  };
-
-  const clearStoredCredentials = () => {
-    localStorage.removeItem('biometric_credentials');
-  };
-
   const getBiometryIcon = () => {
     switch (biometryType) {
       case 'touchId':

@@ -172,7 +172,6 @@ export async function compressAPIResponse(
     headers?: Record<string, string>;
   } = {}
 ): Promise<NextResponse> {
-  const jsonString = JSON.stringify(data);
   const response = NextResponse.json(data, {
     status: options.status || 200,
     headers: options.headers,

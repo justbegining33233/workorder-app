@@ -7,7 +7,7 @@ import { Prisma } from '@prisma/client';
  * @param params Query parameters
  * @returns Query result
  */
-export async function query(queryString: string, params: any[] = []): Promise<any> {
+export async function query(queryString: string, _params: any[] = []): Promise<any> {
   try {
     // Use Prisma's $queryRaw for raw SQL queries
     const result = await prisma.$queryRaw(Prisma.raw(`${queryString}`));
@@ -24,7 +24,7 @@ export async function query(queryString: string, params: any[] = []): Promise<an
  * @param params Query parameters
  * @returns Query result with rowCount
  */
-export async function execute(queryString: string, params: any[] = []): Promise<any> {
+export async function execute(queryString: string, _params: any[] = []): Promise<any> {
   try {
     const result = await prisma.$executeRaw(Prisma.raw(`${queryString}`));
     return { rowCount: result };
@@ -34,4 +34,5 @@ export async function execute(queryString: string, params: any[] = []): Promise<
   }
 }
 
-export default { query, execute };
+const dbModule = { query, execute };
+export default dbModule;

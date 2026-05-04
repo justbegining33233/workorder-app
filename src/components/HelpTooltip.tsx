@@ -28,7 +28,7 @@ export default function HelpTooltip({
   children
 }: HelpTooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasBeenShown, setHasBeenShown] = useState(false);
+  const [, setHasBeenShown] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
 

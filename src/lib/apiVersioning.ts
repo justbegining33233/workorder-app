@@ -7,11 +7,13 @@ export interface APIVersion {
   patch: number;
 }
 
+type APIHandler = (...args: unknown[]) => unknown;
+
 export interface APIEndpoint {
   path: string;
   versions: {
     [version: string]: {
-      handler: Function;
+      handler: APIHandler;
       deprecated?: boolean;
       deprecatedAt?: string;
       sunsetAt?: string;
@@ -30,7 +32,7 @@ class APIVersionManager {
   }
 
   // Get the appropriate handler for an endpoint and version
-  getHandler(path: string, requestedVersion?: string): Function | null {
+  getHandler(path: string, requestedVersion?: string): APIHandler | null {
     const endpoint = this.endpoints.get(path);
     if (!endpoint) return null;
 
@@ -56,7 +58,7 @@ class APIVersionManager {
     return this.findCompatibleVersion(endpoint, version);
   }
 
-  private findCompatibleVersion(endpoint: APIEndpoint, requestedVersion: string): Function | null {
+  private findCompatibleVersion(endpoint: APIEndpoint, requestedVersion: string): APIHandler | null {
     const requested = this.parseVersion(requestedVersion);
     if (!requested) return null;
 

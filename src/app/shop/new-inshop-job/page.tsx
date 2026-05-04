@@ -6,7 +6,7 @@ import type { Route } from 'next';
 import Link from 'next/link';
 
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaArrowLeft, FaBuilding, FaCheck } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding } from 'react-icons/fa';
 
 export default function ShopNewInShopJob() {
   const router = useRouter();

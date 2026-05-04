@@ -79,9 +79,9 @@ async function verifyJwt(token: string): Promise<Record<string, unknown> | null>
   }
 }
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
+// ─── Proxy ───────────────────────────────────────────────────────────────────
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow unauthenticated access to role-specific login pages
@@ -120,6 +120,10 @@ export async function middleware(request: NextRequest) {
 
   // Role is permitted for this route → let through
   if (allowedRoles.includes(role)) {
+    if (pathname.startsWith('/admin/owner') && payload?.isOwner !== true) {
+      return NextResponse.redirect(new URL('/admin/home', request.url));
+    }
+
     // Shop owners must have an active/trialing subscription before using shop app routes.
     if (role === 'shop') {
       const isExempt = SHOP_SUBSCRIPTION_EXEMPT_PATHS.some((p) => pathname.startsWith(p));

@@ -4,7 +4,8 @@ import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
 import { validateRequest } from '@/lib/validation';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { generateAccessToken } from '@/lib/auth';
+import { isOwnerAdmin } from '@/lib/owner-access';
 
 const adminLoginSchema = z.object({
   username: z.string().min(1),
@@ -51,32 +52,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate JWT token
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      console.error('FATAL: JWT_SECRET is not set — refusing to sign admin token');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-    const token = jwt.sign(
-      {
-        id: admin.id,
-        username: admin.username,
-        role: 'admin',
-        isSuperAdmin: admin.isSuperAdmin,
-      },
-      jwtSecret,
-      { expiresIn: '24h' }
-    );
+    const ownerAccess = isOwnerAdmin({ id: admin.id, username: admin.username });
+    const token = generateAccessToken({
+      id: admin.id,
+      username: admin.username,
+      role: 'admin',
+      isSuperAdmin: admin.isSuperAdmin,
+      isOwner: ownerAccess,
+    });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       token,
+      accessToken: token,
+      id: admin.id,
+      username: admin.username,
+      email: admin.email,
+      isSuperAdmin: admin.isSuperAdmin,
+      isOwner: ownerAccess,
+      role: 'admin',
       admin: {
         id: admin.id,
         username: admin.username,
         email: admin.email,
         isSuperAdmin: admin.isSuperAdmin,
+        isOwner: ownerAccess,
       },
     });
+
+    response.cookies.set('sos_auth', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24,
+    });
+
+    return response;
   } catch (error) {
     console.error('Admin login error:', error);
     return NextResponse.json(

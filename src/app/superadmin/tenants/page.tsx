@@ -5,8 +5,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import {
-  FaBuilding, FaSearch, FaChartBar, FaUsers, FaCheckCircle,
-  FaExclamationTriangle, FaArrowLeft,
+  FaBuilding, FaSearch, FaChartBar, FaUsers, FaArrowLeft,
 } from 'react-icons/fa';
 
 type Tenant = {

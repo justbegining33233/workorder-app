@@ -14,6 +14,7 @@ interface LoginUserData {
   isShopAdmin?: boolean;
   shopProfileComplete?: boolean;
   isSuperAdmin?: boolean;
+  isOwner?: boolean;
 }
 
 interface AuthContextType {
@@ -25,6 +26,7 @@ interface AuthContextType {
     isShopAdmin?: boolean;
     shopProfileComplete?: boolean;
     isSuperAdmin?: boolean;
+    isOwner?: boolean;
     onboardingCompleted?: boolean;
   } | null;
   isLoading: boolean;
@@ -72,14 +74,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const token = localStorage.getItem('token');
-      const role = localStorage.getItem('userRole');
-      const name = localStorage.getItem('userName');
-      const id = localStorage.getItem('userId');
+      let role = localStorage.getItem('userRole');
+      let name = localStorage.getItem('userName');
+      let id = localStorage.getItem('userId');
       const shopId = localStorage.getItem('shopId');
       const isShopAdmin = localStorage.getItem('isShopAdmin') === 'true';
       const shopProfileComplete = localStorage.getItem('shopProfileComplete') === 'true';
       const isSuperAdmin = localStorage.getItem('isSuperAdmin') === 'true';
+      const storedIsOwner = localStorage.getItem('isOwner') === 'true';
       const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
+      let isOwner = storedIsOwner;
+
+      if (!role || !name || !id) {
+        try {
+          const rawUser = localStorage.getItem('user');
+          if (rawUser) {
+            const parsed = JSON.parse(rawUser) as Record<string, unknown>;
+            role = role || (typeof parsed.role === 'string' ? parsed.role : null);
+            name = name || (typeof parsed.name === 'string' ? parsed.name : null);
+            id = id || (typeof parsed.id === 'string' ? parsed.id : null);
+
+            if (role) localStorage.setItem('userRole', role);
+            if (name) localStorage.setItem('userName', name);
+            if (id) localStorage.setItem('userId', id);
+          }
+        } catch {
+          // Ignore malformed legacy payloads and continue with known keys only.
+        }
+      }
 
 
       // Validate token if it exists
@@ -94,10 +116,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem('shopId');
           localStorage.removeItem('isShopAdmin');
           localStorage.removeItem('shopProfileComplete');
+          localStorage.removeItem('isSuperAdmin');
+          localStorage.removeItem('isOwner');
           setUser(null);
           setIsLoading(false);
           return;
         }
+
+        isOwner = Boolean(decodedToken.isOwner ?? storedIsOwner);
+        if (typeof decodedToken.isSuperAdmin === 'boolean') {
+          if (decodedToken.isSuperAdmin) localStorage.setItem('isSuperAdmin', 'true');
+          else localStorage.removeItem('isSuperAdmin');
+        }
+        if (isOwner) localStorage.setItem('isOwner', 'true');
+        else localStorage.removeItem('isOwner');
 
         // If valid token found, ensure socket is connected for real-time updates
         try {
@@ -119,6 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           isShopAdmin,
           shopProfileComplete,
           isSuperAdmin,
+          isOwner,
           onboardingCompleted,
         });
       } else {
@@ -163,6 +196,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     else localStorage.removeItem('shopProfileComplete');
     if (userData.isSuperAdmin) localStorage.setItem('isSuperAdmin', 'true');
     else localStorage.removeItem('isSuperAdmin');
+    if (userData.isOwner) localStorage.setItem('isOwner', 'true');
+    else localStorage.removeItem('isOwner');
 
     setUser({
       id: userData.id,
@@ -172,6 +207,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isShopAdmin: userData.isShopAdmin,
       shopProfileComplete: userData.shopProfileComplete,
       isSuperAdmin: userData.isSuperAdmin,
+      isOwner: userData.isOwner,
       onboardingCompleted: localStorage.getItem('onboardingCompleted') === 'true',
     });
   };
@@ -186,6 +222,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('shopId');
     localStorage.removeItem('isShopAdmin');
     localStorage.removeItem('shopProfileComplete');
+    localStorage.removeItem('isSuperAdmin');
+    localStorage.removeItem('isOwner');
     localStorage.removeItem('token');
 
     try {
@@ -237,7 +275,7 @@ const ROLE_HOME_MAP: Record<string, string> = {
   admin:      '/admin/home',
   superadmin: '/superadmin/dashboard',
   shop:       '/shop/home',
-  manager:    '/shop/home',
+  manager:    '/manager/home',
   tech:       '/tech/home',
   customer:   '/customer/dashboard',
 };
@@ -249,7 +287,10 @@ export function useRequireAuth(requiredRoles?: string[]) {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/auth/login' as Route);
+      const target = typeof window !== 'undefined'
+        ? `${window.location.pathname}${window.location.search}`
+        : '/';
+      router.push(`/auth/login?redirect=${encodeURIComponent(target)}` as Route);
       return;
     }
 

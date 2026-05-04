@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { FaEnvelope, FaMobileAlt, FaRocket, FaBullhorn, FaPlus, FaQuestionCircle } from 'react-icons/fa';
+import { FaEnvelope, FaMobileAlt, FaRocket, FaBullhorn } from 'react-icons/fa';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';

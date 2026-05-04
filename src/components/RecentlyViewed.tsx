@@ -20,8 +20,17 @@ interface RecentlyViewedProps {
 
 export default function RecentlyViewed({ maxItems = 5, showInSidebar = false }: RecentlyViewedProps) {
   const [recentItems, setRecentItems] = useState<RecentlyViewedItem[]>([]);
+  const [currentTimestamp, setCurrentTimestamp] = useState<number>(() => Date.now());
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTimestamp(Date.now());
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     // Load recently viewed items from localStorage
@@ -108,7 +117,7 @@ export default function RecentlyViewed({ maxItems = 5, showInSidebar = false }: 
   };
 
   const formatTimeAgo = (timestamp: number) => {
-    const diff = Date.now() - timestamp;
+    const diff = currentTimestamp - timestamp;
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);

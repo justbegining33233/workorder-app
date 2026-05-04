@@ -8,9 +8,9 @@ import { useAuth } from '@/contexts/AuthContext';
 /** Where each role belongs — must mirror src/middleware.ts */
 const ROLE_HOME: Record<string, string> = {
   admin:      '/admin/home',
-  superadmin: '/admin/home',
+  superadmin: '/superadmin/dashboard',
   shop:       '/shop/home',
-  manager:    '/shop/home',
+  manager:    '/manager/home',
   tech:       '/tech/home',
   customer:   '/customer/dashboard',
 };
@@ -22,7 +22,10 @@ export default function useRequireAuth(allowedRoles?: string[]) {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        router.push('/auth/login' as Route);
+        const target = typeof window !== 'undefined'
+          ? `${window.location.pathname}${window.location.search}`
+          : '/';
+        router.push(`/auth/login?redirect=${encodeURIComponent(target)}` as Route);
         return;
       }
 

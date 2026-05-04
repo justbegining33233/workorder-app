@@ -6,7 +6,7 @@ import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import {
   FaChartBar, FaArrowLeft, FaUsers, FaBuilding, FaClipboardList,
-  FaDollarSign, FaArrowUp, FaArrowDown,
+  FaDollarSign, FaArrowUp,
 } from 'react-icons/fa';
 
 type Analytics = {

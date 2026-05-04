@@ -5,8 +5,8 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import {
-  FaServer, FaArrowLeft, FaDatabase, FaMemory, FaMicrochip,
-  FaCheckCircle, FaExclamationTriangle, FaSyncAlt, FaClock,
+  FaArrowLeft, FaDatabase, FaMemory, FaMicrochip,
+  FaCheckCircle, FaExclamationTriangle, FaSyncAlt,
 } from 'react-icons/fa';
 
 type HealthData = {

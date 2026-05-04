@@ -11,6 +11,24 @@ import { apiVersioning } from './apiVersioning';
 import { queryCache } from './queryCache';
 import { compression } from './compression';
 
+function isBuildPhase(): boolean {
+  return process.env.NEXT_PHASE === 'phase-production-build' || process.env.npm_lifecycle_event === 'build';
+}
+
+function shouldAutoInitializeEnterprise(): boolean {
+  if (typeof window !== 'undefined' || isBuildPhase()) return false;
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.ENABLE_ENTERPRISE_BOOTSTRAP === 'true';
+  }
+  return true;
+}
+
+function shouldRunReplication(): boolean {
+  if (isBuildPhase()) return false;
+  if (process.env.ENABLE_MULTI_REGION_REPLICATION === 'true') return true;
+  return process.env.NODE_ENV !== 'production';
+}
+
 class EnterpriseIntegration {
   private initialized = false;
 
@@ -34,8 +52,12 @@ class EnterpriseIntegration {
       // 3. Register services with service mesh
       this.registerServices();
 
-      // 4. Start data replication
-      await dataReplicationManager.syncData();
+      // 4. Start data replication only when explicitly enabled for the runtime.
+      if (shouldRunReplication()) {
+        await dataReplicationManager.syncData();
+      } else {
+        logger.info('Skipping multi-region replication bootstrap for this runtime');
+      }
 
       // 5. Initialize feature flags
       await this.initializeFeatureFlags();
@@ -250,7 +272,7 @@ class EnterpriseIntegration {
 export const enterprise = new EnterpriseIntegration();
 
 // Initialize enterprise features when module is loaded
-if (typeof window === 'undefined') { // Server-side only
+if (shouldAutoInitializeEnterprise()) {
   enterprise.initialize().catch(error => {
     console.error('Failed to initialize enterprise features:', error);
   });

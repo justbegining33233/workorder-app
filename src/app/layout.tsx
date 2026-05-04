@@ -1,10 +1,23 @@
 import "./globals.css";
 import { Metadata, Viewport } from "next";
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import ClientAuthProvider from '@/components/ClientAuthProvider';
 import OfflineBanner from '@/components/OfflineBanner';
 import FloatingSignOut from '@/components/FloatingSignOut';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta',
+  display: 'swap',
+});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -38,7 +51,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${inter.variable} ${plusJakartaSans.variable}`}>
         <ErrorBoundary>
           <ClientAuthProvider>
             {children}

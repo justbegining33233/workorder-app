@@ -2,12 +2,28 @@ import { NextRequest, NextResponse } from 'next/server';
 import { logAdminAction } from '@/lib/auditLog';
 import prisma from '@/lib/prisma';
 import { requireRole } from '@/lib/auth';
+import { isOwnerAdmin } from '@/lib/owner-access';
+
+type SupportedUserType = 'admin' | 'shop' | 'customer' | 'manager' | 'tech';
+
+function getUserCapabilities(userType: SupportedUserType, options?: { isOwnerAdmin?: boolean }) {
+  const isOwner = Boolean(options?.isOwnerAdmin);
+
+  return {
+    canEditRole: userType === 'tech' || userType === 'manager',
+    canEditStatus: userType === 'shop',
+    canEditUsername: userType === 'customer' || userType === 'shop' || (userType === 'admin' && !isOwner),
+  };
+}
 
 export async function GET(request: NextRequest) {
   const auth = requireRole(request, ['admin', 'superadmin']);
   if (auth instanceof NextResponse) return auth;
 
   try {
+    const searchQuery = request.nextUrl.searchParams.get('q')?.trim() || '';
+    const hasSearch = searchQuery.length > 0;
+
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -17,6 +33,18 @@ export async function GET(request: NextRequest) {
 
     // Get all customers with work order data
     const customers = await prisma.customer.findMany({
+      ...(hasSearch
+        ? {
+            where: {
+              OR: [
+                { email: { contains: searchQuery, mode: 'insensitive' } },
+                { username: { contains: searchQuery, mode: 'insensitive' } },
+                { firstName: { contains: searchQuery, mode: 'insensitive' } },
+                { lastName: { contains: searchQuery, mode: 'insensitive' } },
+              ],
+            },
+          }
+        : {}),
       select: {
         id: true,
         username: true,
@@ -36,12 +64,23 @@ export async function GET(request: NextRequest) {
       },
       orderBy: {
         createdAt: 'desc'
-      },
-      take: 100
+      }
     });
 
     // Get all techs with work order and time entry data
     const techs = await prisma.tech.findMany({
+      ...(hasSearch
+        ? {
+            where: {
+              OR: [
+                { email: { contains: searchQuery, mode: 'insensitive' } },
+                { firstName: { contains: searchQuery, mode: 'insensitive' } },
+                { lastName: { contains: searchQuery, mode: 'insensitive' } },
+                { role: { contains: searchQuery } },
+              ],
+            },
+          }
+        : {}),
       select: {
         id: true,
         email: true,
@@ -71,12 +110,23 @@ export async function GET(request: NextRequest) {
       },
       orderBy: {
         createdAt: 'desc'
-      },
-      take: 100
+      }
     });
 
     // Get all shops (admins)
     const shops = await prisma.shop.findMany({
+      ...(hasSearch
+        ? {
+            where: {
+              OR: [
+                { email: { contains: searchQuery, mode: 'insensitive' } },
+                { username: { contains: searchQuery, mode: 'insensitive' } },
+                { ownerName: { contains: searchQuery, mode: 'insensitive' } },
+                { status: { contains: searchQuery } },
+              ],
+            },
+          }
+        : {}),
       select: {
         id: true,
         username: true,
@@ -95,8 +145,30 @@ export async function GET(request: NextRequest) {
       },
       orderBy: {
         createdAt: 'desc'
+      }
+    });
+
+    const admins = await prisma.admin.findMany({
+      ...(hasSearch
+        ? {
+            where: {
+              OR: [
+                { email: { contains: searchQuery, mode: 'insensitive' } },
+                { username: { contains: searchQuery, mode: 'insensitive' } },
+              ],
+            },
+          }
+        : {}),
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        isSuperAdmin: true,
       },
-      take: 100
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
     // Combine all users with role identification and metrics
@@ -112,12 +184,14 @@ export async function GET(request: NextRequest) {
         
         return {
           id: customer.id,
+          userType: 'customer' as const,
           username: customer.username,
           email: customer.email,
           firstName: customer.firstName || '',
           lastName: customer.lastName || '',
           role: 'customer' as const,
           status: 'active',
+          capabilities: getUserCapabilities('customer'),
           createdAt: customer.createdAt,
           // Customer-specific metrics
           totalOrders,
@@ -138,12 +212,14 @@ export async function GET(request: NextRequest) {
         
         return {
           id: tech.id,
+          userType: tech.role as 'tech' | 'manager',
           username: tech.email,
           email: tech.email,
           firstName: tech.firstName,
           lastName: tech.lastName,
           role: tech.role as 'tech' | 'manager',
           status: tech.available ? 'active' : 'inactive',
+          capabilities: getUserCapabilities(tech.role as 'tech' | 'manager'),
           createdAt: tech.createdAt,
           shopId: tech.shopId,
           // Tech-specific metrics
@@ -162,17 +238,36 @@ export async function GET(request: NextRequest) {
         
         return {
           id: shop.id,
+          userType: 'shop' as const,
           username: shop.username,
           email: shop.email,
           firstName: shop.ownerName?.split(' ')[0] || '',
           lastName: shop.ownerName?.split(' ').slice(1).join(' ') || '',
           role: 'shop' as const,
           status: shop.status,
+          capabilities: getUserCapabilities('shop'),
           createdAt: shop.createdAt,
           // Shop owner metrics
           totalRevenue,
           totalJobs,
           lastLogin: shop.createdAt, // Would need actual login tracking
+        };
+      }),
+      ...admins.map((admin: any) => {
+        const ownerAdmin = isOwnerAdmin({ id: admin.id, username: admin.username });
+        return {
+          id: admin.id,
+          userType: 'admin' as const,
+          username: admin.username,
+          email: admin.email,
+          firstName: admin.isSuperAdmin ? 'Super' : 'Admin',
+          lastName: admin.isSuperAdmin ? 'Admin' : '',
+          role: 'admin' as const,
+          status: 'active',
+          isOwner: ownerAdmin,
+          capabilities: getUserCapabilities('admin', { isOwnerAdmin: ownerAdmin }),
+          createdAt: admin.createdAt,
+          lastLogin: admin.createdAt,
         };
       })
     ];
@@ -427,30 +522,88 @@ export async function PUT(request: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   try {
-    const { id, role, status, userType } = await request.json();
+    const { id, role, status, userType, email, username, firstName, lastName } = await request.json();
     
     if (!id || !userType) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const normalizedUserType = userType as SupportedUserType;
     let updated = null;
 
+    if (!['admin', 'shop', 'customer', 'manager', 'tech'].includes(normalizedUserType)) {
+      return NextResponse.json({ error: 'Invalid user type' }, { status: 400 });
+    }
+
+    let targetOwnerAdmin = false;
+    if (normalizedUserType === 'admin') {
+      const existingAdmin = await prisma.admin.findUnique({
+        where: { id },
+        select: { id: true, username: true },
+      });
+
+      if (!existingAdmin) {
+        return NextResponse.json({ error: 'User not found or update failed' }, { status: 404 });
+      }
+
+      targetOwnerAdmin = isOwnerAdmin(existingAdmin);
+      if (targetOwnerAdmin && typeof username === 'string' && username.trim() && username.trim() !== existingAdmin.username) {
+        return NextResponse.json({ error: 'Owner username is locked and cannot be changed here.' }, { status: 403 });
+      }
+    }
+
+    const capabilities = getUserCapabilities(normalizedUserType, { isOwnerAdmin: targetOwnerAdmin });
+
+    if (typeof role === 'string' && role.trim() && !capabilities.canEditRole) {
+      return NextResponse.json({ error: 'Role cannot be updated for this user type.' }, { status: 400 });
+    }
+
+    if (typeof status === 'string' && status.trim() && !capabilities.canEditStatus) {
+      return NextResponse.json({ error: 'Status cannot be updated for this user type.' }, { status: 400 });
+    }
+
+    if (typeof username === 'string' && username.trim() && !capabilities.canEditUsername) {
+      return NextResponse.json({ error: 'Username cannot be updated for this user type.' }, { status: 400 });
+    }
+
     // Update based on user type
-    if (userType === 'shop') {
+    if (normalizedUserType === 'shop') {
+      const ownerName = [firstName, lastName].filter(Boolean).join(' ').trim();
       updated = await prisma.shop.update({
         where: { id },
         data: {
           ...(status && { status }),
+          ...(email && { email }),
+          ...(username && { username }),
+          ...(ownerName && { ownerName }),
         },
       });
-    } else if (userType === 'customer') {
-      // Customers don't have a status field in the schema
-      return NextResponse.json({ error: 'Cannot update customer status' }, { status: 400 });
-    } else if (userType === 'tech' || userType === 'manager') {
+    } else if (normalizedUserType === 'customer') {
+      updated = await prisma.customer.update({
+        where: { id },
+        data: {
+          ...(email && { email }),
+          ...(username && { username }),
+          ...(typeof firstName === 'string' && { firstName }),
+          ...(typeof lastName === 'string' && { lastName }),
+        },
+      });
+    } else if (normalizedUserType === 'tech' || normalizedUserType === 'manager') {
       updated = await prisma.tech.update({
         where: { id },
         data: {
           ...(role && { role }),
+          ...(email && { email }),
+          ...(typeof firstName === 'string' && { firstName }),
+          ...(typeof lastName === 'string' && { lastName }),
+        },
+      });
+    } else if (normalizedUserType === 'admin') {
+      updated = await prisma.admin.update({
+        where: { id },
+        data: {
+          ...(email && { email }),
+          ...(username && { username }),
         },
       });
     }
@@ -459,7 +612,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'User not found or update failed' }, { status: 404 });
     }
 
-    await logAdminAction(auth.id, `Updated user ${id}`, `Type: ${userType}, Role: ${role}, Status: ${status}`);
+    await logAdminAction(auth.id, `Updated user ${id}`, `Type: ${normalizedUserType}, Role: ${role}, Status: ${status}`);
     return NextResponse.json({ success: true, user: updated });
   } catch (error) {
     console.error('Error updating user:', error);

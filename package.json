@@ -51,6 +51,7 @@
     "@upstash/redis": "^1.36.3",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.8.0",
+    "critters": "^0.0.23",
     "dotenv": "^16.6.1",
     "express-rate-limit": "^8.2.1",
     "isomorphic-dompurify": "^3.5.1",

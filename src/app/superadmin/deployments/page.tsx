@@ -6,7 +6,7 @@ import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import {
   FaRocket, FaArrowLeft, FaCheckCircle, FaClock, FaTimesCircle,
-  FaSyncAlt, FaCodeBranch, FaCalendarAlt,
+  FaSyncAlt, FaCalendarAlt,
 } from 'react-icons/fa';
 
 type Deployment = {
@@ -20,39 +20,41 @@ type Deployment = {
   deployer?: string;
 };
 
+const DEPLOYMENT_HISTORY: Deployment[] = [
+  {
+    id: '1',
+    version: 'v0.0.5',
+    environment: 'Production',
+    status: 'success',
+    timestamp: '2026-05-01T10:15:00.000Z',
+    duration: '2m 34s',
+    deployer: 'System',
+  },
+  {
+    id: '2',
+    version: 'v0.0.4',
+    environment: 'Production',
+    status: 'success',
+    timestamp: '2026-04-24T09:40:00.000Z',
+    duration: '3m 12s',
+    deployer: 'System',
+  },
+  {
+    id: '3',
+    version: 'v0.0.3',
+    environment: 'Production',
+    status: 'success',
+    timestamp: '2026-04-17T08:55:00.000Z',
+    duration: '2m 58s',
+    deployer: 'System',
+  },
+];
+
 export default function SuperAdminDeployments() {
   const { user, isLoading } = useRequireAuth(['superadmin']);
 
   // Static deployment log — in a production system this would come from a CI/CD API
-  const [deployments] = useState<Deployment[]>([
-    {
-      id: '1',
-      version: 'v0.0.5',
-      environment: 'Production',
-      status: 'success',
-      timestamp: new Date().toISOString(),
-      duration: '2m 34s',
-      deployer: 'System',
-    },
-    {
-      id: '2',
-      version: 'v0.0.4',
-      environment: 'Production',
-      status: 'success',
-      timestamp: new Date(Date.now() - 7 * 86400000).toISOString(),
-      duration: '3m 12s',
-      deployer: 'System',
-    },
-    {
-      id: '3',
-      version: 'v0.0.3',
-      environment: 'Production',
-      status: 'success',
-      timestamp: new Date(Date.now() - 14 * 86400000).toISOString(),
-      duration: '2m 58s',
-      deployer: 'System',
-    },
-  ]);
+  const [deployments] = useState<Deployment[]>(DEPLOYMENT_HISTORY);
 
   if (isLoading) {
     return (

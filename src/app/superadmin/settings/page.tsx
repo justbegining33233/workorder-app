@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import {
-  FaGlobe, FaArrowLeft, FaCog, FaEnvelope, FaPalette,
+  FaGlobe, FaArrowLeft, FaCog,
   FaBell, FaSave, FaCheck,
 } from 'react-icons/fa';
 

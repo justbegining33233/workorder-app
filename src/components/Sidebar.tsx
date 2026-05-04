@@ -3,7 +3,7 @@
 // Use react-icons for all icons
 import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { FaArrowLeft, FaArrowRight, FaBell, FaBolt, FaBoxes, FaBuilding, FaBullhorn, FaBullseye, FaCalendarAlt, FaCamera, FaCar, FaCaretDown, FaChartBar, FaChevronDown, FaChevronLeft, FaChevronRight, FaChevronUp, FaClipboardList, FaClock, FaCodeBranch, FaCog, FaCogs, FaComments, FaCreditCard, FaDesktop, FaDownload, FaEdit, FaEnvelope, FaGift, FaHeartbeat, FaHome, FaIndustry, FaKey, FaLeaf, FaListAlt, FaLock, FaMapMarkerAlt, FaMoneyBill, FaPaintBrush, FaPlug, FaPrint, FaReceipt, FaRecycle, FaRoad, FaScroll, FaSearch, FaShoppingCart, FaSignOutAlt, FaStar, FaStore, FaSyncAlt, FaTools, FaUser, FaUserTie, FaUsers } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBolt, FaBoxes, FaBuilding, FaBullhorn, FaBullseye, FaCalendarAlt, FaCamera, FaCar, FaCaretDown, FaChartBar, FaClipboardList, FaClock, FaCodeBranch, FaCog, FaComments, FaCreditCard, FaDesktop, FaEdit, FaGift, FaHeartbeat, FaHome, FaIndustry, FaKey, FaLeaf, FaListAlt, FaLock, FaMapMarkerAlt, FaMoneyBill, FaPaintBrush, FaPlug, FaReceipt, FaRecycle, FaRoad, FaScroll, FaSearch, FaShoppingCart, FaStar, FaStore, FaSyncAlt, FaTools, FaUser, FaUserTie, FaUsers } from 'react-icons/fa';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { usePathname } from 'next/navigation';

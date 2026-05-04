@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FaArrowRight, FaCreditCard, FaLink, FaQuestionCircle } from 'react-icons/fa';
+import { FaArrowRight, FaCreditCard, FaLink } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
 import Link from 'next/link';

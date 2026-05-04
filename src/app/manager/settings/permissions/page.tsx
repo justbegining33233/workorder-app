@@ -5,7 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaLock, FaUsers } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa';
 
 export default function ManagerPermissionsPage() {
   const { user, isLoading } = useRequireAuth(['manager']);

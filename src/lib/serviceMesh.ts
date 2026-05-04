@@ -162,7 +162,7 @@ class ServiceRegistry {
       clearTimeout(timeoutId);
 
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }

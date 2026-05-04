@@ -28,6 +28,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "coverage/**",
     "next-env.d.ts",
     // Ignore root JS scripts and scripts folder
     "*.js",

@@ -5,7 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaClipboardList, FaDollarSign, FaStopwatch, FaTools, FaWrench } from 'react-icons/fa';
+import { FaClipboardList, FaDollarSign, FaStopwatch, FaWrench } from 'react-icons/fa';
 
 interface WorkOrderTemplate {
   id: string;

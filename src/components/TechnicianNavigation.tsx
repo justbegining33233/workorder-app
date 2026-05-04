@@ -11,12 +11,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   FaHome,
   FaClipboardList,
-  FaClock,
   FaMapMarkerAlt,
   FaComments,
   FaUser,
   FaBell,
-  FaCog,
   FaSignOutAlt,
   FaBars,
   FaTimes,
@@ -176,7 +174,7 @@ export default function TechnicianNavigation({
       {/* Mobile Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
         <div className="grid grid-cols-5 h-16">
-          {navigationItems.slice(0, 4).map((item, index) => (
+          {navigationItems.slice(0, 4).map((item) => (
             <Link
               key={item.name}
               href={item.href as Route}

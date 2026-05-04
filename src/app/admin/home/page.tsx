@@ -1,7 +1,7 @@
 'use client';
 import { FaBook, FaSave, FaSlidersH, FaStar, FaStethoscope, FaTicketAlt } from 'react-icons/fa';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import type { Route } from 'next';
@@ -20,9 +20,12 @@ function AdminHomeContent() {
   const searchParams = useSearchParams();
   const { user, isLoading } = useRequireAuth(['admin', 'superadmin']);
   const isSuperAdmin = user?.isSuperAdmin;
+  const isOwnerProfile = Boolean(user?.isOwner);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   const {
     platformStats,
@@ -85,6 +88,16 @@ function AdminHomeContent() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   if (isLoading) {
@@ -264,14 +277,64 @@ function AdminHomeContent() {
                 <span>Search</span>
               </button>
 
-              <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
-                <div className="w-9 h-9 rounded-md bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white flex items-center justify-center text-xs font-semibold">
-                  {user.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'}
-                </div>
-                <div className="hidden sm:block leading-tight">
-                  <p className="text-sm text-white font-medium">{user.name || 'Admin'}</p>
-                  <p className="text-xs text-slate-300 capitalize">{user.role || 'administrator'}</p>
-                </div>
+              <div className="relative" ref={profileMenuRef}>
+                <button
+                  onClick={() => setShowProfileMenu((prev) => !prev)}
+                  className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover:bg-white/10 transition-colors"
+                >
+                  <div className="w-9 h-9 rounded-md bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white flex items-center justify-center text-xs font-semibold">
+                    {user.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'}
+                  </div>
+                  <div className="hidden sm:block leading-tight text-left">
+                    <p className="text-sm text-white font-medium">{user.name || 'Admin'}</p>
+                    <p className="text-xs text-slate-300 capitalize">{user.role || 'administrator'}</p>
+                  </div>
+                </button>
+
+                {showProfileMenu && (
+                  <div className="absolute right-0 mt-2 w-72 rounded-xl border border-white/10 bg-[#0b1220] shadow-2xl shadow-black/40 overflow-hidden z-50">
+                    <div className="px-4 py-3 border-b border-white/10">
+                      <p className="text-sm text-white font-semibold">{user.name || 'Admin'}</p>
+                      <p className="text-xs text-slate-400 capitalize">{user.role || 'administrator'}</p>
+                    </div>
+
+                    {isOwnerProfile && (
+                      <div className="px-4 py-3 border-b border-white/10">
+                        <p className="text-[11px] uppercase tracking-wide text-slate-500 mb-2">FixTray Owner</p>
+                        <p className="text-xs text-slate-300">Platform control center and account recovery tools.</p>
+                      </div>
+                    )}
+
+                    <div className="py-2">
+                      <Link
+                        href={(isOwnerProfile ? '/admin/owner?section=profile' : isSuperAdmin ? '/superadmin/profile' : '/admin/profile') as Route}
+                        className="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 no-underline"
+                        onClick={() => setShowProfileMenu(false)}
+                      >
+                        My Profile
+                      </Link>
+
+                      {isOwnerProfile && (
+                        <>
+                          <Link
+                            href={'/admin/owner?section=quick-edit' as Route}
+                            className="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 no-underline"
+                            onClick={() => setShowProfileMenu(false)}
+                          >
+                            Quick Edit User Info
+                          </Link>
+                          <Link
+                            href={'/admin/owner?section=reset-password' as Route}
+                            className="block px-4 py-2 text-sm text-slate-200 hover:bg-white/10 no-underline"
+                            onClick={() => setShowProfileMenu(false)}
+                          >
+                            Reset User Password
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button

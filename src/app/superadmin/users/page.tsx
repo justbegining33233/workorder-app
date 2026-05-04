@@ -5,8 +5,8 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import {
-  FaUsers, FaSearch, FaArrowLeft, FaUserShield, FaStore,
-  FaUser, FaWrench, FaUserTie, FaBan, FaCheck,
+  FaSearch, FaArrowLeft, FaUserShield, FaStore,
+  FaUser, FaWrench, FaUserTie,
 } from 'react-icons/fa';
 
 type PlatformUser = {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { FaCamera, FaCheckCircle, FaExclamationTriangle, FaRedo, FaUpload } from 'react-icons/fa';
+import { FaCamera, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { Capacitor } from '@capacitor/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Filesystem, Directory } from '@capacitor/filesystem';
@@ -30,7 +30,7 @@ export default function EnhancedBarcodeScanner({
 }: EnhancedBarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const [supported, setSupported] = useState<boolean | null>(null);
+  const [_supported, setSupported] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
   const [manualCode, setManualCode] = useState('');
@@ -118,12 +118,12 @@ export default function EnhancedBarcodeScanner({
             } else {
               setError('No barcode detected. Try again.');
             }
-          } catch (detectError) {
+          } catch (_detectError) {
             setError('Barcode detection failed');
           }
         };
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Camera access failed');
     }
   };
@@ -169,8 +169,8 @@ export default function EnhancedBarcodeScanner({
         setScanning(true);
         startDetection(stream);
       }
-    } catch (err) {
-      setError('Camera access denied or unavailable');
+    } catch (_err) {
+      console.error('Camera access denied or unavailable');
     }
   };
 

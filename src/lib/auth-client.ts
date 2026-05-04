@@ -6,6 +6,8 @@ interface JWTPayload {
   email?: string;
   role: string;
   shopId?: string;
+  isSuperAdmin?: boolean;
+  isOwner?: boolean;
   iat?: number;
   exp?: number;
 }

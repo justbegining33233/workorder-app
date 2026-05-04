@@ -1,5 +1,7 @@
 "use client";
 
+import Link from 'next/link';
+
 export default function GlobalError({
   error,
   reset,
@@ -46,7 +48,7 @@ export default function GlobalError({
               >
                 Try Again
               </button>
-              <a
+              <Link
                 href="/"
                 style={{
                   padding: '0.75rem 1.5rem', background: 'white', color: '#374151',
@@ -55,7 +57,7 @@ export default function GlobalError({
                 }}
               >
                 Go Home
-              </a>
+              </Link>
             </div>
             {error.digest && (
               <p style={{ marginTop: '2rem', fontSize: '0.75rem', color: '#9ca3af' }}>

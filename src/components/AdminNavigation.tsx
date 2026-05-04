@@ -21,8 +21,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
-  FaExclamationTriangle,
-  FaCheckCircle
+  FaExclamationTriangle
 } from 'react-icons/fa';
 
 interface AdminNavProps {
@@ -192,7 +191,7 @@ export default function AdminNavigation({
       {/* Mobile Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
         <div className="grid grid-cols-5 h-16">
-          {navigationItems.slice(0, 4).map((item, index) => (
+          {navigationItems.slice(0, 4).map((item) => (
             <Link
               key={item.name}
               href={item.href as Route}

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
 import TopNavBar from '../../../components/TopNavBar';
@@ -11,6 +11,7 @@ import { FaBolt, FaChartBar, FaHeart, FaSearch, FaSyncAlt, FaUser } from 'react-
 export default function CustomerDashboard() {
   useRequireAuth(['customer']);
   const { logout } = useAuth();
+  const isMountedRef = useRef(true);
   const [_userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
   const [_mounted, setMounted] = useState(false);
@@ -59,47 +60,56 @@ export default function CustomerDashboard() {
     appointments: 0
   });
 
-  const fetchStats = async () => {
-    try {
-      const fetchOpts = { credentials: 'include' } as RequestInit;
+  const fetchStats = useCallback(async () => {
+    if (typeof window === 'undefined') return;
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const fetchOpts = {
+      credentials: 'include',
+      headers: { Authorization: `Bearer ${token}` },
+    } as RequestInit;
+    const safeFetchJson = async (url: string) => {
+      try {
+        const response = await fetch(url, fetchOpts);
+        if (!response.ok) return null;
+        return await response.json();
+      } catch {
+        return null;
+      }
+    };
 
       // Fetch appointments
-      const apptRes = await fetch('/api/appointments', fetchOpts);
-      const apptData = await apptRes.json();
-      const appointments = apptData.appointments || [];
+      const apptData = await safeFetchJson('/api/appointments');
+      const appointments = Array.isArray(apptData?.appointments) ? apptData.appointments : [];
       const upcoming = appointments.filter((a: any) => 
         a.status === 'Scheduled' || a.status === 'Confirmed'
       ).length;
       
       // Fetch vehicles
-      const vehicleRes = await fetch('/api/customers/vehicles', fetchOpts);
-      const vehicles = await vehicleRes.json();
+      const vehicles = await safeFetchJson('/api/customers/vehicles');
       
       // Fetch reviews
-      const reviewRes = await fetch('/api/reviews', fetchOpts);
-      const reviews = await reviewRes.json();
+      const reviews = await safeFetchJson('/api/reviews');
       
       // Fetch favorites
-      const favRes = await fetch('/api/customers/favorites', fetchOpts);
-      const favorites = await favRes.json();
+      const favorites = await safeFetchJson('/api/customers/favorites');
       
       // Fetch work orders for history
-      const historyRes = await fetch('/api/workorders', fetchOpts);
-      const workorders = await historyRes.json();
+      const workorders = await safeFetchJson('/api/workorders');
       const completed = Array.isArray(workorders) ? workorders.filter((w: any) => w.status === 'Completed') : [];
       
       // Fetch documents
-      const docRes = await fetch('/api/customers/documents', fetchOpts);
-      const documents = await docRes.json();
+      const documents = await safeFetchJson('/api/customers/documents');
       
       // Fetch messages
-      const msgRes = await fetch('/api/customers/messages', fetchOpts);
-      const messages = await msgRes.json();
+      const messages = await safeFetchJson('/api/customers/messages');
       const unread = Array.isArray(messages) ? messages.filter((m: any) => !m.read && m.from !== 'customer').length : 0;
       
       // Fetch payment methods
-      const paymentRes = await fetch('/api/customers/payment-methods', fetchOpts);
-      const paymentMethods = await paymentRes.json();
+      const paymentMethods = await safeFetchJson('/api/customers/payment-methods');
+
+      if (!isMountedRef.current) return;
 
       setStats({
         appointmentCount: appointments.length,
@@ -118,10 +128,8 @@ export default function CustomerDashboard() {
 
       // Fetch loyalty points from API; fall back to client-side calculation
       let pts = completed.length * 50;
-      try {
-        const rewardsRes = await fetch('/api/customers/rewards', fetchOpts);
-        if (rewardsRes.ok) {
-          const rewardsData = await rewardsRes.json();
+      const rewardsData = await safeFetchJson('/api/customers/rewards');
+        if (rewardsData) {
           if (typeof rewardsData.points === 'number') pts = rewardsData.points;
           if (typeof rewardsData.tier === 'string') {
             setTier(rewardsData.tier);
@@ -131,10 +139,6 @@ export default function CustomerDashboard() {
             setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
           }
         } else {
-          setLoyaltyPoints(pts);
-          setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
-        }
-      } catch {
         setLoyaltyPoints(pts);
         setTier(pts >= 1000 ? 'Gold' : pts >= 200 ? 'Silver' : 'Bronze');
       }
@@ -161,20 +165,26 @@ export default function CustomerDashboard() {
         documents: Array.isArray(documents) ? documents.slice(0, 3) : [],
         payments: Array.isArray(paymentMethods) ? paymentMethods.slice(0, 3) : [],
       }));
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     setMounted(true);
     const name = localStorage.getItem('userName');
     const id = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
     
     if (name) setUserName(name);
     if (id) setUserId(id);
-    fetchStats();
-  }, []);
+    if (id && token) {
+      fetchStats();
+    }
+  }, [fetchStats]);
 
   // Live updates: listen for socket events dispatched by `useSocket`
   useEffect(() => {
@@ -208,7 +218,7 @@ export default function CustomerDashboard() {
       window.removeEventListener('chat:new-message', onNewMessage as EventListener);
       window.removeEventListener('tech:location_updated', onLocationUpdate as EventListener);
     };
-  }, []);
+  }, [fetchStats]);
 
   const _handleSignOut = () => {
     logout();

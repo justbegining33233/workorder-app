@@ -5,7 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaChartBar, FaClipboardList, FaDollarSign, FaUsers } from 'react-icons/fa';
+import { FaChartBar, FaClipboardList, FaUsers } from 'react-icons/fa';
 
 interface OverviewStats {
   totalOrders: number;

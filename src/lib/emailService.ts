@@ -1,4 +1,3 @@
-import { FaCheckCircle } from 'react-icons/fa';
 // Email service for notifications
 // Configure with Resend or SendGrid API key in environment variables
 

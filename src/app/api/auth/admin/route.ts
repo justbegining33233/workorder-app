@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, getClientIP, resetRateLimit } from '@/lib/rateLimit';
 
 import { generateAccessToken, generateRandomToken, refreshExpiryDate } from '@/lib/auth';
+import { isOwnerAdmin } from '@/lib/owner-access';
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,7 +54,14 @@ export async function POST(request: NextRequest) {
     resetRateLimit(rateLimitKey);
 
     // Generate short-lived access token
-    const accessToken = generateAccessToken({ id: admin.id, username: admin.username, role: 'admin' });
+    const ownerAccess = isOwnerAdmin({ id: admin.id, username: admin.username });
+    const accessToken = generateAccessToken({
+      id: admin.id,
+      username: admin.username,
+      role: 'admin',
+      isSuperAdmin: admin.isSuperAdmin,
+      isOwner: ownerAccess,
+    });
 
     // Create refresh token (store hashed) and set httpOnly cookie. We store cookie as "<id>:<raw>"
     const refreshRaw = generateRandomToken(48);
@@ -76,6 +84,7 @@ export async function POST(request: NextRequest) {
       username: admin.username,
       email: admin.email,
       isSuperAdmin: admin.isSuperAdmin,
+      isOwner: ownerAccess,
       role: 'admin',
       accessToken,
     });

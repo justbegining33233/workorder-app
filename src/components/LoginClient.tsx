@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { Route } from 'next';
 import PasswordResetForm from '@/components/PasswordResetForm';
 import { getCsrfToken } from '@/lib/clientCsrf';
@@ -15,6 +15,7 @@ const MIN_PASSWORD_LENGTH = 8;
 
 export default function LoginClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
@@ -30,6 +31,15 @@ export default function LoginClient() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showReset, setShowReset] = useState(false);
   const [regMsg, setRegMsg] = useState<{type:'success'|'error';text:string}|null>(null);
+
+  const getPostLoginRoute = (fallback: string): Route => {
+    const redirect = searchParams?.get('redirect') || '';
+    // Allow only same-origin internal paths.
+    if (redirect.startsWith('/') && !redirect.startsWith('//') && !redirect.startsWith('/auth/login')) {
+      return redirect as Route;
+    }
+    return fallback as Route;
+  };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +64,10 @@ export default function LoginClient() {
         }
         if (adminResponse.ok) {
           const adminData = await adminResponse.json();
-          login({ token: adminData.accessToken, role: 'admin', name: adminData.username, id: adminData.id, isSuperAdmin: adminData.isSuperAdmin });
+          login({ token: adminData.accessToken, role: 'admin', name: adminData.username, id: adminData.id, isSuperAdmin: adminData.isSuperAdmin, isOwner: adminData.isOwner });
           setLoading(false);
-          router.push('/admin/home' as Route);
+          const fallback = adminData.isSuperAdmin ? '/superadmin/dashboard' : '/admin/home';
+          router.push(getPostLoginRoute(fallback));
           return;
         }
         if (adminResponse.status >= 500) serverError = true;
@@ -69,7 +80,7 @@ export default function LoginClient() {
           const techData = await techResponse.json();
           login({ token: techData.accessToken, role: techData.role, name: techData.name, id: techData.id, shopId: techData.shopId });
           setLoading(false);
-          if (techData.role === 'tech') router.push('/tech/home' as Route); else if (techData.role === 'manager') router.push('/manager/home' as Route);
+          if (techData.role === 'tech') router.push(getPostLoginRoute('/tech/home')); else if (techData.role === 'manager') router.push(getPostLoginRoute('/manager/home'));
           return;
         }
         if (techResponse.status >= 500) serverError = true;
@@ -85,7 +96,7 @@ export default function LoginClient() {
           login({ token: shopAccount.accessToken, role: 'shop', name: shopAccount.shopName, id: shopAccount.id, shopId: shopAccount.id, isShopAdmin: true, shopProfileComplete: profileComplete });
           setLoading(false);
           const nextRoute = profileComplete ? '/shop/admin' : '/shop/complete-profile';
-          router.push(nextRoute as Route);
+          router.push(getPostLoginRoute(nextRoute));
           return;
         }
         if (shopResponse.status >= 500) serverError = true;
@@ -101,7 +112,7 @@ export default function LoginClient() {
           const id = customerData.id || (customerData.user && customerData.user.id);
           login({ token, role: 'customer', name: name || 'Customer', id: id || '' });
           setLoading(false);
-          router.push('/customer/dashboard' as Route);
+          router.push(getPostLoginRoute('/customer/dashboard'));
           return;
         }
         if (customerResponse.status >= 500) serverError = true;

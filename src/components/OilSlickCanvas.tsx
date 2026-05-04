@@ -202,7 +202,8 @@ function drawBolt(c: CanvasRenderingContext2D, r: number, alpha: number) {
     const ha = (i / 6) * Math.PI * 2 - Math.PI / 6;
     const px = hexR * Math.cos(ha);
     const py = hexR * Math.sin(ha) - hexR * 0.05;
-    i === 0 ? c.moveTo(px, py) : c.lineTo(px, py);
+    if (i === 0) c.moveTo(px, py);
+    else c.lineTo(px, py);
   }
   c.closePath();
   c.fillStyle = AMBER + "0.75)";
@@ -233,8 +234,8 @@ function drawConnectingRod(
   c.globalAlpha = alpha;
 
   // I-beam body
-  const x0 = 0, y0 = -len / 2 + bigR;
-  const x1 = 0, y1 = len / 2 - smallR;
+  const y0 = -len / 2 + bigR;
+  const y1 = len / 2 - smallR;
   const flangeH = len * 0.07;
 
   c.beginPath();

@@ -314,7 +314,7 @@ class ComplianceManager {
     for (const [category, categoryResults] of results) {
       const failedChecks = categoryResults.filter(r => !r.passed);
 
-      failedChecks.forEach(result => {
+      failedChecks.forEach(_result => {
         const check = Array.from(this.checks.values())
           .find(c => c.category === category);
 
@@ -330,7 +330,7 @@ class ComplianceManager {
   private findCriticalViolations(results: Map<string, ComplianceResult[]>): any[] {
     const criticalViolations: any[] = [];
 
-    for (const [category, categoryResults] of results) {
+    for (const [_category, categoryResults] of results) {
       categoryResults.forEach(result => {
         if (result.violations) {
           const criticals = result.violations.filter(v => v.severity === 'critical');
@@ -364,6 +364,7 @@ export const complianceManager = new ComplianceManager();
 // Scheduled compliance checking
 export class ComplianceScheduler {
   private intervals: Map<string, NodeJS.Timeout> = new Map();
+  private activeSchedules: Map<string, boolean> = new Map();
 
   scheduleChecks(): void {
     // Run daily checks
@@ -384,23 +385,57 @@ export class ComplianceScheduler {
   }
 
   private schedule(name: string, interval: number, task: () => Promise<void>): void {
+    const MAX_TIMER_INTERVAL = 2147483647;
+    this.activeSchedules.set(name, true);
+
     // Run immediately first
     task().catch(error => {
       logger.error(`Scheduled compliance check failed: ${name}`, error);
     });
 
-    // Then schedule recurring
-    const timer = setInterval(() => {
-      task().catch(error => {
-        logger.error(`Scheduled compliance check failed: ${name}`, error);
-      });
-    }, interval);
+    // Then schedule recurring. For long intervals (> ~24.8 days), use
+    // chunked timeout scheduling to avoid Node TimeoutOverflow warnings.
+    if (interval <= MAX_TIMER_INTERVAL) {
+      const timer = setInterval(() => {
+        task().catch(error => {
+          logger.error(`Scheduled compliance check failed: ${name}`, error);
+        });
+      }, interval);
+      this.intervals.set(name, timer);
+      return;
+    }
 
-    this.intervals.set(name, timer);
+    let nextRunAt = Date.now() + interval;
+    const scheduleNextChunk = () => {
+      if (!this.activeSchedules.get(name)) return;
+
+      const remaining = Math.max(0, nextRunAt - Date.now());
+      const delay = Math.min(MAX_TIMER_INTERVAL, remaining);
+
+      const timer = setTimeout(async () => {
+        if (!this.activeSchedules.get(name)) return;
+
+        if (Date.now() >= nextRunAt) {
+          try {
+            await task();
+          } catch (error) {
+            logger.error(`Scheduled compliance check failed: ${name}`, error);
+          }
+          nextRunAt = Date.now() + interval;
+        }
+
+        scheduleNextChunk();
+      }, delay);
+
+      this.intervals.set(name, timer);
+    };
+
+    scheduleNextChunk();
   }
 
   stop(): void {
     for (const [name, timer] of this.intervals) {
+      this.activeSchedules.set(name, false);
       clearInterval(timer);
       logger.info(`Stopped scheduled compliance check: ${name}`);
     }

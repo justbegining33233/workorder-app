@@ -20,6 +20,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
   const router = useRouter();
   const { isConnected, emit, on, off } = useSocket();
   const [userRole, setUserRole] = useState('');
+  const [userName, setUserName] = useState('');
   const [shopName, setShopName] = useState('');
   const [shopId, setShopId] = useState('');
   const [userId, setUserId] = useState('');
@@ -33,7 +34,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [notificationSoundEnabled, setNotificationSoundEnabled] = useState(true);
-  const [notificationPreferences, setNotificationPreferences] = useState<Record<string, boolean>>({});
+  const [_notificationPreferences, setNotificationPreferences] = useState<Record<string, boolean>>({});
   const [notificationPrefs, setNotificationPrefs] = useState({
     messages: true,
     workOrders: true,
@@ -44,20 +45,45 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const role = localStorage.getItem('userRole');
-    const shop = localStorage.getItem('shopId');
-    const user = localStorage.getItem('userId');
+    const roleFromStorage = localStorage.getItem('userRole');
+    const nameFromStorage = localStorage.getItem('userName');
+    const shopFromStorage = localStorage.getItem('shopId');
+    const userFromStorage = localStorage.getItem('userId');
 
-    setUserRole(role || '');
-    setUserId(user || '');
+    let resolvedRole = roleFromStorage || '';
+    let resolvedName = nameFromStorage || 'User';
+    let resolvedShop = shopFromStorage || '';
+    let resolvedUserId = userFromStorage || '';
 
-    if (shop) {
-      setShopId(shop);
-      fetchShopName(shop);
+    try {
+      const rawUser = localStorage.getItem('user');
+      if (rawUser) {
+        const parsed = JSON.parse(rawUser) as Record<string, unknown>;
+        if (typeof parsed.role === 'string') resolvedRole = parsed.role;
+        if (typeof parsed.name === 'string' && parsed.name.trim()) resolvedName = parsed.name;
+        if (typeof parsed.id === 'string' && parsed.id.trim()) resolvedUserId = parsed.id;
+        if (typeof parsed.shopId === 'string' && parsed.shopId.trim()) resolvedShop = parsed.shopId;
+      }
+    } catch {
+      // Ignore malformed legacy payloads.
     }
 
-    if (user && (role === 'tech' || role === 'manager')) {
-      checkClockInStatus(user);
+    if (resolvedRole) localStorage.setItem('userRole', resolvedRole);
+    if (resolvedName) localStorage.setItem('userName', resolvedName);
+    if (resolvedUserId) localStorage.setItem('userId', resolvedUserId);
+    if (resolvedShop) localStorage.setItem('shopId', resolvedShop);
+
+    setUserRole(resolvedRole);
+    setUserName(resolvedName);
+    setUserId(resolvedUserId);
+
+    if (resolvedShop) {
+      setShopId(resolvedShop);
+      fetchShopName(resolvedShop);
+    }
+
+    if (resolvedUserId && (resolvedRole === 'tech' || resolvedRole === 'manager')) {
+      checkClockInStatus(resolvedUserId);
     }
 
     // Load notification preferences from localStorage
@@ -71,7 +97,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     }
 
     const interval = setInterval(() => {
-      if (user && (role === 'tech' || role === 'manager')) checkClockInStatus(user);
+      if (resolvedUserId && (resolvedRole === 'tech' || resolvedRole === 'manager')) checkClockInStatus(resolvedUserId);
     }, 10000);
 
     return () => clearInterval(interval);
@@ -83,22 +109,22 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     const fetchNotificationSettings = async () => {
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        if (!token) return;
         const response = await fetch(`/api/shops/settings?shopId=${shopId}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
           credentials: 'include',
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          const settings = data.settings || data.shop?.settings || {};
-          if (settings) {
-            setNotificationsEnabled(settings.notificationsEnabled ?? true);
-            setNotificationSoundEnabled(settings.notificationSoundEnabled ?? true);
-            setNotificationPreferences(settings.notificationPreferences || {});
-          }
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const settings = data.settings || data.shop?.settings || {};
+        if (settings) {
+          setNotificationsEnabled(settings.notificationsEnabled ?? true);
+          setNotificationSoundEnabled(settings.notificationSoundEnabled ?? true);
+          setNotificationPreferences(settings.notificationPreferences || {});
         }
-      } catch (error) {
-        console.error('Error loading notification settings:', error);
+      } catch {
       }
     };
 
@@ -172,8 +198,8 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                 icon: '🔧',
               }));
           }
-        } catch (error) {
-          console.error('Error fetching work order notifications:', error);
+        } catch (_error) {
+          // Ignore transient notification fetch failures.
         }
       }
 
@@ -184,8 +210,7 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       ];
 
       setNotifications([...messageNotifications, ...workOrderNotifications, ...systemNotifications]);
-    } catch (error) {
-      console.error('Error fetching message notifications:', error);
+    } catch {
     }
   };
 
@@ -293,8 +318,21 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
       case 'manager': return '/manager/home';
       case 'tech': return '/tech/home';
       case 'admin': return '/admin/home';
-      case 'customer': return '/customer/home';
+      case 'superadmin': return '/superadmin/dashboard';
+      case 'customer': return '/customer/dashboard';
       default: return '/';
+    }
+  };
+
+  const getProfileLink = (): Route => {
+    switch (userRole) {
+      case 'shop': return '/shop/profile' as Route;
+      case 'manager': return '/manager/profile' as Route;
+      case 'tech': return '/tech/profile' as Route;
+      case 'admin': return '/admin/profile' as Route;
+      case 'superadmin': return '/superadmin/profile' as Route;
+      case 'customer': return '/customer/profile' as Route;
+      default: return '/' as Route;
     }
   };
 
@@ -368,10 +406,12 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
     if (typeof window === 'undefined') return;
 
     localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userName');
     localStorage.removeItem('shopId');
     localStorage.removeItem('userId');
+    localStorage.removeItem('user');
     window.location.href = '/auth/login';
   };
 
@@ -746,6 +786,22 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
               }}
             >
+              <span style={{
+                width: 22,
+                height: 22,
+                borderRadius: 6,
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: '#fff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                fontWeight: 700,
+                flexShrink: 0,
+              }}>
+                {(userName || 'U').charAt(0).toUpperCase()}
+              </span>
+              <span style={{ maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{userName || 'User'}</span>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
               <span style={{ fontSize: 14 }}><FaCaretDown style={{marginRight:4}} /></span>
             </button>
@@ -764,11 +820,41 @@ export default function TopNavBar({ onMenuToggle, showMenuButton = false }: TopN
                 zIndex: 2000,
               }}>
                 {/* Role badge */}
-                <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  {getRoleBadge()}
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
-                  <span style={{ fontSize: 11, color: liveIndicator ? '#4ade80' : '#475569', fontWeight: 600 }}>{liveIndicator ? 'Live' : 'Offline'}</span>
+                <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ color: '#e5e7eb', fontSize: 13, fontWeight: 700, marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {userName || 'User'}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {getRoleBadge()}
+                    <span style={{ width: 7, height: 7, borderRadius: '50%', background: liveIndicator ? '#22c55e' : '#475569', display: 'inline-block', flexShrink: 0 }} />
+                    <span style={{ fontSize: 11, color: liveIndicator ? '#4ade80' : '#475569', fontWeight: 600 }}>{liveIndicator ? 'Live' : 'Offline'}</span>
+                  </div>
                 </div>
+
+                {/* My Profile */}
+                <Link
+                  href={getProfileLink()}
+                  onClick={() => setShowProfileMenu(false)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    background: 'transparent',
+                    border: 'none',
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    color: '#e2e8f0',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    textDecoration: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <FaUser style={{marginRight:4}} /> My Profile
+                </Link>
 
                 {/* Clock In/Out for tech/manager */}
                 {(userRole === 'tech' || userRole === 'manager') && (

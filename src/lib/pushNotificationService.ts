@@ -164,7 +164,7 @@ class PushNotificationService {
         if (data.customerId) {
           // Navigate to messages
           setTimeout(() => {
-            window.location.href = '/messages';
+            window.location.href = '/customer/messages';
           }, 1000);
         }
         break;
@@ -210,7 +210,7 @@ class PushNotificationService {
     if (!notification.recurring) return;
 
     const { type, interval } = notification.recurring;
-    let nextSchedule = new Date(notification.schedule);
+    const nextSchedule = new Date(notification.schedule);
 
     switch (type) {
       case 'daily':
@@ -323,7 +323,7 @@ class PushNotificationService {
       body: messagePreview,
       data: {
         type: 'message',
-        actionUrl: '/messages',
+        actionUrl: '/customer/messages',
       },
     });
   }

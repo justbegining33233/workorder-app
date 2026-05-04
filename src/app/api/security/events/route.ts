@@ -12,6 +12,15 @@ interface SecurityEvent {
   createdAt?: Date;
 }
 
+function isMissingSecurityEventsTable(error: unknown): boolean {
+  const message = String((error as { message?: string })?.message || error || '').toLowerCase();
+  return message.includes('security_events') && (
+    message.includes('does not exist') ||
+    message.includes('undefined table') ||
+    message.includes('no such table')
+  );
+}
+
 // POST /api/security/events - Log security event
 export async function POST(request: NextRequest) {
   try {
@@ -74,6 +83,13 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Security event logging error:', error);
+    if (isMissingSecurityEventsTable(error)) {
+      return NextResponse.json({
+        success: true,
+        skipped: true,
+        message: 'Security events table is not available in this environment',
+      });
+    }
     return NextResponse.json(
       { error: 'Failed to log security event' },
       { status: 500 }
@@ -92,8 +108,8 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0');
 
     // Build query conditions
-    let whereConditions = [];
-    let queryParams = [];
+    const whereConditions = [];
+    const queryParams = [];
     let paramIndex = 1;
 
     if (userId) {
@@ -154,6 +170,9 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Security events fetch error:', error);
+    if (isMissingSecurityEventsTable(error)) {
+      return NextResponse.json({ events: [], total: 0, limit: 50, offset: 0, skipped: true });
+    }
     return NextResponse.json(
       { error: 'Failed to fetch security events' },
       { status: 500 }
@@ -257,6 +276,9 @@ export async function DELETE(request: NextRequest) {
 
   } catch (error) {
     console.error('Security events cleanup error:', error);
+    if (isMissingSecurityEventsTable(error)) {
+      return NextResponse.json({ success: true, deletedCount: 0, skipped: true });
+    }
     return NextResponse.json(
       { error: 'Failed to cleanup security events' },
       { status: 500 }

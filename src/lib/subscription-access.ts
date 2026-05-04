@@ -85,8 +85,16 @@ const ROUTE_FEATURE_RULES: Array<{ prefix: string; feature: FeatureKey }> = [
 
 const SORTED_RULES = [...ROUTE_FEATURE_RULES].sort((a, b) => b.prefix.length - a.prefix.length);
 
-export function getPlanFeatures(plan: SubscriptionPlan) {
-  const features = SUBSCRIPTION_PLANS[plan].features as Record<string, unknown>;
+function resolvePlan(plan: SubscriptionPlan | string | null | undefined): SubscriptionPlan {
+  if (plan && plan in SUBSCRIPTION_PLANS) {
+    return plan as SubscriptionPlan;
+  }
+  return 'starter';
+}
+
+export function getPlanFeatures(plan: SubscriptionPlan | string | null | undefined) {
+  const normalizedPlan = resolvePlan(plan);
+  const features = SUBSCRIPTION_PLANS[normalizedPlan].features as Record<string, unknown>;
   const has = (key: string) => Boolean(features[key]);
 
   return {
@@ -108,7 +116,7 @@ export function getRequiredFeatureForPath(pathname: string): FeatureKey | null {
   return rule ? rule.feature : null;
 }
 
-export function isPathAllowedForPlan(pathname: string, plan: SubscriptionPlan): boolean {
+export function isPathAllowedForPlan(pathname: string, plan: SubscriptionPlan | string | null | undefined): boolean {
   const requiredFeature = getRequiredFeatureForPath(pathname);
   if (!requiredFeature) return true;
   return Boolean(getPlanFeatures(plan)[requiredFeature]);

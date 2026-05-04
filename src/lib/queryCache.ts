@@ -135,7 +135,7 @@ class QueryCache {
       }
 
       // Invalidate memory cache
-      for (const [key, entry] of this.memoryCache.entries()) {
+      for (const [key] of this.memoryCache.entries()) {
         if (key.includes(pattern)) {
           this.memoryCache.delete(key);
         }

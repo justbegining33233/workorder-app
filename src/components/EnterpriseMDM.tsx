@@ -105,7 +105,6 @@ export default function EnterpriseMDM() {
         osVersion: device.osVersion,
         manufacturer: device.manufacturer,
         isVirtual: device.isVirtual,
-        batteryLevel: battery?.batteryLevel,
         isCharging: battery?.isCharging,
         networkType: network.connectionType,
         networkConnected: network.connected,
@@ -173,7 +172,7 @@ export default function EnterpriseMDM() {
 
     // Battery status changes
     try {
-      const batteryStatus = await Device.getBatteryInfo();
+      const _batteryStatus = await Device.getBatteryInfo();
       // Note: Capacitor doesn't have battery change listeners, would need custom implementation
     } catch {
       // Battery info not available
@@ -232,10 +231,10 @@ export default function EnterpriseMDM() {
 
   const unenrollDevice = async () => {
     try {
-      const response = await fetch('/api/mdm/unenroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceId: deviceInfo?.id }),
+      const qs = new URLSearchParams();
+      if (deviceInfo?.id) qs.set('deviceId', deviceInfo.id);
+      const response = await fetch(`/api/mdm/enroll?${qs.toString()}`, {
+        method: 'DELETE',
       });
 
       if (response.ok) {

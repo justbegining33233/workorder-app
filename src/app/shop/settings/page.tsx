@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { Route } from 'next';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { PLAN_MARKETING_HIGHLIGHTS, PLAN_ORDER, getPlanCapacityLine } from '@/lib/subscription-copy';
+import { PLAN_MARKETING_HIGHLIGHTS, getPlanCapacityLine } from '@/lib/subscription-copy';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlan } from '@/lib/subscription';
 
 type CategoryId = 'diesel' | 'gas' | 'small-engine' | 'heavy-equipment' | 'resurfacing' | 'welding' | 'tire';

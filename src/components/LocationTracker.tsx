@@ -36,6 +36,7 @@ export default function LocationTracker({
   const [error, setError] = useState<string | null>(null);
   const [trackingStartTime, setTrackingStartTime] = useState<number | null>(null);
   const [distanceTraveled, setDistanceTraveled] = useState<number>(0);
+  const [currentTimestamp, setCurrentTimestamp] = useState<number>(() => Date.now());
 
   const watchIdRef = useRef<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,7 +66,7 @@ export default function LocationTracker({
         setPermissionStatus('granted');
         return true;
       }
-    } catch (err) {
+    } catch (_err) {
       setPermissionStatus('denied');
       return false;
     }
@@ -80,7 +81,7 @@ export default function LocationTracker({
         return permission.location === 'granted';
       }
       return true;
-    } catch (err) {
+    } catch (_err) {
       setPermissionStatus('denied');
       return false;
     }
@@ -95,8 +96,8 @@ export default function LocationTracker({
         maximumAge: 30000,
       });
       return position;
-    } catch (err: any) {
-      setError(`Location error: ${err.message}`);
+    } catch (_err: any) {
+      setError(`Location error: ${_err.message}`);
       return null;
     }
   };
@@ -251,7 +252,7 @@ export default function LocationTracker({
           text: 'Here is my current location',
           url: locationUrl,
         });
-      } catch (err) {
+      } catch (_err: any) {
         // User cancelled share
       }
     } else {
@@ -263,7 +264,7 @@ export default function LocationTracker({
 
   // Format time duration
   const formatDuration = (startTime: number): string => {
-    const elapsed = Date.now() - startTime;
+    const elapsed = currentTimestamp - startTime;
     const hours = Math.floor(elapsed / 3600000);
     const minutes = Math.floor((elapsed % 3600000) / 60000);
     const seconds = Math.floor((elapsed % 60000) / 1000);
@@ -297,6 +298,16 @@ export default function LocationTracker({
       stopTracking();
     };
   }, [autoStart]);
+
+  useEffect(() => {
+    if (!isTracking) return;
+
+    const timer = setInterval(() => {
+      setCurrentTimestamp(Date.now());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isTracking]);
 
   return (
     <div style={{

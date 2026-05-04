@@ -14,16 +14,6 @@ interface MDMEnrollmentRequest {
   userId?: string;
 }
 
-interface MDMCommand {
-  id: string;
-  deviceId: string;
-  command: 'lock' | 'wipe' | 'update_policy' | 'check_compliance';
-  parameters?: any;
-  status: 'pending' | 'executed' | 'failed';
-  createdAt: Date;
-  executedAt?: Date;
-}
-
 // POST /api/mdm/enroll - Enroll a device in MDM
 export async function POST(request: NextRequest) {
   try {

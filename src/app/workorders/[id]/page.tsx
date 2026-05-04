@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { WorkOrder, Message } from '@/types/workorder';
 import { getWorkOrderByIdClient, updateWorkOrderClient, deleteWorkOrderClient } from '@/lib/workordersClient';
 import { FIXTRAY_SERVICE_FEE } from '@/lib/constants';
@@ -13,11 +12,6 @@ import BarcodeScanner from '@/components/BarcodeScanner';
 import EstimateBuilder from '@/components/EstimateBuilder';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { FaArrowLeft, FaEnvelope, FaExclamationTriangle, FaFileAlt, FaPrint, FaTimes, FaCamera } from 'react-icons/fa';
-
-// Dynamically import heavy components
-const CustomerMessaging = dynamic(() => import('@/components/CustomerMessaging'), {
-  loading: () => <div className="p-4 text-center text-gray-400">Loading messaging...</div>
-});
 
 type Part = { name: string; quantity: number; unitPrice: number };
 type Labor = { description: string; hours: number; ratePerHour: number };

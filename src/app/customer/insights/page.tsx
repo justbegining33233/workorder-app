@@ -4,7 +4,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaArrowDown, FaArrowRight, FaArrowUp, FaChartBar, FaChartLine } from 'react-icons/fa';
+import { FaArrowRight, FaChartBar, FaChartLine } from 'react-icons/fa';
 
 interface Insight {
   id: string;

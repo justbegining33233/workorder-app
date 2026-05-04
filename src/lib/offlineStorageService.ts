@@ -373,7 +373,7 @@ class OfflineStorageService {
 
     // Clear old offline work orders
     const offlineWorkOrders = await this.getOfflineWorkOrders();
-    const recentWorkOrders = offlineWorkOrders.filter(wo => wo.timestamp > cutoffTime);
+    const _recentWorkOrders = offlineWorkOrders.filter(wo => wo.timestamp > cutoffTime);
 
     // Note: This would need to be implemented in the native service
     // to actually remove old files from device storage

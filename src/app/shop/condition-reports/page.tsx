@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { FaCamera, FaKey, FaCar, FaExclamationTriangle, FaPlus, FaQuestionCircle } from 'react-icons/fa';
+import { FaCamera, FaKey, FaCar, FaExclamationTriangle } from 'react-icons/fa';
 import useRequireAuth from '@/lib/useRequireAuth';
 
 interface ConditionReport {

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { FaRecycle, FaPlus, FaQuestionCircle } from 'react-icons/fa';
+import { FaRecycle, FaPlus } from 'react-icons/fa';
 import useRequireAuth from '@/lib/useRequireAuth';
 
 interface CoreReturn { id: string; partName: string; partNumber?: string; vendor?: string; coreValue: number; creditReceived?: number; status: string; workOrderId?: string; notes?: string; createdAt: string; returnedAt?: string; }

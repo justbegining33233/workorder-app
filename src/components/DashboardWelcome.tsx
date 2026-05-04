@@ -20,15 +20,6 @@ import {
   FaCog
 } from 'react-icons/fa';
 
-interface QuickAction {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ReactNode;
-  color: string;
-  priority?: 'high' | 'medium' | 'low';
-}
-
 interface DashboardWelcomeProps {
   userRole: 'customer' | 'tech' | 'manager' | 'admin' | 'shop' | 'superadmin';
   userName?: string;

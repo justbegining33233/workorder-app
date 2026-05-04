@@ -47,3 +47,5 @@ VERCEL_ENV_SETUP.txt
 tmp_secrets.txt
 tmp/
 .env*.local
+/logs/*.log
+/lint-output.txt

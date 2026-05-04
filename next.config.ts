@@ -42,18 +42,6 @@ const nextConfig: NextConfig = {
           { key: 'X-Feature-Flags',           value: 'enabled' },
         ],
       },
-      // Static assets caching
-      {
-        source: '/_next/static/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: isProd
-              ? 'public, max-age=31536000, immutable'
-              : 'no-cache, no-store, must-revalidate',
-          },
-        ],
-      },
       {
         source: '/public/(.*)',
         headers: [

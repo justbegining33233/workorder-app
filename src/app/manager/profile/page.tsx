@@ -1,114 +1,205 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRequireAuth } from '@/contexts/AuthContext';
-import TopNavBar from '@/components/TopNavBar';
-import Sidebar from '@/components/Sidebar';
-import Breadcrumbs from '@/components/Breadcrumbs';
-import { FaUser, FaEnvelope, FaPhone, FaCog, FaSave } from 'react-icons/fa';
+export const dynamic = 'force-dynamic';
+
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useRequireAuth } from '@/contexts/AuthContext';
 
-export default function ManagerProfilePage() {
+type ManagerProfileSection = 'profile' | 'contact' | 'links';
+
+function ManagerProfilePageContent() {
   const { user, isLoading } = useRequireAuth(['manager']);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [section, setSection] = useState<ManagerProfileSection>('profile');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (user) {
-      setName(user.name || '');
-      setEmail((user as Record<string, unknown>).email as string || '');
-      setPhone((user as Record<string, unknown>).phone as string || '');
+    const raw = (searchParams?.get('section') || 'profile').toLowerCase();
+    if (raw === 'profile' || raw === 'contact' || raw === 'links') {
+      setSection(raw as ManagerProfileSection);
+      return;
     }
+    setSection('profile');
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!user) return;
+    const u = user as Record<string, unknown>;
+    setName((u.name as string) || '');
+    setEmail((u.email as string) || '');
+    setPhone((u.phone as string) || '');
   }, [user]);
 
+  const initials = useMemo(() => {
+    const base = (name || user?.name || 'M').trim();
+    const chars = base.split(/\s+/).map((p) => p[0]).join('').slice(0, 2);
+    return chars.toUpperCase() || 'M';
+  }, [name, user]);
+
+  const openSection = (next: ManagerProfileSection) => {
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    params.set('section', next);
+    router.replace(`/manager/profile?${params.toString()}` as Route, { scroll: false });
+    setSection(next);
+    setMessage('');
+  };
+
   const handleSave = async () => {
+    setSaving(true);
+    setMessage('');
     try {
-      setSaving(true);
       const token = localStorage.getItem('token');
       const res = await fetch('/api/auth/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: 'include',
         body: JSON.stringify({ name, phone }),
       });
-      if (res.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
+
+      if (!res.ok) {
+        setMessage('Unable to save profile right now.');
+        return;
       }
+
+      setMessage('Profile updated successfully.');
     } catch {
-      // ignore
+      setMessage('Unable to save profile right now.');
     } finally {
       setSaving(false);
     }
   };
 
-  if (isLoading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#e5e7eb' }}>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#09090B', color: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        Loading...
+      </div>
+    );
+  }
+
   if (!user) return null;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
-      <Sidebar role="manager" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <TopNavBar onMenuToggle={() => setSidebarOpen(o => !o)} showMenuButton />
-        <main style={{ flex: 1, padding: 24, maxWidth: 800, margin: '0 auto', width: '100%' }}>
-          <Breadcrumbs />
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#e5e7eb', margin: '16px 0 24px' }}>My Profile</h1>
+    <div style={{ minHeight: '100vh', background: '#09090B', color: '#e2e8f0' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 20px' }}>
+        <Link href={'/manager/home' as Route} style={{ color: '#93c5fd', textDecoration: 'none', fontSize: 14 }}>
+          Back to Manager Home
+        </Link>
 
-          <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 24, marginBottom: 16 }}>
-            {/* Avatar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6', fontSize: 24 }}>
-                <FaUser />
-              </div>
-              <div>
-                <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: 18 }}>{name || 'Manager'}</div>
-                <div style={{ color: '#6b7280', fontSize: 14, textTransform: 'capitalize' }}>{user.role}</div>
-              </div>
+        <div style={{ marginTop: 14, background: '#0f172a', border: '1px solid #1f2937', borderRadius: 16, padding: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <h1 style={{ margin: 0, fontSize: 30, color: '#f8fafc' }}>Manager Profile</h1>
+              <p style={{ marginTop: 8, color: '#94a3b8', fontSize: 14 }}>Your manager account details and settings.</p>
             </div>
-
-            {/* Fields */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div>
-                <label style={{ display: 'block', color: '#9aa3b2', fontSize: 13, marginBottom: 6 }}><FaUser style={{ marginRight: 4, fontSize: 11 }} /> Full Name</label>
-                <input type="text" value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', padding: '10px 14px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#e5e7eb', fontSize: 14, boxSizing: 'border-box' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', color: '#9aa3b2', fontSize: 13, marginBottom: 6 }}><FaEnvelope style={{ marginRight: 4, fontSize: 11 }} /> Email</label>
-                <input type="email" value={email} disabled style={{ width: '100%', padding: '10px 14px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 8, color: '#6b7280', fontSize: 14, boxSizing: 'border-box' }} />
-                <p style={{ color: '#4b5563', fontSize: 12, marginTop: 4 }}>Contact admin to change email</p>
-              </div>
-              <div>
-                <label style={{ display: 'block', color: '#9aa3b2', fontSize: 13, marginBottom: 6 }}><FaPhone style={{ marginRight: 4, fontSize: 11 }} /> Phone</label>
-                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 123-4567" style={{ width: '100%', padding: '10px 14px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#e5e7eb', fontSize: 14, boxSizing: 'border-box' }} />
-              </div>
-            </div>
-
-            {/* Save */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20 }}>
-              <button onClick={handleSave} disabled={saving} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, background: '#3b82f6', color: '#fff', fontSize: 14, fontWeight: 500, cursor: 'pointer', border: 'none', opacity: saving ? 0.6 : 1 }}>
-                <FaSave /> {saving ? 'Saving...' : 'Save Changes'}
-              </button>
-              {saved && <span style={{ color: '#22c55e', fontSize: 14 }}>Profile updated!</span>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 999, background: 'rgba(59,130,246,0.14)', border: '1px solid rgba(59,130,246,0.35)', color: '#bfdbfe', fontSize: 12, fontWeight: 700 }}>
+              <span style={{ width: 24, height: 24, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(59,130,246,0.25)', color: '#dbeafe' }}>{initials}</span>
+              {name || user.name || 'Manager'}
             </div>
           </div>
 
-          <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 20 }}>
-            <h2 style={{ color: '#e5e7eb', fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Quick Links</h2>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <Link href={'/manager/settings' as Route} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#3b82f6', fontSize: 14, textDecoration: 'none' }}>
-                <FaCog /> Settings
-              </Link>
-              <Link href={'/manager/settings/two-factor' as Route} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#3b82f6', fontSize: 14, textDecoration: 'none' }}>
-                <FaCog /> Two-Factor Auth
-              </Link>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 260px', gap: 18, marginTop: 20 }}>
+            <div style={{ minWidth: 0 }}>
+              {section === 'profile' && (
+                <div style={{ background: '#0b1220', border: '1px solid #1e293b', borderRadius: 12, padding: 16 }}>
+                  <h2 style={{ marginTop: 0, color: '#f8fafc', fontSize: 22 }}>My Profile</h2>
+                  <p style={{ color: '#94a3b8', fontSize: 14, marginBottom: 14 }}>Personal overview for your manager account.</p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 14 }}>
+                      <div style={{ color: '#94a3b8', fontSize: 12 }}>Name</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, marginTop: 6 }}>{name || 'Not set'}</div>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 14 }}>
+                      <div style={{ color: '#94a3b8', fontSize: 12 }}>Role</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, marginTop: 6 }}>manager</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {section === 'contact' && (
+                <div style={{ background: '#0b1220', border: '1px solid #1e293b', borderRadius: 12, padding: 16 }}>
+                  <h2 style={{ marginTop: 0, color: '#f8fafc', fontSize: 22 }}>Contact & Settings</h2>
+                  <p style={{ color: '#94a3b8', fontSize: 14, marginBottom: 14 }}>Update your manager contact details.</p>
+
+                  <div style={{ display: 'grid', gap: 10, maxWidth: 620 }}>
+                    <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#020617', color: '#e2e8f0' }} />
+                    <input value={email} disabled placeholder="Email" style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #1f2937', background: '#0b1220', color: '#94a3b8' }} />
+                    <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #334155', background: '#020617', color: '#e2e8f0' }} />
+                    <button onClick={handleSave} disabled={saving} style={{ width: 'fit-content', padding: '10px 14px', borderRadius: 8, border: 'none', background: '#2563eb', color: 'white', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.75 : 1 }}>
+                      {saving ? 'Saving...' : 'Save Changes'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {section === 'links' && (
+                <div style={{ background: '#0b1220', border: '1px solid #1e293b', borderRadius: 12, padding: 16 }}>
+                  <h2 style={{ marginTop: 0, color: '#f8fafc', fontSize: 22 }}>Quick Links</h2>
+                  <p style={{ color: '#94a3b8', fontSize: 14, marginBottom: 14 }}>Useful manager pages.</p>
+
+                  <div style={{ display: 'grid', gap: 10, maxWidth: 460 }}>
+                    <Link href={'/manager/settings' as Route} style={{ textDecoration: 'none', color: '#bfdbfe', border: '1px solid #1e3a8a', borderRadius: 8, padding: '10px 12px', background: 'rgba(30,64,175,0.15)' }}>
+                      Manager Settings
+                    </Link>
+                    <Link href={'/manager/home' as Route} style={{ textDecoration: 'none', color: '#bfdbfe', border: '1px solid #1e3a8a', borderRadius: 8, padding: '10px 12px', background: 'rgba(30,64,175,0.15)' }}>
+                      Manager Dashboard
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {message && (
+                <div style={{ marginTop: 12, fontSize: 13, color: message.toLowerCase().includes('success') ? '#4ade80' : '#fda4af' }}>
+                  {message}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div style={{ background: '#0b1220', border: '1px solid #1e293b', borderRadius: 12, padding: 12, position: 'sticky', top: 24 }}>
+                <div style={{ color: '#94a3b8', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Menu</div>
+                <button onClick={() => openSection('profile')} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 8, border: section === 'profile' ? '1px solid rgba(59,130,246,0.45)' : '1px solid transparent', background: section === 'profile' ? 'rgba(59,130,246,0.14)' : 'transparent', color: '#e2e8f0', cursor: 'pointer', marginBottom: 8 }}>
+                  My Profile
+                </button>
+                <button onClick={() => openSection('contact')} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 8, border: section === 'contact' ? '1px solid rgba(59,130,246,0.45)' : '1px solid transparent', background: section === 'contact' ? 'rgba(59,130,246,0.14)' : 'transparent', color: '#e2e8f0', cursor: 'pointer', marginBottom: 8 }}>
+                  Contact & Settings
+                </button>
+                <button onClick={() => openSection('links')} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 8, border: section === 'links' ? '1px solid rgba(59,130,246,0.45)' : '1px solid transparent', background: section === 'links' ? 'rgba(59,130,246,0.14)' : 'transparent', color: '#e2e8f0', cursor: 'pointer' }}>
+                  Quick Links
+                </button>
+              </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function ManagerProfilePage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ minHeight: '100vh', background: '#09090B', color: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          Loading...
+        </div>
+      }
+    >
+      <ManagerProfilePageContent />
+    </Suspense>
   );
 }

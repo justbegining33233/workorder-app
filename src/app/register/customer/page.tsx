@@ -125,7 +125,7 @@ export default function CustomerRegisterPage() {
         </p>
         <p style={{ textAlign: 'center', marginTop: 8, fontSize: 13, color: '#9ca3af' }}>
           Are you a shop?{' '}
-          <Link href="/auth/register/shop/client" style={{ color: '#6b7280', textDecoration: 'none' }}>Register your shop</Link>
+          <Link href="/auth/register/shop" style={{ color: '#6b7280', textDecoration: 'none' }}>Register your shop</Link>
         </p>
       </div>
     </div>

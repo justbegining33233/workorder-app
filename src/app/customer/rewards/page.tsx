@@ -150,7 +150,7 @@ export default function Rewards() {
                     if (!reward.earned) return;
                     try {
                       const token = localStorage.getItem('token');
-                      const r = await fetch('/api/customers/rewards/claim', {
+                      const r = await fetch('/api/customers/rewards', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                         body: JSON.stringify({ rewardId: reward.id }),

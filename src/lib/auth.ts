@@ -82,9 +82,12 @@ export function requireRole(request: NextRequest, roles: string[]): NextResponse
 
 export interface AuthUser {
   id: string;
-  email: string;
+  email?: string;
+  username?: string;
   role: 'customer' | 'tech' | 'manager' | 'admin' | 'shop' | 'superadmin';
   shopId?: string;
+  isSuperAdmin?: boolean;
+  isOwner?: boolean;
 }
 
 export function getAuthToken(request: NextRequest): string | null {

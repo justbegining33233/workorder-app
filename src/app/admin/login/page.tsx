@@ -36,6 +36,8 @@ export default function AdminLoginPage() {
         localStorage.setItem('adminId', data.admin.id);
         localStorage.setItem('adminUsername', data.admin.username);
         localStorage.setItem('isSuperAdmin', data.admin.isSuperAdmin.toString());
+        if (data.admin?.isOwner) localStorage.setItem('isOwner', 'true');
+        else localStorage.removeItem('isOwner');
 
         // Also set shared user keys so the AuthContext picks up the admin as an authenticated user
         localStorage.setItem('userId', data.admin.id);

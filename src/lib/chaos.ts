@@ -276,7 +276,7 @@ class ChaosEngine {
     };
   }
 
-  private async measureRecoveryTime(experiment: ChaosExperiment): Promise<number> {
+  private async measureRecoveryTime(_experiment: ChaosExperiment): Promise<number> {
     const startTime = Date.now();
 
     // Wait for system to stabilize
@@ -525,7 +525,7 @@ export const chaosEngine = new ChaosEngine();
 export class ChaosScheduler {
   private schedule: Map<string, NodeJS.Timeout> = new Map();
 
-  scheduleExperiment(experiment: ChaosExperiment, cronExpression: string): void {
+  scheduleExperiment(experiment: ChaosExperiment, _cronExpression: string): void {
     // In a real implementation, this would parse cron expressions
     // For now, just schedule to run once per day
     const interval = 24 * 60 * 60 * 1000; // 24 hours

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FaBars, FaTimes, FaHome, FaClipboardList, FaComments, FaUser, FaCog, FaBell, FaSearch, FaPlus } from 'react-icons/fa';
+import { FaBars, FaHome, FaClipboardList, FaComments, FaUser, FaCog, FaBell, FaSearch, FaPlus } from 'react-icons/fa';
 import { Capacitor } from '@capacitor/core';
 import { nativeMobileService } from '@/lib/nativeMobileService';
 import { offlineStorageService } from '@/lib/offlineStorageService';
@@ -205,7 +205,7 @@ export default function NativeMobileLayout({
     if (item.action) {
       item.action();
     } else {
-      window.location.href = item.path;
+      window.location.assign(item.path);
     }
 
     // Haptic feedback on native

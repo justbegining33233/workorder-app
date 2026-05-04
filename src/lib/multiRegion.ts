@@ -3,6 +3,20 @@
 
 import logger from './logger';
 
+function isBuildPhase(): boolean {
+  return process.env.NEXT_PHASE === 'phase-production-build' || process.env.npm_lifecycle_event === 'build';
+}
+
+function shouldStartRegionHealthChecks(): boolean {
+  if (isBuildPhase()) return false;
+  if (process.env.ENABLE_MULTI_REGION_HEALTHCHECKS === 'true') return true;
+  return process.env.NODE_ENV !== 'production';
+}
+
+function shouldInjectReplicationFailure(): boolean {
+  return process.env.NODE_ENV !== 'production' && process.env.ENABLE_REPLICATION_FAILURE_SIMULATION === 'true';
+}
+
 export interface Region {
   id: string;
   name: string;
@@ -86,7 +100,9 @@ class RegionManager {
     };
 
     this.initializeRegions();
-    this.startHealthChecks();
+    if (shouldStartRegionHealthChecks()) {
+      this.startHealthChecks();
+    }
   }
 
   private initializeRegions(): void {
@@ -503,8 +519,8 @@ class DataReplicationManager {
     // Simulate synchronization time
     await this.wait(Math.random() * 5000 + 1000);
 
-    // Simulate occasional sync errors
-    if (Math.random() < 0.05) { // 5% failure rate
+    // Allow random failure injection only for explicitly enabled non-production simulations.
+    if (shouldInjectReplicationFailure() && Math.random() < 0.05) {
       throw new Error(`Synchronization failed for table: ${tableName}`);
     }
   }
@@ -656,7 +672,7 @@ class DisasterRecoveryManager {
     return result;
   }
 
-  private async executeRecoveryStep(step: string, context?: any): Promise<RecoveryStepResult> {
+  private async executeRecoveryStep(step: string, _context?: any): Promise<RecoveryStepResult> {
     logger.info('Executing recovery step', { step });
 
     // Simulate step execution time

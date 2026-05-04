@@ -53,11 +53,18 @@ function dispatch(windowEvent: string, detail: unknown) {
 let socketInstance: Socket | null = null;
 let socketConnected = false;
 
+function shouldUseSocketInCurrentEnv(): boolean {
+  if (process.env.NEXT_PUBLIC_ENABLE_REALTIME !== 'true') return false;
+  if (process.env.NODE_ENV === 'production') return true;
+  return process.env.NEXT_PUBLIC_ENABLE_SOCKET_IN_DEV === 'true';
+}
+
 function getSocket(): Socket | null {
   if (typeof window === 'undefined') return null;
   if (socketInstance) return socketInstance;
+  if (!shouldUseSocketInCurrentEnv()) return null;
 
-  const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
+  const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || `${window.location.origin}`;
   if (!socketUrl) return null;
 
   const token = localStorage.getItem('token');

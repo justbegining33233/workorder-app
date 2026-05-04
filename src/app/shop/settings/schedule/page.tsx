@@ -97,7 +97,7 @@ export default function ScheduleSettingsPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/shop/schedule/blocked-dates', {
+      const res = await fetch('/api/shop/schedule/blockedDates', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -128,7 +128,7 @@ export default function ScheduleSettingsPage() {
   const handleRemoveBlockedDate = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/shop/schedule/blocked-dates?id=${id}`, {
+      const res = await fetch(`/api/shop/schedule/blockedDates?id=${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

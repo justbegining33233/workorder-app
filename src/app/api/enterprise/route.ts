@@ -9,9 +9,7 @@ import { chaosEngine, predefinedExperiments } from '@/lib/chaos';
 import { serviceMesh } from '@/lib/serviceMesh';
 import { regionManager } from '@/lib/multiRegion';
 import { featureFlags } from '@/lib/featureFlags';
-import { apiVersioning } from '@/lib/apiVersioning';
 import { queryCache } from '@/lib/queryCache';
-import { compression } from '@/lib/compression';
 import logger from '@/lib/logger';
 
 export async function GET(request: NextRequest) {

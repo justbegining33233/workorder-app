@@ -9,7 +9,6 @@ import { sanitizeObject } from '@/lib/sanitize';
 import { apiVersioning } from '@/lib/apiVersioning';
 import { queryCache } from '@/lib/queryCache';
 import { compression } from '@/lib/compression';
-import { serviceMesh } from '@/lib/serviceMesh';
 import { featureFlags } from '@/lib/featureFlags';
 import logger from '@/lib/logger';
 

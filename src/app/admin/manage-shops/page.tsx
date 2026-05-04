@@ -1,5 +1,5 @@
 'use client';
-import { FaArrowLeft, FaBan, FaCheck, FaStar, FaSyncAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaBan, FaCheck, FaSyncAlt } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '@/contexts/AuthContext';

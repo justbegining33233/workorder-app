@@ -5,7 +5,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaBell, FaCalendarAlt, FaSyncAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaSyncAlt } from 'react-icons/fa';
 
 interface RecurringSchedule {
   id: string;

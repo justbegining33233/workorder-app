@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaComments, FaExclamationTriangle, FaShieldAlt, FaStore, FaUser, FaUserTie, FaWrench } from 'react-icons/fa';
 import { useSocket } from '@/lib/socket';
 

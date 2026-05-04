@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { MaintenanceType } from '../../../types/workorder';
 import { createWorkOrderClient } from '@/lib/workordersClient';
 import { useRequireAuth } from '@/contexts/AuthContext';
-import { FaArrowLeft, FaBuilding, FaCheck } from 'react-icons/fa';
+import { FaArrowLeft, FaBuilding } from 'react-icons/fa';
 
 export default function NewInShopJob() {
   const router = useRouter();
