@@ -28,14 +28,14 @@ export default function AllTechTools() {
       title: 'New Roadside Job',
       description: 'Create emergency roadside assistance work orders for towing, jumpstart, tire changes, and more',
       icon: '',
-      link: '/workorders/new',
+      link: '/tech/new-roadside-job',
       category: 'Job Creation'
     },
     {
       title: 'New In-Shop Job',
       description: 'Schedule in-shop service appointments with vehicle diagnostics and service selection',
       icon: '',
-      link: '/workorders/inshop',
+      link: '/tech/new-inshop-job',
       category: 'Job Creation'
     },
     {
@@ -56,14 +56,14 @@ export default function AllTechTools() {
       title: 'Active Jobs',
       description: 'View all your currently assigned work orders and update their status',
       icon: '',
-      link: '/workorders/list?status=in-progress',
+      link: '/tech/home',
       category: 'Job Management'
     },
     {
       title: 'Job History',
       description: 'Browse completed work orders, customer feedback, and service history',
       icon: '',
-      link: '/workorders/list?status=closed',
+      link: '/tech/home',
       category: 'Job Management'
     },
     {

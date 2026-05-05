@@ -52,7 +52,7 @@ const ROLES: Record<ShellRole, RoleConfig> = {
     roleLabel: 'Shop Owner',
     ico: '🔧',
     tiles: [
-      { ico: '🗂️', name: 'Work Orders', sub: 'Jobs & repairs', href: '/workorders/list', color: '#0f1e3a', badge: undefined, span2: true },
+      { ico: '🗂️', name: 'Work Orders', sub: 'Jobs & repairs', href: '/shop/home', color: '#0f1e3a', badge: undefined, span2: true },
       { ico: '📅', name: 'Calendar', sub: 'Appointments', href: '/shop/calendar', color: '#0f2214' },
       { ico: '👥', name: 'Team', sub: 'Manage staff', href: '/shop/manage-team', color: '#1a0f2e' },
       { ico: '💬', name: 'Messages', sub: 'Customer chat', href: '/shop/customer-messages', color: '#0f0f2e' },
@@ -63,8 +63,7 @@ const ROLES: Record<ShellRole, RoleConfig> = {
     ],
     footer: [
       { ico: '🏠', label: 'Home', href: '/shop/home' },
-      { ico: '🗂️', label: 'Jobs', href: '/workorders/list' },
-      // center slot = FAB
+      { ico: '🗂️', label: 'Jobs', href: '/shop/home' },
       { ico: '💬', label: 'Chat', href: '/shop/customer-messages' },
       { ico: '📊', label: 'Reports', href: '/shop/reports' },
     ],
@@ -76,7 +75,7 @@ const ROLES: Record<ShellRole, RoleConfig> = {
       {
         title: 'Operations',
         items: [
-          { ico: '🗂️', label: 'Work Orders', href: '/workorders/list' },
+          { ico: '🗂️', label: 'Work Orders', href: '/shop/home' },
           { ico: '📅', label: 'Calendar', href: '/shop/calendar' },
           { ico: '🏪', label: 'Bays / Waiting Room', href: '/shop/bays' },
           { ico: '🔍', label: 'DVI Inspections', href: '/shop/dvi' },
@@ -124,7 +123,7 @@ const ROLES: Record<ShellRole, RoleConfig> = {
     roleLabel: 'Technician',
     ico: '⚙️',
     tiles: [
-      { ico: '🗂️', name: 'My Jobs', sub: 'Assigned jobs', href: '/workorders/list', color: '#0f1e3a', span2: true },
+      { ico: '🗂️', name: 'My Jobs', sub: 'Assigned jobs', href: '/tech/home', color: '#0f1e3a', span2: true },
       { ico: '🔍', name: 'DVI', sub: 'Inspections', href: '/tech/dvi', color: '#0f2214' },
       { ico: '📸', name: 'Photos', sub: 'Upload pics', href: '/tech/photos', color: '#1a0f2e' },
       { ico: '💬', name: 'Messages', sub: 'Shop & customer', href: '/tech/messages', color: '#0f0f2e' },
@@ -135,7 +134,7 @@ const ROLES: Record<ShellRole, RoleConfig> = {
     ],
     footer: [
       { ico: '🏠', label: 'Home', href: '/tech/home' },
-      { ico: '🗂️', label: 'My Jobs', href: '/workorders/list' },
+      { ico: '🗂️', label: 'My Jobs', href: '/tech/home' },
       { ico: '💬', label: 'Chat', href: '/tech/messages' },
       { ico: '👤', label: 'Profile', href: '/tech/profile' },
     ],
@@ -147,7 +146,7 @@ const ROLES: Record<ShellRole, RoleConfig> = {
       {
         title: 'My Work',
         items: [
-          { ico: '🗂️', label: 'My Jobs', href: '/workorders/list' },
+          { ico: '🗂️', label: 'My Jobs', href: '/tech/home' },
           { ico: '🔍', label: 'DVI / Inspections', href: '/tech/dvi' },
           { ico: '📸', label: 'Job Photos', href: '/tech/photos' },
           { ico: '🚐', label: 'Roadside Jobs', href: '/tech/new-roadside-job' },
@@ -655,7 +654,7 @@ export default function MobileShell({
                       onClick={() => { setDrawerOpen(false); go(item.href); }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: 10,
-                        padding: '9px 12px', width: '100%', cursor: 'pointer',
+                        padding: '9px 12px', cursor: 'pointer',
                         fontSize: 12, fontWeight: 500, color: '#e2e8f0',
                         background: isActivePath(item.href) ? 'rgba(255,255,255,0.07)' : 'transparent',
                         border: 'none', textAlign: 'left',

@@ -52,7 +52,7 @@ export default function KeyboardShortcuts({ shortcuts = [] }: KeyboardShortcutsP
         key: 'n',
         ctrl: true,
         description: 'New work order',
-        action: () => router.push('/workorders/new' as Route),
+        action: () => router.push('/shop/new-inshop-job' as Route),
       });
     }
 
@@ -76,25 +76,25 @@ export default function KeyboardShortcuts({ shortcuts = [] }: KeyboardShortcutsP
           key: '1',
           alt: true,
           description: 'All orders',
-          action: () => router.push('/workorders/list' as Route),
+          action: () => router.push('/shop/home' as Route),
         },
         {
           key: '2',
           alt: true,
           description: 'Pending orders',
-          action: () => router.push('/workorders/list?status=pending' as Route),
+          action: () => router.push('/shop/home' as Route),
         },
         {
           key: '3',
           alt: true,
           description: 'In progress',
-          action: () => router.push('/workorders/list?status=in-progress' as Route),
+          action: () => router.push('/shop/home' as Route),
         },
         {
           key: '4',
           alt: true,
           description: 'Completed orders',
-          action: () => router.push('/workorders/list?status=completed' as Route),
+          action: () => router.push('/shop/home' as Route),
         }
       );
     }

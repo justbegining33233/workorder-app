@@ -119,12 +119,12 @@ export default function NativeMobileLayout({
         {
           icon: <FaClipboardList size={20} />,
           label: 'Orders',
-          path: '/workorders/list',
+          path: '/shop/home',
         },
         {
           icon: <FaPlus size={20} />,
           label: 'New',
-          path: '/workorders/new',
+          path: '/shop/new-inshop-job',
           action: onAddNew,
         },
         {
@@ -147,7 +147,7 @@ export default function NativeMobileLayout({
         {
           icon: <FaClipboardList size={20} />,
           label: 'My Jobs',
-          path: '/workorders/list',
+          path: '/tech/home',
         },
         {
           icon: <FaPlus size={20} />,
@@ -180,7 +180,7 @@ export default function NativeMobileLayout({
         {
           icon: <FaPlus size={20} />,
           label: 'New',
-          path: '/workorders/new',
+          path: '/shop/new-inshop-job',
           action: onAddNew,
         },
         {

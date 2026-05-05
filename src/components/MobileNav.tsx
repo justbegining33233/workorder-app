@@ -43,7 +43,7 @@ const navConfig: Record<string, { primary: NavItem[]; more: NavItem[] }> = {
   shop: {
     primary: [
       { icon: <IconHome size={22} />,     label: 'Home',     path: '/shop/home' },
-      { icon: <IconOrders size={22} />,   label: 'Orders',   path: '/workorders/list' },
+      { icon: <IconOrders size={22} />,   label: 'Orders',   path: '/shop/home' },
       { icon: <IconMessages size={22} />, label: 'Messages', path: '/shop/customer-messages' },
       { icon: <IconTeam size={22} />,     label: 'Team',     path: '/shop/manage-team' },
     ],
@@ -59,7 +59,7 @@ const navConfig: Record<string, { primary: NavItem[]; more: NavItem[] }> = {
   tech: {
     primary: [
       { icon: <IconHome size={22} />,       label: 'Home',     path: '/tech/home' },
-      { icon: <IconClipboard size={22} />,  label: 'My Jobs',  path: '/workorders/list' },
+      { icon: <IconClipboard size={22} />,  label: 'My Jobs',  path: '/tech/home' },
       { icon: <IconClock size={22} />,      label: 'Clock',    path: '/tech/timeclock' },
       { icon: <IconMessages size={22} />,   label: 'Messages', path: '/tech/messages' },
     ],
@@ -83,9 +83,9 @@ const navConfig: Record<string, { primary: NavItem[]; more: NavItem[] }> = {
       { icon: <IconFileText size={22} />,   label: 'Estimates',  path: '/manager/estimates' },
       { icon: <IconClock size={22} />,      label: 'Time Clock', path: '/manager/timeclock' },
       { icon: <IconInventory size={22} />,  label: 'Inventory',  path: '/manager/inventory' },
-      { icon: <IconOrders size={22} />,     label: 'All Orders', path: '/workorders/list' },
+      { icon: <IconOrders size={22} />,     label: 'All Orders', path: '/manager/home' },
       { icon: <IconChart size={22} />,      label: 'Overview',   path: '/manager/overview' },
-      { icon: <IconOrders size={22} />,     label: 'Work Orders', path: '/workorders/list' },
+      { icon: <IconOrders size={22} />,     label: 'Work Orders', path: '/manager/home' },
       { icon: <IconInventory size={22} />,  label: 'Parts',      path: '/manager/inventory' },
       { icon: <IconSearch size={22} />,     label: 'Inspections', path: '/manager/inspections' },
     ],

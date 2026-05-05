@@ -65,7 +65,7 @@ export default function ManagerNavigation({
     },
     {
       name: 'Work Orders',
-      href: '/workorders/list',
+      href: '/manager/home',
       icon: FaList,
       description: 'Work order management'
     },
