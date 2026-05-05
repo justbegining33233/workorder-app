@@ -407,7 +407,7 @@ export default function CustomerDashboard() {
   const isMobile = useIsMobile();
   const isNative = useIsNative();
 
-  if (isNative) {
+  if (isNative || isMobile) {
     return <MobileShell role="customer" isHome userName={_userName} />;
   }
 

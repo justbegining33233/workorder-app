@@ -409,7 +409,7 @@ export default function ShopHome() {
     setPendingWorkOrders(prev => [...prev, { ...movedJob, status: 'Pending' }]);
   };
 
-  if (isNative) {
+  if (isNative || isMobile) {
     return <MobileShell role="shop" isHome userName={user?.name} />;
   }
 

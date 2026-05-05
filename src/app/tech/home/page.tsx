@@ -202,7 +202,7 @@ export default function TechHome() {
     return null;
   }
 
-  if (isNative) {
+  if (isNative || isMobile) {
     return <MobileShell role="tech" isHome userName={user?.name} />;
   }
 
