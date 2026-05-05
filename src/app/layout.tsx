@@ -57,11 +57,16 @@ export default async function RootLayout({
   const nativeHeader = headersList.get('x-fixtray-native') as 'android' | 'ios' | null;
   const isNative = nativeHeader === 'android' || nativeHeader === 'ios';
 
+  // Detect mobile browsers server-side so the initial render never flashes
+  // desktop layout on phones/tablets.
+  const ua = headersList.get('user-agent') ?? '';
+  const isMobileUA = isNative || /Mobile|Android|iPhone|iPad|iPod/i.test(ua);
+
   return (
     <html lang="en">
       <body className={`${inter.variable} ${plusJakartaSans.variable}`}>
         <ErrorBoundary>
-          <NativeProvider isNative={isNative} platform={nativeHeader ?? null}>
+          <NativeProvider isNative={isNative} platform={nativeHeader ?? null} isMobileUA={isMobileUA}>
             <ClientAuthProvider>
               {children}
               <OfflineBanner />
