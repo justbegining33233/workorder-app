@@ -84,8 +84,27 @@ async function verifyJwt(token: string): Promise<Record<string, unknown> | null>
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // ── Native-app detection ──────────────────────────────────────────────────
+  // Build a modified headers object that includes x-fixtray-native so
+  // layout.tsx can read it server-side and render the correct shell from byte 1.
+  const nativeCookie = request.cookies.get('x-fixtray-native')?.value;
+  const ua = request.headers.get('user-agent') ?? '';
+  const isAndroidUA = ua.includes('FixTray-Android-App-Pro');
+  const isIosUA = ua.includes('FixTray-iOS-App-Pro');
+  const nativePlatform: string | null =
+    nativeCookie === 'android' || nativeCookie === 'ios'
+      ? nativeCookie
+      : isAndroidUA ? 'android'
+      : isIosUA ? 'ios'
+      : null;
+
+  const requestHeaders = new Headers(request.headers);
+  if (nativePlatform) requestHeaders.set('x-fixtray-native', nativePlatform);
+  const passThrough = () => NextResponse.next({ request: { headers: requestHeaders } });
+  // ─────────────────────────────────────────────────────────────────────────
+
   // Allow unauthenticated access to role-specific login pages
-  if (pathname === '/admin/login') return NextResponse.next();
+  if (pathname === '/admin/login') return passThrough();
 
   // Find the route group this path belongs to
   const entry = Object.entries(ROUTE_ROLES).find(([prefix]) =>
@@ -93,7 +112,7 @@ export async function proxy(request: NextRequest) {
   );
 
   // Not a protected route — pass through
-  if (!entry) return NextResponse.next();
+  if (!entry) return passThrough();
 
   const [, allowedRoles] = entry;
 
@@ -182,7 +201,7 @@ export async function proxy(request: NextRequest) {
       }
     }
 
-    return NextResponse.next();
+    return passThrough();
   }
 
   // Wrong role → bounce to their own dashboard (not to login)
