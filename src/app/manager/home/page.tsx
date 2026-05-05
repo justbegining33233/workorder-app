@@ -11,6 +11,7 @@ import TopNavBar from '@/components/TopNavBar';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import MobileShell from '@/components/MobileShell';
 import { useRequireAuth } from '@/contexts/AuthContext';
 
 export default function ManagerHome() {
@@ -242,6 +243,10 @@ export default function ManagerHome() {
       setManagerMsg({type:'error',text:'Error submitting request'});
     }
   };
+
+  if (isMobile) {
+    return <MobileShell role="manager" isHome userName={userName} />;
+  }
 
   return (
     <div style={{ minHeight: "100vh", background: 'transparent', display: 'flex', flexDirection: 'column' }}>

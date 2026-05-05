@@ -12,6 +12,7 @@ import MessagingCard from '@/components/MessagingCard';
 import RealTimeWorkOrders from '@/components/RealTimeWorkOrders';
 import ShopBaysCard from '@/components/ShopBaysCard';
 import MobileLayout from '@/components/MobileLayout';
+import MobileShell from '@/components/MobileShell';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { isPathAllowedForPlan } from '@/lib/subscription-access';
@@ -405,6 +406,10 @@ export default function ShopHome() {
     const movedJob: Job = moved;
     setPendingWorkOrders(prev => [...prev, { ...movedJob, status: 'Pending' }]);
   };
+
+  if (isMobile) {
+    return <MobileShell role="shop" isHome userName={user?.name} />;
+  }
 
   return (
     <MobileLayout

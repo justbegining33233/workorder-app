@@ -7,6 +7,8 @@ import RealTimeWorkOrders from '../../../components/RealTimeWorkOrders';
 import { useRequireAuth, useAuth } from '../../../contexts/AuthContext';
 import '../../../styles/sos-theme.css';
 import { FaBolt, FaChartBar, FaHeart, FaSearch, FaSyncAlt, FaUser } from 'react-icons/fa';
+import MobileShell from '../../../components/MobileShell';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
 export default function CustomerDashboard() {
   useRequireAuth(['customer']);
@@ -400,6 +402,12 @@ export default function CustomerDashboard() {
       getData: () => []
     },
   ];
+
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <MobileShell role="customer" isHome userName={_userName} />;
+  }
 
   return (
     <div style={{minHeight:'100vh', background: 'transparent'}}>

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { useRequireAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import MobileShell from '@/components/MobileShell';
 import {
   FaBuilding, FaUsers, FaShieldAlt, FaServer, FaRocket,
   FaChartBar, FaExclamationTriangle, FaCheckCircle, FaClock,
@@ -19,6 +21,7 @@ type Stats = {
 
 export default function SuperAdminDashboard() {
   const { user, isLoading } = useRequireAuth(['superadmin']);
+  const isMobile = useIsMobile();
   const [stats, setStats] = useState<Stats>({ totalShops: 0, totalUsers: 0, activeWorkOrders: 0, systemHealth: 'healthy' });
   const [tenants, setTenants] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
@@ -65,6 +68,10 @@ export default function SuperAdminDashboard() {
   }
 
   if (!user) return null;
+
+  if (isMobile) {
+    return <MobileShell role="admin" isHome userName={user.name} />;
+  }
 
   const statCards = [
     { label: 'Total Shops', value: stats.totalShops, icon: FaBuilding, color: 'bg-indigo-500', href: '/superadmin/tenants' },
