@@ -15,6 +15,7 @@ import MobileLayout from '@/components/MobileLayout';
 import MobileShell from '@/components/MobileShell';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useIsNative } from '@/context/NativeContext';
 import { isPathAllowedForPlan } from '@/lib/subscription-access';
 import type { SubscriptionPlan } from '@/lib/subscription';
 
@@ -52,6 +53,7 @@ export default function ShopHome() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth(['shop']);
   const isMobile = useIsMobile();
+  const isNative = useIsNative();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState({
@@ -407,7 +409,7 @@ export default function ShopHome() {
     setPendingWorkOrders(prev => [...prev, { ...movedJob, status: 'Pending' }]);
   };
 
-  if (isMobile) {
+  if (isNative) {
     return <MobileShell role="shop" isHome userName={user?.name} />;
   }
 

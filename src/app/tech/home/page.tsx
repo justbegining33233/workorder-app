@@ -14,12 +14,14 @@ import MobileLayout from '@/components/MobileLayout';
 import MobileShell from '@/components/MobileShell';
 import { useRequireAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useIsNative } from '@/context/NativeContext';
 import { FaArrowRight, FaBook, FaBox, FaCamera, FaCar, FaChartBar, FaCheckCircle, FaCircle, FaClipboardList, FaCog, FaComments, FaExclamationCircle, FaMapMarkerAlt, FaRegCircle, FaSearch, FaStopwatch, FaSyncAlt, FaTools, FaUser, FaWrench } from 'react-icons/fa';
 
 export default function TechHome() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth(['tech']);
   const isMobile = useIsMobile();
+  const isNative = useIsNative();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [todayJobs, setTodayJobs] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('job-creation');
@@ -200,7 +202,7 @@ export default function TechHome() {
     return null;
   }
 
-  if (isMobile) {
+  if (isNative) {
     return <MobileShell role="tech" isHome userName={user?.name} />;
   }
 

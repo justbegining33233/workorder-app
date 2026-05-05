@@ -9,6 +9,7 @@ import '../../../styles/sos-theme.css';
 import { FaBolt, FaChartBar, FaHeart, FaSearch, FaSyncAlt, FaUser } from 'react-icons/fa';
 import MobileShell from '../../../components/MobileShell';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import { useIsNative } from '../../../context/NativeContext';
 
 export default function CustomerDashboard() {
   useRequireAuth(['customer']);
@@ -404,8 +405,9 @@ export default function CustomerDashboard() {
   ];
 
   const isMobile = useIsMobile();
+  const isNative = useIsNative();
 
-  if (isMobile) {
+  if (isNative) {
     return <MobileShell role="customer" isHome userName={_userName} />;
   }
 

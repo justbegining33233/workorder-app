@@ -3,7 +3,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import type { Route } from 'next';
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { useIsNative } from '@/context/NativeContext';
 
 export type ShellRole = 'shop' | 'tech' | 'customer' | 'manager' | 'admin';
 
@@ -391,7 +391,7 @@ export default function MobileShell({
   children,
   unreadMessages = 0,
 }: MobileShellProps) {
-  const isMobile = useIsMobile();
+  const isNative = useIsNative();
   const router = useRouter();
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -403,7 +403,9 @@ export default function MobileShell({
     setNewMenuOpen(false);
   }, [pathname]);
 
-  if (!isMobile) return <>{children}</>;
+  // Only render the shell when running inside the native app.
+  // On web/desktop always pass through children.
+  if (!isNative) return <>{children}</>;
 
   const cfg = ROLES[role];
   const accent = cfg.accentColor;
