@@ -35,8 +35,14 @@ export function useIsMobile(breakpoint = 768): boolean {
   const [isMobile, setIsMobile] = useState(serverMobile);
 
   useEffect(() => {
+    // Do NOT call check() immediately on mount.
+    // The server already gave us the right answer via useState(serverMobile).
+    // Calling check() here can flip mobile→desktop if the client-side viewport
+    // width or UA reading disagrees with the server — that IS the flash bug.
+    //
+    // Only respond to future resize events (handles orientation changes,
+    // keyboard open/close, etc.).
     const check = () => setIsMobile(detectMobileClient(breakpoint));
-    check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, [breakpoint]);
